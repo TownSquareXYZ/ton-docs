@@ -1,0 +1,73 @@
+# SDK list (if you've decided on functionality)
+
+Please use the sidebar navigation to choose the preferred programming language!
+
+:::tip
+
+There are different ways to connect to blockchain:
+
+1. RPC data provider or other API: in most cases, you have to _rely_ on its stability and security.
+2. ADNL connection: you're connecting to a [liteserver](/participate/run-nodes/liteserver). They might be inaccessible, but with a certain level of validation (implemented in the library), cannot lie.
+3. Tonlib binary: you're connecting to liteserver as well, so all benefits and downsides apply, but your application also contains a dynamic-loading library compiled outside.
+4. Offchain-only. Such SDKs allow to create and serialize cells, which you can then send to APIs.
+
+:::
+
+### TypeScript
+
+| 库                                               | Blockchain connection                                                                                                    | 描述                                                                                                                       |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| [ton](https://github.com/ton-org/ton)           | via RPC ([Orbs](https://www.orbs.com/ton-access/) / [Toncenter](https://toncenter.com/api/v2/) / etc) | 方便的跨平台客户端，用于在TON区块链上开发dApps。                                                                                             |
+| [tonweb](https://github.com/toncenter/tonweb)   | via RPC ([Orbs](https://www.orbs.com/ton-access/) / [Toncenter](https://toncenter.com/api/v2/) / etc) | Old-style TON JS SDK, with minimal external dependencies, extensively tested in production.                              |
+| [tonkite/adnl](https://github.com/tonkite/adnl) | 原生ADNL / WebSocket                                                                                                       | ADNL的TypeScript实现。                                                                                                       |
+| [tonutils](https://github.com/thekiba/tonutils) | The Open Network的原生C# SDK。                                                                                               | 基于TypeScript的接口，用于在TON生态系统中构建和交互应用。 Due to native ADNL dependency, cannot be used for blockchain interaction in browser. |
+
+### Python
+
+<!-- tonsdk dropped due to invalid cells serialization -->
+
+| SDKs                                                          | Blockchain connection                                                                                                    | TypeScript                                                  |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| [TonTools](https://github.com/yungwine/TonTools)              | via RPC ([Orbs](https://www.orbs.com/ton-access/) / [Toncenter](https://toncenter.com/api/v2/) / etc) | TonTools是一个高级面向对象的Python库，可用于与TON区块链交互。                     |
+| [pytoniq-core](https://github.com/yungwine/pytoniq-core)      | _offchain-only_                                                                                                          | 强大的无传输依赖的Python SDK                                         |
+| [pytoniq](https://github.com/yungwine/pytoniq)                | 原生ADNL                                                                                                                   | Python SDK，具有原生LiteClient和其他基于ADNL的协议实现。                    |
+| [tonpy](https://github.com/disintar/tonpy)                    | 原生ADNL                                                                                                                   | Python包，提供与TON区块链交互的数据结构和API。                               |
+| [mytonlib](https://github.com/igroman787/mytonlib)            | 原生ADNL                                                                                                                   | 用于处理The Open Network的原生Python SDK库                          |
+| [pytonlib](https://github.com/toncenter/pytonlib)             | Tonlib                                                                                                                   | 基于libtonlibjson的独立Python库                                   |
+| [tvm_valuetypes](https://github.com/toncenter/tvm_valuetypes) | _offchain-only_                                                                                                          | 用于处理TVM类型的实用程序库。                                            |
+| [pytvm](https://github.com/yungwine/pytvm)                    | TonLib是最早用于处理TON区块链的库之一。                                                                                                 | Python TVM emulator using bindings to C++ standard emulator |
+
+### C#
+
+| 库                                                                 | Blockchain connection | TypeScript                                                                                                    |
+| ----------------------------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [TonSdk.NET](https://github.com/continuation-team/TonSdk.NET)     | Native ADNL or RPC    | The Open Network的原生C# SDK。                                                                                    |
+| [justdmitry/TonLib.NET](https://github.com/justdmitry/TonLib.NET) | Tonlib                | .NET SDK for The Open Network, connecting via libtonlibjson brought as a binary dependency from TON monorepo. |
+
+### Rust
+
+| 语言                                                            | Blockchain connection | 语言                         |
+| ------------------------------------------------------------- | --------------------- | -------------------------- |
+| [tonlib-rs](https://github.com/ston-fi/tonlib-rs)             | `api/v2`              | The Open Network的Rust SDK  |
+| [getgems-io/ton-grpc](https://github.com/getgems-io/ton-grpc) | `api/v2`              | tonlibjson的Rust绑定和基于它构建的服务 |
+
+### GO
+
+| GO                                                              | Blockchain connection | 描述                                  |
+| --------------------------------------------------------------- | --------------------- | ----------------------------------- |
+| [tonutils-go](https://github.com/xssnick/tonutils-go)           | 原生ADNL                | 用于与TON区块链交互的Golang库                 |
+| [tongo](https://github.com/tonkeeper/tongo)                     | 原生ADNL                | TON区块链的Go库实现                        |
+| [Golang TonLib封装器](https://github.com/ton-blockchain/tonlib-go) | `api/v2`              | Official bindings for libtonlibjson |
+
+### 免费数据提供商 SDKs
+
+| 库                                                                                               | 语言     | Blockchain connection                                                       | 描述                                                                                                     |   |
+| ----------------------------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ | - |
+| [ton-kotlin](https://github.com/ton-community/ton-kotlin)                                       | Kotlin | 原生ADNL                                                                      | 适用于The Open Network的Kotlin/多平台SDK                                                                      |   |
+| [tonlib-java](https://github.com/ton-blockchain/tonlib-java)                                    | Java   | Tonlib bin	                                                                 | TonLib的JVM包装器，可用于Java/Scala/Kotlin等。                                                                   |   |
+| [ayrat555/ton](https://github.com/ayrat555/ton)                                                 | Elixir | _offchain-only_                                                             | Elixir的TON SDK                                                                                         |   |
+| [example/cpp](https://github.com/ton-blockchain/ton/tree/master/example/cpp)                    | C++    | Tonlib二进制连接器类型意味着您必须使用Tonlib来增强您现有的软件。TonLib是用于与Liteserver交互的客户端C++库。       | Official examples on smart contract interaction in TON monorepo                                        | . |
+| [Java TonLib封装器（JNI）](https://github.com/ton-blockchain/tonlib-java)                            | Java   | Tonlib C++基本使用示例                                                            | Official examples on smart contract interaction in TON monorepo.                                       |   |
+| [labraburn/SwiftyTON](https://github.com/labraburn/SwiftyTON)—tonlib的原生Swift封装器，支持async/await   | Swift  | [C++ TonLib](https://github.com/ton-blockchain/ton/tree/master/example/cpp) | [Python TonLib封装器](https://github.com/toncenter/pytonlib)                                              |   |
+| [tonsdk](https://github.com/tonfactory/tonsdk)                                                  | Swift  | `api/v2`                                                                    | [tonlib-xcframework](https://github.com/labraburn/tonlib-xcframework)—为Apple生成适用于所有架构的.xcframework的构建器 |   |
+| [labraburn/node-tonlib](https://github.com/labraburn/node-tonlib)—用于NodeJS的C++插件，用于处理tonlibjson | NodeJS | 传统 TonLib SDK                                                               | TON JS SDK，具有最小的外部依赖和增强的安全性，适用于支付系统和DEXs的开发。                                                           |   |
