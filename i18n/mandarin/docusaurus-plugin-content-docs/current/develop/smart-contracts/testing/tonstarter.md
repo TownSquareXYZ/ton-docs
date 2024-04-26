@@ -26,11 +26,11 @@ npm test
 
 ### ton-contract-executor
 
-:::info 不推荐
-这个库已经不推荐使用。TON社区不再开发它。
+:::info deprecated
+This library is deprecated. 这个库已经不推荐使用。TON社区不再开发它。
 :::
 
-这个库允许您在本地运行TON虚拟机并执行合约。这使您能够在将合约发布到网络之前编写、调试和完全测试您的合约。
+这个库允许您在本地运行TON虚拟机并执行合约。这使您能够在将合约发布到网络之前编写、调试和完全测试您的合约。 That allows you to write & debug & fully test your contracts before launching them to the network.
 
 - https://github.com/ton-community/ton-contract-executor
 
@@ -38,4 +38,4 @@ npm test
 
 首先阅读这篇文章，了解在TON上进行测试的所有方法：
 
-* [TON Hello World第4部分：逐步指导测试您的第一个智能合约](https://ton-community.github.io/tutorials/04-testing/)
+- [TON Hello World第4部分：逐步指导测试您的第一个智能合约](https://ton-community.github.io/tutorials/04-testing/)
