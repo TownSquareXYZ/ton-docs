@@ -1,6 +1,6 @@
 # 会话协议
 
-会话协议定义了客户端标识符，并为应用程序和钱包提供了端到端加密。这意味着HTTP bridge是完全不受信任的，并且不能读取在应用程序和钱包之间传输的用户数据。JS bridge不使用此协议，因为钱包和应用程序都在同一设备上运行。
+Session protocol defines client identifiers and offers end-to-end encryption for the app and the wallet. 会话协议定义了客户端标识符，并为应用程序和钱包提供了端到端加密。这意味着HTTP bridge是完全不受信任的，并且不能读取在应用程序和钱包之间传输的用户数据。JS bridge不使用此协议，因为钱包和应用程序都在同一设备上运行。 JS bridge does not use this protocol since both the wallet and the app run on the same device.
 
 ## 定义
 
@@ -25,7 +25,7 @@ A <- X25519Pubkey(s)
 
 ### 会话
 
-会话由两个客户端 ID 的对定义。应用程序和钱包都创建自己的[客户端 ID](#client-id)。
+A session is defined by a pair of two client IDs. 会话由两个客户端 ID 的对定义。应用程序和钱包都创建自己的[客户端 ID](#client-id)。
 
 ### 创建客户端密钥对
 
