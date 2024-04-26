@@ -154,25 +154,25 @@ shard_state#9023afe2 global_id:int32
     = ShardStateUnsplit;
 ```
 
-| 字段                     | 类型                                                                     | 是否必需     | 描述                                                                                                                                     |
-| ---------------------- | ---------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `global_id`            | int32                                                                  | 是        | An ID of the network where this shard belongs. `-239` for mainnet and `-3` for testnet.                |
-| `shard_id`             | ShardIdent                                                             | 是        | 分片的标识符。                                                                                                                                |
-| `seq_no`               | uint32                                                                 | 是        | 此分片链的最新序列号。                                                                                                                            |
-| `vert_seq_no`          | #                                                                      | 是        | 此分片链的最新垂直序列号。                                                                                                                          |
-| `gen_utime`            | uint32                                                                 | 是        | The generation time associated with the creation of the shard.                                                         |
-| `gen_lt`               | uint64                                                                 | 是        | 创建分片的逻辑时间。                                                                                                                             |
-| `min_ref_mc_seqno`     | uint32                                                                 | 是        | 最新引用的主链区块的序列号。                                                                                                                         |
-| `out_msg_queue_info`   | OutMsgQueueInfo                                                        | 是        | Information about the out message queue of this shard. Stored in a reference.                          |
-| `before_split`         | ## 1                                                                   | 是        | 标志位，表示此分片链的下一个区块是否将发生拆分。                                                                                                               |
-| `accounts`             | ShardAccounts                                                          | 是        | The state of accounts in the shard. Stored in a reference.                                             |
-| `overload_history`     | uint64                                                                 | 是        | History of overload events for the shard. Used for load balancing through sharding.                    |
-| `underload_history`    | uint64                                                                 | 是        | History of underload events for the shard. Used for load balancing through sharding.                   |
-| `total_balance`        | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 是        | Total balance for the shard.                                                                                           |
-| `total_validator_fees` | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 是        | Total validator fees for the shard.                                                                                    |
-| `libraries`            | HashmapE 256 LibDescr                                                  | 是        | A hashmap of library descriptions in this shard. Currently, non-empty only in the masterchain.         |
-| `master_ref`           | BlkMasterInfo                                                          | 否        | A reference to the master block info.                                                                                  |
-| `custom`               | McStateExtra                                                           | 前一区块的签名。 | Custom extra data for the shard state. 此字段仅在主链中存在，包含所有主链特有的数据。区块的自定义额外数据。存储为引用。 Stored in a reference. |
+| 字段                     | 类型                                                                     | 是否必需 | 描述                                                                                                                                     |
+| ---------------------- | ---------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `global_id`            | int32                                                                  | 是    | An ID of the network where this shard belongs. `-239` for mainnet and `-3` for testnet.                |
+| `shard_id`             | ShardIdent                                                             | 是    | 分片的标识符。                                                                                                                                |
+| `seq_no`               | uint32                                                                 | 是    | 此分片链的最新序列号。                                                                                                                            |
+| `vert_seq_no`          | #                                                                      | 是    | 此分片链的最新垂直序列号。                                                                                                                          |
+| `gen_utime`            | uint32                                                                 | 是    | The generation time associated with the creation of the shard.                                                         |
+| `gen_lt`               | uint64                                                                 | 是    | 创建分片的逻辑时间。                                                                                                                             |
+| `min_ref_mc_seqno`     | uint32                                                                 | 是    | 最新引用的主链区块的序列号。                                                                                                                         |
+| `out_msg_queue_info`   | OutMsgQueueInfo                                                        | 是    | Information about the out message queue of this shard. Stored in a reference.                          |
+| `before_split`         | ## 1                                                                   | 是    | 标志位，表示此分片链的下一个区块是否将发生拆分。                                                                                                               |
+| `accounts`             | ShardAccounts                                                          | 是    | The state of accounts in the shard. Stored in a reference.                                             |
+| `overload_history`     | uint64                                                                 | 是    | History of overload events for the shard. Used for load balancing through sharding.                    |
+| `underload_history`    | uint64                                                                 | 是    | History of underload events for the shard. Used for load balancing through sharding.                   |
+| `total_balance`        | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 是    | Total balance for the shard.                                                                                           |
+| `total_validator_fees` | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 是    | Total validator fees for the shard.                                                                                    |
+| `libraries`            | HashmapE 256 LibDescr                                                  | 是    | A hashmap of library descriptions in this shard. Currently, non-empty only in the masterchain.         |
+| `master_ref`           | BlkMasterInfo                                                          | 否    | A reference to the master block info.                                                                                  |
+| `custom`               | McStateExtra                                                           | 否    | Custom extra data for the shard state. 此字段仅在主链中存在，包含所有主链特有的数据。区块的自定义额外数据。存储为引用。 Stored in a reference. |
 
 ### ShardState 拆分
 
@@ -225,7 +225,9 @@ masterchain_block_extra#cca5
 | `shard_hashes`        | ShardHashes                     | 是                                                          | 相应分片链的最新区块的哈希。                                                                                                     |
 | `shard_fees`          | ShardFees                       | 是                                                          | 此区块中所有分片收集的总费用。                                                                                                    |
 | `prev_blk_signatures` | HashmapE 16 CryptoSignaturePair | 是                                                          | Previous block signatures.                                                                         |
-| `recover_create_msg`  | InMsg                           | 否                                                          | The message related to recovering extra-currencies, if any. Stored in a reference. |
+| `recover_create_msg`  | InMsg                           | ```
+                                                 |
+``` | The message related to recovering extra-currencies, if any. Stored in a reference. |
 | `mint_msg`            | InMsg                           | 否                                                          | The message related to minting extra-currencies, if any. Stored in a reference.    |
 | `config`              | ConfigParams                    | ```
                                                  |
