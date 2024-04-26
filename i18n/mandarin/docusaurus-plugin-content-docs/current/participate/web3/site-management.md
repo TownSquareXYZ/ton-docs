@@ -14,9 +14,10 @@
 >
 > 如果您丢失了短语，可以使用任何TON钱包进行恢复。
 > 在Tonkeeper中：设置 > 钱包保护 > 您的私钥。
+> In Tonkeeper: Settings > Wallet protection > Your private key.
 >
-> 请务必记下这24个单词，并将它们保存在安全的地方。在紧急情况下，您只能通过恢复短语来恢复对钱包的访问。
-> 请严格保密您的恢复短语。任何获得您恢复短语的人都将完全控制您的资金。
+> Be sure to write down these 24 words and keep them in a safe place. In case of emergency, you will be able to restore access to the wallet only by recovery phrases.
+> Keep your recovery phrases strictly confidential. Anyone who gains access to your recovery phrases will have full access to your funds.
 
 4. 现在在https://dns.ton.org打开您的域名并点击“编辑”按钮。
 
@@ -40,7 +41,7 @@
 
 ## 如何设置子域名
 
-1. 在网络上创建一个智能合约，用于管理您网站或服务的子域名。您可以使用现成的[manual-dns](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/dns-manual-code.fc)或[auto-dns](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/dns-auto-code.fc)智能合约，或任何实现TON DNS接口的其他智能合约。
+1. Create a smart contract on the network that will manage the subdomains of your website or service. 在网络上创建一个智能合约，用于管理您网站或服务的子域名。您可以使用现成的[manual-dns](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/dns-manual-code.fc)或[auto-dns](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/dns-auto-code.fc)智能合约，或任何实现TON DNS接口的其他智能合约。
 
 2. 按上述方法打开域名进行编辑。
 
