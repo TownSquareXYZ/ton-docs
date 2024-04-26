@@ -13,9 +13,9 @@ _toncli—The Open Network跨平台智能合约命令行界面。_
 以下是使用toncli库制作的教程：
 
 - [快速开始指南](https://github.com/disintar/toncli/blob/master/docs/quick_start_guide.md) — 部署示例智能合约到TON的简单步骤。
-- [TON Learn: FunC旅程概览。第3部分](https://blog.ton.org/func-journey-3) Part 1](https://blog.ton.org/func-journey)
+- [TON Learn: FunC旅程概览。第1部分](https://blog.ton.org/func-journey) Part 1](https://blog.ton.org/func-journey)
 - [TON Learn: FunC旅程概览。第1部分](https://blog.ton.org/func-journey) 贡献者已经准备了很好的示例项目，并覆盖了新的测试。例如，现在可以使用两个命令部署NFT集合或Jetton。
-- [TON Learn: FunC旅程概览。第2部分](https://blog.ton.org/func-journey-2) Part 3](https://blog.ton.org/func-journey-3)
+- [TON Learn: FunC旅程概览。第3部分](https://blog.ton.org/func-journey-3) Part 3](https://blog.ton.org/func-journey-3)
 - [TON Learn: 10个从零到英雄的课程](https://github.com/romanovichim/TonFunClessons_Eng) ([俄语版本](https://github.com/romanovichim/TonFunClessons_ru))
 
 ## 安装 💾
