@@ -1,21 +1,63 @@
 # 单一提名者池
 
+## Using mytonctrl
+
 目前 [mytonctrl](https://github.com/ton-blockchain/mytonctrl) 尚未原生支持`single_nominator`合约，因此这里是设置步骤。
 
-:::info
-原生支持将于2023年第四季度发布
-:::
+### mytonctrl 2.0
 
-## 准备验证者
+If you already have installed mytonctrl just use command `update mytonctrl2`. If you have no mytonctrl installed, follow these steps:
+
+1. Download installation script:
+
+```bash
+wget https://raw.githubusercontent.com/ton-blockchain/mytonctrl/mytonctrl2/scripts/install.sh
+```
+
+2. Run installation script:
+
+```bash
+sudo bash ./install.sh -b mytonctrl2
+```
+
+### 原生支持将于2023年第四季度发布
+
+After you have created and activated validator's wallet, follow these steps:
+
+1. Enable single nominator mode
+
+```bash
+MyTonCtrl> enable_mode single-nominator
+```
+
+2. 准备验证者
+
+```bash
+MyTonCtrl> new_single_pool <pool-name> <owner_address>
+```
+
+3. Type `pools_list` to display pool addresses
+
+4. Send 1 TON to the pool and activate it
+
+```bash
+MyTonCtrl> activate_single_pool <pool-name>
+```
+
+Now you can work with this pool via mytonctrl like with a standard nominator pool.
+
+## Without mytonctrl
 
 #### 准备已启动的验证者
 
-如果您已安装 mytonctrl 并正在运行验证者：
+  如果您已安装 mytonctrl 并正在运行验证者：
 
 1. 停止验证并提取所有资金。
 
 #### 从头开始准备
-如果您以前没有验证者，请执行以下操作：
+
+  如果您以前没有验证者，请执行以下操作：
+
 1. [运行验证者](/participate/run-nodes/full-node)并确保已同步。
 2. 停止验证并提取所有资金。
 
@@ -135,9 +177,8 @@ npx ts-node scripts/ts/withdraw-deeplink.ts <single-nominator-addr> <withdraw-am
 
 d. 在所有者的手机上打开深层链接
 
-
 ## 参阅
 
-* [Single Nominator 池合约](https://github.com/orbs-network/single-nominator)
-* [归属合约](/participate/network-maintenance/vesting-contract)
-* [single-nominator-quick-how-to-09-25](https://telegra.ph/single-nominator-quick-how-to-09-25)
+- [Single Nominator 池合约](https://github.com/orbs-network/single-nominator)
+- [归属合约](/participate/network-maintenance/vesting-contract)
+- [single-nominator-quick-how-to-09-25](https://telegra.ph/single-nominator-quick-how-to-09-25)
