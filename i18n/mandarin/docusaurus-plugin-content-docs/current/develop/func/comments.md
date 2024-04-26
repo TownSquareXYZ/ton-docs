@@ -1,17 +1,20 @@
-# 注释
-FunC 有单行注释，以 `;;`（双分号）开始。例如：
+# Comments
+
+FunC 有单行注释，以 `;;`（双分号）开始。例如： For example:
+
 ```func
 int x = 1; ;; 给 x 赋值 1
 ```
 
-它还有多行注释，以 `{-` 开始并以 `-}` 结束。请注意，与许多其他语言不同的是，FunC 的多行注释可以嵌套。例如：
+它还有多行注释，以 `{-` 开始并以 `-}` 结束。请注意，与许多其他语言不同的是，FunC 的多行注释可以嵌套。例如： Note that unlike in many other languages, FunC multi-line comments can be nested. For example:
+
 ```func
 {- 这是一个多行注释
     {- 这是注释中的注释 -}
 -}
 ```
 
-此外，多行注释中可以有单行注释，且单行注释 `;;` 比多行注释 `{- -}`“更强”。换句话说，在以下示例中：
+此外，多行注释中可以有单行注释，且单行注释 `;;` 比多行注释 `{- -}`“更强”。换句话说，在以下示例中： In other words in the following example:
 
 ```func
 {-
