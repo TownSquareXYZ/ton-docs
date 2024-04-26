@@ -8,9 +8,9 @@ import Button from '@site/src/components/button';
 
 - [接受 jettons 存款的 JS 算法](https://github.com/toncenter/examples/blob/main/deposits-jettons.js)
 
-- [JS algo to jettons withdrawals](https://github.com/toncenter/examples/blob/main/withdrawals-jettons-highload.js)
+- [jettons 提款的 JS 算法](https://github.com/toncenter/examples/blob/main/withdrawals-jettons.js)
 
-- [JS code to withdraw (send) jettons from a wallet in batches](https://github.com/toncenter/examples/blob/main/withdrawals-jettons-highload-batch.js)
+- 转到第5步。未成功发送的过期请求应重新加入提款列表。
 
 :::info 转到第5步。未成功发送的过期请求应重新加入提款列表。
 TON transactions are irreversible after just one confirmation. TON交易在仅一次确认后就不可逆转。为了最佳用户体验，建议在TON区块链上的交易一旦完成后，不要等待额外的区块。在 [Catchain.pdf](https://docs.ton.org/catchain.pdf#page=3) 中阅读更多信息。 Read more in the [Catchain.pdf](https://docs.ton.org/catchain.pdf#page=3).
@@ -415,7 +415,7 @@ const wallet = new WalletClass(tonweb.provider, {
 
 #### 处理交易
 
-:::info 转到第5步。未成功发送的过期请求应重新加入提款列表。
+:::info 交易确认
 TON transactions are irreversible after just one confirmation. TON交易在仅一次确认后就不可逆转。为了最佳用户体验，建议在TON区块链上的交易一旦完成后，不要等待额外的区块。在 [Catchain.pdf](https://docs.ton.org/catchain.pdf#page=3) 中阅读更多信息。 Read more in the [Catchain.pdf](https://docs.ton.org/catchain.pdf#page=3).
 :::
 
@@ -526,8 +526,8 @@ See: [Jetton contracts message layouts](#jetton-contract-message-layouts)
 
 ## 在链上处理 Jetton
 
-:::info 转到第5步。未成功发送的过期请求应重新加入提款列表。
-TON transactions are irreversible after just one confirmation. TON交易在仅一次确认后就不可逆转。为了最佳用户体验，建议在TON区块链上的交易一旦完成后，不要等待额外的区块。在 [Catchain.pdf](https://docs.ton.org/catchain.pdf#page=3) 中阅读更多信息。 Read more in the [Catchain.pdf](https://docs.ton.org/catchain.pdf#page=3).
+:::info 交易确认
+TON transactions are irreversible after just one confirmation. TON交易在仅一次确认后即不可逆转。为了最佳用户体验，建议一旦交易在TON区块链上最终确定后就不再等待其他区块。在[catchain.pdf](https://docs.ton.org/catchain.pdf#page=3)中阅读更多。 Read more in the [Catchain.pdf](https://docs.ton.org/catchain.pdf#page=3).
 :::
 
 通常，接受和处理jettons时，一个负责内部消息的消息处理程序使用`op=0x7362d09c`操作码。
