@@ -1,4 +1,4 @@
-# Governance Contracts
+# 治理合约
 
 在TON中，与TVM、catchain、费用和链拓扑（以及这些参数如何存储和更新）有关的节点操作共识参数由一组特殊的智能合约控制（与前几代区块链采用的旧式和不灵活的硬编码这些参数的方式不同）。通过这种方式，TON实现了全面透明的链上治理。这组特殊合约本身受参数控制，目前包括选举人、配置合约和DNS合约，将来将通过额外的货币铸币和其他合约进行扩展。 That way, TON implements comprehensive and transparent on-chain governance. The set of special contracts itself is governed by parameters and currently includes the Elector, Config, and DNS contracts and in future will be extended by extra-currency Minter and others.
 
