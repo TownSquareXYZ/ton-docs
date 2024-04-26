@@ -1,17 +1,24 @@
-# 覆盖子网络
+# Overlay Subnetworks
 
 实现：
-* https://github.com/ton-blockchain/ton/tree/master/overlay
+
+- https://github.com/ton-blockchain/ton/tree/master/overlay
 
 ## 概览
 
-在像TON这样的多区块链系统中，即使是完整节点通常也只对获取某些分片链的更新（即新区块）感兴趣。为此，在TON网络内部，基于ADNL协议，为每个分片链构建了一个特殊的覆盖子网络 (Overlay Subnetwork)。
+在像TON这样的多区块链系统中，即使是完整节点通常也只对获取某些分片链的更新（即新区块）感兴趣。为此，在TON网络内部，基于ADNL协议，为每个分片链构建了一个特殊的覆盖子网络 (Overlay Subnetwork)。 To this end, a special overlay subnetwork has been built
+inside the TON Network, on top of the ADNL Protocol,
+for each shardchain.
 
 此外，覆盖子网络还用于TON存储、TON代理等的运行。
 
 ## ADNL 与覆盖网络
 
-与ADNL不同的是，TON的覆盖网络 (Overlay Network) 通常不支持向其他任意节点发送数据报。相反，某些“半永久链接”在特定节点（相对于正在讨论的的覆盖网络，这被称为“邻居节点(neighbors)”）之间建立，消息通常沿着这些链接转发（即从一个节点到它的一个邻居节点(neighbors)）。
+In contrast to ADNL, the TON overlay networks usually do not support
+sending datagrams to other arbitrary nodes. Instead, some “semi-permanent
+links” are established between certain nodes (called “neighbors” with respect to
+the overlay network under consideration) and messages are usually forwarded
+along these links (i.e. from a node to one of its neighbors).
 
 每个覆盖子网络都有一个通常等于覆盖网络描述的SHA256的256位网络标识符——一个TL序列化对象。
 
