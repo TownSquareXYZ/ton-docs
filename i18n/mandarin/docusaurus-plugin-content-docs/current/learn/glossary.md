@@ -4,7 +4,7 @@
 
 在这个词汇表中，您可以找到任何与TON和加密相关的词汇
 
-***
+____________
 
 ## A
 
@@ -28,13 +28,13 @@
 
 **APY** — 年百分比收益率，用于计算给定资产的年利率。
 
-***
+____________
 
 ## B
 
 ### Bearish
 
-**Bearish** — 当资产价格由于投资者抛售而下降时使用的术语。（该术语通常用于描述整体市场情绪。）
+**Bearish** — 当资产价格由于投资者抛售而下降时使用的术语。（该术语通常用于描述整体市场情绪。） (The term is often used to describe the overall market sentiment.)
 
 ### Binance
 
@@ -54,29 +54,29 @@
 
 ### BoC
 
-**BoC** — 单元包。通常在代码中使用。
+**BoC** — 单元包。通常在代码中使用。 Usually, used in code.
 
 ### BoF
 
-**BoF** — 文件袋。通常在代码中使用。
+**BoF** — 文件袋。通常在代码中使用。 Usually, used in code.
 
 ### Bot
 
-**Bot** — 为两个生态系统编写的程序，例如开放网络和Telegram信使。在Telegram上，机器人是由软件操作的信使中的账户。
+**Bot** — 为两个生态系统编写的程序，例如开放网络和Telegram信使。在Telegram上，机器人是由软件操作的信使中的账户。 On Telegram, bots are accounts in the messenger operated by software.
 
 ### Bridge
 
-**Bridge** — 一种连接各种区块链以在网络之间传输代币和数据的程序。TON桥可以在此链接找到。
+**Bridge** — 一种连接各种区块链以在网络之间传输代币和数据的程序。TON桥可以在此链接找到。 TON Bridge is available at this [link](https://ton.org/bridge/).
 
 ### Bullish
 
-**Bullish** — 用于描述价值上升的资产的术语。（“牛市”是市场整体价值增长的相反情况。）
+励。 **Bullish** — 用于描述价值上升的资产的术语。（“牛市”是市场整体价值增长的相反情况。）
 
 ### Burning
 
 **Burning** — 燃烧或从流通和总供应中移除一定数量的代币的行为，通常导致需求增加。
 
-***
+___________
 
 ## C
 
@@ -100,7 +100,7 @@
 
 **Custodial** — 一种加密货币钱包，其中第三方存储加密货币，而不是其真正的所有者。
 
-***
+___________
 
 ## D
 
@@ -114,7 +114,7 @@
 
 ### Decentralization
 
-**Decentralization** — 是TON和其他区块链的主要原则之一。没有去中心化，将无法实现Web3；因此，TON生态系统的每个元素都围绕最大化去中心化展开。
+**Inflation** — 货币价值降低的过程 — 例如美元或欧元。Toncoin（和其他加密货币）以高度透明和可预测的发行方式发行，具有通缩特性。 **Decentralization** — 是TON和其他区块链的主要原则之一。没有去中心化，将无法实现Web3；因此，TON生态系统的每个元素都围绕最大化去中心化展开。
 
 ### DeFi
 
@@ -122,7 +122,7 @@
 
 ### DEX
 
-**DEX** — 去中心化交易所（DEX），用户可以在没有任何中介的情况下交易加密货币。确保安全交易所需的在线实体是区块链本身。
+**DEX** — 去中心化交易所（DEX），用户可以在没有任何中介的情况下交易加密货币。确保安全交易所需的在线实体是区块链本身。 The online entity needed to guarantee safe transactions is the blockchain itself.
 
 ### Diamond hands
 
@@ -146,13 +146,13 @@
 
 ### Durov
 
-**Durov** — Pavel Durov，一位因创办VK社交网络和Telegram信使而闻名的俄罗斯企业家。Nikolai Durov是Pavel的兄弟，参与了VK、Telegram以及TON的开发。
+**Durov** — Pavel Durov，一位因创办VK社交网络和Telegram信使而闻名的俄罗斯企业家。Nikolai Durov是Pavel的兄弟，参与了VK、Telegram以及TON的开发。 Nikolai Durov is Pavel's brother who participated in developing VK, Telegram and also TON.
 
 ### DYOR
 
 **DYOR** — 做你自己的研究，即在决定投资之前对项目、公司或加密货币进行研究的过程。
 
-***
+___________
 
 ## E
 
@@ -164,7 +164,7 @@
 
 **Exchange** — 用于交易和使用其他市场工具的场所。
 
-***
+___________
 
 ## F
 
@@ -172,15 +172,13 @@
 
 **Farming** — 将您的加密货币资产借出以获得奖
 
-励。
-
 ### Fiat
 
 **Fiat** — 中央银行或金融机构发行的常规货币。
 
 ### FOMO
 
-**FOMO** — “失去机会的恐惧”，一种心理状态，当存在失去某个机会带来的潜在收益时，会影响一些投资者。通常出现在牛市和交易者未对特定项目进行尽职调查的情况下。
+**FOMO** — “失去机会的恐惧”，一种心理状态，当存在失去某个机会带来的潜在收益时，会影响一些投资者。通常出现在牛市和交易者未对特定项目进行尽职调查的情况下。 It usually appears during a bull market and when traders don’t do their due diligence analyzing a particular project.
 
 ### Fungible tokens
 
@@ -198,7 +196,7 @@
 
 **FunC** — TON上的智能合约语言。
 
-***
+___________
 
 ## G
 
@@ -210,7 +208,7 @@
 
 **GitHub** — 开发人员聚集在此创建程序基础代码的平台。
 
-***
+___________
 
 ## H
 
@@ -230,7 +228,7 @@
 
 **Hold** — 保存 — 即不出售 — 投资组合中的资产或资产。
 
-***
+___________
 
 ## I
 
@@ -244,9 +242,9 @@
 
 ### Inflation
 
-**Inflation** — 货币价值降低的过程 — 例如美元或欧元。Toncoin（和其他加密货币）以高度透明和可预测的发行方式发行，具有通缩特性。
+**Inflation** — the process when the value of a currency — e.g., U.S. dollar or the euro — decreases. Toncoin (and other cryptocurrencies) are emitted with a high degree of transparency and a predictable issuance, which has deflationary properties.
 
-***
+___________
 
 ## K
 
@@ -254,19 +252,19 @@
 
 **KYС** — 认识你的客户，用户在为加密服务创建帐户时验证其身份的过程。
 
-***
+___________
 
 ## L
 
 ### Launchpad
 
-**Launchpad** — 为加密初创公司提供平台，将投资者和项目聚集在一起。TON生态系统中的主要发射台是Tonstarter。
+**Launchpad** — 为加密初创公司提供平台，将投资者和项目聚集在一起。TON生态系统中的主要发射台是Tonstarter。 The main launchpad in the TON Ecosystem is Tonstarter.
 
 ### Liquidity pool
 
-**Liquidity pool** — 将加密资产聚集在一起并冻结在智能合约中。流动性池用于去中心化交易、贷款和其他活动。
+**Liquidity pool** — 将加密资产聚集在一起并冻结在智能合约中。流动性池用于去中心化交易、贷款和其他活动。 Liquidity pools are used for decentralized trading, loans, and other endeavors.
 
-***
+__________
 
 ## M
 
@@ -280,7 +278,7 @@
 
 ### Masterchain
 
-**Masterchain** — 在多层区块链中，主链是最重要的。对于TON来说，主链是网络的主链。当在区块链上执行操作时，它们是在主链上执行的。
+**Masterchain** — 在多层区块链中，主链是最重要的。对于TON来说，主链是网络的主链。当在区块链上执行操作时，它们是在主链上执行的。 For TON, the masterchain is the main chain of the network. When operations happen on the blockchain, they do so on the masterchain.
 
 ### Metaverse
 
@@ -290,7 +288,7 @@
 
 **Moon** — 一个用于描述加密资产在价格图表上垂直轨迹的加密术语 — 即迅速增值。
 
-***
+__________
 
 ## N
 
@@ -310,7 +308,7 @@
 
 **Non-custodial** — 一种加密钱包，将资产的完全控制权交给所有者/用户。
 
-***
+__________
 
 ## O
 
@@ -324,9 +322,9 @@
 
 ### Onion routing
 
-**Onion routing** — 一种类似于TOR的技术，允许在网络上进行匿名交互。所有消息都以类似于洋葱的各种层次加密。TON代理应用了这样的技术。
+**Onion routing** — 一种类似于TOR的技术，允许在网络上进行匿名交互。所有消息都以类似于洋葱的各种层次加密。TON代理应用了这样的技术。 All messages are encrypted in various layers akin to an onion. TON Proxy applies such a technique.
 
-***
+__________
 
 ## P
 
@@ -340,7 +338,7 @@
 
 ### Proof-of-work
 
-**Proof-of-work** — 一种共识算法，其中一方向另一方证明了特定数量的计算工作已经花费。通过花费少量能量，一方可以验证这一点。
+**Proof-of-work** — 一种共识算法，其中一方向另一方证明了特定数量的计算工作已经花费。通过花费少量能量，一方可以验证这一点。 By expending a little energy, a party can verify this.
 
 ### Proxy
 
@@ -354,7 +352,7 @@
 
 **P2P** — 对等，用户之间进行交易，无需第三方或中介的帮助。
 
-***
+__________
 
 ## R
 
@@ -366,7 +364,7 @@
 
 **ROI** — 投资回报率，从投资中获得的利润。
 
-***
+_________
 
 ## S
 
@@ -400,13 +398,13 @@
 
 ### Staking
 
-**Staking** — 用户通过将硬币或代币存储在权益证明算法中来赚取 passiv 收入的一种方式，从而确保区块链平稳运行。为此，他们以奖励的形式获得激励。
+**Staking** — 用户通过将硬币或代币存储在权益证明算法中来赚取 passiv 收入的一种方式，从而确保区块链平稳运行。为此，他们以奖励的形式获得激励。 For this, they earn rewards as an incentive.
 
 ### Swap
 
 **Swap** — 两种金融资产的交换 — 例如 Toncoin 对 USDT。
 
-***
+________
 
 ## T
 
@@ -436,11 +434,11 @@
 
 ### To the moon
 
-**To the moon** — 在人们制造 FOMO 时使用的口头禅。它指的是希望某种加密货币的价值迅速增值 — 因此其轨迹指向月球。
+**To the moon** — 在人们制造 FOMO 时使用的口头禅。它指的是希望某种加密货币的价值迅速增值 — 因此其轨迹指向月球。 It refers to hopefuls wanting the value of a cryptocurrency rapidly gaining a lot of value — hence its trajectory to the moon.
 
 ### Toncoin
 
-**Toncoin** — TON生态系统的本地加密货币，用于开发服务并支付费用和服务。它可以被购买、出售和交易。
+**Toncoin** — TON生态系统的本地加密货币，用于开发服务并支付费用和服务。它可以被购买、出售和交易。 It can be bought, sold, and traded.
 
 ### Trading
 
@@ -454,7 +452,7 @@
 
 **TVM** — Ton Virtual Machine，类似于分布式计算机的机器，它在每个新区块后计算Ton区块链的状态并执行智能合约。
 
-***
+___________
 
 ## V
 
@@ -462,7 +460,7 @@
 
 **Validator** — 在TON区块链上验证新区块的人。
 
-***
+___________
 
 ## W
 
@@ -472,7 +470,7 @@
 
 ### Wallet
 
-**Wallet** — 通过一套购买或出售加密货币和代币所需的私钥系统来存储加密货币的软件。它也是TON生态系统中用于购买和出售Toncoin的机器人。
+**Wallet** — 通过一套购买或出售加密货币和代币所需的私钥系统来存储加密货币的软件。它也是TON生态系统中用于购买和出售Toncoin的机器人。 It is also a bot in the TON ecosystem for buying and selling Toncoin.
 
 ### Web3
 
@@ -488,7 +486,7 @@
 
 ### White paper
 
-**White paper** — 由项目开发人员编写的项目主要文件。它解释了技术和项目的目标。
+**White paper** — 由项目开发人员编写的项目主要文件。它解释了技术和项目的目标。 It explains the technology and the project’s goals.
 
 ### Watchlist
 
@@ -496,9 +494,9 @@
 
 ### Workchain
 
-**Workchain** — 连接到主链的次级链。它们可以包含大量不同的连接链，这些链具有自己的共识规则。它们还可以包含地址和交易信息以及用于智能合约的虚拟机。此外，它们可以与主链兼容并相互交互。
+**Workchain** — 连接到主链的次级链。它们可以包含大量不同的连接链，这些链具有自己的共识规则。它们还可以包含地址和交易信息以及用于智能合约的虚拟机。此外，它们可以与主链兼容并相互交互。 They can contain a massive number of different connected chains that have their own consensus rules. They can also contain address and transaction information and virtual machines for smart contracts. Additionally, they can be compatible with the masterchain and interact with one another.
 
-***
+___________
 
 ## Y
 
@@ -509,4 +507,3 @@
 ### Yolo
 
 **Yolo** — “你只活一次”，一个俚语首字母缩写，用作呼吁充分利用生活而不考虑给定努力的风险。
-
