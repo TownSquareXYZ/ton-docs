@@ -2,12 +2,11 @@
 description: 在本文中，我们将创建一个简单的Telegram机器人，用于接收TON支付。
 ---
 
-# 带有自己余额的机器人
-
+# Bot with own balance
 
 在本文中，我们将创建一个简单的Telegram机器人，用于接收TON支付。
 
-## 🦄 外观
+## 🦄 What it looks like
 
 机器人将如下所示：
 
@@ -16,34 +15,43 @@ description: 在本文中，我们将创建一个简单的Telegram机器人，�
 ### 源代码
 
 源代码可在GitHub上获得：
-* https://github.com/Gusarich/ton-bot-example
+
+- https://github.com/Gusarich/ton-bot-example
 
 ## 📖 你将学到什么
+
 你将学会：
- - 使用Aiogram在Python3中创建一个Telegram机器人
- - 使用SQLITE数据库
- - 使用公共TON API
+
+- 使用Aiogram在Python3中创建一个Telegram机器人
+- 使用SQLITE数据库
+- 使用公共TON API
 
 ## ✍️ 开始之前你需要
+
 如果还没有安装[Python](https://www.python.org/)，请先安装。
 
 还需要以下PyPi库：
- - aiogram
- - requests
+
+- aiogram
+- requests
 
 你可以在终端中用一条命令安装它们。
+
 ```bash
 pip install aiogram==2.21 requests
 ```
 
 ## 🚀 开始吧！
+
 为我们的机器人创建一个目录，其中包含四个文件：
- - `bot.py`—运行Telegram机器人的程序
- - `config.py`—配置文件
- - `db.py`—与sqlite3数据库交互的模块
- - `ton.py`—处理TON支付的模块
+
+- `bot.py`—运行Telegram机器人的程序
+- `config.py`—配置文件
+- `db.py`—与sqlite3数据库交互的模块
+- `ton.py`—处理TON支付的模块
 
 目录应该看起来像这样：
+
 ```
 my_bot
 ├── bot.py
@@ -55,9 +63,11 @@ my_bot
 现在，让我们开始编写代码吧！
 
 ## 配置
-我们先从`config.py`开始，因为它是最小的一个。我们只需要在其中设置一些参数。
+
+我们先从`config.py`开始，因为它是最小的一个。我们只需要在其中设置一些参数。 We just need to set a few parameters in it.
 
 **config.py**
+
 ```python
 BOT_TOKEN = 'YOUR BOT TOKEN'
 DEPOSIT_ADDRESS = 'YOUR DEPOSIT ADDRESS'
@@ -71,29 +81,34 @@ else:
 ```
 
 这里你需要在前三行填入值：
- - `BOT_TOKEN`是你的Telegram机器人令牌，可以在[创建机器人](https://t.me/BotFather)后获得。
- - `DEPOSIT_ADDRESS`是你的项目钱包地址，将接受所有支付。你可以简单地创建一个新的TON钱包并复制其地址。
- - `API_KEY`是你从TON Center获得的API密钥，可以在[这个机器人](https://t.me/tonapibot)中获得。
+
+- `BOT_TOKEN`是你的Telegram机器人令牌，可以在[创建机器人](https://t.me/BotFather)后获得。
+- `DEPOSIT_ADDRESS`是你的项目钱包地址，将接受所有支付。你可以简单地创建一个新的TON钱包并复制其地址。 You can just create a new TON Wallet and copy its address.
+- `API_KEY`是你从TON Center获得的API密钥，可以在[这个机器人](https://t.me/tonapibot)中获得。
 
 你还可以选择你的机器人是运行在测试网上还是主网上（第4行）。
 
 配置文件就是这些了，我们可以继续向前了！
 
 ## 数据库
+
 现在让我们编辑`db.py`文件，该文件将处理我们机器人的数据库。
 
 导入sqlite3库。
+
 ```python
 import sqlite3
 ```
 
 初始化数据库连接和游标（你可以选择任何文件名，而不仅限于`db.sqlite`）。
+
 ```python
 con = sqlite3.connect('db.sqlite')
 cur = con.cursor()
 ```
 
 为了存储关于用户的信息（在我们的案例中是他们的余额），创建一个名为"Users"的表，包含用户ID和余额行。
+
 ```python
 cur.execute('''CREATE TABLE IF NOT EXISTS Users (
                 uid INTEGER,
@@ -105,6 +120,7 @@ con.commit()
 现在我们需要声明一些函数来处理数据库。
 
 `add_user`函数将用于将新用户插入数据库。
+
 ```python
 def add_user(uid):
     # 新用户的余额始终为0
@@ -113,6 +129,7 @@ def add_user(uid):
 ```
 
 `check_user`函数将用于检查用户是否存在于数据库中。
+
 ```python
 def check_user(uid):
     cur.execute(f'SELECT * FROM Users WHERE uid = {uid}')
@@ -123,6 +140,7 @@ def check_user(uid):
 ```
 
 `add_balance`函数将用于增加用户的余额。
+
 ```python
 def add_balance(uid, amount):
     cur.execute(f'UPDATE Users SET balance = balance + {amount} WHERE uid = {uid}')
@@ -130,6 +148,7 @@ def add_balance(uid, amount):
 ```
 
 `get_balance`函数将用于检索用户的余额。
+
 ```python
 def get_balance(uid):
     cur.execute(f'SELECT balance FROM Users WHERE uid = {uid}')
@@ -142,11 +161,12 @@ def get_balance(uid):
 现在，我们可以在机器人的其他组件中使用这四个函数来处理数据库。
 
 ## TON Center API
+
 在`ton.py`文件中，我们将声明一个函数，该函数将处理所有新的存款，增加用户余额，并通知用户。
 
 ### getTransactions 方法
 
-我们将使用TON Center API。他们的文档在这里：
+We'll use the TON Center API. 我们将使用TON Center API。他们的文档在这里：
 https://toncenter.com/api/v2/
 
 我们需要[getTransactions](https://toncenter.com/api/v2/#/accounts/get_transactions_getTransactions_get)方法来获取某个账户最新交易的信息。
@@ -171,7 +191,7 @@ https://toncenter.com/api/v2/
 }
 ```
 
-好的，所以当一切正常时，`ok`字段被设置为`true`，并且我们有一个数组`result`，列出了`limit`最近的交易。现在让我们看看单个交易：
+好的，所以当一切正常时，`ok`字段被设置为`true`，并且我们有一个数组`result`，列出了`limit`最近的交易。现在让我们看看单个交易： Now let's look at one single transaction:
 
 ```json
 {
@@ -205,15 +225,16 @@ https://toncenter.com/api/v2/
 }
 ```
 
-我们可以看到可以帮助我们识别确切交易的信息存储在`transaction_id`字段中。我们需要从中获取`lt`字段，以了解哪个交易先发生，哪个后发生。
+我们可以看到可以帮助我们识别确切交易的信息存储在`transaction_id`字段中。我们需要从中获取`lt`字段，以了解哪个交易先发生，哪个后发生。 We need the `lt` field from it to understand which transaction happened earlier and which happened later.
 
-关于coin转移的信息在`in_msg`字段中。我们需要从中获取`value`和`message`。
+关于coin转移的信息在`in_msg`字段中。我们需要从中获取`value`和`message`。 We'll need `value` and `message` from it.
 
 现在我们准备好创建支付处理程序了。
 
 ### 从代码中发送 API 请求
 
 让我们从导入所需的库和之前的两个文件`config.py`和`db.py`开始。
+
 ```python
 import requests
 import asyncio
@@ -231,13 +252,15 @@ import db
 
 我们可以每隔几秒调用API，并检查我们的钱包地址是否有任何新交易。
 
-为此，我们需要知道最后处理的交易是什么。最简单的方法是只将该交易的信息保存在某个文件中，并在我们处理新交易时更新它。
+太棒了！程序现在可以处理新交易并通知用户存款情况。但我们不应忘记之前我们使用过的`lt`，我们必须更新最后的`lt`，因为处理了一个更新的交易。 为此，我们需要知道最后处理的交易是什么。最简单的方法是只将该交易的信息保存在某个文件中，并在我们处理新交易时更新它。
 
-我们需要将哪些交易信息存储在文件中？实际上，我们只需要存储`lt`值——逻辑时间。有了这个值，我们就能知道需要处理哪些交易。
+我们需要将哪些交易信息存储在文件中？实际上，我们只需要存储`lt`值——逻辑时间。有了这个值，我们就能知道需要处理哪些交易。 Actually, we only need to store the `lt` value—logical time.
+With that value we'll be able to understand what transactions we need to process.
 
-所以我们需要定义一个新的异步函数；让我们称之为`start`。为什么这个函数需要是异步的？因为Telegram机器人的Aiogram库也是异步的，稍后使用异步函数会更容易。
+所以我们需要定义一个新的异步函数；让我们称之为`start`。为什么这个函数需要是异步的？因为Telegram机器人的Aiogram库也是异步的，稍后使用异步函数会更容易。 Why does this function need to be asynchronous? That is because the Aiogram library for Telegram bots is also asynchronous, and it'll be easier to work with async functions later.
 
 这是我们的`start`函数应该看起来的样子：
+
 ```python
 async def start():
     try:
@@ -254,9 +277,10 @@ async def start():
     while True:
         # 在这里，我们将每隔几秒调用API并获取新交易。
         ...
-```        
+```
 
-现在让我们编写while循环的主体。我们需要每隔几秒在这里调用TON Center API。
+Now let's write the body of while loop. 现在让我们编写while循环的主体。我们需要每隔几秒在这里调用TON Center API。
+
 ```python
 while True:
     # 每次检查之间延迟2秒
@@ -274,7 +298,7 @@ while True:
     ...
 ```
 
-在使用`requests.get`调用后，我们有一个变量`resp`包含了API的响应。`resp`是一个对象，`resp['result']`是一个列表，包含了我们地址的最后100笔交易。
+在使用`requests.get`调用后，我们有一个变量`resp`包含了API的响应。`resp`是一个对象，`resp['result']`是一个列表，包含了我们地址的最后100笔交易。 `resp` is an object and `resp['result']` is a list with the last 100 transactions for our address.
 
 现在我们只需遍历这些交易，找到新的交易即可。
 
@@ -297,10 +321,11 @@ while True:
         ...
 ```
 
-我们如何处理一笔新的交易呢？我们需要：
- - 理解哪个用户发送了它
- - 增加该用户的余额
- - 通知用户他们的存款
+我们如何处理一笔新的交易呢？我们需要： We need to:
+
+- 理解哪个用户发送了它
+- 增加该用户的余额
+- 通知用户他们的存款
 
 下面是将完成所有这些操作的代码：
 
@@ -333,21 +358,22 @@ while True:
 
 让我们看看它做了什么。
 
-所有有关coin转移的信息都在`tx['in_msg']`中。我们只需要其中的'value'和'message'字段。
+所有有关coin转移的信息都在`tx['in_msg']`中。我们只需要其中的'value'和'message'字段。 We just need the 'value' and 'message' fields from it.
 
 首先，我们检查值是否大于零，如果是，才继续。
 
 然后我们期望转移有一个评论（`tx['in_msg']['message']`），以有我们机器人的用户ID，所以我们验证它是否是一个有效的数字，以及该UID是否存在于我们的数据库中。
 
-经过这些简单的检查，我们有了一个变量`value`，它是存款金额，和一个变量`uid`，它是进行此次存款的用户ID。所以我们可以直接给他们的账户增加资金，并发送通知消息。
+经过这些简单的检查，我们有了一个变量`value`，它是存款金额，和一个变量`uid`，它是进行此次存款的用户ID。所以我们可以直接给他们的账户增加资金，并发送通知消息。 So we can just add funds to their account and send a notification message.
 
-同时注意值默认是以nanotons为单位的，所以我们需要将其除以10亿。我们在通知消息中这样做：
+Also note that value is in nanotons by default, so we need to divide it by 1 billion. 同时注意值默认是以nanotons为单位的，所以我们需要将其除以10亿。我们在通知消息中这样做：
 `{value / 1e9:.2f}`
 这里我们将值除以`1e9`（10亿），并保留小数点后两位数字，以便以用户友好的格式显示给用户。
 
-太棒了！程序现在可以处理新交易并通知用户存款情况。但我们不应忘记之前我们使用过的`lt`，我们必须更新最后的`lt`，因为处理了一个更新的交易。
+Great! The program can now process new transactions and notify users about deposits. But we should not forget about storing `lt` that we have used before. We must update the last `lt` because a newer transaction was processed.
 
 这很简单：
+
 ```python
 while True:
     ...
@@ -363,12 +389,14 @@ while True:
 
 `ton.py`文件的内容就这些了！
 我们的机器人现在已完成3/4；我们只需要在机器人自身创建一个包含几个按钮的用户界面。
+带有自己余额的机器人
 
 ## Telegram 机器人
 
 ### 初始化
 
 打开`bot.py`文件并导入我们所需的所有模块。
+
 ```python
 # 日志模块
 import logging
@@ -387,11 +415,13 @@ import db
 ```
 
 让我们设置日志记录，以便我们以后可以看到发生的事情以便调试。
+
 ```python
 logging.basicConfig(level=logging.INFO)
 ```
 
 现在我们需要使用Aiogram初始化机器人对象及其调度器。
+
 ```python
 bot = Bot(token=config.BOT_TOKEN)
 dp = Dispatcher(bot)
@@ -399,13 +429,13 @@ dp = Dispatcher(bot)
 
 这里我们使用了教程开始时我们创建的配置中的`BOT_TOKEN`。
 
-我们初始化了机器人，但它仍然是空的。我们必须添加一些与用户交互的功能。
+我们初始化了机器人，但它仍然是空的。我们必须添加一些与用户交互的功能。 We must add some functions for interaction with the user.
 
 ### 消息处理器
 
 #### /start 命令
 
-我们首先处理`/start`和`/help`命令。当用户第一次启动机器人、重新启动它或使用`/help`命令时，将调用此函数。
+Let's begin with the `/start` and `/help` commands handler. 我们首先处理`/start`和`/help`命令。当用户第一次启动机器人、重新启动它或使用`/help`命令时，将调用此函数。
 
 ```python
 @dp.message_handler(commands=['start', 'help'])
@@ -431,11 +461,11 @@ async def welcome_handler(message: types.Message):
                          parse_mode=ParseMode.MARKDOWN)
 ```
 
-欢迎消息可以是你想要的任何内容。键盘按钮可以是任何文本，但在这个示例中，它们被标记为我们的机器人最清晰的方式：`Deposit`和`Balance`。
+The welcome message can be anything you want. 欢迎消息可以是你想要的任何内容。键盘按钮可以是任何文本，但在这个示例中，它们被标记为我们的机器人最清晰的方式：`Deposit`和`Balance`。
 
 #### 余额(Balance)按钮
 
-现在用户可以启动机器人并看到带有两个按钮的键盘。但在调用其中一个后，用户不会收到任何响应，因为我们还没有为它们创建任何功能。
+现在用户可以启动机器人并看到带有两个按钮的键盘。但在调用其中一个后，用户不会收到任何响应，因为我们还没有为它们创建任何功能。 But after calling one of these, the user won't get any response because we didn't create any function for them.
 
 所以让我们添加一个请求余额的功能。
 
@@ -454,11 +484,11 @@ async def balance_handler(message: types.Message):
                          parse_mode=ParseMode.MARKDOWN)
 ```
 
-这非常简单。我们只需从数据库获取余额并向用户发送消息。
+🦄 外观 这非常简单。我们只需从数据库获取余额并向用户发送消息。
 
 #### 存款(Deposit)按钮
 
-那第二个`Deposit`按钮呢？这是它的函数：
+那第二个`Deposit`按钮呢？这是它的函数： Here is the function for it:
 
 ```python
 @dp.message_handler(commands='deposit')
@@ -484,7 +514,7 @@ async def deposit_handler(message: types.Message):
 
 这里我们要做的也很容易理解。
 
-还记得在`ton.py`文件中，我们是如何通过评论确定哪个用户进行了存款吗？现在在机器人中，我们需要请求用户发送包含他们UID的交易。
+还记得在`ton.py`文件中，我们是如何通过评论确定哪个用户进行了存款吗？现在在机器人中，我们需要请求用户发送包含他们UID的交易。 Now here in the bot we need to ask the user to send a transaction with a comment containing their UID.
 
 ### 启动机器人
 
@@ -502,11 +532,11 @@ if __name__ == '__main__':
     ex.start_polling()
 ```
 
-此时，我们已经编写了我们机器人所需的所有代码。如果你按照教程正确完成，当你使用`python my-bot/bot.py`命令在终端运行时，它应该会工作。
+At this moment, we have written all the required code for our bot. 此时，我们已经编写了我们机器人所需的所有代码。如果你按照教程正确完成，当你使用`python my-bot/bot.py`命令在终端运行时，它应该会工作。
 
 如果你的机器人不能正确工作，请与[这个库](https://github.com/Gusarich/ton-bot-example)的代码进行对比。
 
 ## 参考资料
 
- - 作为[ton-footsteps/8](https://github.com/ton-society/ton-footsteps/issues/8)的一部分
- - 由Gusarich提供（[Telegram @Gusarich](https://t.me/Gusarich), [Gusarich on GitHub](https://github.com/Gusarich)）
+- 作为[ton-footsteps/8](https://github.com/ton-society/ton-footsteps/issues/8)的一部分
+- 由Gusarich提供（[Telegram @Gusarich](https://t.me/Gusarich), [Gusarich on GitHub](https://github.com/Gusarich)）
