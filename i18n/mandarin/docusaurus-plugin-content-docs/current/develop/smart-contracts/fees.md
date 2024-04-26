@@ -4,9 +4,9 @@
 
 ## Gas
 
-所有费用都以Gas计算。这是TON中用作费用的特殊货币。
+所有费用都以Gas计算。这是TON中用作费用的特殊货币。 It's a special currency for fees in TON.
 
-所有费用都以一定数量的gas来指定和固定，但gas价格本身并不固定。今天的gas价格为：
+即使TON价格上涨100倍，交易仍将非常便宜；不到$0.01。此外，如果验证者认为手续费变得昂贵，他们可以降低这个值[阅读他们为何感兴趣](#gas-changing-voting-process)。 所有费用都以一定数量的gas来指定和固定，但gas价格本身并不固定。今天的gas价格为：
 
 ```cpp
 1 gas = 1000 nanotons = 0,000 001 TON
@@ -16,10 +16,10 @@
 
 > **简而言之：** 今天，每笔交易的成本约为 **~0.005 TON**
 
-即使TON价格上涨100倍，交易仍将非常便宜；不到$0.01。此外，如果验证者认为手续费变得昂贵，他们可以降低这个值[阅读他们为何感兴趣](#gas-changing-voting-process)。
+Even if TON price increases 100 times, transactions will remain ultra-cheap; less than $0.01. Moreover, validators may lower this value if they see commissions have become expensive [read why they're interested](#gas-changing-voting-process).
 
 :::info
-当前的gas数量写在网络配置[参数20](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam20)中。
+当前的gas数量写在网络配置[参数20](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam20)中。
 :::
 
 ### Gas 变更投票过程
@@ -30,7 +30,7 @@
 
 #### Gas 的成本会更高吗？
 
-> *这是否意味着有一天gas价格可能会上涨1000倍甚至更多？*
+> _这是否意味着有一天gas价格可能会上涨1000倍甚至更多？_
 
 从技术上讲，是的；但实际上，不会。
 
@@ -38,7 +38,7 @@
 
 ### 如何计算费用？
 
-TON上的费用难以提前计算，因为它们的数量取决于交易运行时间、账户状态、消息内容和大小、区块链网络设置以及无法在交易发送之前计算的其他许多变量。阅读关于[计算费用](/develop/howto/fees-low-level#computation-fees)的低层级文章概述。
+TON上的费用难以提前计算，因为它们的数量取决于交易运行时间、账户状态、消息内容和大小、区块链网络设置以及无法在交易发送之前计算的其他许多变量。阅读关于[计算费用](/develop/howto/fees-low-level#computation-fees)的低层级文章概述。 由于尚未实施，因此目前未使用。因此目前等于0。
 
 这就是为什么即使NFT市场通常会额外收取大约1 TON的TON，并在稍后返还(_`1 - transaction_fee`_)。
 
@@ -58,21 +58,21 @@ transaction_fee = storage_fees
 
 ## 交易费用的元素
 
-* `storage_fees`是您为在区块链上存储智能合约而支付的金额。实际上，您支付的是智能合约在区块链上存储的每一秒钟。
-  * _示例_：您的TON钱包也是一个智能合约，每次您接收或发送交易时都会支付存储费用。阅读更多关于[如何计算存储费用](/develop/smart-contracts/fees#storage-fee)。
-* `in_fwd_fees`是从区块链外部导入消息的费用。每次您进行交易时，都必须将其传送给将处理它的验证者。
-  * _示例_：您使用的每个钱包应用程序（如Tonkeeper）进行的每笔交易都需要首先在验证节点之间分发。
-* `computation_fees`是您为在虚拟机中执行代码而支付的金额。代码越大，必须支付的费用就越多。
-  * _示例_：每次您使用钱包（即智能合约）发送交易时，您都会执行钱包合约的代码并为此付费。
-* `action_fees`是智能合约发送外部消息所收取的费用。
-* `out_fwd_fees`代表从TON区块链发送消息到外部服务（例如，日志）和外部区块链的费用。
-  * 由于尚未实施，因此目前未使用。因此目前等于0。
+- `storage_fees`是您为在区块链上存储智能合约而支付的金额。实际上，您支付的是智能合约在区块链上存储的每一秒钟。 主链
+  - _示例_：您的TON钱包也是一个智能合约，每次您接收或发送交易时都会支付存储费用。阅读更多关于[如何计算存储费用](/develop/smart-contracts/fees#storage-fee)。 Read more about [how storage fees are calculated](/develop/smart-contracts/fees#storage-fee).
+- `in_fwd_fees`是从区块链外部导入消息的费用。每次您进行交易时，都必须将其传送给将处理它的验证者。 Every time you make a transaction, it must be delivered to the validators who will process it.
+  - _示例_：您使用的每个钱包应用程序（如Tonkeeper）进行的每笔交易都需要首先在验证节点之间分发。
+- `computation_fees`是您为在虚拟机中执行代码而支付的金额。代码越大，必须支付的费用就越多。 The larger the code, the more fees must be paid.
+  - _示例_：每次您使用钱包（即智能合约）发送交易时，您都会执行钱包合约的代码并为此付费。
+- `action_fees`是智能合约发送外部消息所收取的费用。
+- `out_fwd_fees`代表从TON区块链发送消息到外部服务（例如，日志）和外部区块链的费用。
+  - Not used because it's not implemented. So today is equal to 0.
 
 ## 存储费
 
 TON验证者从智能合约收取存储费用。
 
-存储费用是在任何交易的**存储阶段**从智能合约余额中收取的。阅读更多关于阶段以及TVM如何工作的内容[在此](/learn/tvm-instructions/tvm-overview#transactions-and-phases)。
+存储费用是在任何交易的**存储阶段**从智能合约余额中收取的。阅读更多关于阶段以及TVM如何工作的内容[在此](/learn/tvm-instructions/tvm-overview#transactions-and-phases)。 Read more about phases and how TVM works [here](/learn/tvm-instructions/tvm-overview#transactions-and-phases).
 
 重要的是要记住，在TON上，您既要为智能合约的执行付费，也要为**使用的存储**付费：
 
@@ -95,26 +95,26 @@ bytes * second
 
 让我们更仔细地检查每个值：
 
-* `price` — 存储`time_delta`秒的价格
-* `cells_count` — 智能合约使用的cell数量
-* `bits_count` — 智能合约使用的位数
-* `cell_price` — 单个cell的价格
-* `bit_price` — 单个位的价格
+- `price` — 存储`time_delta`秒的价格
+- `cells_count` — 智能合约使用的cell数量
+- `bits_count` — 智能合约使用的位数
+- `cell_price` — 单个cell的价格
+- `bit_price` — 单个位的价格
 
-`cell_price`和`bit_price`都可以从网络配置[参数18](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam18)中获得。
+`cell_price`和`bit_price`都可以从网络配置[参数18](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam18)中获得。
 
 当前值为：
 
-* 工作链
-    ```cpp
-    bit_price_ps:1
-    cell_price_ps:500
-    ```
-* 主链
-    ```cpp
-    mc_bit_price_ps:1000
-    mc_cell_price_ps:500000
-    ```
+- 工作链
+  ```cpp
+  bit_price_ps:1
+  cell_price_ps:500
+  ```
+- Masterchain.
+  ```cpp
+  mc_bit_price_ps:1000
+  mc_cell_price_ps:500000
+  ```
 
 ### 计算器示例
 
@@ -166,13 +166,13 @@ function storageFeeCalculator() {
 
 ### 在 TON 上保存数据的成本？
 
-在TON上保存1 MB数据一年的成本为6.01 TON。请注意，您通常不需要在链上存储大量数据。如果您需要去中心化存储，请考虑[TON Storage](/participate/ton-storage/storage-daemon)。
+在TON上保存1 MB数据一年的成本为6.01 TON。请注意，您通常不需要在链上存储大量数据。如果您需要去中心化存储，请考虑[TON Storage](/participate/ton-storage/storage-daemon)。 Note that you don't usually need to store big amounts of data on-chain. Consider [TON Storage](/participate/ton-storage/storage-daemon) if you need decentralized storage.
 
 ### 如何在 FunC 中计算费用？
 
-* [在FunC中计算转发费用的智能合约函数](https://github.com/ton-blockchain/token-contract/blob/main/misc/forward-fee-calc.fc)
+- [在FunC中计算转发费用的智能合约函数](https://github.com/ton-blockchain/token-contract/blob/main/misc/forward-fee-calc.fc)
 
 ## 参考资料
 
-* ["低层级费用概述"](/develop/howto/fees-low-level#fees-calculation-formulas) — 阅读有关计算佣金的公式。
-* *基于[@thedailyton文章](https://telegra.ph/Commissions-on-TON-07-22)最初由[menschee](https://github.com/menschee)撰写*
+- ["低层级费用概述"](/develop/howto/fees-low-level#fees-calculation-formulas) — 阅读有关计算佣金的公式。
+- _基于[@thedailyton文章](https://telegra.ph/Commissions-on-TON-07-22)最初由[menschee](https://github.com/menschee)撰写_
