@@ -2,25 +2,26 @@
 
 ## 介绍
 
-TON DNS 是一个强大的工具。它不仅允许将 TON 网站/存储包分配给域名，还可以设置子域名解析。
+TON DNS 是一个强大的工具。它不仅允许将 TON 网站/存储包分配给域名，还可以设置子域名解析。 It allows not only to assign TON Sites/Storage bags to domains, but also to set up subdomain resolving.
 
 ## 相关链接
 
 1. [TON 智能合约地址系统](/learn/overviews/addresses)
-1. [TEP-0081 - TON DNS 标准](https://github.com/ton-blockchain/TEPs/blob/master/text/0081-dns-standard.md)
-1. [.ton DNS 集合的源代码](https://tonscan.org/address/EQC3dNlesgVD8YbAazcauIrXBPfiVhMMr5YYk2in0Mtsz0Bz#source)
-1. [.t.me DNS 集合的源代码](https://tonscan.org/address/EQCA14o1-VWhS2efqoh_9M1b_A9DtKTuoqfmkn83AbJzwnPi#source)
-1. [域名合约搜索器](https://tonscan.org/address/EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH_Zp#source)
-1. [简单子域名管理器代码](https://github.com/Gusarich/simple-subdomain/blob/198485bbc9f7f6632165b7ab943902d4e125d81a/contracts/subdomain-manager.fc)
+2. [TEP-0081 - TON DNS 标准](https://github.com/ton-blockchain/TEPs/blob/master/text/0081-dns-standard.md)
+3. [.ton DNS 集合的源代码](https://tonscan.org/address/EQC3dNlesgVD8YbAazcauIrXBPfiVhMMr5YYk2in0Mtsz0Bz#source)
+4. [.t.me DNS 集合的源代码](https://tonscan.org/address/EQCA14o1-VWhS2efqoh_9M1b_A9DtKTuoqfmkn83AbJzwnPi#source)
+5. [域名合约搜索器](https://tonscan.org/address/EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH_Zp#source)
+6. [简单子域名管理器代码](https://github.com/Gusarich/simple-subdomain/blob/198485bbc9f7f6632165b7ab943902d4e125d81a/contracts/subdomain-manager.fc)
 
 ## 域名合约搜索器
 
-子域名具有实际用途。例如，区块链浏览器目前没有提供通过名称查找域名合约的方法。让我们探索如何创建一个合约，提供查找这类域名的机会。
+Subdomains have practical use. For example, blockchain explorers don't currently provide way to find domain contract by its name. Let's explore how to create contract that gives an opportunity to find such domains.
 
 :::info
-此合约部署在 [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH_Zp](https://tonscan.org/address/EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH_Zp#source)，并链接到 `resolve-contract.ton`。要测试它，您可以在您喜欢的 TON 浏览器的地址栏中输入 `<your-domain.ton>.resolve-contract.ton`，进入 TON DNS 域名合约的页面。子域名和 .t.me 域名也得到支持。
+This contract is deployed at [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH\_Zp](https://tonscan.org/address/EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH_Zp#source) and linked to `resolve-contract.ton`. To test it, you may write `<your-domain.ton>.resolve-contract.ton` in the address bar of your favourite TON explorer and get to the page of TON DNS domain contract. Subdomains and .t.me domains are supported as well.
 
 您可以尝试通过访问 `resolve-contract.ton.resolve-contract.ton` 来查看解析器代码。不幸的是，这将不会显示子解析器（那是不同的智能合约），您将看到域名合约本身的页面。
+::: Unfortunately, that will not show you the subresolver (that is a different smart-contract), you will see the page of domain contract itself.
 :::
 
 ### dnsresolve() 代码
@@ -122,22 +123,22 @@ _bits(subdomain_sfx));
 
 1. 它将子域名和类别作为输入。
 2. 如果开头有零字节，则跳过。
-3. 检查子域名是否以 `"ton\0"` 开头。如果是，
-    1. 跳过前32位（子域名 = `"resolve-contract\0"`）
-    2. 设置 `subdomain_sfx` 的值为 `subdomain`，并读取直到零字节的字节
-    3. （子域名 = `"resolve-contract\0"`，subdomain_sfx = `""`）
-    4. 从子域名切片的末尾裁剪零字节和 subdomain_sfx（子域名 = `"resolve-contract"`）
-    5. 使用 slice_hash 和 get_ton_dns_nft_address_by_index 函数将域名转换为合约地址。您可以在 [[Subresolvers#Appendix 1. resolve-contract.ton 的代码|附录 1]] 中看到它们。
-4. 否则，dnsresolve() 检查子域名是否以 `"address\0"` 开头。如果是，它跳过该前缀并读取 base64 地址。
+3. 检查子域名是否以 `"ton\0"` 开头。如果是， If so,
+   1. 跳过前32位（子域名 = `"resolve-contract\0"`）
+   2. 设置 `subdomain_sfx` 的值为 `subdomain`，并读取直到零字节的字节
+   3. （子域名 = `"resolve-contract\0"`，subdomain_sfx = `""`）
+   4. 从子域名切片的末尾裁剪零字节和 subdomain_sfx（子域名 = `"resolve-contract"`）
+   5. 使用 slice_hash 和 get_ton_dns_nft_address_by_index 函数将域名转换为合约地址。您可以在 [[Subresolvers#Appendix 1. You can see them in [[Subresolvers#Appendix 1. resolve-contract.ton 的代码|附录 1]] 中看到它们。
+4. 否则，dnsresolve() 检查子域名是否以 `"address\0"` 开头。如果是，它跳过该前缀并读取 base64 地址。 If so, it skips that prefix and reads base64 address.
 5. 如果提供的用于解析的子域名与这些前缀都不匹配，函数通过返回 `(0, null())`（零字节前缀解析无 DNS 条目）表示失败。
-6. 然后检查子域名后缀是否为空。空后缀表示请求已完全满足。如果后缀为空：
-    1. dnsresolve() 为域名的 "wallet" 子部分创建一个 DNS 记录，使用它检索到的 TON 域名合约地址。
-    2. 如果请求类别 0（所有 DNS 条目），则将记录包装在字典中并返回。
-    3. 如果请求类别为 "wallet"H，则按原样返回记录。
-    4. 否则，指定类别没有 DNS 条目，因此函数表示解析成功但未找到任何结果。
+6. 然后检查子域名后缀是否为空。空后缀表示请求已完全满足。如果后缀为空： An empty suffix indicates the request was fully satisfied. 绑定解析器
+   1. dnsresolve() 为域名的 "wallet" 子部分创建一个 DNS 记录，使用它检索到的 TON 域名合约地址。
+   2. 如果请求类别 0（所有 DNS 条目），则将记录包装在字典中并返回。
+   3. 如果请求类别为 "wallet"H，则按原样返回记录。
+   4. 否则，指定类别没有 DNS 条目，因此函数表示解析成功但未找到任何结果。
 7. 如果后缀不为空：
-    1. 之前获得的合约地址用作下一个解析器。函数构建指向它的下一个解析器记录。
-    2. `"\0ton\0stabletimer\0"` 被传递给该合约：处理的位是子域名的位。
+   1. The contract address obtained before is used as the next resolver. The function builds the next resolver record pointing at it.
+   2. `"\0ton\0stabletimer\0"` 被传递给该合约：处理的位是子域名的位。
 
 总结来说，dnsresolve() 要么：
 
@@ -146,12 +147,12 @@ _bits(subdomain_sfx));
 - 为未知子域名返回“未找到域名”的结果
 
 :::warning
-实际上，base64 地址解析不起作用：如果您尝试输入 `<some-address>.address.resolve-contract.ton`，您将收到一个错误，表明域名配置错误或不存在。原因是域名不区分大小写（从真实 DNS 继承的功能），因此会转换为小写，将您带到不存在的工作链的某个地址。
+实际上，base64 地址解析不起作用：如果您尝试输入 `<some-address>.address.resolve-contract.ton`，您将收到一个错误，表明域名配置错误或不存在。原因是域名不区分大小写（从真实 DNS 继承的功能），因此会转换为小写，将您带到不存在的工作链的某个地址。 The reason for that is that domain names are case-insensitive (feature inherited from real DNS) and thus are converted to lowercase, taking you to some address of non-existent workchain.
 :::
 
-### 绑定解析器
+### Binding the resolver
 
-现在子解析器合约已部署，我们需要将域名指向它，即更改域名的 `dns_next_resolver` 记录。我们可以通过将以下 TL-B 结构的消息发送到域名合约来实现。
+现在子解析器合约已部署，我们需要将域名指向它，即更改域名的 `dns_next_resolver` 记录。我们可以通过将以下 TL-B 结构的消息发送到域名合约来实现。 We may do so by sending message with the following TL-B structure to the domain contract.
 
 1. `change_dns_record#4eb1f0f9 query_id:uint64 record_key#19f02441ee588fdb26ee24b2568dd035c3c9206e11ab979be62e55558a1d17ff record:^[dns_next_resolver#ba93 resolver:MsgAddressInt]`
 
@@ -161,7 +162,7 @@ _bits(subdomain_sfx));
 
 ### 合约数据
 
-我们需要在合约数据中存储所有者的地址和 *域名*->*记录哈希*->*记录值* 字典。
+我们需要在合约数据中存储所有者的地址和 _域名_->_记录哈希_->_记录值_ 字典。
 
 ```func
 global slice owner;
@@ -219,7 +220,7 @@ _msg_full~load_uint(4) & 1) { return (); } ;; 弹回消息
 
 我们检查传入消息是否包含某些请求，不是弹回的，来自所有者，且请求为 `op::update_record`。
 
-然后，我们从消息中加载域名。我们不能将域名按原样存储在字典中：它们可能有不同的长度，但 TVM 非前缀字典只能包含等长的键。因此，我们计算 `string_hash(domain)` - 域名的 SHA-256；域名保证有整数个八位字节，因此这是有效的。
+Then we load domain name from the message. 然后，我们从消息中加载域名。我们不能将域名按原样存储在字典中：它们可能有不同的长度，但 TVM 非前缀字典只能包含等长的键。因此，我们计算 `string_hash(domain)` - 域名的 SHA-256；域名保证有整数个八位字节，因此这是有效的。 Thus, we calculate `string_hash(domain)` - SHA-256 of domain name; domain name is guaranteed to have an integer number of octets so that works.
 
 之后，我们为指定域名更新记录，并将新数据保存到合约存储中。
 
@@ -260,9 +261,9 @@ _msg_full~load_uint(4) & 1) { return (); } ;; 弹回消息
 }
 ```
 
-`dnsresolve` 函数检查请求的子域名是否包含整数个八位字节，跳过子域名切片开头的可选零字节，然后将其分割为最高级别的域和其他部分（`test\0qwerty\0` 被分割为 `test` 和 `qwerty\0`）。加载与请求的域名对应的记录字典。
+`dnsresolve` 函数检查请求的子域名是否包含整数个八位字节，跳过子域名切片开头的可选零字节，然后将其分割为最高级别的域和其他部分（`test\0qwerty\0` 被分割为 `test` 和 `qwerty\0`）。加载与请求的域名对应的记录字典。 The record dictionary corresponding to the requested domain is loaded.
 
-如果存在非空子域名后缀，函数返回已解析的字节数和在 `"dns_next_resolver"H` 键下找到的下一个解析器记录。否则，函数返回已解析的字节数（即整个切片长度）和请求的记录。
+如果存在非空子域名后缀，函数返回已解析的字节数和在 `"dns_next_resolver"H` 键下找到的下一个解析器记录。否则，函数返回已解析的字节数（即整个切片长度）和请求的记录。 Otherwise, the function returns the number of bytes resolved (that is, the full slice length) and the record requested.
 
 可以通过更优雅地处理错误来改进此函数，但这不是绝对必需的。
 
