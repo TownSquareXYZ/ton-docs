@@ -1,14 +1,14 @@
 # 随机数生成
 
-生成随机数是许多不同项目中常见的任务。你可能已经在FunC文档中看到过`random()`函数，但请注意，除非你采用一些额外的技巧，否则其结果很容易被预测。
+Generating random numbers is a common task that you may need in many different projects. 生成随机数是许多不同项目中常见的任务。你可能已经在FunC文档中看到过`random()`函数，但请注意，除非你采用一些额外的技巧，否则其结果很容易被预测。
 
 ## 如何预测随机数？
 
-计算机在生成随机信息方面非常糟糕，因为它们只是遵循用户的指令。然而，由于人们经常需要随机数，他们设计了各种方法来生成_伪随机_数。
+计算机在生成随机信息方面非常糟糕，因为它们只是遵循用户的指令。然而，由于人们经常需要随机数，他们设计了各种方法来生成_伪随机_数。 However, since people frequently need random numbers, they've devised various methods for generating _pseudo-random_ numbers.
 
-这些算法通常要求你提供一个_seed_值，该值将被用来生成一系列_伪随机_数。因此，如果你多次运行相同的程序并使用相同的_seed_，你将始终得到相同的结果。在TON中，每个区块的_seed_是不同的。
+这些算法通常要求你提供一个_seed_值，该值将被用来生成一系列_伪随机_数。因此，如果你多次运行相同的程序并使用相同的_seed_，你将始终得到相同的结果。在TON中，每个区块的_seed_是不同的。 跳过区块并不是一个复杂的任务。你可以通过简单地将消息发送到主链，然后再发送回你合约的工作链来完成。让我们来看一个简单的例子！ In TON, the _seed_ is different for each block.
 
--   [区块随机seed的生成](/develop/smart-contracts/security/random)
+- [区块随机seed的生成](/develop/smart-contracts/security/random)
 
 因此，要预测智能合约中`random()`函数的结果，你只需要知道当前区块的`seed`，如果你不是验证者，这是不可能的。
 
@@ -27,9 +27,9 @@ int x = random(); ;; 用户无法预测这个数字
 
 ## 有没有办法防止验证者操纵？
 
-为了防止（或至少复杂化）验证者替换seed，你可以使用更复杂的方案。例如，你可以在生成随机数之前跳过一个区块。如果我们跳过一个区块，seed将以不太可预测的方式改变。
+To prevent (or at least complicate) the substitution of the seed by validators, you can use more complex schemes. For instance, you could skip one block before generating a random number. If we skip a block, the seed will change in a less predictable manner.
 
-跳过区块并不是一个复杂的任务。你可以通过简单地将消息发送到主链，然后再发送回你合约的工作链来完成。让我们来看一个简单的例子！
+Skipping blocks isn't a complex task. You can do it by simply sending a message to the Masterchain and back to the workchain of your contract. Let's examine a simple example!
 
 :::caution
 不要在真实项目中使用此示例合约，请自己编写。
@@ -37,7 +37,7 @@ int x = random(); ;; 用户无法预测这个数字
 
 ### 任何工作链中的主合约
 
-让我们以一个简单的彩票合约为例。用户将向它发送1 TON，有50%的机会会得到2 TON回报。
+Let's write a simple lottery contract as an example. 让我们以一个简单的彩票合约为例。用户将向它发送1 TON，有50%的机会会得到2 TON回报。
 
 ```func
 ;; 设置回声合约地址
@@ -99,10 +99,10 @@ const echo_address = "Ef8Nb7157K5bVxNKAvIWreRcF0RcUlzcCA7lwmewWVNtqM3s"a;
 
 ## 这种方法100%安全吗？
 
-虽然它确实有所帮助，但如果入侵者同时控制了几个验证者，仍然有可能被操纵。在这种情况下，他们可能会以某种概率[影响](/develop/smart-contracts/security/random#conclusion)依赖的_seed_。即使这种可能性极小，仍然值得考虑。
+虽然它确实有所帮助，但如果入侵者同时控制了几个验证者，仍然有可能被操纵。在这种情况下，他们可能会以某种概率[影响](/develop/smart-contracts/security/random#conclusion)依赖的_seed_。即使这种可能性极小，仍然值得考虑。 In this case, they might, with some probability, [affect](/develop/smart-contracts/security/random#conclusion) the _seed_, which the random number depends on. Even if this probability is extremely small, it's still worth considering.
 
-随着最新的TVM升级，向`c7`寄存器中引入新值可以进一步提高随机数生成的安全性。具体来说，升级在`c7`寄存器中添加了关于最近16个主链区块的信息。
+随着最新的TVM升级，向`c7`寄存器中引入新值可以进一步提高随机数生成的安全性。具体来说，升级在`c7`寄存器中添加了关于最近16个主链区块的信息。 Specifically, the upgrade adds information about the last 16 masterchain blocks to the `c7` register.
 
-由于主链区块信息的不断变化性质，它可以作为随机数生成的额外熵源。通过将这些数据纳入你的随机算法中，你可以创建出更难以被潜在对手预测的数字。
+由于主链区块信息的不断变化性质，它可以作为随机数生成的额外熵源。通过将这些数据纳入你的随机算法中，你可以创建出更难以被潜在对手预测的数字。 为了防止（或至少复杂化）验证者替换seed，你可以使用更复杂的方案。例如，你可以在生成随机数之前跳过一个区块。如果我们跳过一个区块，seed将以不太可预测的方式改变。
 
 有关此TVM升级的更多详细信息，请参考[TVM升级](/learn/tvm-instructions/tvm-upgrade-2023-07)。
