@@ -4,18 +4,22 @@ import Button from '@site/src/components/button'
 
 在本教程中，我们将创建一个示例 Telegram 机器人，该机器人支持使用 Python TON Connect SDK [pytonconnect](https://github.com/XaBbl4/pytonconnect) 的 TON Connect 2.0 认证。
 我们将分析连接钱包、发送交易、获取有关已连接钱包的数据以及断开钱包的连接。
+We will analyze connecting a wallet, sending a transaction, getting data about the connected wallet, and disconnecting a wallet.
 
-<Button href="https://t.me/test_tonconnect_bot" colorType={'primary'} sizeType={'sm'}>打开演示机器人</Button>
-<Button href="https://github.com/yungwine/ton-connect-bot" colorType={'secondary'} sizeType={'sm'}>查看 GitHub</Button>
+\<Button href="https://t.me/test_tonconnect_bot" colorType={'primary'} sizeType={'sm'}>打开演示机器人</Button>
+\<Button href="https://github.com/yungwine/ton-connect-bot" colorType={'secondary'} sizeType={'sm'}>查看 GitHub</Button>
 
 ## 准备工作
 
 ### 安装库
 
+To make bot we are going to use `aiogram` 3.0 Python library.
 要制作机器人，我们将使用 `aiogram` 3.0 Python 库。
 要开始将 TON Connect 集成到您的 Telegram 机器人中，您需要安装 `pytonconnect` 包。
 并且，为了使用 TON 原语并解析用户地址，我们需要 `pytoniq-core`。
 您可以使用 pip 来完成此操作：
+And to use TON primitives and parse user address we need `pytoniq-core`.
+You can use pip for this purpose:
 
 ```bash
 pip install aiogram pytoniq-core python-dotenv
@@ -23,7 +27,8 @@ pip install pytonconnect
 ```
 
 ### 设置配置
-在 `.env` 文件中指定 [机器人令牌](https://t.me/BotFather) 和 TON Connect [清单文件](https://github.com/ton-connect/sdk/tree/main/packages/sdk#add-the-tonconnect-manifest) 的链接。之后在 `config.py` 中加载它们：
+
+在 `.env` 文件中指定 [机器人令牌](https://t.me/BotFather) 和 TON Connect [清单文件](https://github.com/ton-connect/sdk/tree/main/packages/sdk#add-the-tonconnect-manifest) 的链接。之后在 `config.py` 中加载它们： After load them in `config.py`:
 
 ```dotenv
 # .env
@@ -135,6 +140,7 @@ def get_connector(chat_id: int):
     return TonConnect(config.MANIFEST_URL, storage=TcStorage(chat_id))
 
 ```
+
 其次，让我们在 `command_start_handler()` 中添加连接处理器：
 
 ```python
@@ -162,6 +168,7 @@ async def command_start_handler(message: Message):
 
 现在，对于尚未连接钱包的用户，机器人会发送带有所有可用钱包按钮的消息。
 因此，我们需要编写函数来处理 `connect:{wallet["name"]}` 回调：
+So we need to write function to handle `connect:{wallet["name"]}` callbacks:
 
 ```python
 # main.py
@@ -301,7 +308,6 @@ async def send_transaction(message: Message):
         await message.answer(text=f'Unknown error: {e}')
 ```
 
-
 ## 添加断开连接处理器
 
 这个函数的实现非常简单：
@@ -325,6 +331,7 @@ async def disconnect_wallet(message: Message):
 ├── messages.py
 └── tc_storage.py
 ```
+
 `main.py` 的内容如下：
 
 <details>
@@ -481,15 +488,16 @@ if __name__ == "__main__":
     asyncio.run(main())
 
 ```
+
 </details>
 
 ## 改进
-
 
 ### 添加持久存储 - Redis
 
 目前，我们的 TON Connect 存储使用字典，导致机器人重启后会丢失会话。
 让我们使用 Redis 添加永久数据库存储：
+Let's add permanent database storage with Redis:
 
 在启动 Redis 数据库后安装用于与之交互的 python 库：
 
@@ -556,9 +564,11 @@ async def connect_wallet(message: Message, wallet_name: str):
 ## 总结
 
 接下来可以做什么？
+
 - 您可以在机器人中添加更好的错误处理。
 - 您可以添加启动文本和类似 `/connect_wallet` 的命令。
 
 ## 参阅
+
 - [完整的机器人代码](https://github.com/yungwine/ton-connect-bot)
 - [准备消息](/develop/dapps/ton-connect/message-builders)
