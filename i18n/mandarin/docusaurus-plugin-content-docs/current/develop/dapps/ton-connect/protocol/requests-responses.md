@@ -1,6 +1,6 @@
 # 请求与响应
 
-应用向钱包发送请求。钱包向应用发送响应和事件。
+App sends requests to the wallet. 应用向钱包发送请求。钱包向应用发送响应和事件。
 
 ```tsx
 type AppMessage = ConnectRequest | AppRequest;
@@ -9,7 +9,8 @@ type WalletMessage = WalletResponse | WalletEvent;
 ```
 
 ### 应用清单(manifest)
-应用需要有自己的清单，以向钱包传递元信息。清单是一个命名为 `tonconnect-manifest.json` 的 JSON 文件，遵循以下格式：
+
+App needs to have its manifest to pass meta information to the wallet. 应用需要有自己的清单，以向钱包传递元信息。清单是一个命名为 `tonconnect-manifest.json` 的 JSON 文件，遵循以下格式：
 
 ```json
 {
@@ -22,14 +23,16 @@ type WalletMessage = WalletResponse | WalletEvent;
 ```
 
 最佳实践是将清单放置在应用的根目录中，例如 `https://myapp.com/tonconnect-manifest.json`。这允许钱包更好地处理您的应用，并改善与您的应用相关联的用户体验。
-确保清单可以通过其 URL 被 GET 访问。
+确保清单可以通过其 URL 被 GET 访问。 It allows the wallet to handle your app better and improve the UX connected to your app.
+Make sure that manifest is available to GET by its URL.
 
 #### 字段描述
-- `url` -- 应用 URL。将用作 DApp 标识符。点击钱包中的图标后将用来打开 DApp。建议传递不带结尾斜杠的 url，例如 'https://mydapp.com' 而不是 'https://mydapp.com/'。
-- `name` -- 应用名称。可以简单，不会用作标识符。
-- `iconUrl` -- 应用图标的 Url。必须是 PNG、ICO 等格式。不支持 SVG 图标。最好传递一个 180x180px 的 PNG 图标的 url。
-- `termsOfUseUrl` --（可选）使用条款文档的 url。对于普通应用是可选的，但对于放置在 Tonkeeper 推荐应用列表中的应用是必需的。
-- `privacyPolicyUrl` --（可选）隐私政策文档的 url。对于普通应用是可选的，但对于放置在 Tonkeeper 推荐应用列表中的应用是必需的。
+
+- `url` -- app URL. Will be used as the DAppidentifier. Will be used to open the DAppafter click to its icon in the wallet. `url` -- 应用 URL。将用作 DApp 标识符。点击钱包中的图标后将用来打开 DApp。建议传递不带结尾斜杠的 url，例如 'https://mydapp.com' 而不是 'https://mydapp.com/'。
+- `name` -- 应用名称。可以简单，不会用作标识符。 Might be simple, will not be used as identifier.
+- `iconUrl` -- Url to the app icon. Must be PNG, ICO, ... format. SVG icons are not supported. `iconUrl` -- 应用图标的 Url。必须是 PNG、ICO 等格式。不支持 SVG 图标。最好传递一个 180x180px 的 PNG 图标的 url。
+- `termsOfUseUrl` --（可选）使用条款文档的 url。对于普通应用是可选的，但对于放置在 Tonkeeper 推荐应用列表中的应用是必需的。 Optional for usual apps, but required for the apps which is placed in the Tonkeeper recommended apps list.
+- `privacyPolicyUrl` --（可选）隐私政策文档的 url。对于普通应用是可选的，但对于放置在 Tonkeeper 推荐应用列表中的应用是必需的。 Optional for usual apps, but required for the apps which is placed in the Tonkeeper recommended apps list.
 
 ### 初始化连接
 
@@ -55,6 +58,7 @@ type TonProofItem = {
 ```
 
 ConnectRequest 描述：
+
 - `manifestUrl`：应用的 tonconnect-manifest.json 的链接
 - `items`：与应用共享的数据项。
 
@@ -135,24 +139,25 @@ enum NETWORK {
 
 **连接事件错误代码：**
 
-| code | 描述                      |
-|------|--------------------------|
-| 0    | 未知错误                  |
-| 1    | 错误请求                  |
-| 2    | 未找到应用清单           |
-| 3    | 应用清单内容错误         |
-| 100  | 未知应用                  |
-| 300  | 用户拒绝连接             |
+| code | 描述       |
+| ---- | -------- |
+| 0    | 未知错误     |
+| 1    | 错误请求     |
+| 2    | 未找到应用清单  |
+| 3    | 应用清单内容错误 |
+| 100  | 未知应用     |
+| 300  | 用户拒绝连接   |
 
 **连接项目错误代码：**
 
-| code | 描述                      |
-|------|--------------------------|
-| 0    | 未知错误                  |
-| 400  | 方法不被支持             |
+| code | 描述    |
+| ---- | ----- |
+| 0    | 未知错误  |
+| 400  | 方法不支持 |
 
 如果钱包不支持所请求的 `ConnectItem`（例如 "ton_proof"），它必须发送对应于所请求项目的以下 ConnectItemReply 回复。
 结构如下：
+with following structure:
 
 ```ts
 type ConnectItemReplyError = {
@@ -166,9 +171,9 @@ type ConnectItemReplyError = {
 
 ### 地址证明签名（`ton_proof`）
 
-如果请求了 `TonProofItem`，钱包证明其拥有选定账户的密钥。签名消息绑定到：
+如果请求了 `TonProofItem`，钱包证明其拥有选定账户的密钥。签名消息绑定到： The signed message is bound to:
 
-- 唯一前缀，以将消息与链上消息分开。（`ton-connect`）
+- Unique prefix to separate messages from on-chain messages. (`ton-connect`)
 - 钱包地址。
 - 应用域
 - 签名时间戳
@@ -185,16 +190,16 @@ signature = Ed25519Sign(privkey, sha256(0xffff ++ utf8_encode("ton-connect") ++ 
 
 其中：
 
-* `Address` 是作为序列编码的钱包地址：
-    * `workchain`：32 位有符号整数大端序；
-    * `hash`：256 位无符号整数大端序；
-* `AppDomain` 是 Length ++ EncodedDomainName
-    - `Length` 是 utf-8 编码的应用域名长度的 32 位值（字节）
-    - `EncodedDomainName` 是 `Length` 字节的 utf-8 编码应用域名
-* `Timestamp` 是签名操作的 64 位 unix epoch 时间
-* `Payload` 是变长的二进制字符串。
+- `Address` 是作为序列编码的钱包地址：
+  - `workchain`：32 位有符号整数大端序；
+  - `hash`：256 位无符号整数大端序；
+- `AppDomain` 是 Length ++ EncodedDomainName
+  - `Length` 是 utf-8 编码的应用域名长度的 32 位值（字节）
+  - `EncodedDomainName` 是 `Length` 字节的 utf-8 编码应用域名
+- `Timestamp` 是签名操作的 64 位 unix epoch 时间
+- `Payload` 是变长的二进制字符串。
 
-注意：载荷是变长的不受信任数据。为了避免使用不必要的长度前缀，我们简单地将其放在消息的末尾。
+Note: payload is variable-length untrusted data. To avoid using unnecessary length prefixes we simply put it last in the message.
 
 必须通过公钥验证签名：
 
@@ -202,11 +207,11 @@ signature = Ed25519Sign(privkey, sha256(0xffff ++ utf8_encode("ton-connect") ++ 
 
 2. 如果智能合约还未部署，或者缺少 get 方法，您需要：
 
-    1. 解析 `TonAddressItemReply.walletStateInit` 并从 stateInit 获取公钥。您可以将 `walletStateInit.code` 与标准钱包合约的代码进行比较，并根据找到的钱包版本解析数据。
-    
-    2. 检查 `TonAddressItemReply.publicKey` 是否等于获取到的公钥
+   1. 解析 `TonAddressItemReply.walletStateInit` 并从 stateInit 获取公钥。您可以将 `walletStateInit.code` 与标准钱包合约的代码进行比较，并根据找到的钱包版本解析数据。 You can compare the `walletStateInit.code` with the code of standard wallets contracts and parse the data according to the found wallet version.
 
-    3. 检查 `TonAddressItemReply.walletStateInit.hash()` 是否等于 `TonAddressItemReply.address`。`.hash()` 意味着 BoC 哈希。
+   2. 检查 `TonAddressItemReply.publicKey` 是否等于获取到的公钥
+
+   3. 检查 `TonAddressItemReply.walletStateInit.hash()` 是否等于 `TonAddressItemReply.address`。`.hash()` 意味着 BoC 哈希。 `.hash()` means BoC hash.
 
 ## 消息
 
@@ -228,6 +233,7 @@ signature = Ed25519Sign(privkey, sha256(0xffff ++ utf8_encode("ton-connect") ++ 
 ### 结构
 
 **所有应用请求都具有以下结构（如 json-rpc 2.0）**
+
 ```tsx
 interface AppRequest {
 	method: string;
@@ -235,15 +241,16 @@ interface AppRequest {
 	id: string;
 }
 ```
-其中
+
+Where
+
 - `method`：操作名称（'sendTransaction', 'signMessage', ...）
 - `params`：操作特定参数的数组
 - `id`：递增的标识符，允许匹配请求和响应
 
-
 **钱包消息是响应或事件。**
 
-响应是格式化为 json-rpc 2.0 响应的对象。响应的 `id` 必须与请求的 id 匹配。
+响应是格式化为 json-rpc 2.0 响应的对象。响应的 `id` 必须与请求的 id 匹配。 Response `id` must match request's id.
 
 钱包不接受任何 id 未大于该会话的最后处理请求 id 的请求。
 
@@ -262,6 +269,7 @@ interface WalletResponseError {
 ```
 
 事件是一个带有 `event` 属性的对象，`event` 等于事件名称，`id` 是递增的事件计数器（**不** 关联 `request.id` 因为事件没有请求），以及包含事件附加数据的 `payload`。
+
 ```tsx
 interface WalletEvent {
     event: WalletEventName;
@@ -272,7 +280,7 @@ interface WalletEvent {
 type WalletEventName = 'connect' | 'connect_error' | 'disconnect';
 ```
 
-钱包在生成新事件时必须增加 `id`。（每个接下来的事件必须有的 `id` > 前一个事件的 `id`）
+钱包在生成新事件时必须增加 `id`。（每个接下来的事件必须有的 `id` > 前一个事件的 `id`） 其中
 
 DApp 不接受任何 id 未大于该会话的最后处理事件 id 的事件。
 
@@ -292,18 +300,20 @@ interface SendTransactionRequest {
 
 其中 `<transaction-payload>` 是具有以下属性的 JSON：
 
-* `valid_until`（整数，可选）：unix 时间戳。该时刻之后交易将无效。
-* `network`（NETWORK，可选）：DApp打算发送交易的网络（主网或测试网）。如果未设置，交易将发送到钱包当前设置的网络，但这不安全，DApp 应始终努力设置网络。如果设置了 `network` 参数，但钱包设置了不同的网络，钱包应显示警告并不允许发送此交易。
-* `from`（以 `<wc>:<hex>` 格式的字符串，可选）- DApp打算从中发送交易的发送者地址。如果未设置，钱包允许用户在交易批准时选择发送者的地址。如果设置了 `from` 参数，钱包不应允许用户选择发送者的地址；如果从指定地址发送不可能，钱包应显示警告并不允许发送此交易。
-* `messages`（信息数组）：1-4 条从钱包合约到其他账户的输出消息。所有消息按顺序发送出去，但 **钱包无法保证消息会按相同顺序被传递和执行**。
+- `valid_until`（整数，可选）：unix 时间戳。该时刻之后交易将无效。 after th moment transaction will be invalid.
+- `network` (NETWORK, optional): The network (mainnet or testnet) where DAppintends to send the transaction. `network`（NETWORK，可选）：DApp打算发送交易的网络（主网或测试网）。如果未设置，交易将发送到钱包当前设置的网络，但这不安全，DApp 应始终努力设置网络。如果设置了 `network` 参数，但钱包设置了不同的网络，钱包应显示警告并不允许发送此交易。 If the `network` parameter is set, but the wallet has a different network set, the wallet should show an alert and DO NOT ALLOW TO SEND this transaction.
+- `from`（以 `<wc>:<hex>` 格式的字符串，可选）- DApp打算从中发送交易的发送者地址。如果未设置，钱包允许用户在交易批准时选择发送者的地址。如果设置了 `from` 参数，钱包不应允许用户选择发送者的地址；如果从指定地址发送不可能，钱包应显示警告并不允许发送此交易。 If not set, wallet allows user to select the sender's address at the moment of transaction approval. If `from` parameter is set, the wallet should DO NOT ALLOW user to select the sender's address; If sending from the specified address is impossible, the wallet should show an alert and DO NOT ALLOW TO SEND this transaction.
+- `messages`（信息数组）：1-4 条从钱包合约到其他账户的输出消息。所有消息按顺序发送出去，但 **钱包无法保证消息会按相同顺序被传递和执行**。 唯一前缀，以将消息与链上消息分开。（`ton-connect`）
 
 消息结构：
-* `address`（字符串）：消息目的地
-* `amount`（小数字符串）：要发送的纳币数量。
-* `payload`（base64 编码的字符串，可选）：以 Base64 编码的原始cell BoC。
-* `stateInit`（base64 编码的字符串，可选）：以 Base64 编码的原始cell BoC。
+
+- `address`（字符串）：消息目的地
+- `amount`（小数字符串）：要发送的纳币数量。
+- `payload`（base64 编码的字符串，可选）：以 Base64 编码的原始cell BoC。
+- `stateInit`（base64 编码的字符串，可选）：以 Base64 编码的原始cell BoC。
 
 #### 常见情况
+
 1. 无 payload，无 stateInit：简单转账，无消息。
 2. payload 前缀为 32 个零位，无 stateInit：带文本消息的简单转账。
 3. 无 payload 或前缀为 32 个零位；存在 stateInit：合约部署。
@@ -329,8 +339,8 @@ interface SendTransactionRequest {
   ]
 }
 ```
-</details>
 
+</details>
 
 钱包以 **SendTransactionResponse** 回复：
 
@@ -351,14 +361,13 @@ interface SendTransactionResponseError {
 
 **错误代码：**
 
-| code | 描述                   |
-|------|-----------------------|
-| 0    | 未知错误               |
-| 1    | 错误请求               |
-| 100  | 未知应用               |
-| 300  | 用户拒绝了交易         |
-| 400  | 方法不支持             |
-
+| code | 描述      |
+| ---- | ------- |
+| 0    | 未知错误    |
+| 1    | 错误请求    |
+| 100  | 未知应用    |
+| 300  | 用户拒绝了交易 |
+| 400  | 方法不被支持  |
 
 #### 签署数据（实验性）
 
@@ -376,15 +385,16 @@ interface SignDataRequest {
 
 其中 `<sign-data-payload>` 是具有以下属性的 JSON：
 
-* `schema_crc`（整数）：指示payload cell的布局，进而定义域分割。
-* `cell`（字符串，base64 编码cell）：根据其 TL-B 定义包含任意数据。
-* `publicKey`（HEX 字符串，不含0x，可选）：DApp打算用来签署数据的密钥对的公钥。如果未设置，钱包在签名时不受限制使用哪个密钥对。如果设置了 `publicKey` 参数，钱包应使用与此公钥对应的密钥对签名；如果使用指定的密钥对签名不可能，钱包应显示警告并不允许签署此数据。
+- `schema_crc`（整数）：指示payload cell的布局，进而定义域分割。
+- `cell`（字符串，base64 编码cell）：根据其 TL-B 定义包含任意数据。
+- `publicKey`（HEX 字符串，不含0x，可选）：DApp打算用来签署数据的密钥对的公钥。如果未设置，钱包在签名时不受限制使用哪个密钥对。如果设置了 `publicKey` 参数，钱包应使用与此公钥对应的密钥对签名；如果使用指定的密钥对签名不可能，钱包应显示警告并不允许签署此数据。 If not set, the wallet is not limited in what keypair to sign. If `publicKey` parameter is set, the wallet SHOULD to sign by keypair corresponding this public key; If sign by this specified keypair is impossible, the wallet should show an alert and DO NOT ALLOW TO SIGN this data.
 
 签名将以以下方式计算：
 `ed25519(uint32be(schema_crc) ++ uint64be(timestamp) ++ cell_hash(X), privkey)`
 
 [查看详情](https://github.com/oleganza/TEPs/blob/datasig/text/0000-data-signatures.md)
 
+注意：载荷是变长的不受信任数据。为了避免使用不必要的长度前缀，我们简单地将其放在消息的末尾。
 钱包应根据 schema_crc 解码cell，并向用户显示相应数据。
 如果钱包不知道 schema_crc，钱包应向用户显示危险通知/UI。
 
@@ -409,18 +419,19 @@ interface SignDataResponseError {
 
 **错误代码：**
 
-| code | 描述                 |
-|------|---------------------|
-| 0    | 未知错误             |
-| 1    | 错误请求             |
-| 100  | 未知应用             |
-| 300  | 用户拒绝了请求       |
-| 400  | 方法不支持           |
-
+| code | 描述      |
+| ---- | ------- |
+| 0    | 未知错误    |
+| 1    | 错误请求    |
+| 100  | 未知应用    |
+| 300  | 用户拒绝了请求 |
+| 400  | 方法不支持   |
 
 #### 断开连接操作
+
 当用户在 dApp 中断开钱包的连接时，DApp 应通知钱包以帮助钱包节省资源并删除不必要的会话。
 允许钱包更新其界面到断开连接状态。
+Allows the wallet to update its interface to the disconnected state.
 
 ```tsx
 interface DisconnectRequest {
@@ -450,19 +461,18 @@ interface DisconnectResponseError {
 
 **错误代码：**
 
-| code | 描述               |
-|------|-------------------|
-| 0    | 未知错误           |
-| 1    | 错误请求           |
-| 100  | 未知应用           |
-| 400  | 方法不支持         |
-
+| code | 描述    |
+| ---- | ----- |
+| 0    | 未知错误  |
+| 1    | 错误请求  |
+| 100  | 未知应用  |
+| 400  | 方法不支持 |
 
 ### 钱包事件
 
 <ins>断开连接</ins>
 
-当用户在钱包中删除应用时触发该事件。应用必须对该事件做出反应并删除保存的会话。如果用户在应用端断开钱包连接，那么事件不会触发，会话信息仍保留在本地存储中
+The event fires when the user deletes the app in the wallet. The app must react to the event and delete the saved session. 当用户在钱包中删除应用时触发该事件。应用必须对该事件做出反应并删除保存的会话。如果用户在应用端断开钱包连接，那么事件不会触发，会话信息仍保留在本地存储中
 
 ```tsx
 interface DisconnectEvent {
