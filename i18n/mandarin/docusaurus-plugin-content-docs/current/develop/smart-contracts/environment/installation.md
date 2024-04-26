@@ -91,25 +91,30 @@ Instead of the `%USERNAME%` keyword, you must insert your own `username`.\
 chmod +x func
 chmod +x fift
 chmod +x lite-client
-```2. 核心团队为几
+```2.```bash
+chmod +x func
+chmod +x fift
+chmod +x lite-client
+```2. 将这些二进制文件添加到您的路径中（或复制到`/usr/local/bin`），以便您可以在任何地方访问它们也是很有用的。
    将这些二进制文件添加到您的路径中（或复制到`/usr/local/bin`），以便您可以在任何地方访问它们也是很有用的。```bash
 cp ./func /usr/local/bin/func
 cp ./fift /usr/local/bin/fift
 cp ./lite-client /usr/local/bin/lite-client
-```3. 要检查是否一切安装正确，请在终端运行。
+```3. 从下表中下载二进制文件。请确保选择适合您操作系统的正确版本，并安装任何附加依赖项：
    要检查是否一切安装正确，请在终端运行。```bash
 fift -V && func -V && lite-client -V
-```4. 如果您计划`使用fift`，还需下载[fiftlib.zip](/ton-binaries/windows/fiftlib.zip)，在您设备上的某个目录中打开zip（例如`/usr/local/lib/fiftlib`），并将环境变量`FIFTPATH`指向此目录。在“_高级_”选项卡上
+```4. 如果您计划`使用fift`，还需下载[fiftlib.zip](/ton-binaries/windows/fiftlib.zip)，在您设备上的某个目录中打开zip（例如`/usr/local/lib/fiftlib`），并将环境变量`FIFTPATH`指向此目录。```
+unzip fiftlib.zip
+mkdir -p /usr/local/lib/fiftlib
+cp fiftlib/* /usr/local/lib/fiftlib
+```:::info 嘿，你快完成了 :)
+记得设置[环境变量](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix) `FIFTPATH`指向这个目录。在“_高级_”选项卡上
 :::
 
 
 <TabItem value="mac" label="Linux / MacOS">
 
-1. 下载后，请确保通过更改权限使下载的二进制文件可执行。```bash
-   chmod +x func
-   chmod +x fift
-   chmod +x lite-client
-   ```2)
+1. 下载后，请确保通过更改权限使下载的二进制文件可执行。
 
 ```bash
 chmod +x func
@@ -117,7 +122,7 @@ chmod +x fift
 chmod +x lite-client
 ```
 
-2. 将这些二进制文件添加到您的路径中（或复制到`/usr/local/bin`），以便您可以在任何地方访问它们也是很有用的。
+2. 核心团队为几
 
 ```bash
 cp ./func /usr/local/bin/func
@@ -125,18 +130,13 @@ cp ./fift /usr/local/bin/fift
 cp ./lite-client /usr/local/bin/lite-client
 ```
 
-3. 从下表中下载二进制文件。请确保选择适合您操作系统的正确版本，并安装任何附加依赖项：
+3. 要检查是否一切安装正确，请在终端运行。
 
 ```bash
 fift -V && func -V && lite-client -V
 ```
 
-4. 如果您计划`使用fift`，还需下载[fiftlib.zip](/ton-binaries/windows/fiftlib.zip)，在您设备上的某个目录中打开zip（例如`/usr/local/lib/fiftlib`），并将环境变量`FIFTPATH`指向此目录。```
-   unzip fiftlib.zip
-   mkdir -p /usr/local/lib/fiftlib
-   cp fiftlib/* /usr/local/lib/fiftlib
-   ```:::info 嘿，你快完成了 :)
-   记得设置[环境变量](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix) `FIFTPATH`指向这个目录。
+4. 如果您计划`使用fift`，还需下载[fiftlib.zip](/ton-binaries/windows/fiftlib.zip)，在您设备上的某个目录中打开zip（例如`/usr/local/lib/fiftlib`），并将环境变量`FIFTPATH`指向此目录。
 
 ```
 unzip fiftlib.zip
