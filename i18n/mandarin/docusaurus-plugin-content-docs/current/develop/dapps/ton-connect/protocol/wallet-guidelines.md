@@ -4,16 +4,20 @@
 
 ### 只有少数几个网络。
 
-目前，仅有两个网络 - 主网(Mainnet)和测试网(Testnet)。
-在可预见的未来，不预期会出现新的类似于主网的TON网络。请注意，当前的主网内置了替代网络的机制 - 工作链(workchains)。
+At the moment, there are only two networks - Mainnet and Testnet.
+In the foreseeable future, the emergence of new Mainnet TON-like networks is not expected. Note that the current Mainnet has a built-in mechanism for alternative networks - workchains.
 
 ### 对普通用户隐藏测试网。
 
+Testnet is used exclusively by developers. 目前，仅有两个网络 - 主网(Mainnet)和测试网(Testnet)。
+在可预见的未来，不预期会出现新的类似于主网的TON网络。请注意，当前的主网内置了替代网络的机制 - 工作链(workchains)。
 测试网专门用于开发者。普通用户不应看到测试网。
 这意味着切换到测试网不应该容易可得，即使DApp处于测试网中，也不应提示用户将钱包切换到测试网。用户切换到测试网，如果不理解此操作，那么无法切回主网。
+Users switch to Testnet, don't understand this action, can't switch back to Mainnet.
 
 因此，dapps不需要在运行时切换网络，相反，更倾向于在不同的域上拥有不同实例的DApp，如dapp.com, Testnet.dapp.com。
 出于同样的原因，Ton Connect协议中没有`NetworkChanged`或`ChainChanged`事件。
+For the same reason there is no `NetworkChanged` or `ChainChanged` event in the Ton Connect protocol.
 
 ### 如果DApp在测试网而钱包在主网中，不要发送任何东西。
 
@@ -27,7 +31,7 @@ DApps应在`SendTransaction`请求中明确指示`network`字段。
 
 ## 多账户
 
-可以为一对密钥创建多个网络账户。在您的钱包中实现此功能 - 用户会觉得这很有用。
+可以为一对密钥创建多个网络账户。在您的钱包中实现此功能 - 用户会觉得这很有用。 Implement this functionality in your wallet - users will find it useful.
 
 ### 一般而言，当前没有所谓“活跃”账户
 
@@ -37,7 +41,7 @@ DApps应在`SendTransaction`请求中明确指示`network`字段。
 
 在大多数情况下，发件人地址对dapp来说并不重要，在这些情况下，用户可以在批准交易时选择合适的账户，交易将从选定的账户发送。
 
-在某些情况下，对DApp来说，从特定地址发送交易很重要，在这种情况下，它会在`SendTransaction`请求中明确指定`from`字段。如果设置了`from`参数，钱包不应允许用户选择发件人地址；如果无法从指定地址发送，钱包应显示警告，不允许发送此交易。
+在某些情况下，对DApp来说，从特定地址发送交易很重要，在这种情况下，它会在`SendTransaction`请求中明确指定`from`字段。如果设置了`from`参数，钱包不应允许用户选择发件人地址；如果无法从指定地址发送，钱包应显示警告，不允许发送此交易。 If `from` parameter is set, the wallet should DO NOT ALLOW user to select the sender's address; If sending from the specified address is impossible, the wallet should show an alert and DO NOT ALLOW TO SEND this transaction.
 
 ### 登录流程
 
@@ -55,6 +59,6 @@ DApps应在`SendTransaction`请求中明确指示`network`字段。
 
 ## 参阅
 
-* [TON Connect概览](/dapps/ton-connect/overview)
-* [协议规范](/dapps/ton-connect/protocol/)
-* [连接钱包](/dapps/ton-connect/wallet)
+- [TON Connect概览](/dapps/ton-connect/overview)
+- [协议规范](/dapps/ton-connect/protocol/)
+- [连接钱包](/dapps/ton-connect/wallet)
