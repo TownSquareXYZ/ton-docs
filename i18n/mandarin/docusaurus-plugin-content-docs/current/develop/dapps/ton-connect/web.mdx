@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 ## 实现
 
-### 1) 安装
+### 1. 安装
 
 <Tabs groupId="Installation">
   <TabItem value="CDN" label="CDN">
@@ -17,23 +17,24 @@ Add script in the HEAD element of your website:
     <br/>
     <br/>
 
-
 ```html
 <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
 ```
-  </TabItem>
+
+</TabItem>
   <TabItem value="NPM" label="NPM">
     要开始将TON Connect集成到您的应用中，请安装@tonconnect/ui包：
 
 ```bash npm2yarn
 npm i @tonconnect/ui
 ```
-  </TabItem>
+
+</TabItem>
 </Tabs>
 
-### 2) TON Connect 初始化
+### 2. TON Connect 初始化
 
-安装包后，您应创建一个`manifest.json`文件给您的应用程序。有关如何创建manifest.json文件的更多信息，请查看[这里](/develop/dapps/ton-connect/manifest)。
+安装包后，您应创建一个`manifest.json`文件给您的应用程序。有关如何创建manifest.json文件的更多信息，请查看[这里](/develop/dapps/ton-connect/manifest)。 More information on how to create a manifest.json file can be found [here](/develop/dapps/ton-connect/manifest).
 
 添加一个带有`ton-connect` id的按钮来连接钱包：
 
@@ -41,7 +42,7 @@ npm i @tonconnect/ui
 <div id="ton-connect"></div>
 ```
 
-*在此标签之后*在应用页面的`<body>`部分添加`tonConnectUI`的脚本：
+_在此标签之后_在应用页面的`<body>`部分添加`tonConnectUI`的脚本：
 
 ```html
 <script>
@@ -52,7 +53,7 @@ npm i @tonconnect/ui
 </script>
 ```
 
-### 3) 连接到钱包
+### 3. 连接到钱包
 
 "连接"按钮（在`buttonRootId`处添加）会自动处理点击。
 
@@ -73,7 +74,7 @@ npm i @tonconnect/ui
 </script>
 ```
 
-### 4) 重定向
+### 4. 重定向
 
 #### 自定义返回策略
 
@@ -91,12 +92,11 @@ tonConnectUI.uiOptions = {
 
 [在SDK文档中阅读更多](https://github.com/ton-connect/sdk/tree/main/packages/ui#use-inside-twa-telegram-web-app)
 
-### 5) UI自定义
+### 5. UI自定义
 
-TonConnect UI提供了一个用户在使用各种应用时应该熟悉且可识别的界面。然而，应用开发者可以对这个接口进行更改，以保持与应用接口的一致性。
+TonConnect UI提供了一个用户在使用各种应用时应该熟悉且可识别的界面。然而，应用开发者可以对这个接口进行更改，以保持与应用接口的一致性。 However, the app developer can make changes to this interface to keep it consistent with the app interface.
 
 - [TonConnect UI文档](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)
-
 
 ## SDK文档
 
@@ -135,23 +135,25 @@ const result = await tonConnectUI.sendTransaction(transaction)
 
 ### 通过哈希理解交易状态
 
-位于支付处理（使用tonweb）中的原则。[查看更多](/develop/dapps/asset-processing/#checking-contracts-transactions)
+The principle located in Payment Processing (using tonweb). 位于支付处理（使用tonweb）中的原则。[查看更多](/develop/dapps/asset-processing/#checking-contracts-transactions)
 
 ### 签名和验证
 
 了解如何使用TON Connect签名和验证消息：
+
 - [签名和验证](/develop/dapps/ton-connect/sign)
 - [GitHub上的TON Connect UI实现](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-connect-request-parameters-ton_proof)
 
 ### 钱包断开连接
 
 调用以断开钱包连接：
+
 ```js
 await tonConnectUI.disconnect();
 ```
 
 ## 参阅
 
-* [UI自定义](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)
-* [[YouTube] TON Connect UI React [RU]](https://youtu.be/wIMbkJHv0Fs?list=PLyDBPwv9EPsCJ226xS5_dKmXXxWx1CKz_&t=1747)
-* [[YouTube] 将TON Connect UI连接到网站 [RU]](https://www.youtube.com/watch?v=HUQ1DPfFxG4&list=PLyDBPwv9EPsAIWi8vgic9kiV3KF_wvIcz&index=4)
+- [UI自定义](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)
+- [\[YouTube\] TON Connect UI React \[RU\]](https://youtu.be/wIMbkJHv0Fs?list=PLyDBPwv9EPsCJ226xS5_dKmXXxWx1CKz_&t=1747)
+- [\[YouTube\] 将TON Connect UI连接到网站 \[RU\]](https://www.youtube.com/watch?v=HUQ1DPfFxG4&list=PLyDBPwv9EPsAIWi8vgic9kiV3KF_wvIcz&index=4)
