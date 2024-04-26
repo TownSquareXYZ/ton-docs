@@ -8,6 +8,7 @@
 
 3. 为Google Chrome安装[TON扩展](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd)。
    您也可以使用[MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc)。
+   You can also use [MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc).
 
 4. 打开扩展，点击“导入钱包”，使用恢复短语导入拥有该域名的钱包。
 
@@ -17,12 +18,13 @@
 
 ## 如何在TON存储中托管静态TON网站
 
-1. [创建](/participate/ton-storage/storage-daemon#creating-a-bag-of-files)一个文件夹的包，其中包含网站文件，将其上传到网络并获取Bag ID。文件夹必须包含`index.html`文件。
+1. [创建](/participate/ton-storage/storage-daemon#creating-a-bag-of-files)一个文件夹的包，其中包含网站文件，将其上传到网络并获取Bag ID。文件夹必须包含`index.html`文件。 The folder must contain `index.html` file.
 
 2. 在您的电脑上打开Google Chrome浏览器。
 
 3. 为Google Chrome安装[TON扩展](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd)。
    您也可以使用[MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc)。
+   You can also use [MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc).
 
 4. 打开扩展，点击“导入钱包”，使用恢复短语导入拥有该域名的钱包。
 
@@ -46,7 +48,7 @@ dns_storage_address#7473 bag_id:uint256 = DNSRecord;
 
 ## 如何在TON存储中托管静态TON网站（低层级）
 
-[创建](/participate/ton-storage/storage-daemon#creating-a-bag-of-files)一个文件夹的包，其中包含网站文件，将其上传到网络并获取Bag ID。文件夹必须包含`index.html`文件。
+[创建](/participate/ton-storage/storage-daemon#creating-a-bag-of-files)一个文件夹的包，其中包含网站文件，将其上传到网络并获取Bag ID。文件夹必须包含`index.html`文件。 The folder must contain `index.html` file.
 
 您需要将以下值分配给TON域的sha256("site") DNS记录：
 
