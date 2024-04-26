@@ -1,7 +1,7 @@
 # 跨链桥地址
 
 :::caution
-要准确获取当前跨链桥智能合约的地址，请直接在[区块链配置](/participate/crosschain/overview#blockchain-configs)中查看。这是最安全的方式。
+要准确获取当前跨链桥智能合约的地址，请直接在[区块链配置](/participate/crosschain/overview#blockchain-configs)中查看。这是最安全的方式。 It's the most secure way.
 :::
 
 ## Toncoin主网
@@ -40,7 +40,7 @@ Governance 地址 - [Ef8OvX_5ynDgbp4iqJIvWudSEanWo0qAlOjhWHtga9u2YjVp](https://t
 
 预言机5 - [Ef93olLWqh1OuBSTOnJKWZ4NwxNq_ELK55_h_laNPVwxcEro](https://tonscan.org/address/Ef93olLWqh1OuBSTOnJKWZ4NwxNq_ELK55_h_laNPVwxcEro)
 
-预言机6 - [Ef_iUPZdKLOCrqcNpDuFGNEmiuBwMB18TBXNjDimewpDExgn](https://tonscan.org/address/Ef_iUPZdKLOCrqcNpDuFGNEmiuBwMB18TBXNjDimewpDExgn)
+Oracle 6 - [Ef_iUPZdKLOCrqcNpDuFGNEmiuBwMB18TBXNjDimewpDExgn](https://tonscan.org/address/Ef_iUPZdKLOCrqcNpDuFGNEmiuBwMB18TBXNjDimewpDExgn)
 
 预言机7 - [Ef_tTGGToGmONePskH_Y6ZG-QLV9Kcg5DIXeKwBvCX4YifKa](https://tonscan.org/address/Ef_tTGGToGmONePskH_Y6ZG-QLV9Kcg5DIXeKwBvCX4YifKa)
 
@@ -72,21 +72,19 @@ Governance 地址 - [kf83VnnXuaqQV1Ts2qvUr6agacM0ydOux5NNa1mcU-cEO693](https://t
 
 ### 测试网Toncoin预言机
 
-> 与Toncoin测试网桥相同
-
-* 预言机0
+- Oracle 0
 
   TON地址 - [Ef9fwskZLEuGDfYTRAtvt9k-mEdkaIskkUOsEwPw1wzXk7zR](https://testnet.tonscan.org/address/Ef9fwskZLEuGDfYTRAtvt9k-mEdkaIskkUOsEwPw1wzXk7zR)
 
   EVM地址 - 0xe54cd631c97be0767172ad16904688962d09d2fe
 
-* 预言机1
+- Oracle 1
 
   TON地址 - [Ef8jPzrhTYloKgTCsGgEFNx7OdH-sJ98etJnwrIVSsFxH9mu](https://testnet.tonscan.org/address/Ef8jPzrhTYloKgTCsGgEFNx7OdH-sJ98etJnwrIVSsFxH9mu)
 
   EVM地址 - 0xeb05E1B6AC0d574eF2CF29FDf01cC0bA3D8F9Bf1
 
-* 预言机2
+- Oracle 2
 
   TON地址 - [Ef-fxGCPuPKNR6T4GcFxNQuLU5TykLKEAtkxWEfA1wBWy6JE](https://testnet.tonscan.org/address/Ef-fxGCPuPKNR6T4GcFxNQuLU5TykLKEAtkxWEfA1wBWy6JE)
 
@@ -106,7 +104,7 @@ Governance 地址 - [Ef8hHxV0v2I9FHh3CMX91WXjKaJav6SQlemEQm8ZvPBJdLde](https://t
 
 ### 主网Token预言机
 
-* 预言机0
+- Oracle 0
 
   TON公钥 = a0993546fbeb4e8c90eeab0baa627659aee01726809707008e38d5742ea38aef
 
@@ -114,7 +112,7 @@ Governance 地址 - [Ef8hHxV0v2I9FHh3CMX91WXjKaJav6SQlemEQm8ZvPBJdLde](https://t
 
   ETH地址 - 0x3154E640c56D023a98890426A24D1A772f5A38B2
 
-* 预言机1
+- Oracle 1
 
   TON公钥 = fe0a78726a82754b62517e4b7a492e1b1a8d4c9014955d2fa8f1345f1a3eafba
 
@@ -122,7 +120,7 @@ Governance 地址 - [Ef8hHxV0v2I9FHh3CMX91WXjKaJav6SQlemEQm8ZvPBJdLde](https://t
 
   ETH地址 = 0x8B06A5D37625F41eE9D9F543482b6562C657EA6F
 
-* 预言机2
+- Oracle 2
 
   TON公钥 = 00164233e111509b0486df85d2743defd6e2525820ee7d341c8ad92ee68d41a6
 
@@ -130,7 +128,7 @@ Governance 地址 - [Ef8hHxV0v2I9FHh3CMX91WXjKaJav6SQlemEQm8ZvPBJdLde](https://t
 
   ETH地址 = 0x6D5E361F7E15ebA73e41904F4fB2A7d2ca045162
 
-* 预言机3
+- Oracle 3
 
   TON公钥 = 9af68ce3c030e8d21aae582a155a6f5c41ad006f9f3e4aacbb0ce579982b9ebb
 
@@ -138,7 +136,7 @@ Governance 地址 - [Ef8hHxV0v2I9FHh3CMX91WXjKaJav6SQlemEQm8ZvPBJdLde](https://t
 
   ETH地址 = 0x43931B8c29e34a8C16695408CD56327F511Cf086
 
-* 预言机4
+- Oracle 4
 
   TON公钥 = a4fef528b1e841f5fce752feeac0971f7df909e37ffeb3fab71c5ce8deb9f7d4
 
@@ -146,7 +144,7 @@ Governance 地址 - [Ef8hHxV0v2I9FHh3CMX91WXjKaJav6SQlemEQm8ZvPBJdLde](https://t
 
   ETH地址 = 0x7a0d3C42f795BA2dB707D421Add31deda9F1fEc1
 
-* 预言机5
+- Oracle 5
 
   TON公钥 = 58a7ab3e3ff8281b668a86ad9fe8b72f2d14df5dcc711937915dacca1b94c07d
 
@@ -154,7 +152,7 @@ Governance 地址 - [Ef8hHxV0v2I9FHh3CMX91WXjKaJav6SQlemEQm8ZvPBJdLde](https://t
 
   ETH地址 = 0x88352632350690EF22F9a580e6B413c747c01FB2
 
-* 预言机6
+- Oracle 6
 
   TON公钥 = db60c3f50cb0302b516cd42833c7e8cad8097ad94306564b057b16ace486fb07
 
@@ -162,7 +160,7 @@ Governance 地址 - [Ef8hHxV0v2I9FHh3CMX91WXjKaJav6SQlemEQm8ZvPBJdLde](https://t
 
   ETH地址 = 0xeB8975966dAF0C86721C14b8Bb7DFb89FCBB99cA
 
-* 预言机7
+- Oracle 7
 
   TON公钥 = 98c037c6d3a92d9467dc62c0e3da9bb0ad08c6b3d1284d4a37c1c5c0c081c7df
 
@@ -170,7 +168,7 @@ Governance 地址 - [Ef8hHxV0v2I9FHh3CMX91WXjKaJav6SQlemEQm8ZvPBJdLde](https://t
 
   ETH地址 = 0x48Bf4a783ECFb7f9AACab68d28B06fDafF37ac43
 
-* 预言机8
+- Oracle 8
 
   TON公钥 = 5503c54a1b27525376e83d6fc326090c7d9d03079f400071b8bf05de5fbba48d
 
@@ -194,19 +192,19 @@ Governance 地址 - [kf9NLH8CsGUkEKGYzCxaLd9Th6T5YkO-MXsCEU9Rw1fiRhf9](https://t
 
 > 与Toncoin测试网桥相同
 
-* 预言机0
+- Oracle 0
 
   TON地址 - [Ef9fwskZLEuGDfYTRAtvt9k-mEdkaIskkUOsEwPw1wzXk7zR](https://testnet.tonscan.org/address/Ef9fwskZLEuGDfYTRAtvt9k-mEdkaIskkUOsEwPw1wzXk7zR)
 
   EVM地址 - 0xe54cd631c97be0767172ad16904688962d09d2fe
 
-* 预言机1
+- Oracle 1
 
   TON地址 - [Ef8jPzrhTYloKgTCsGgEFNx7OdH-sJ98etJnwrIVSsFxH9mu](https://testnet.tonscan.org/address/Ef8jPzrhTYloKgTCsGgEFNx7OdH-sJ98etJnwrIVSsFxH9mu)
 
   EVM地址 - 0xeb05E1B6AC0d574eF2CF29FDf01cC0bA3D8F9Bf1
 
-* 预言机2
+- Oracle 2
 
   TON地址 - [Ef-fxGCPuPKNR6T4GcFxNQuLU5TykLKEAtkxWEfA1wBWy6JE](https://testnet.tonscan.org/address/Ef-fxGCPuPKNR6T4GcFxNQuLU5TykLKEAtkxWEfA1wBWy6JE)
 
