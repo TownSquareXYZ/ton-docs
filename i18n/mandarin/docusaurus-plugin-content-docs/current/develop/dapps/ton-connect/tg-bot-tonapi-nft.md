@@ -4,19 +4,19 @@
 
 本文旨在提供关于验证令牌所有权的指导，随着 NFT 的流行程度持续飙升，越来越多的人寻找有效的方法来实现这一点。
 
-## 📝 获取机器人的令牌
+## 📝 Obtaining a token for the bot
 
 1. 在 Telegram 上访问 [BotFather](https://t.me/BotFather)。
 
 2. 按照指示创建一个新的机器人。
 
-3. 创建后，BotFather 将为您提供一个独特的令牌。这个令牌至关重要，因为它允许您的机器人与 Telegram API 通信。
+3. 创建后，BotFather 将为您提供一个独特的令牌。这个令牌至关重要，因为它允许您的机器人与 Telegram API 通信。 This token is crucial as it allows your bot to communicate with the Telegram API.
 
 ## 🧠 机器人功能描述
 
 ### 功能
 
-我们的 Telegram 机器人将执行一个引人入胜的示例任务，验证用户是否拥有来自 TON Footsteps 集合的 NFT 项目。关键部分将包括：
+我们的 Telegram 机器人将执行一个引人入胜的示例任务，验证用户是否拥有来自 TON Footsteps 集合的 NFT 项目。关键部分将包括： The key components will be:
 
 - aiogram 库：用于与 Telegram 客户端交互。
 - TON Connect：连接用户的钱包。
@@ -94,6 +94,7 @@ import keyboards as kb
 
 现在，我们需要准备我们的数据库以与 `pytonconnect` 接口。
 为此，我们将创建一个名为 `database.py` 的新文件
+其中：
 
 ```python
 # 导入 Redis 库以与 Redis 数据库交互
@@ -178,13 +179,13 @@ async def connect_wallet_tonkeeper(message: types.Message):
             await message.answer(text="很遗憾，你没有来自 TON Footsteps 集合的 NFT")
 ```
 
-为了检查用户是否拥有必要的 NFT 集合，我们将使用 [TONAPI](https://tonapi.io/)。请求将如下所示：
+为了检查用户是否拥有必要的 NFT 集合，我们将使用 [TONAPI](https://tonapi.io/)。请求将如下所示： The request will look like this:
 
 ```bash
 https://tonapi.io/v2/accounts/<ADDRESS>/nfts?collection=<NFT_COLLECTION>&limit=1000&offset=0&indirect_ownership=false
 ```
 
-其中：
+Where:
 
 - `ADDRESS` - 这是我们想要检查所需 NFT 的用户的钱包地址。
 - `NFT_COLLECTION` - 这是所需 NFT 集合的地址。
@@ -296,7 +297,7 @@ if __name__ == '__main__':
 python3 main.py
 ```
 
-之后，在 Telegram 中打开与您的机器人的对话尝试使用它。如果您正确地遵循了这个指南，机器人应该能够按预期工作！
+之后，在 Telegram 中打开与您的机器人的对话尝试使用它。如果您正确地遵循了这个指南，机器人应该能够按预期工作！ If you followed this guide correctly, the bot should work as expected!
 
 ## [🎁 最终代码和资源](https://github.com/AndreyBurnosov/Checking_for_nft_availability)
 
