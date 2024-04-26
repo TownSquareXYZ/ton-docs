@@ -13,9 +13,9 @@ TON Connect 旨在通过提供吸引流量和增加用户留存的强大功能�
 
 ### 基本步骤
 
-为了让开发者将 TON Connect 集成到他们的应用中，使用了专门的 TON Connect SDK。这个过程相当简单，可以在需要时访问正确的文档进行操作。
+为了让开发者将 TON Connect 集成到他们的应用中，使用了专门的 TON Connect SDK。这个过程相当简单，可以在需要时访问正确的文档进行操作。 The process is quite simple and can be performed by accessing the correct documentation when needed.
 
-TON Connect 允许用户通过二维码或通用连接链接将他们的应用与众多钱包连接。应用程序还可以使用内置浏览器扩展在钱包内打开，因此了解添加到TON Connect中的附加功能至关重要。
+TON Connect 允许用户通过二维码或通用连接链接将他们的应用与众多钱包连接。应用程序还可以使用内置浏览器扩展在钱包内打开，因此了解添加到TON Connect中的附加功能至关重要。 Apps can also be opened within a wallet using a built-in browser extension and it is critical to keep up to date with additional features that are added to TON Connect moving forward.
 
 ### TON Connect 的开发者集成协助
 
@@ -43,4 +43,4 @@ TON Connect 允许用户通过二维码或通用连接链接将他们的应用�
 
 TON Connect 是一个开放协议，可用于使用任何编程语言或开发环境开发 dapps。
 
-对于 JavaScript (JS) 应用，TON 开发者社区创建了一个 JavaScript SDK，使开发者能够在几分钟内无缝集成 TON Connect。将来，将提供设计用于其他编程语言的 SDK。
+对于 JavaScript (JS) 应用，TON 开发者社区创建了一个 JavaScript SDK，使开发者能够在几分钟内无缝集成 TON Connect。将来，将提供设计用于其他编程语言的 SDK。 In the future, SDKs designed to operate with additional programming languages will be available.
