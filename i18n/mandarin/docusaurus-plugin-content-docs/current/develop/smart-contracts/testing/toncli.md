@@ -6,17 +6,18 @@
 
 ## 使用toncli进行测试
 
-`toncli`使用FunC来测试智能合约。此外，最新版本支持Docker，用于快速环境设置。
+`toncli` uses FunC to test smart contracts. Also, the latest version supports Docker for quick environment setup.
 
 本教程将帮助您测试智能合约的功能，以确保项目正常工作。
 
 描述使用toncli进行测试的最佳教程是：
-* [FunC测试如何工作？](https://github.com/disintar/toncli/blob/master/docs/advanced/func_tests_new.md)
-* [如何用toncli调试交易？](https://github.com/disintar/toncli/blob/master/docs/advanced/transaction_debug.md)
+
+- [FunC测试如何工作？](https://github.com/disintar/toncli/blob/master/docs/advanced/func_tests_new.md)
+- [如何用toncli调试交易？](https://github.com/disintar/toncli/blob/master/docs/advanced/transaction_debug.md)
 
 ## 在toncli下的FunC测试结构
 
-为了测试我们的智能合约，我们需要编写2个函数。其中一个接受值，包含期望的结果，并在被测试的函数不正确工作时给出错误。
+为了测试我们的智能合约，我们需要编写2个函数。其中一个接受值，包含期望的结果，并在被测试的函数不正确工作时给出错误。 One of which takes values, contains the desired result, gives an error if the function under test does not work correctly.
 
 ### 让我们创建一个包含测试的文件
 
@@ -26,16 +27,15 @@
 
 通常，测试函数不接受参数，但必须返回它们。
 
-* **函数选择器** - 测试合约中被调用函数的id；
-* **元组** - （栈）我们将传递给执行测试的函数的值；
-* **c4 cell** - 控制寄存器c4中的"永久数据"；
-* **c7元组** - 控制寄存器c7中的"临时数据"；
-* ** gas 限制整数** -  gas 限制（要理解 gas 的概念，我建议您首先阅读以太坊中的相关内容）；
+- **函数选择器** - 测试合约中被调用函数的id；
+- **元组** - （栈）我们将传递给执行测试的函数的值；
+- **c4 cell** - 控制寄存器c4中的"永久数据"；
+- **c7元组** - 控制寄存器c7中的"临时数据"；
+- \*\* gas 限制整数\*\* -  gas 限制（要理解 gas 的概念，我建议您首先阅读以太坊中的相关内容）；
 
-:::info 关于 gas 
- gas 是一个值，显示智能合约在执行时花费了多少资源。因此，它越小越好。
+:::info 关于 gas
 
-您可以详细阅读[这里](https://ton-blockchain.github.io/docs/#/smart-contracts/fees)。完整细节在[附录A](https://ton-blockchain.github.io/docs/tvm.pdf)。
+`toncli`使用FunC来测试智能合约。此外，最新版本支持Docker，用于快速环境设置。 您可以详细阅读[这里](https://ton-blockchain.github.io/docs/#/smart-contracts/fees)。完整细节在[附录A](https://ton-blockchain.github.io/docs/tvm.pdf)。
 
 关于寄存器c4和c7的更多信息[这里](https://ton-blockchain.github.io/docs/tvm.pdf)在1.3.1
 :::
@@ -46,8 +46,8 @@
 
 在新测试中，测试是通过两个函数进行的，这些函数允许调用智能合约方法：
 
-* `invoke_method`，假设不会抛出异常
-* `invoke_method_expect_fail`，假设会抛出异常
+- `invoke_method`，假设不会抛出异常
+- `invoke_method_expect_fail`，假设会抛出异常
 
 这些是测试函数内的函数，可以返回任意数量的值，所有这些值都将在运行测试时显示在报告中。
 
@@ -75,14 +75,12 @@ int __test_example() {
 }
 ```
 
-* `begin_cell()` - 将为未来的 cell创建一个构造器
-* `store_uint()` - 写入总量的值
-* `end_cell()`- 创建cell
-* `set_data()` - 将cell写入寄存器c4
+- `begin_cell()` - 将为未来的 cell创建一个构造器
+- `store_uint()` - 写入总量的值
+- `end_cell()`- 创建cell
+- `set_data()` - 将cell写入寄存器c4
 
 `impure`是一个关键词，表示该函数更改了智能合约数据。
-
-我们得
 
 到一个将在测试函数主体中使用的函数
 
@@ -113,8 +111,9 @@ int __test_example() {
 此后，我们将使用`invoke_method`方法。
 
 这个方法接受两个参数：
-* 方法名称
-* 作为`tuple`的测试参数
+
+- 方法名称
+- 作为`tuple`的测试参数
 
 返回两个值：使用的 gas 和方法返回的值（作为元组）。
 
@@ -124,7 +123,7 @@ int __test_example() {
 
 在第一次调用中，参数将是`recv_internal`和一个元组，其中包含通过`begin_parse()`转换成切片的消息
 
-```js 
+```js
 var (int gas_used1, _) = invoke_method(recv_internal, [message.begin_parse()]);
 ```
 
@@ -151,20 +150,22 @@ int __test_example() {
 }
 ```
 
-现在，最后，最重要的步骤。我们必须检查我们的智能合约是否正常工作。
+Now, finally, the most important step. 现在，最后，最重要的步骤。我们必须检查我们的智能合约是否正常工作。
 
 也就是说，如果它返回**正确的结果**，我们返回`success`或`failure`和使用的 gas 。
 
-``` js
+```js
 [int total] = stack; 
 throw_if(101, total != 10); 
 ```
-**解释：**
-* 传递元组
-* 在第一个参数中，错误的编号（101），如果智能合约工作不正常，我们将接收到该错误
-* 在第二个参数中是正确的答案
 
-``` js
+**解释：**
+
+- Passing a tuple
+- 在第一个参数中，错误的编号（101），如果智能合约工作不正常，我们将接收到该错误
+- 在第二个参数中是正确的答案
+
+```js
 int __test_example() {
 	set_data(begin_cell().store_uint(0, 64).end_cell());
 	cell message = begin_cell().store_uint(10, 32).end_cell();
