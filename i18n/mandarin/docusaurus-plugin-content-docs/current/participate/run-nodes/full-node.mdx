@@ -3,29 +3,34 @@ import TabItem from '@theme/TabItem';
 
 # 运行全节点
 
-要安装和管理您自己的节点，请使用TON基金会开发的**MyTonCtrl**开源工具。大多数TON节点都通过**MyTonCtrl**进行了可靠和测试。
+:::caution System Administrator Required
+For running nodes basic knowledge of Linux/Ubuntu system administration is required.
+:::
 
-[MyTonCtrl](https://github.com/ton-blockchain/mytonctrl)是一个控制台应用程序，它是fift、lite-client和validator-engine-console的方便包装器。它专门开发用于简化在Linux操作系统上的钱包、域和验证者管理任务。
+要安装和管理您自己的节点，请使用TON基金会开发的**MyTonCtrl**开源工具。大多数TON节点都通过**MyTonCtrl**进行了可靠和测试。 The majority of TON Nodes are reliable and tested by **MyTonCtrl**.
 
-我们正在积极寻求关于安装过程的反馈。如果您有任何问题或建议，请[联系我们](https://t.me/SwiftAdviser)。
+[MyTonCtrl](https://github.com/ton-blockchain/mytonctrl)是一个控制台应用程序，它是fift、lite-client和validator-engine-console的方便包装器。它专门开发用于简化在Linux操作系统上的钱包、域和验证者管理任务。 It has been specifically developed to streamline wallet, domain, and validator management tasks on the Linux operating system.
+
+We are actively seeking feedback about the installation process. If you have any questions or suggestions, please [contact us](https://t.me/Alexgton).
 
 ## 必要条件
 
 我们强烈建议使用支持的操作系统安装MyTonCtrl：
-* Ubuntu 20.04
-* Ubuntu 22.04
-* Debian 11
+
+- Ubuntu 20.04
+- Ubuntu 22.04
+- Debian 11
 
 请使用具有**sudo**权限的**非root用户**来安装和运行MyTonCtrl。
 
 ## 硬件要求
 
-这些要求适用于**带验证者的全节点**。如果您想运行没有验证者的全节点（例如[liteserver](/participate/run-nodes/full-node#hardware-requirements-1)），您可以使用较低配置的机器。
+These requirements are for a **full node with a validator**. 这些要求适用于**带验证者的全节点**。如果您想运行没有验证者的全节点（例如[liteserver](/participate/run-nodes/full-node#hardware-requirements-1)），您可以使用较低配置的机器。
 
 - 16核CPU
-- 64 GB RAM
+- 128 GB RAM
 - 1TB NVME SSD _或者_ 预置64+k IOPS存储
-- 1 Gbit/s 网络连接
+- 1 Gbit/s网络连接
 - 固定公网IP地址
 - 高峰期每月16TB流量
 
@@ -37,21 +42,11 @@ import TabItem from '@theme/TabItem';
 
 TON基金会推荐以下供应商运行验证者：
 
-#### AWS
-
-- **实例类型：** `m5.4xlarge`
-- **CPU：** `16 vCPUs`
-- **RAM：** `64 GB`
-- **存储：** `1 TB NVMe SSD`
-- **网络：** `高达10 Gbps`
-- **公网IP：** `关联一个弹性IP以获得固定IP地址。`
-- **流量：** `每月16 TB`
-
 #### GCP (谷歌云平台)
 
 - **机器类型：** `n2-standard-16`
-- **CPU：** `16 vCPUs`
-- **RAM：** `64 GB`
+- **CPU:** `32 vCPUs`
+- **RAM：** `128 GB`
 - **存储：** `1 TB NVMe SSD持久性磁盘`
 - **网络：** `16 Gbps`
 - **公网IP：** `预留一个静态外部IP地址。`
@@ -60,18 +55,18 @@ TON基金会推荐以下供应商运行验证者：
 #### 阿里巴巴云
 
 - **实例类型：** `ecs.g6.4xlarge`
-- **CPU：** `16 vCPUs`
-- **RAM：** `64 GB`
+- **CPU:** `32 vCPUs`
+- **RAM：** `128 GB`
 - **存储：** `1 TB NVMe SSD磁盘`
 - **网络：** `高达10 Gbps`
 - **公网IP：** `绑定一个弹性IP以获得固定IP地址。`
 - **流量：** `每月16 TB`
 
-#### 腾讯云
+#### Tencent Cloud
 
 - **实例类型：** `M5.4XLARGE`
-- **CPU：** `16 vCPUs`
-- **RAM：** `64 GB`
+- **CPU:** `32 vCPUs`
+- **RAM：** `128 GB`
 - **存储：** `1 TB NVMe SSD云磁盘`
 - **网络：** `高达10 Gbps`
 - **公网IP：** `关联一个弹性IP以获得固定IP地址。`
@@ -80,9 +75,7 @@ TON基金会推荐以下供应商运行验证者：
 #### Vultr
 
 - **实例类型：** `裸金属 Intel E-2388G`
-- **CPU：** `8
-
- 核心 / 16 线程`
+- **CPU：** `16 核心 / 32 线程`
 - **RAM：** `128 GB`
 - **存储：** `1.92TB NVMe SSD`
 - **网络：** `10 Gbps`
@@ -92,8 +85,8 @@ TON基金会推荐以下供应商运行验证者：
 #### DigitalOcean
 
 - **实例类型：** `通用型高级 Intel`
-- **CPU：** `16 vCPUs`
-- **RAM：** `64 GB`
+- **CPU:** `32 vCPUs`
+- **RAM：** `128 GB`
 - **存储：** `1TB NVMe SSD`
 - **网络：** `10 Gbps`
 - **公网IP：** `实例包含固定IP地址。`
@@ -110,12 +103,12 @@ TON基金会推荐以下供应商运行验证者：
 - **流量：** `每月16 TB`
 
 :::info
-**注意：** 价格、配置和可用性可能会有所变化。在做出任何决定之前，建议始终检查相应云提供商的官方文档和定价页面。
+**Note:** Prices, configurations, and availability may vary. It is advisable to always check the official documentation and pricing pages of the respective cloud provider before making any decisions.
 :::
 
-## 如何运行节点？（视频）
+## How to run a Node? (video)
 
-[//]: # (<ReactPlayer controls={true} style={{borderRadius:'10pt', margin:'15pt auto', maxWidth: '100%'}} url='/docs/files/setup_validator.mp4' />)
+[//]: # "<ReactPlayer controls={true} style={{borderRadius:'10pt', margin:'15pt auto', maxWidth: '100%'}} url='/docs/files/setup_validator.mp4' />"
 
 请查看此视频逐步教程，以快速开始：
 
@@ -127,85 +120,88 @@ TON基金会推荐以下供应商运行验证者：
 
 ### 必要条件
 
-1. 以具有**sudo**权限的**非root**用户身份登录您的服务器。
+#### Login with non-root sudo user
 
-2. 如果您没有非root用户，请以root身份登录并创建一个：
+以具有**sudo**权限的**非root**用户身份登录您的服务器。
+
+#### Create and login non-root sudo user
+
+If you don't have **non-root** user, you can create this with the following steps steps.
+
+1. Login as root and create new user:
 
 ```bash
 sudo adduser <username>
 ```
 
-3. 将您的用户添加到sudo组：
+2. 将您的用户添加到sudo组：
 
 ```bash
 sudo usermod -aG sudo <username>
 ```
 
-4. 切换到您的非root用户：
+3. Log into the server as a new user using ssh
 
 ```bash
-su - <username>
+ssh <username>@<server-ip-address>
 ```
-
 
 ### 安装MyTonCtrl
 
-从具有**sudo**权限的**非root**用户帐户下载并运行安装脚本。选择您的Linux发行版：
-
-
+从具有**sudo**权限的**非root**用户帐户下载并运行安装脚本。选择您的Linux发行版： Choose your Linux distributive:
 
 <Tabs groupId="operating-systems">
   <TabItem value="ubuntu" label="Ubuntu">
 
-  ```bash
-  wget https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/scripts/install.sh
-  sudo bash install.sh -m full -d
-  ```
+```bash
+wget https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/scripts/install.sh
+sudo bash install.sh -m full -d
+```
 
-  </TabItem>
+</TabItem>
   <TabItem value={'debian'} label={'Debian'}>
 
-  ```bash
-  wget https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/scripts/install.sh
-  su root -c 'bash install.sh -m full -d'
-  ```
+```bash
+wget https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/scripts/install.sh
+su root -c 'bash install.sh -m full -d'
+```
 
-  </TabItem>
+</TabItem>
 </Tabs>
 
-* `-m full` - 全节点安装模式。
-* `-d` - **mytonctrl** 将下载最新区块链状态的[转储](https://dump.ton.org/)。
-这将减少同步时间数倍。
-* `-c <path>` - 如果您想使用非公共liteservers进行同步。_(不是必需的)_
+- `-m full` - 全节点安装模式。
+- `-d` - **mytonctrl** 将下载最新区块链状态的[转储](https://dump.ton.org/)。
+  这将减少同步时间数倍。
+  This will reduce synchronization time by several times.
+- `-c <path>` - 如果您想使用非公共liteservers进行同步。_(不是必需的)_ _(not required)_
 
 ### 运行mytonctrl
 
 1. 从第1步中用于安装的本地用户账户运行**MyTonCtrl**控制台：
 
- ```sh
- sudo mytonctrl
-  ```
+```sh
+sudo mytonctrl
+```
 
 2. 使用`status`命令检查MyTonCtrl状态：
 
-  ```sh
-  status
-  ```
-
+```sh
+status
+```
 
 以下状态应该显示：
 
-* **mytoncore状态**：应为绿色。
-* **本地验证者状态**：也应为绿色。
-* **本地验证者未同步**：最初显示一个大数字。一旦新创建的验证者与其他验证者连接，数字将在250k左右。随着同步的进行，这个数字会减少。当它降至20以下时，验证者已同步。
+- **mytoncore状态**：应为绿色。
+- **本地验证者状态**：也应为绿色。
+- **Local validator out of sync**: Initially, a large number is displayed. As soon as the newly created validator connects with other validators, the number will be around 250k. As synchronization progresses, this number decreases. When it falls below 20, the validator is synchronized.
 
 **status**命令输出的示例：
 
 ![status](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/mytonctrl-status.png)
 
 :::caution 确保状态输出相同
-对于所有类型的节点，**Local Validator status**部分应该显示。
-如果没有显示，请[查看故障排除部分](/participate/run-nodes/full-node#status-command-displays-without-local-node-section)和[检查节点日志](/participate/run-nodes/full-node#check-the-node-logs)。
+For all nodes type **Local Validator status** section should appear.
+Otherwise, [check troubleshooting section](/participate/run-nodes/full-node#status-command-displays-without-local-node-section) and [check node logs](/participate/run-nodes/full-node#check-the-node-logs).
 :::
 
 等到`Local validator out of sync`变为少于20秒。
@@ -224,12 +220,11 @@ wl
 
 ![wallet list](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytonctrl-wl_ru.png)
 
-
 ### 激活钱包
 
 1. 向钱包发送必要数量的coins并激活它。
 
-最近（_在2023年底_），大致数字为最低质押代币约__340K TON__，最高约__1M TON__。
+Recently (_at the end of 2023_), the approximate figures have been a minimum stake of around **340K TON** and a maximum of about **1M TON**.
 
 查看[tonscan.com](https://tonscan.com/validation)以了解所需coins数量。
 
@@ -251,29 +246,29 @@ aw [wallet name]
 
 ### 您的验证者现已准备就绪
 
-**mytoncore** 将自动加入选举。它将钱包余额分为两部分，并使用它们作为质押代币参加选举。您也可以手动设置质押代币大小：
+**mytoncore** 将自动加入选举。它将钱包余额分为两部分，并使用它们作为质押代币参加选举。您也可以手动设置质押代币大小： It divides the wallet balance into two parts and uses them as a stake to participate in the elections. You can also manually set the stake size:
 
 ```sh
 set stake 50000
 ```
 
-`set stake 50000` — 这将质押代币大小设置为50k coins。如果质押代币被接受并且我们的节点成为验证者，那么质押代币只能在第二次选举中提取（根据选民的规则）。
+`set stake 50000` — this sets the stake size to 50k coins. If the bet is accepted and our node becomes a validator, the bet can only be withdrawn in the second election (according to the rules of the electorate).
 
 ![setting stake](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytonctrl-set_ru.png)
 
 ## 启用Liteserver模式
 
-在全节点中激活端点时，节点将承担**Liteserver**的角色。这种节点类型可以处理并响应来自轻客户端的请求，允许与TON区块链无缝互动。
+When an endpoint is activated in a full node, the node assumes the role of a **Liteserver**. 在全节点中激活端点时，节点将承担**Liteserver**的角色。这种节点类型可以处理并响应来自轻客户端的请求，允许与TON区块链无缝互动。
 
 ### 硬件要求
 
-与[验证者](/participate/run-nodes/full-node#hardware-requirements)相比，liteserver模式需要较少的资源。然而，仍建议使用功能强大的机器运行liteserver。
+与[验证者](/participate/run-nodes/full-node#hardware-requirements)相比，liteserver模式需要较少的资源。然而，仍建议使用功能强大的机器运行liteserver。 However, it is still recommended to use a powerful machine to run a liteserver.
 
 - 至少16核CPU
-- 至少64 GB RAM
+- at least 128 GB RAM
 - 至少1TB GB NVMe SSD _或者_ 预置32+k IOPS存储
 - 1 Gbit/s网络连接
-- 高峰期每月16 TB流量
+- 高峰期每月16TB流量
 - 固定公网IP地址
 
 #### 推荐供应商
@@ -282,8 +277,8 @@ set stake 50000
 
 Hetzner和OVH被禁止运行验证者，但您可以使用它们运行liteserver：
 
-- __Hetzner__：EX101, AX102
-- __OVH__：RISE-4
+- **Hetzner**：EX101, AX102
+- **OVH**：RISE-4
 
 ### 安装liteserver
 
@@ -298,14 +293,13 @@ MyTonInstaller> clcf
 本地配置文件已创建：/usr/bin/ton/local.config.json
 ```
 
-3. 这个文件将帮助您连接到您的liteserver。将位于指定路径的配置文件复制到您的目录以保存它。
+3. 这个文件将帮助您连接到您的liteserver。将位于指定路径的配置文件复制到您的目录以保存它。 Copy the config file located on the specified path to your home to save it.
 
 ```bash
 cp /usr/bin/ton/local.config.json ~/config.json
 ```
 
 4. 在您的本地机器上创建一个空的`config.json`文件。
-
 
 5. 将控制台中的内容复制到您本地机器的`config.json`文件。
 
@@ -315,7 +309,7 @@ cat ~/config.json
 
 ### 检查防火墙设置
 
-首先，验证您`config.json`文件中指定的Liteserver端口。这个端口会随着每次新安装`MyTonCtrl`而改变。它位于`port`字段：
+首先，验证您`config.json`文件中指定的Liteserver端口。这个端口会随着每次新安装`MyTonCtrl`而改变。它位于`port`字段： This port changes with each new installation of `MyTonCtrl`. It is located in the `port` field:
 
 ```json
 {
@@ -330,13 +324,13 @@ cat ~/config.json
 }
 ```
 
-如果您使用的是云提供商，您需要在防火墙设置中打开此端口。例如，如果您使用的是AWS，您需要在[安全组](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html)中打开端口。
+If you are using a cloud provider, you need to open this port in the firewall settings. 如果您使用的是云提供商，您需要在防火墙设置中打开此端口。例如，如果您使用的是AWS，您需要在[安全组](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html)中打开端口。
 
 以下是在裸机服务器防火墙中打开端口的示例。
 
 #### 在防火墙中打开端口
 
-我们将使用`ufw`实用程序（[速查表](https://www.cyberciti.biz/faq/ufw-allow-incoming-ssh-connections-from-a-specific-ip-address-subnet-on-ubuntu-debian/)）。您可以使用您喜欢的一个。
+我们将使用`ufw`实用程序（[速查表](https://www.cyberciti.biz/faq/ufw-allow-incoming-ssh-connections-from-a-specific-ip-address-subnet-on-ubuntu-debian/)）。您可以使用您喜欢的一个。 You can use the one you prefer.
 
 1. 如果未安装`ufw`，请安装：
 
@@ -357,7 +351,7 @@ sudo ufw allow ssh
 sudo ufw allow <port>
 ```
 
-4. 检查防火墙状态。运行此命令后，您可以通过检查UFW状态来验证规则是否已成功添加：
+4. Check the firewall status. 检查防火墙状态。运行此命令后，您可以通过检查UFW状态来验证规则是否已成功添加：
 
 ```bash
 sudo ufw status
@@ -380,26 +374,27 @@ sudo ufw enable
 <Tabs groupId="code-examples">
   <TabItem value="js" label="JavaScript">
 
-  ```bash
-  npm i --save ton-core ton-lite-client
-  ```
+```bash
+npm i --save ton-core ton-lite-client
+```
 
-  </TabItem>
+</TabItem>
   <TabItem value="python" label="Python">
 
-  ```bash
-  pip install pytonlib
-  ```
+```bash
+pip install pytonlib
+```
 
-  </TabItem>
+</TabItem>
   <TabItem value="go" label="Golang">
 
-  ```bash
-  go get github.com/xssnick/tonutils-go
-  go get github.com/xssnick/tonutils-go/liteclient
-  go get github.com/xssnick/tonutils-go/ton
-  ```
-  </TabItem>
+```bash
+go get github.com/xssnick/tonutils-go
+go get github.com/xssnick/tonutils-go/liteclient
+go get github.com/xssnick/tonutils-go/ton
+```
+
+</TabItem>
 </Tabs>
 
 2. 初始化客户端并请求主链信息以确保liteserver正在运行。
@@ -409,134 +404,142 @@ sudo ufw enable
 
   将项目类型更改为`module`在您的`package.json`文件：
 
-  ```js
-  import { LiteSingleEngine } from 'ton-lite-client/dist/engines/single.js'
-  import { LiteRoundRobinEngine } from 'ton-lite-client/dist/engines/roundRobin.js'
-  import { LiteClient } from 'ton-lite-client/dist/client.js'
-  import config from './config.json' assert {type: 'json'};
+```json
+{
+    "type": "module"
+}
+```
+
+  Create `index.js` file with the following content:
+
+```js
+import { LiteSingleEngine } from 'ton-lite-client/dist/engines/single.js'
+import { LiteRoundRobinEngine } from 'ton-lite-client/dist/engines/roundRobin.js'
+import { LiteClient } from 'ton-lite-client/dist/client.js'
+import config from './config.json' assert {type: 'json'};
 
 
-  function intToIP(int ) {
-      var part1 = int & 255;
-      var part2 = ((int >> 8) & 255);
-      var part3 = ((int >> 16) & 255);
-      var part4 = ((int >> 24) & 255);
+function intToIP(int ) {
+    var part1 = int & 255;
+    var part2 = ((int >> 8) & 255);
+    var part3 = ((int >> 16) & 255);
+    var part4 = ((int >> 24) & 255);
 
-      return part4 + "." + part3 + "." + part2 + "." + part1;
-  }
-
-  let server = config.liteservers[0];
-
-  async function main() {
-      const engines = [];
-      engines.push(new LiteSingleEngine({
-          host: `tcp://${intToIP(server.ip)}:${server.port}`,
-          publicKey: Buffer.from(server.id.key, 'base64'),
-      }));
-
-      const engine = new LiteRoundRobinEngine(engines);
-      const client = new LiteClient({ engine });
-      const master = await client.getMasterchainInfo()
-      console.log('master', master)
-
-  }
-
-  main()
-
-  ```
-
-  </TabItem>
-  <TabItem value="python" label="Python">
-
-  ```python
-    import asyncio
-    from pytonlib import TonlibClient
-    from pathlib import Path
-    import json
-
-
-    async def get_client() -> TonlibClient:
-    with open('config.json', 'r') as f:
-    config = json.loads(f.read())
-
-    keystore_dir = '/tmp/ton_keystore'
-    Path(keystore_dir).mkdir(parents=True, exist_ok=True)
-
-    client = TonlibClient(ls_index=0, config=config, keystore=keystore_dir, tonlib_timeout=10)
-    await client.init()
-
-    return client
-
-
-    async def test_client():
-    client = await get_client()
-
-    print(await client.get_masterchain_info())
-
-    await client.close()
-
-
-    if __name__ == '__main__':
-    asyncio.run(test_client())
-  ```
-
-  </TabItem>
-  <TabItem value="go" label="Golang">
-
-  ```go
-  package main
-
-  import (
-      "context"
-      "encoding/json"
-      "io/ioutil"
-      "log"
-      "github.com/xssnick/tonutils-go/liteclient"
-      "github.com/xssnick/tonutils-go/ton"
-  )
-
-  func main() {
-      client := liteclient.NewConnectionPool()
-
-      content, err := ioutil.ReadFile("./config.json")
-      if err != nil {
-          log.Fatal("Error when opening file: ", err)
-      }
-
-      config := liteclient.GlobalConfig{}
-      err = json.Unmarshal(content, &config)
-      if err != nil {
-          log.Fatal("Error during Unmarshal(): ", err)
-      }
-
-      err = client.AddConnectionsFromConfig(context.Background(), &config)
-      if err != nil {
-          log.Fatalln("connection err: ", err.Error())
-          return
-      }
-
-      // initialize ton API lite connection wrapper
-      api := ton.NewAPIClient(client)
-
-      master, err := api.GetMasterchainInfo(context.Background())
-      if err != nil {
-          log.Fatalln("get masterchain info err: ", err.Error())
-          return
-      }
-
-      log.Println(master)
+    return part4 + "." + part3 + "." + part2 + "." + part1;
 }
 
-  ```
-  </TabItem>
+let server = config.liteservers[0];
+
+async function main() {
+    const engines = [];
+    engines.push(new LiteSingleEngine({
+        host: `tcp://${intToIP(server.ip)}:${server.port}`,
+        publicKey: Buffer.from(server.id.key, 'base64'),
+    }));
+
+    const engine = new LiteRoundRobinEngine(engines);
+    const client = new LiteClient({ engine });
+    const master = await client.getMasterchainInfo()
+    console.log('master', master)
+
+}
+
+main()
+
+```
+
+</TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+  import asyncio
+  from pytonlib import TonlibClient
+  from pathlib import Path
+  import json
+
+
+  async def get_client() -> TonlibClient:
+  with open('config.json', 'r') as f:
+  config = json.loads(f.read())
+
+  keystore_dir = '/tmp/ton_keystore'
+  Path(keystore_dir).mkdir(parents=True, exist_ok=True)
+
+  client = TonlibClient(ls_index=0, config=config, keystore=keystore_dir, tonlib_timeout=10)
+  await client.init()
+
+  return client
+
+
+  async def test_client():
+  client = await get_client()
+
+  print(await client.get_masterchain_info())
+
+  await client.close()
+
+
+  if __name__ == '__main__':
+  asyncio.run(test_client())
+```
+
+</TabItem>
+  <TabItem value="go" label="Golang">
+
+```go
+package main
+
+import (
+    "context"
+    "encoding/json"
+    "io/ioutil"
+    "log"
+    "github.com/xssnick/tonutils-go/liteclient"
+    "github.com/xssnick/tonutils-go/ton"
+)
+
+func main() {
+    client := liteclient.NewConnectionPool()
+
+    content, err := ioutil.ReadFile("./config.json")
+    if err != nil {
+        log.Fatal("Error when opening file: ", err)
+    }
+
+    config := liteclient.GlobalConfig{}
+    err = json.Unmarshal(content, &config)
+    if err != nil {
+        log.Fatal("Error during Unmarshal(): ", err)
+    }
+
+    err = client.AddConnectionsFromConfig(context.Background(), &config)
+    if err != nil {
+        log.Fatalln("connection err: ", err.Error())
+        return
+    }
+
+    // initialize ton API lite connection wrapper
+    api := ton.NewAPIClient(client)
+
+    master, err := api.GetMasterchainInfo(context.Background())
+    if err != nil {
+        log.Fatalln("get masterchain info err: ", err.Error())
+        return
+    }
+
+    log.Println(master)
+}
+
+```
+
+</TabItem>
 </Tabs>
 
 3. 现在您可以与您自己的liteserver互动。
 
 ### 参阅
 
-* [[YouTube]教程如何启动liteserver](https://youtu.be/p5zPMkSZzPc)
-
+- [\[YouTube\]教程如何启动liteserver](https://youtu.be/p5zPMkSZzPc)
 
 ## 小贴士和技巧
 
@@ -552,6 +555,14 @@ sudo ufw enable
 
 ![logs](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytoncore-log.png)
 
+### 对于所有类型的节点，**Local Validator status**部分应该显示。
+如果没有显示，请[查看故障排除部分](/participate/run-nodes/full-node#status-command-displays-without-local-node-section)和[检查节点日志](/participate/run-nodes/full-node#check-the-node-logs)。
+
+Check the node logs upon failure:
+
+```bash
+tail -f /var/ton-work/log.thread*
+```
 
 ## 故障排除
 
@@ -561,12 +572,12 @@ sudo ufw enable
 
 `[Error : 651 : no nodes]`表示您的节点无法在TON区块链内找到另一个节点。
 
-有时，这个过程可能需要长达24小时。但是，如果您已经连续几天收到此错误，这意味着您的节点无法通过当前网络连接进行同步。
+Sometimes, this process can take up to 24 hours. 有时，这个过程可能需要长达24小时。但是，如果您已经连续几天收到此错误，这意味着您的节点无法通过当前网络连接进行同步。
 
 :::tip 解决方案
-您需要检查防火墙设置，包括任何NAT设置（如果存在）。
 
 它应该允许在一个特定端口上的传入连接和从任何端口的传出连接。
+:::
 :::
 
 ### 验证者控制台未设置
@@ -574,24 +585,24 @@ sudo ufw enable
 如果您遇到 `Validator console is not settings` 错误，这表示您正在以一个非安装时使用的用户身份运行 `MyTonCtrl`。
 
 :::tip 解决方案
-以您安装它的用户（非root sudo用户）运行`MyTonCtrl`。
 
 ```bash
 sudo mytonctrl
 ```
+
 :::
 
 ### "block is not applied"是什么意思？
 
-__问：__ 有时我们对各种请求得到`block is not applied`或`block is not ready`的回应 - 这正常吗？
+**问：** 有时我们对各种请求得到`block is not applied`或`block is not ready`的回应 - 这正常吗？
 
-__答：__ 这是正常的，通常这意味着您试图检索尚未到达您请求的节点的区块。
+**答：** 这是正常的，通常这意味着您试图检索尚未到达您请求的节点的区块。
 
-__问：__ 如果比较频繁出现，是否意味着某处存在问题？
+**问：** 如果比较频繁出现，是否意味着某处存在问题？
 
-__答：__ 不。您需要检查mytonctrl中的“Local validator out of sync”值。如果它少于60秒，那么一切正常。
+**A:** No. **答：** 不。您需要检查mytonctrl中的“Local validator out of sync”值。如果它少于60秒，那么一切正常。 If it's less than 60 seconds, then everything is fine.
 
-但是您需要记住，节点不断同步。有时，您可能会试图接收尚未到达您请求的节点的区块。
+But you need to keep in mind that the node is constantly synchronizing. Sometimes, you may try to receive a block that has not reached the node you requested.
 
 您需要稍作延迟重复请求。
 
@@ -603,15 +614,15 @@ __答：__ 不。您需要检查mytonctrl中的“Local validator out of sync”
 推荐的解决方案是再次使用新转储重新安装`MyTonCtrl`。
 :::
 
-如果同步花费异常长的时间，可能是转储出现了问题。请[联系我们](https://t.me/SwiftAdviser)寻求帮助。
+If syncing takes an unusually long time, there may have been issues with the dump. Please [contact us](https://t.me/SwiftAdviser) for assistance.
 
 请以您安装的用户身份运行`mytonctrl`。
 
-
-### 命令<...>在3秒后超时的错误
+### 命令\<...>在3秒后超时的错误
 
 此错误意味着本地节点尚未同步（out of sync小于20秒）并且正在使用公共节点。
 公共节点不总是响应，并最终导致超时错误。
+Public nodes do not always respond and end up with a timeout error.
 
 :::tip 解决方案
 解决问题的办法是等待本地节点同步或多次执行相同命令。
@@ -623,6 +634,7 @@ __答：__ 不。您需要检查mytonctrl中的“Local validator out of sync”
 
 如果节点状态中没有本地节点部分，通常意味着安装过程中出了问题，跳过了创建/分配验证者钱包的步骤。
 还要检查是否指定了验证者钱包。
+Also check that the validator wallet is specified.
 
 直接检查以下内容：
 
@@ -636,11 +648,10 @@ mytonctrl> get validatorWalletName
 mytonctrl> set validatorWalletName validator_wallet_001
 ```
 
-
 ### 在新服务器上转移验证者
 
 :::info
-将所有密钥和配置从旧节点转移到工作节点并启动它。如果新节点出现问题，原来的节点仍然保留着所有已设置的内容。
+将所有密钥和配置从旧节点转移到工作节点并启动它。如果新节点出现问题，原来的节点仍然保留着所有已设置的内容。 In case something goes wrong on the new one, there is still the source where everything is set up.
 :::
 
 最好的方法（当暂时不验证的罚款很小时，可以不间断地进行）：
