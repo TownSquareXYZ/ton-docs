@@ -5,22 +5,24 @@
 如果您仍然想自己编译源代码，请按照以下说明操作。
 
 :::caution
-这是一个简化的快速构建指南。
+This is a simplified quick build guide.
 
 如果您是为生产而不是家庭使用而构建，最好使用[自动构建脚本](https://github.com/ton-blockchain/ton/tree/master/.github/workflows)。
+:::
 :::
 
 ## 通用
 
-该软件可能在大多数Linux系统上都能正确编译和工作。它应该适用于macOS甚至Windows。
+该软件可能在大多数Linux系统上都能正确编译和工作。它应该适用于macOS甚至Windows。 It should work on macOS and even Windows.
 
-1) 在GitHub库 https://github.com/ton-blockchain/ton/ 下载TON区块链源代码的最新版本：
+1. 在GitHub库 https://github.com/ton-blockchain/ton/ 下载TON区块链源代码的最新版本：
 
 ```bash
 git clone --recurse-submodules https://github.com/ton-blockchain/ton.git
 ```
 
-2) 安装最新版本的：
+2. 安装最新版本的：
+
    - `make`
    - `cmake` 版本 3.0.2 或更高
    - `g++` 或 `clang`（或适用于您的操作系统的另一种C++14兼容编译器）。
@@ -34,7 +36,7 @@ apt update
 sudo apt install build-essential cmake clang openssl libssl-dev zlib1g-dev gperf libreadline-dev ccache libmicrohttpd-dev pkg-config libsodium-dev libsecp256k1-dev
 ```
 
-3) 假设您已将源代码树获取到目录`~/ton`，其中`~`是您的主目录，并且您已创建一个空目录`~/ton-build`：
+3. 假设您已将源代码树获取到目录`~/ton`，其中`~`是您的主目录，并且您已创建一个空目录`~/ton-build`：
 
 ```bash
 mkdir ton-build
@@ -50,7 +52,7 @@ cmake -DCMAKE_BUILD_TYPE=Release ../ton && cmake --build . -j$(nproc)
 ```
 
 :::warning
-在MacOS Intel上进行下一步之前，我们可能需要使用`brew`安装`openssl@3`，或者只是链接该库：
+On MacOS Intel before next step we need maybe install `openssl@3` with `brew` or just link the lib:
 
 ```zsh
 brew install openssl@3 ninja libmicrohttpd pkg-config
@@ -104,13 +106,14 @@ cmake --build . --target lite-client
 ./lite-client/lite-client -C global.config.json
 ```
 
+If everything was installed successfully, the Lite Client will connect to a special server (a full node for the TON Blockchain Network) and will send some queries to the server.
 如果一切安装成功，轻客户端将连接到一个特殊的服务器（TON区块链网络的完整节点）并向服务器发送一些查询。如果您向客户端指示一个可写的“数据库”目录作为额外参数，它将下载并保存与最新的主链块相对应的块和状态：
 
 ```bash
 ./lite-client/lite-client -C global.config.json -D ~/ton-db-dir
 ```
 
-通过在轻客户端中输入`help`可以获得基本帮助信息。输入`quit`或按`Ctrl-C`退出。
+通过在轻客户端中输入`help`可以获得基本帮助信息。输入`quit`或按`Ctrl-C`退出。 Type `quit` or press `Ctrl-C` to exit.
 
 ## FunC
 
@@ -154,7 +157,7 @@ cmake --build . --target tonlib-cli
 ./tonlib/tonlib-cli -C global.config.json
 ```
 
-通过在tonlib-cli中输入`help`可以获得基本帮助信息。输入`quit`或按`Ctrl-C`退出。
+通过在tonlib-cli中输入`help`可以获得基本帮助信息。输入`quit`或按`Ctrl-C`退出。 Type `quit` or press `Ctrl-C` to exit.
 
 ## RLDP-HTTP-Proxy
 
