@@ -2,11 +2,11 @@
 
 Hacktoberfest 活动是一年中获得社区支持的最佳时机！
 
-如果你的代码库与TON生态系统相关，许多贡献者将会对其感兴趣。让我们帮助他们迅速投入到你的项目中！
+如果你的代码库与TON生态系统相关，许多贡献者将会对其感兴趣。让我们帮助他们迅速投入到你的项目中！ Let's help them dive right into your project!
 
 ## 准备参与派对
 
-为了能正确借助贡献者的力量，你需要拥有一个状况良好的代码库。
+To handle contributors in the right way, you need to have a repository in good standing.
 
 遵循以下最佳实践，为你的项目准备贡献：
 
