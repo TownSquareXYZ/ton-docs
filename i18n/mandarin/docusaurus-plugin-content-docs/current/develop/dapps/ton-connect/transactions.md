@@ -3,13 +3,14 @@
 TON Connect 2.0 不仅仅提供了在 dApp 中认证用户的强大选项：它还可以通过已连接的钱包发送外部消息！
 
 您将了解到：
+
 - 如何从 DApp 发送消息到区块链
 - 如何在一次交易中发送多条消息
 - 如何使用 TON Connect 部署合约
 
 ## 演示页面
 
-我们将使用 JavaScript 的低级 [TON Connect SDK](https://github.com/ton-connect/sdk/tree/main/packages/sdk) 。我们将在钱包已连接的页面上的浏览器控制台上做实验。以下是示例页面：
+我们将使用 JavaScript 的低级 [TON Connect SDK](https://github.com/ton-connect/sdk/tree/main/packages/sdk) 。我们将在钱包已连接的页面上的浏览器控制台上做实验。以下是示例页面： We'll experiment in the browser console on a page where the wallet is already connected. Here is the sample page:
 
 ```html
 <!DOCTYPE html>
@@ -36,15 +37,16 @@ TON Connect 2.0 不仅仅提供了在 dApp 中认证用户的强大选项：它�
 
 ## 发送多条消息
 
-### 1) 了解任务
+### 1. 了解任务
 
 我们将在一次交易中发送两条独立的消息：一条发送到您自己的地址，携带 0.2 TON，另一条发送到其他钱包地址，携带 0.1 TON。
 
 顺便说一下，一次交易中发送的消息有限制：
+
 - 标准 ([v3](/participate/wallets/contracts#wallet-v3)/[v4](/participate/wallets/contracts#wallet-v4)) 钱包：4 条传出消息；
 - 高负载钱包：255 条传出消息（接近区块链限制）。
 
-### 2) 发送消息
+### 2. 发送消息
 
 运行以下代码：
 
@@ -64,12 +66,11 @@ console.log(await connector.sendTransaction({
 }));
 ```
 
-您会注意到这个命令没有在控制台打印任何东西，像返回无内容的函数一样，`null` 或 `undefined`。这意味着 `connector.sendTransaction` 不会立即退出。
+您会注意到这个命令没有在控制台打印任何东西，像返回无内容的函数一样，`null` 或 `undefined`。这意味着 `connector.sendTransaction` 不会立即退出。 This means that `connector.sendTransaction` does not exit immediately.
 
-打开您的钱包应用，您会看到原因。有一个请求，显示您要发送的内容以及coin将会去向哪里。请接受它。
+Open your wallet application, and you'll see why. 打开您的钱包应用，您会看到原因。有一个请求，显示您要发送的内容以及coin将会去向哪里。请接受它。 Please, accept it.
 
-
-### 3) 获取结果
+### 3. 获取结果
 
 函数将退出，并且区块链的输出将被打印：
 
@@ -79,9 +80,17 @@ console.log(await connector.sendTransaction({
 }
 ```
 
-BOC 是 [Bag of Cells](/learn/overviews/cells)，这是 TON 中存储数据的方式。现在我们可以解码它。
+BOC 是 [Bag of Cells](/learn/overviews/cells)，这是 TON 中存储数据的方式。现在我们可以解码它。 Now we can decode it.
 
 在您选择的工具中解码这个 BOC，您将得到以下cell树：
+
+```bash
+x{88016543D9EAA8BC0ED9A6D5CA2DD4FD7BE655D401195457095F30CD7D9641112B5A02501DD1A83C401673E97A8D7DD57FE38A29A7F41C27AB7CF0714FCC3231D134DE6C0B9B72CA6055DD2275AE3CB2B1C023AC30C500857F884F960724843CFF70094D4D18BB1F72F5600000024800181C_}
+ x{42005950F67AAA2F03B669B5728B753F5EF9957500465515C257CC335F6590444AD6A00989680000000000000000000000000000}
+ x{42005950F67AAA2F03B669B5728B753F5EF9957500465515C257CC335F6590444AD69CC4B40000000000000000000000000000}
+```
+
+This is serialized external message, and two references are outgoing messages representations.
 
 ```bash
 x{88016543D9EAA8BC0ED9A6D5CA2DD4FD7BE655D401195457095F30CD7D964111...
@@ -102,10 +111,10 @@ x{88016543D9EAA8BC0ED9A6D5CA2DD4FD7BE655D401195457095F30CD7D964111...
 
 在我们继续之前，让我们谈谈我们打算发送的消息格式。
 
-* **payload** (string base64, 可选): 以 Base64 编码的单cell BoC。
-  * 我们将使用它来存储转账上的文本评论
-* **stateInit** (string base64, 可选): 以 Base64 编码的单cell BoC。
-  * 我们将使用它来部署智能合约
+- **payload** (string base64, 可选): 以 Base64 编码的单cell BoC。
+  - 我们将使用它来存储转账上的文本评论
+- **stateInit** (string base64, 可选): 以 Base64 编码的单cell BoC。
+  - 我们将使用它来部署智能合约
 
 构建消息后，您可以将其序列化为 BOC。
 
@@ -117,7 +126,7 @@ TonWeb.utils.bytesToBase64(await payloadCell.toBoc())
 
 您可以使用 [toncenter/tonweb](https://github.com/toncenter/tonweb) JS SDK 或您喜欢的工具将cell序列化为 BOC。
 
-转账上的文本评论被编码为操作码 0 (32 个零位) + 评论的 UTF-8 字节。以下是将其转换为cell包的示例。
+转账上的文本评论被编码为操作码 0 (32 个零位) + 评论的 UTF-8 字节。以下是将其转换为cell包的示例。 Here's an example of how to convert it into a bag of cells.
 
 ```js
 let a = new TonWeb.boc.Cell();
@@ -131,7 +140,7 @@ console.log(payload);
 
 ### 智能合约部署
 
-我们将部署一个非常简单的 [聊天机器人 Doge](https://github.com/LaDoger/doge.fc)，在[智能合约示例](/develop/smart-contracts/#smart-contract-examples)中提到。首先，我们加载它的代码并在数据中存储一些独特的内容，以便我们接收到一个尚未被其他人部署的全新实例。然后我们将代码和数据合并到 stateInit 中。
+我们将部署一个非常简单的 [聊天机器人 Doge](https://github.com/LaDoger/doge.fc)，在[智能合约示例](/develop/smart-contracts/#smart-contract-examples)中提到。首先，我们加载它的代码并在数据中存储一些独特的内容，以便我们接收到一个尚未被其他人部署的全新实例。然后我们将代码和数据合并到 stateInit 中。 First of all, we load its code and store something unique in data, so that we receive our very own instance that has not been deployed by someone other. Then we combine code and data into stateInit.
 
 ```js
 let code = TonWeb.boc.Cell.oneFromBoc(TonWeb.utils.base64ToBytes('te6cckEBAgEARAABFP8A9KQT9LzyyAsBAGrTMAGCCGlJILmRMODQ0wMx+kAwi0ZG9nZYcCCAGMjLBVAEzxaARfoCE8tqEssfAc8WyXP7AN4uuM8='));
@@ -178,8 +187,8 @@ console.log(await connector.sendTransaction({
 
 处理请求拒绝相当简单，但当您正在开发某个项目时，最好提前知道会发生什么。
 
-当用户在钱包应用中的弹出窗口中点击“取消”时，会抛出异常：`Error: [TON_CONNECT_SDK_ERROR] Wallet declined the request`。这个错误可以被视为最终的（不像连接取消那样） - 如果它被抛出，那么直到发送下一个请求，请求的交易绝对不会发生。
+当用户在钱包应用中的弹出窗口中点击“取消”时，会抛出异常：`Error: [TON_CONNECT_SDK_ERROR] Wallet declined the request`。这个错误可以被视为最终的（不像连接取消那样） - 如果它被抛出，那么直到发送下一个请求，请求的交易绝对不会发生。 This error can be considered final (unlike connection cancellation) - if it has been raised, then the requested transaction will definitely not happen until the next request is sent.
 
 ## 参阅
 
-* [准备消息](/develop/dapps/ton-connect/message-builders)
+- [准备消息](/develop/dapps/ton-connect/message-builders)
