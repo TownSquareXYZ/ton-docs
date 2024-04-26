@@ -23,11 +23,12 @@
 
 ### 获取区块信息的RPC方法是什么？
 
-验证者生产区块。现有区块通过Liteservers可用。Liteservers通过轻客户端访问。在轻客户端之上构建了第三方工具，如钱包、浏览器、dapps等。
+Blocks produced by Validators. Existing blocks available via Liteservers. Liteservers accessible via Lite Сlients. On top of Lite Сlient built 3rd-party tools like wallets, explorers, dapps, etc.
 
 - 要访问轻客户端核心，请查看我们GitHub的这个部分：[ton-blockchain/tonlib](https://github.com/ton-blockchain/ton/tree/master/tonlib)
 
 此外，这里有三个高级第三方区块浏览器：
+
 - https://explorer.toncoin.org/last
 - https://toncenter.com/
 - https://tonwhales.com/explorer
@@ -52,7 +53,7 @@ _小于6秒_
 
 ### 平均区块大小
 
-```bash 
+```bash
 max block size param 29
 max_block_bytes:2097152
 ```
@@ -73,24 +74,28 @@ max_block_bytes:2097152
 
 - [请参见上面的答案](/develop/howto/faq#are-there-any-standardized-protocols-for-minting-burning-and-transferring-fungible-and-non-fungible-tokens-in-transactions)
 
-### TON 交易是异步的还是同步的？是否有文档显示这个系统是如何工作的？
+### TON 交易是异步的还是同步的？是否有文档显示这个系统是如何工作的？ Is it possible to access documentation that show how this system works?
 
 TON区块链消息是异步的：
+
 - 发送者准备交易正文（消息boc）并通过轻客户端（或更高级工具）广播
 - 轻客户端返回广播状态，而非执行交易的结果
 - 发送者通过监听目标账户（地址）状态或整个区块链状态来检查期望结果
 
 使用一个与钱包智能合约相关的例子来解释TON异步消息传递是如何工作的：
+
 - [TON钱包如何工作，以及如何使用JavaScript访问它们](https://blog.ton.org/how-ton-wallets-work-and-how-to-access-them-from-javascript#1b-sending-a-transfer)
 
 钱包合约转账的示例（低层级）：
+
 - https://github.com/xssnick/tonutils-go/blob/master/example/wallet/main.go
 
-### 是否可以确定交易100%完成？查询交易级数据是否足以获得这些信息？
+### 是否可以确定交易100%完成？查询交易级数据是否足以获得这些信息？ Is querying the transaction level data sufficient to obtain this information?
 
-**简短回答：**要确保交易已完成，必须检查接收者的账户。
+\*\*简短回答：\*\*要确保交易已完成，必须检查接收者的账户。
 
 要了解有关交易验证的更多信息，请参阅以下示例：
+
 - Go: [钱包示例](https://github.com/xssnick/tonutils-go/blob/master/example/wallet/main.go)
 - Python: [带支付的Storefront bot](/develop/dapps/tutorials/accept-payments-in-a-telegram-bot)
 - JavaScript: [饺子销售机器人](/develop/dapps/tutorials/accept-payments-in-a-telegram-bot-js)
@@ -98,15 +103,18 @@ TON区块链消息是异步的：
 ### TON 中交易的布局是怎样的？
 
 对布局中每个字段的详细解释：
+
 - [交易布局](/develop/data-formats/transaction-layout)
 
 ### 是否可以批量处理交易？
 
 是的，TON上可以通过两种不同的方式实现交易批量处理：
+
 - 通过利用TON的异步特性，即向网络发送独立的交易
 - 通过使用接收任务并将其作为批处理执行的智能合约
 
 使用批量处理特性的合约示例（高负载钱包）：
+
 - https://github.com/tonuniverse/highload-wallet-api
 
 默认钱包（v3/v4）也支持在一笔交易中发送多达4条消息。
@@ -124,20 +132,23 @@ Mainnet支持的小数位数：9位。
 ### 是否有标准化的协议用于铸造、销毁和交易中转移可替代和不可替代代币？
 
 非同质化代币（NFT）：
+
 - [TEP-62：NFT标准](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md)
 - [NFT文档](/develop/dapps/defi/tokens#nft)
 
 Jettons（代币）：
+
 - [TEP-74：Jettons标准](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md)
 - [分布式代币概览](https://telegra.ph/Scalable-DeFi-in-TON-03-30)
 - [可替代代币文档（Jettons）](/develop/dapps/defi/tokens#jettons)
 
 其他标准：
+
 - https://github.com/ton-blockchain/TEPs
 
 ### 是否有用 Jettons（代币）和 NFT 解析事件的示例？
 
-在TON上，所有数据都以boc消息的形式传输。这意味着在交易中使用NFT并不是特殊事件。相反，它是发送给或从（NFT或钱包）合约接收的常规消息，就像涉及标准钱包的交易一样。
+On TON, all data is transmitted as boc-messages. This means that using NFTs in transactions is not an exceptional event. 在TON上，所有数据都以boc消息的形式传输。这意味着在交易中使用NFT并不是特殊事件。相反，它是发送给或从（NFT或钱包）合约接收的常规消息，就像涉及标准钱包的交易一样。
 
 然而，某些索引的API允许您查看发送到或从合约发送的所有消息，并根据您的特定需求对它们进行过滤。
 
@@ -154,6 +165,7 @@ Jettons（代币）：
 ### 是否可以拥有类似于 ENS 的命名账户
 
 是的，请使用TON DNS：
+
 - [TON DNS和域名](/participate/web3/dns)
 
 ### 如何区分普通账户和智能合约？
@@ -166,13 +178,14 @@ Jettons（代币）：
 
 ### 是否有特殊账户（例如，由网络拥有的账户）与其他账户有不同的规则或方法？
 
-TON内有一个特殊的主链叫做Masterchain。它由网络范围内的合约组成，包括网络配置、与验证者相关的合约等：
+TON内有一个特殊的主链叫做Masterchain。它由网络范围内的合约组成，包括网络配置、与验证者相关的合约等： It consists of network-wide contracts with network configuration, validator-related contracts, etc:
 
 :::info
 在TON区块链概述文章中阅读更多关于masterchain、workchains和shardchains的信息：[Blockchain of Blockchains](/learn/overviews/ton-blockchain)。
 :::
 
 一个很好的例子是治理智能合约，它是masterchain的一部分：
+
 - [治理合约](/develop/smart-contracts/governance)
 
 ## 智能合约
@@ -182,19 +195,20 @@ TON内有一个特殊的主链叫做Masterchain。它由网络范围内的合约
 [TON中的一切都是智能合约](/learn/overviews/addresses#everything-is-a-smart-contract)。
 
 账户地址是从其_初始状态_确定生成的，其中包括_初始代码_和_初始数据_（对于钱包，初始数据包括公钥在内的其他参数）。当任何组件发生变化时，地址相应改变。
+When any component changes, the address changes accordingly.
 
-智能合约可以存在于未初始化状态，意味着其状态在区块链中不可用但合约有非零余额。初始状态本身可以稍后通过内部或外部消息发送到网络，因此可以监控这些来检测合约部署。
+智能合约可以存在于未初始化状态，意味着其状态在区块链中不可用但合约有非零余额。初始状态本身可以稍后通过内部或外部消息发送到网络，因此可以监控这些来检测合约部署。 Initial state itself can be sent to the network later with an internal or external message, so those can be monitored to detect contract deployment.
 
-为了防止消息链在不存在的合约处中断，TON使用了“弹回”功能。在这些文章中了解更多信息：
+为了防止消息链在不存在的合约处中断，TON使用了“弹回”功能。在这些文章中了解更多信息： Read more in these articles:
 
 - [通过TonLib部署钱包](https://ton.org/docs/develop/dapps/asset-processing/#deploying-wallet)
 - [支付查询处理费用并发送响应](https://ton.org/docs/develop/smart-contracts/guidelines/processing)
 
 ### 是否可以将代码重新部署到现有地址，还是必须作为新合约部署？
 
-是的，这是可能的。如果智能合约执行特定指令（`set_code()`），其代码可以被更新并且地址将保持不变。
+Yes, this is possible. 是的，这是可能的。如果智能合约执行特定指令（`set_code()`），其代码可以被更新并且地址将保持不变。
 
-如果合约最初无法执行`set_code()`（通过其代码或来自外部的其他代码的执行），那么它的代码将永远无法更改。没有人能够在同一地址重新部署带有其他代码的合约。
+如果合约最初无法执行`set_code()`（通过其代码或来自外部的其他代码的执行），那么它的代码将永远无法更改。没有人能够在同一地址重新部署带有其他代码的合约。 No one will be able to redeploy contract with other code at the same address.
 
 ### 智能合约可以被删除吗？
 
@@ -202,26 +216,26 @@ TON内有一个特殊的主链叫做Masterchain。它由网络范围内的合约
 
 ### 智能合约地址是否区分大小写？
 
-是的，智能合约地址是区分大小写的，因为它们是使用[base64算法](https://en.wikipedia.org/wiki/Base64)生成的。您可以在[这里](/learn/overviews/addresses)了解更多关于智能合约地址的信息。
+是的，智能合约地址是区分大小写的，因为它们是使用[base64算法](https://en.wikipedia.org/wiki/Base64)生成的。您可以在[这里](/learn/overviews/addresses)了解更多关于智能合约地址的信息。  验证者生产区块。现有区块通过Liteservers可用。Liteservers通过轻客户端访问。在轻客户端之上构建了第三方工具，如钱包、浏览器、dapps等。
 
 ### Ton 虚拟机（TVM）与 EVM 兼容吗？
 
-  TVM与以太坊虚拟机（EVM）不兼容，因为TON采用了完全不同的架构（TON是异步的，而以太坊是同步的）。
+TVM与以太坊虚拟机（EVM）不兼容，因为TON采用了完全不同的架构（TON是异步的，而以太坊是同步的）。
 
-  [了解更多关于异步智能合约](https://telegra.ph/Its-time-to-try-something-new-Asynchronous-smart-contracts-03-25)。
+[了解更多关于异步智能合约](https://telegra.ph/Its-time-to-try-something-new-Asynchronous-smart-contracts-03-25)。
 
 ### 是否可以为 TON 编写 Solidity？
 
-  相关地，TON生态系统不支持在以太坊的Solidity编程语言中开发。
+相关地，TON生态系统不支持在以太坊的Solidity编程语言中开发。
 
-  但如果您在Solidity语法中添加异步消息并能够与数据进行低层级交互，那么您可以使用FunC。FunC具有大多数现代编程语言通用的语法，并专为TON上的开发设计。
-
+但如果您在Solidity语法中添加异步消息并能够与数据进行低层级交互，那么您可以使用FunC。FunC具有大多数现代编程语言通用的语法，并专为TON上的开发设计。 FunC features a syntax that is common to most modern programming languages and is designed specifically for development on TON.
 
 ## 远程过程调用(RPC)
 
 ### 推荐的节点提供商用于数据提取包括：
 
 API类型：
+
 - 了解更多关于不同[API类型](/develop/dapps/apis/)（索引、HTTP和ADNL）
 
 节点提供商合作伙伴：
@@ -229,7 +243,7 @@ API类型：
 - https://toncenter.com/api/v2/
 - [getblock.io](https://getblock.io/)
 - https://www.orbs.com/ton-access/
-- [toncenter/ton-http-api](https://github.com/toncenter/ton-http-api) 
+- [toncenter/ton-http-api](https://github.com/toncenter/ton-http-api)
 - [nownodes.io](https://nownodes.io/nodes)
 - https://dton.io/graphql
 
