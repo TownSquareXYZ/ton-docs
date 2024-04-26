@@ -19,7 +19,7 @@ _例如:_
 
 这一部分是用来解释开始本教程前任何需要预先掌握的知识或需要先完成的教程。如果需要任何的代币—要在这里提及。 Any tokens that are needed—mention them here.
 
-采取错误驱动的方法来编写你的教程。添加常见错误和故障排除步骤。_例如:_
+_例如:_
 
 > 在这个教程中，我们将在测试网上铸造Jetton。在我们继续之前，请确保你的[测试网](/develop/smart-contracts/environment/testnet)钱包有足够的余额。 Before we continue, make sure that your [testnet](/develop/smart-contracts/environment/testnet) wallet has sufficient balance.
 
@@ -82,7 +82,7 @@ _例如:_
 
 - 添加图片或代码块以反映预期的终端输出。
 
-- Take an error-driven approach when writing your tutorial. Add common errors and troubleshooting steps. _例如:_
+- Take an error-driven approach when writing your tutorial. Add common errors and troubleshooting steps. 采取错误驱动的方法来编写你的教程。添加常见错误和故障排除步骤。_例如:_
 
 > **由于执行`node deploy:testnet`命令时出错，无法连接到Testnet。**
 >
