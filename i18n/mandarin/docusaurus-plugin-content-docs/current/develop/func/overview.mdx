@@ -4,6 +4,7 @@ import Button from '@site/src/components/button'
 
 高级语言 FunC 用于在 TON 上编程智能合约。
 
+FunC is a domain-specific, C-like, statically typed language.
 FunC 是一种领域特定的、类 C 语言的、静态类型语言。
 这是一个用 FunC 编写的发送资金的简单示例方法：
 
@@ -30,7 +31,7 @@ FunC 程序被编译成 Fift 汇编代码，生成对应的 [TON 虚拟机](/lea
 
 ### 用 JS 编译
 
-开始开发和编译智能合约最方便快捷的方式是使用 Blueprint 框架。更多信息请参阅 [Blueprint](/develop/smart-contracts/sdk/javascript) 部分。
+开始开发和编译智能合约最方便快捷的方式是使用 Blueprint 框架。更多信息请参阅 [Blueprint](/develop/smart-contracts/sdk/javascript) 部分。 Read more in [Blueprint](/develop/smart-contracts/sdk/javascript) section.
 
 ```bash
 npm create ton@latest
@@ -38,8 +39,9 @@ npm create ton@latest
 
 ### 使用原始二进制文件编译
 
-如果您想在本地使用原生 TON 编译器 FunC，您需要在机器上设置二进制文件。可以从以下位置下载 FunC 编译器二进制文件，适用于 Windows、MacOS（Intel/M1）和 Ubuntu：
-* [环境设置页面](/develop/smart-contracts/environment/installation)
+如果您想在本地使用原生 TON 编译器 FunC，您需要在机器上设置二进制文件。可以从以下位置下载 FunC 编译器二进制文件，适用于 Windows、MacOS（Intel/M1）和 Ubuntu： FunC compiler binaries for Windows, MacOS (Intel/M1), and Ubuntu can be downloaded from:
+
+- [环境设置页面](/develop/smart-contracts/environment/installation)
 
 :::info
 同时，您始终可以从源代码构建二进制文件，如：
@@ -56,7 +58,7 @@ npm create ton@latest
 
 ## 教程
 
-:::tip 新手提示
+:::tip starter tip
 开始使用 FunC 进行开发的最佳起点：[入门介绍](/develop/smart-contracts/)
 :::
 
@@ -70,15 +72,16 @@ npm create ton@latest
   - [🚩 挑战 5：5 分钟内创建与合约交互的 UI](https://github.com/romanovichim/TONQuest5)
   - [🚩 挑战 6：分析 Getgems 市场上的 NFT 销售](https://github.com
 
-/romanovichim/TONQuest6)
-* [Func & Blueprint](https://www.youtube.com/watch?v=7omBDfSqGfA&list=PLtUBO1QNEKwtO_zSyLj-axPzc9O9rkmYa) 由 **@MarcoDaTr0p0je** 提供
-* [Learn FunC in Y Minutes](https://learnxinyminutes.com/docs/func/) 由 **@romanovichim** 提供
-* [TON Hello World：编写您的第一个智能合约的逐步指南](https://ton-community.github.io/tutorials/02-contract/)
-* [TON Hello World：测试您的第一个智能合约的逐步指南](https://ton-community.github.io/tutorials/04-testing/)
-* [10 FunC 课程](https://github.com/romanovichim/TonFunClessons_Eng) 由 **@romanovichim** 提供，使用 blueprint
-* [10 FunC 课程（俄文版）](https://github.com/romanovichim/TonFunClessons_ru) 由 **@romanovichim** 提供，使用 blueprint
-* [FunC 测验](https://t.me/toncontests/60) 由 **Vadim** 提供 —— 自测良机。大约需要 10-15 分钟。问题主要关于 FunС，以及一些关于 TON 的常规问题
-* [FunC 测验（俄文版）](https://t.me/toncontests/58?comment=14888) 由 **Vadim** 提供 —— 俄文版 FunC 测验
+<!---->
+
+- [Func & Blueprint](https://www.youtube.com/watch?v=7omBDfSqGfA&list=PLtUBO1QNEKwtO_zSyLj-axPzc9O9rkmYa) 由 **@MarcoDaTr0p0je** 提供
+- [Learn FunC in Y Minutes](https://learnxinyminutes.com/docs/func/) 由 **@romanovichim** 提供
+- [TON Hello World：编写您的第一个智能合约的逐步指南](https://ton-community.github.io/tutorials/02-contract/)
+- [TON Hello World：测试您的第一个智能合约的逐步指南](https://ton-community.github.io/tutorials/04-testing/)
+- [10 FunC 课程](https://github.com/romanovichim/TonFunClessons_Eng) 由 **@romanovichim** 提供，使用 blueprint
+- [10 FunC 课程（俄文版）](https://github.com/romanovichim/TonFunClessons_ru) 由 **@romanovichim** 提供，使用 blueprint
+- [FunC Quiz](https://t.me/toncontests/60) by **Vadim**—Good for selfcheck. It will take 10–15 minutes. The questions are mainly about FunС with a few general questions about TON
+- [FunC 测验（俄文版）](https://t.me/toncontests/58?comment=14888) 由 **Vadim** 提供 —— 俄文版 FunC 测验
 
 ## 竞赛
 
@@ -88,19 +91,20 @@ npm create ton@latest
 
 #### 竞赛传承
 
-| 竞赛描述                | 任务                                                     | 解决方案                                                              |
-|------------------------|----------------------------------------------------------|---------------------------------------------------------------------|
-| TSC #5（2023年12月）  | [任务](https://github.com/ton-community/tsc5)            |                                                                      |
-| TSC #4（2023年9月）   | [任务](https://github.com/ton-community/tsc4)            | [解决方案](/develop/smart-contracts/examples#ton-smart-challenge-4) |
-| TSC #3（2022年12月）  | [任务](https://github.com/ton-blockchain/func-contest3)  | [解决方案](https://github.com/nns2009/TON-FunC-contest-3)           |
-| TSC #2（2022年7月）   | [任务](https://github.com/ton-blockchain/func-contest2)  | [解决方案](https://github.com/ton-blockchain/func-contest2-solutions) |
-| TSC #1（2022年3月）   | [任务](https://github.com/ton-blockchain/func-contest1)  | [解决方案](https://github.com/ton-blockchain/func-contest1-solutions) |
+| 竞赛描述                 | 任务                                                    | 解决方案                                                              |
+| -------------------- | ----------------------------------------------------- | ----------------------------------------------------------------- |
+| TSC #5（2023年12月）     | [任务](https://github.com/ton-community/tsc5)           |                                                                   |
+| TSC #4（2023年9月）      | [任务](https://github.com/ton-community/tsc4)           | [解决方案](/develop/smart-contracts/examples#ton-smart-challenge-4)   |
+| TSC #3（2022年12月）     | [任务](https://github.com/ton-blockchain/func-contest3) | [解决方案](https://github.com/nns2009/TON-FunC-contest-3)             |
+| TSC #2（2022年7月）      | [任务](https://github.com/ton-blockchain/func-contest2) | [解决方案](https://github.com/ton-blockchain/func-contest2-solutions) |
+| TSC #1（2022年3月）      | [任务](https://github.com/ton-blockchain/func-contest1) | [解决方案](https://github.com/ton-blockchain/func-contest1-solutions) |
 
 ## 智能合约示例
 
 标准的基础智能合约，如钱包、选举器（管理 TON 的验证）、多签钱包等，可作为学习时的参考。
 
-* [智能合约示例](/develop/smart-contracts/examples)
+- [智能合约示例](/develop/smart-contracts/examples)
 
 ## 更新日志
+
 [FunC 更新历史](/develop/func/changelog)。
