@@ -1,51 +1,51 @@
-# TMA 设计准则
+# TMA Design Guidelines
 
 :::info
-从版本 **6.10**开始，Telegram 已更新了 Mini App的色板：已修复了一些旧版本，并且添加了新版本。
+Starting with version **6.10**, Telegram has updated the color palette for Mini Apps: a couple of old ones were fixed, and new ones were added.
 :::
 
-对于上下文，让我们记住更新的历史。
+For context let's remember the history of updates.
 
-变更。
+Changelog.
 
-1. `bg_color` 和 `secondary_bg_color` 已更新。
+1. The `bg_color` and `secondary_bg_color` have been updated.
 
 ![](/img/docs/tma-design-guidelines/tma-design_1.png)
 
-原因是：
+What are the reasons:
 
-• 这些颜色原本打算用于页面背景，而不是UI控制。
+• These colors were originally intended for use on page backgrounds, not UI controls.
 
-• 因此，为了一致起见，已对其进行了更新。
+• Therefore, for consistency, they have been updated.
 
-• 为不同部分和卡片的背景颜色添加了section_bg_颜色
+• To color the backgrounds of different sections and cards, section_bg_color was added.
 
-为了改善应用程序的外观，您应该稍微调整颜色变量。
+To improve the appearance of your applications, you should slightly adjust the use of color variables.
 
-以上是一个明确的例子，它解释了iOS将会发生什么变化。 在 Android 上不应该有任何更改。
+Above is a clear example that explains exactly what will change for iOS. There should be no changes on Android.
 
-新颜色。
-此外，还增加了许多新颜色。 其中大多数在Android上最引人注目。 因此，下面的示例将基于Android显示，但适用于所有平台。
+New colors.
+Also, many new colors were added. Most of them are most noticeable on Android. Therefore, the examples below will be shown based on Android, but are relevant for all platforms.
 
 ![](/img/docs/tma-design-guidelines/tma-design_2.png)
 
-2. 对于微型应用，使用 Telegram header 颜色的能力已经可用。
+2. For Mini Apps, the ability to use Telegram header colors has become available.
 
 ![](/img/docs/tma-design-guidelines/tma-design_3.png)
 
-3. 令牌加权文本颜色已经可用，这对于您的应用程序中的任何加权元素都是有用的。 以前，每个人都使用不太合适的暗色链接。
+3. The token accent_text_color has become available, which is useful for any accent elements in your applications. Previously, everyone used the less suitable dark link_color.
 
 ![](/img/docs/tma-design-guidelines/tma-design_4.png)
 
-4. 对于所有二级单元格标签，现在最好使用 "字幕\_text_color"。 这将允许更多的对比标签，改善您应用程序的访问权限。
+4. For all secondary cell labels, it's now better to use `subtitle_text_color`. This will allow for more contrasting label, improving the accessibility of your applications.
 
 ![](/img/docs/tma-design-guidelines/tma-design_5.png)
 
-5. 对于卡片的部分标题，现在有一个专用令牌：`section_header_text_color` 。
+5. For section headers of cards, there is now a dedicated token: `section_header_text_color`.
 
 ![](/img/docs/tma-design-guidelines/tma-design_6.png)
 
-6. 对于按下将导致破坏性动作的单元格，您现在可以使用 'destructive_text_color' 代替自定义单元格。
+6. For cells whose pressing will lead to a destructive action, you can now use `destructive_text_color` instead of custom ones.
 
 <p align="center">
     <br />
@@ -53,10 +53,10 @@
     <br />
 </p>
 
-7. 出现了一个合理的问题：现在应如何使用“link_color”和“hint_color”？
+7. A reasonable question arises: how should `link_color` and `hint_color` be used now?
 
-我建议将它们用作章节下的提示部分的颜色，以及`secondary_bg_color`等背景的链接颜色。
+I recommend using them as colors for hint sections under the sections, and the link color for such backgrounds as `secondary_bg_color`.
 
-## 另见：
+## See Also
 
-- [原始源](https://telegra.php/Changesin Color-Variables-for-Telegram-Mini-Apps-11-20)
+- [Original Source](https://telegra.ph/Changes-in-Color-Variables-for-Telegram-Mini-Apps-11-20)
