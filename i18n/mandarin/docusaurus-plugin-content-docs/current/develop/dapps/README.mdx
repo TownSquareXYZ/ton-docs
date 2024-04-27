@@ -1,92 +1,92 @@
 import Button from '@site/src/components/button'
 
-# 正在开始
+# Getting Started
 
-在潜入DApp之前，请确保您了解底层区块链原则。 您可能会发现我们的 [开放网络] (/learn/introduction) 和 [Blockchain 的 Blockchain] (/learn/overviews/ton-blockchain) 文章是有用的。
+Before diving into DApps, make sure you understand the underlying blockchain principles. You might find our [The Open Network](/learn/introduction) and [Blockchain of Blockchains](/learn/overviews/ton-blockchain) articles useful.
 
-TON DApps 是没有后端的应用，它与区块链交互。 在大多数情况下，它们与习惯[智能合同](/develop/smart-contracts/)相互作用。 此文档提供了处理TON中现有的标准资产的方法，既可以作为样板，也可以更快地开发DApp。
+TON DApps are applications without backend, which interact with the blockchain. In most cases, they interact with custom [smart contracts](/develop/smart-contracts/); this documentation provides ways to process standard assets available in TON, both as an example and for quicker DApps development.
 
-DApp 一般可以用任何为 TON使用 SDK 的编程语言写入。 实际上，最常见的选择是一个网站，然后是Telegram mici-app。
+DApps generally can be written in any programming language having SDK for TON. Actually, the most frequent choice is a website, followed by Telegram mini-apps.
 
-<Button href="/develop/dapps/telegram-apps/" colorType={'primary'} sizeType={'sm'}>构建一个 TMA</Button>
-<Button href="/develop/dapps/apis/sdk" colorType="secondary" sizeType={'sm'}>选择一个 SDK</Button>
+<Button href="/develop/dapps/telegram-apps/" colorType={'primary'} sizeType={'sm'}>Build a TMA</Button>
+<Button href="/develop/dapps/apis/sdk" colorType="secondary" sizeType={'sm'}>Choose an SDK</Button>
 
 ## TON Course: DApps
 
-[TON Blockchain 课程](https://stepik.org/course/176754/)是TON Blockchain 开发的综合指南。
+The [TON Blockchain Course](https://stepik.org/course/176754/) is a comprehensive guide to TON Blockchain development.
 
-模块5和模块6完全包括DApps的开发。 您将学习如何创建 DApp，如何使用 TON 连接，如何使用 SDK 以及如何使用 blockchain 。
+Module 5 and 6 completely covers DApps development. You'll learn how to create a DApp, how to work with TON Connect, how to use SDKs and how to work with the blockchain.
 
-<Button href="https://stepik.org/course/176754/" colorType={'primary'} sizeType={'sm'}>检查 TON Blockchain 课程</Button>
+<Button href="https://stepik.org/course/176754/" colorType={'primary'} sizeType={'sm'}>Check TON Blockchain Course</Button>
 
-## 基本工具和资源
+## Basic Tools and Resources
 
-这里是您在开发过程中需要的一些关键资源：
+Here are some key resources that you'll need throughout your DApp development journey:
 
-1. [开发者钱包](/participate/wallets/apps)
+1. [Developer Wallets](/participate/wallets/apps)
 2. [Blockchain Explorers](/participate/explorers)
-3. [API 文档](/develop/dapps/apis/)
-4. [不同语言的 SDKs](/develop/dapps/apis/sdk)
-5. [使用测试网](/develop/smart-contracts/environment/testnet)
+3. [API Documentation](/develop/dapps/apis/)
+4. [SDKs for Various Languages](/develop/dapps/apis/sdk)
+5. [Using the Testnet](/develop/smart-contracts/environment/testnet)
 6. [TON Unfreezer](https://unfreezer.ton.org/)
 
-### 资产管理
+### Asset Management
 
-使用资产吗？ 这些指南涵盖基本内容：
+Working with assets? These guides cover the essentials:
 
-- [付款处理](/develop/dapps/asset-processing/)
-- [令牌(Jetton) Processing](/develop/dapps/asset-processing/jettons)
-- [处理NFT](/develop/dapps/asset-processing/nft)
-- [解析元数据](/develop/dapps/asset-processing/metadata)
+- [Payments Processing](/develop/dapps/asset-processing/)
+- [Token (Jetton) Processing](/develop/dapps/asset-processing/jettons)
+- [Handling NFTs](/develop/dapps/asset-processing/nft)
+- [Parsing Metadata](/develop/dapps/asset-processing/metadata)
 
-### Defi 简介
+### Introduction to DeFi
 
-对分散融资感兴趣吗？ 下面是如何处理不同类型的资产：
+Interested in decentralized finance (DeFi)? Here's how to handle different types of assets:
 
-- [Understanding Toncoin](/develop/dapps/fire/coins)
-- [令牌: Jettons & NFTs](/develop/dapps/dif/tokens)
-- [TON Payments](/develop/dapps/违抗/ton-pays)
-- [设置订阅](/develop/dapps/违抗/订阅)
+- [Understanding Toncoin](/develop/dapps/defi/coins)
+- [Tokens: Jettons & NFTs](/develop/dapps/defi/tokens)
+- [TON Payments](/develop/dapps/defi/ton-payments)
+- [Setting up Subscriptions](/develop/dapps/defi/subscriptions)
 
-## 教程和示例
+## Tutorials and Examples
 
-### DeFi 基础知识
+### DeFi Basics
 
-- 创建您的第一个令牌：[记录您的第一个犹太人](/develop/dapps/tutorials/jetton-minter)
-- 步进：[NFT 收藏集的记录](/develop/dapps/tutorials/collection-mining)
+- Create Your First Token: [Mint Your First Jetton](/develop/dapps/tutorials/jetton-minter)
+- Step by Step: [NFT Collection Minting](/develop/dapps/tutorials/collection-minting)
 
-### 特定语言指南
+### Language-Specific Guides
 
 #### JavaScript
 
-- [支付过程](https://github.com/toncenter/exampes)
+- [Payment Process](https://github.com/toncenter/examples)
 - [TON Bridge](https://github.com/ton-blockchain/bridge)
-- [Web Walle](https://github.com/toncenter/ton-wallet)
-- [倾销销售箱](/develop/dapps/tutorials/accept-payments-in-a-telegram-bot-js)
+- [Web Wallet](https://github.com/toncenter/ton-wallet)
+- [Dumpling Sales Bot](/develop/dapps/tutorials/accept-payments-in-a-telegram-bot-js)
 
 #### Python
 
-- [示例项目](https://github.com/psylopunk/pytonlib/tree/main/exampes)
-- [店铺前台](/develop/dapps/tutorials/accept-payments-in-a-telegram-bot)
+- [Example Projects](https://github.com/psylopunk/pytonlib/tree/main/examples)
+- [Storefront Bot](/develop/dapps/tutorials/accept-payments-in-a-telegram-bot)
 
-#### 转至
+#### Go
 
 - [Examples](https://github.com/xssnick/tonutils-go/tree/master/example)
 
-### 高级主题
+### Advanced Topics
 
-- [零知识证明](/develop/dapps/tutorials/simple-zk-onton)
+- [Zero-Knowledge Proofs](/develop/dapps/tutorials/simple-zk-on-ton)
 
-### 钱包示例
+### Wallets Examples
 
-- [桌面标准钱包 (C++ 和 Qt)](https://github.com/ton-blockchain/wallet-desktop)
-- [Android 标准钱包 (JavaScrip)](https://github.com/ton-blockchain/wallet-android)
-- [iOS 标准钱包 (Swift)](https://github.com/ton-blockchain/wallet-ios)
+- [Desktop standard wallet (C++ and Qt)](https://github.com/ton-blockchain/wallet-desktop)
+- [Android standard wallet (Java)](https://github.com/ton-blockchain/wallet-android)
+- [iOS standard wallet (Swift)](https://github.com/ton-blockchain/wallet-ios)
 - [TonLib CLI (C++)](https://github.com/ton-blockchain/ton/blob/master/tonlib/tonlib/tonlib-cli.cpp)
 
-## 👨‍💻 contribution
+## 👨‍💻 Contribution
 
-缺少一些关键材料？ 您可以给自己写一个教程或描述社区的问题。
+Missing some crucial material? You can either write a tutorial yourself or describe the problem for the community.
 
 <Button href="/contribute/participate" colorType="primary" sizeType={'sm'}>Contribute</Button>
   <Button href="https://github.com/ton-community/ton-docs/issues/new?assignees=&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A&template=suggest_tutorial.yaml&title=Suggest+a+tutorial" colorType={'secondary'} sizeType={'sm'}>Suggest a Tutorial</Button>
