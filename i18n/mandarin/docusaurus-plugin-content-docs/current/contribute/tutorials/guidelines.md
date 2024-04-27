@@ -1,137 +1,135 @@
 # 教程样式指南
 
-所以你决定为 TON 文档写一个教程？
+所以您已决定为 TON 文档编写一个教程吗？
 
-We're excited to have you among our contributors! 我们很高兴你成为我们的贡献者之一！请仔细阅读以下指南，以确保您的教程遵循 TON 文档现有内容的样式和质量。
+我们很高兴让你成为我们的贡献者！ 请检查下面的指南，以确保您的教程遵循TON Docs上原有内容的风格和质量。
 
-It is important that you take some time to become familiar with the tutorial structure and how headings should be used. 重要的是，您需要花些时间熟悉教程结构和如何使用标题。在提交自己的教程之前，请阅读我们的一些现有教程，并查看 [以前的拉取请求](https://github.com/ton-community/ton-docs/pulls?q=is%3Apr+is%3Aclosed)。
+重要的是，你需要一些时间才能熟悉教程结构和如何使用标题。 请阅读我们先前存在的一些教程，并在提交自己的教程之前查看[上一个Pull 请求](https://github.com/ton-community/ton-docs/pulls?q=is%3Apr+is%3A已关闭)。
 
-## 流程
+## 进程
 
-:::info 重要
-在你开始写作之前，_请阅读下面的指南_！它们将帮助你确保达到标准化和质量水平，这将使审查过程更加迅速。 They will help you ensure the level of standardization and quality that will make the review process much faster.
+:::info 重要的
+在您开始写入之前，_阅读下面的准则_！ 它们将有助于确保标准化和质量水平，从而使审查过程更快些。
 :::
 
-另外，请参考我们提供的[**示例教程结构**](/contribute/tutorials/sample-tutorial)。
+另外，请务必参考我们提供的 [**示例教程结构**](/contribute/tutorials/sample-tutorial) 。
 
-1. 首先，在 GitHub 上分叉然后克隆 [ton-docs](https://github.com/ton-community/ton-docs/) 的库，并在您的本地代码库中创建一个新分支。
-2. 书写您的教程时，请牢记质量和可读性！可以查看现有教程以明确您的目标。 Have a look at the existing tutorials to see what you should aim for.
-3. 当准备好提交审查时，[发起一个拉取请求](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)。我们将收到通知，并开始审查过程： We will be notified, and the review process will begin:
-   1. **Please make every effort to submit only the final draft of your tutorial**. **请尽一切努力提交您的教程的最终稿**。一些打字错误和语法修正是可以接受的，但如果在我们能够发布教程之前需要进行重大更改，审查和要求您进行必要更改的过程将会花费更多时间。
-4. 审查完您的提交后，并且您完成所有必要的更改后，我们将合并拉取请求并在 TON 文档上发布教程。此后不久，我们将与您联系安排付款！ We'll contact you shortly after this to arrange your payment!
-5. 发布后，记得在社交媒体上**推广**您的教程！[文档维护者](/contribute/maintainers)可以帮助扩大这种推广，只要您与我们合作。 The [documentation maintainers](/contribute/maintainers) can help to amplify this promotion as long as you cooperate with us.
+1. 先在 GitHub 上创建一个新分支，然后克隆一个 [ton-docs](https://github.com/ton-community/ton-docs/) 存储库。
+2. 写下你的教程保持质量和可读性！ 看看现有的教程，看看你应该想要什么。
+3. 当您准备好提交它供审核时，请从您的分支[打开Pull Request](https://docs.github.com/en/pull-requests/collating-with-pull-requests/creating-pull-requests/creating-a-pull-request)。 我们将接到通知，审查进程将开始：
+   1. **请尽一切努力只提交你的教程的最后草稿**。 一些轮胎和语法修复是可以接受的，但如果在我们发布教程之前还需要做出重大修改， 您需要更长的时间来审查并做出必要的更改。
+4. 一旦我们审阅了您的提交并做了所有必要的修改，我们将合并合并合并请求并在Ton文档上发布教程。 在这之后我们将与您联系，以安排您的付款！
+5. 一旦发布，请记得**推广** 您在社交媒体上的教程！ 只要你与我们合作，[文档维护者](/贡献者/维护者)就可以帮助扩大这种宣传。
 
-总而言之，工作流程如下：
+总之，工作流程如下：
 
-1. _**分叉并克隆**_ **`ton-docs`** 代码库
-2. _**编写并润色**_ 您的教程
-3. _**提交拉取请求**_ 进行审查
-4. _**进行其他必要的更改**_
-5. 教程 _**合并并发布**_
-6. _**在社交媒体上推广您的教程**_！
+1. _**Fork 和 Clone**_ 存储库 **`ton-docs`**
+2. _**写入和打字**_ 你的教程
+3. _**提交合并请求**_ 供审核
+4. _**做出任何必要的修改**_
+5. 本教程_**合并并已发布**_
+6. _**在社交媒体上推广你的教程**_ ！
 
-## Context
+## 二. 背景
 
-在 "TON" 前加上 "THE" 的主要问题是，在开发 TON 文档和政策编辑期间，市场营销、供应商和开发人员等多个部门加入了讨论，以大写 "Blockchain"、"Ecosystem" 等词汇与 "TON" 结合使用，以创建一个单一系统、网络和品牌的强大形象。经过长时间的讨论，我们得出结论，为了推出强大的品牌形象，我们应该创建一个词汇和短语表，可以不使用 "THE" 并大写书写。如果可以大写，就不需要冠词。目前有两个这样的词组：TON Blockchain 和 TON Ecosystem。 After lengthy discussions, we concluded that for a strong brand image, we should create a glossary of words and phrases that can be written without "THE" and capitalized. If it can be capitalized, the article is unnecessary. Currently, there are two such word combinations: TON Blockchain and TON Ecosystem.
+在“TON”之前加上“THE”的主要问题是，在制定TON文件和编辑政策时，销售商等各部门， 和开发人员参加讨论，利用诸如“Blockchain”、“生态系统”等词， 与"TON"一起创建单一系统、网络和品牌的强烈图像。 经过长时间的讨论，我们得出的结论是，要树立一种强有力的品牌形象， 我们应该建立一个词语和短语汇编，这些词语和短语可以在没有“THE”和大写的情况下写成。 如果可以资本化，该条是没有必要的。 目前有两个词组合：TON区块链和TON生态系统。
 
-对于其他 TON 模块名称，如 TON Connect、TON SDK、TON Grants等，取决于上下文。我们应用大写规则，但对于冠词规则则较为灵活。如果组件名称单独存在，最好不用冠词。然而，如果它与普通名词结合，如 TON Connect protocol，则需要冠词，因为它指的是实体协议。 We apply the capitalization rule but are flexible with the article rule. If the component name stands alone, it is better without the article. However, if it is combined with a common noun, such as the TON Connect protocol, the article is needed because it refers to the entity protocol.
+对于TON Connect、TON SDK、TON Grants等其他TON 模块名称，它取决于上下文情况。 我们适用资本化规则，但对该条规则持灵活态度。 如果组件名称是单独的，最好是没有文章。 然而，如果它与一个共同的封口相结合，例如TON Connect 协议， 该条是必要的，因为它提到了实体议定书。
 
-至于其他词组，如 "TON + 名词"（例如，"the TON world"、"the TON community" 等），我们不限制使用冠词，因为我们期望能看到这样的一个结合。
+关于其他词组合，如“TON + noun”（如“TON world,”）、“TON community,”等。 我们不限制该条的使用，因为我们自然期望看到该条与修饰品结合在一起。
 
 ## 一般提示
 
-- **Do not copy and paste pre-existing content**. Plagiarism is a serious issue and will not be tolerated. If the tutorial is inspired by some existing content, reference it and link to it. When linking to other tutorials/resources, use TON Docs resources if possible.
-- **在 PR 中包含演示视频或视频内容**，方法是上传到 Google Drive。
-- **必须清楚地解释如何从水龙头获得账户资金**，包括哪个账户能拿到资金，从哪里，以及为什么。不要假设学习者可以自行完成这项任务！ Do not assume learners can accomplish this task on their own!
-- **显示示例输出**，以终端片段或屏幕截图的形式，以帮助学习者了解预期效果。记得要修剪长输出。 Trim long outputs.
-- **采取错误驱动的方法**，故意遇到错误，教学习者如何调试。例如，如果您需要注资一个账户才能部署合约，请先尝试在不资助的情况下部署，观察返回的错误，然后修复错误（通过注资账户）并再次尝试。 For example, if you need to fund an account to be able to deploy a contract, first try and deploy without funding, observe the error that is returned, then fix the error (by funding the account) and try again.
-- **添加潜在的错误和故障排除**。当然，教程不应列出所有可能的错误，但应努力捕捉重要的或最常见的错误。
-- **使用 React 或 Vue** 进行客户端开发。
-- **在提交 PR 之前，首先自行运行代码**，以避免其他明显的错误，并确保其按预期工作。
-- **避免在教程之间包含对不同来源的外部/交叉链接**。如果您的教程较长，我们可以讨论如何将其变成更长的课程或路径。 If your tutorial is longer, we can discuss how to turn it into a longer course or Pathway.
-- **Provide** **pictures or screenshots** to illustrate the complicated processes where needed.
-- 将您的图片上传到 learn-tutorials 库的 `static` 目录——**不要** 使用外部网站的热链接，因为这可能导致图片损坏。
-- **图片链接必须以 markdown 格式呈现**，您 **只能** 使用库中 `static` 目录的原始 GitHub URL：`![您图片的名称](https://raw.githubusercontent.com/ton-community/ton-docs/main/static/img/tutorials/<您图片的文件名>.png?raw=true)`
-  - 记住在 URL 的末尾添加 `?raw=true`。
+- **不要复制并粘贴原有内容**。 掠夺主义是一个严重的问题，是不能容忍的。 如果本教程受一些现有内容的启发，请参考并链接到它。 当链接到其他教程/资源时，尽可能使用 TON Docs 资源。
+- **通过上传到Google Drive，在PR 中包含任何走访视频或视频内容** 。
+- **必须明确解释来源于动物的账户供资**，包括哪个账户正在从何处和为什么得到供资。 不要让学生自己完成这个任务！
+- **以终端片段或屏幕截图的形式显示示例输出** 以帮助学员了解预期的内容。 修剪长输出。
+- **采取错误驱动的方法** 你故意变成错误，教导学习者如何调试它们。 例如，如果您需要为一个帐户提供资金才能部署合同，请先尝试在没有资金的情况下进行部署。 观察返回的错误，然后修正错误(通过为帐户提供资金)，然后再试一次。
+- \*\*添加潜在的错误和故障排除。 \* 当然，教程不应列出每一个可能的错误，但它应该努力抓住重要或最常见的错误。
+- **在客户端使用React或Vue** 。
+- **在进行PR之前，你自己先运行代码** 以避免任何明显的错误并确保它能够正常工作。
+- **避免包括教程间不同来源的外部/交叉链接**。 如果你的教程更长，我们可以讨论如何将它变成更长的课程或路径。
+- **Provide** **图片或屏幕截图** 以说明需要时的复杂过程。
+- 将您的图像上传到学习教程存储库的`static`目录——**不要** 使用到外部站点的热链接。 因为这可能导致图像损坏。
+- **Image links must** **be in markdown format** and you must **ONLY** use the raw GitHub URL of the static directory in the repository: `![name of your image](https://raw.githubusercontent.com/ton-community/ton-docs/main/static/img/tutorials/<your image filename>.png?raw=true)`
+  - 记住，在URL末尾添加 `?raw=true` 。
 
 ## 如何构建您的教程
 
 :::info 示例教程结构
-您可以随时查看[示例教程结构](/contribute/tutorials/sample-tutorial)进行了解。
+请随时查看[示例教程结构](/contribute/tutorials/sample-tutorial) 以查看。
 :::
 
-- The **Title** should be direct and clear, summarizing the tutorial's goal. Do not add the tutorial title as a heading inside the document; instead, use the markdown document filename.
-  - _例如_：如果您的教程标题为"_Step by step guide for writing your first smart contract in FunC_"，文件名应为：\
+- **标题** 应该是直接和明确的，总结教程的目标。 不要在文档中添加教程标题作为标题；相反使用Markdown文档名。
+  - _For example_: If your tutorial was titled "_Step by step guide for writing your first smart contract in FunC_," the filename should be:\
     `step-by-step-guide-for-writing-your-first-smart-contract-in-func.md`
-- 包含一个**简介**部分，用来解释_为什么_这个教程很重要，以及教程的背景是什么。不要假设这是显而易见的。 Don't assume that it is obvious.
-- 包含一个**必要条件**部分，用来解释任何要求_预先掌握的知识_或需要首先完成的其他现有教程，其他所需的代币等。
-- 包含一个**要求**部分，用来解释在开始教程之前必须安装的任何_技术程序_，以及教程不会涵盖的内容，如 TON 钱包扩展、Node.js 等。不要列出教程中将安装的包。 Do not list packages that will be installed during the tutorial.
-- 使用**子标题**（H2: ##）来分构教程正文。使用子标题时要记住目录，并尽量保持重点。 Keep the Table of Contents in mind when using subheadings, and try to keep them on point.
-  - 如果子标题下的内容很短（例如，只有一个段落和一个代码块），考虑使用加粗文本而不是子标题。
-- 包含一个**结论**部分，总结所学内容，强化关键点，同时也为学习者完成教程表示祝贺。
-- （_**可选**_）包含一个**接下来**部分，指向后续教程或其他资源（项目、文章等）。
-- （_**可选**_）在最后包含一个**关于作者**部分。您的简介应包括您的 GitHub 个人资料链接（将包含您的姓名、网站等）和您的 Telegram 个人资料链接（以便用户可以联系/标记您，从而获得帮助和提问题）。 Your bio should include a link to your GitHub profile (which will have your name, website, etc.) and a link to your Telegram profile (so that users can contact/tag you for help and questions).
-- 如果您在编写此教程时参考了其他文档、GitHub 库或其他教程，**必须** 存在一个**参考资料**部分。可实现的话，就通过添加他们的名称和文档链接来致谢（如果不是数字文档，请包括 ISBN 或其他参考方式）。 Credit sources by adding their name and a link to the document when possible (if it is not a digital document, include an ISBN or other means of reference).
+- 包含一个**导言**章节解释_为什么_本教程重要以及教程上的内容。 不要假定这是显而易见的。
+- 包含一个 **前提条件** 部分解释所需的任何_先前知识_ 或任何需要先完成的现有教程、所需的任何令牌等。
+- 包含一个 **Requirements** 部分解释任何_必须安装的技术_**优先**开始本教程，教程将不包括， 例如TON钱包扩展，节点。 s等 不要列出将在教程中安装的软件包。
+- 使用 **subheadings** (H2: ##) 来打破您在教程正文中的解释。 在使用子标题时牢记内容表，并试图使它们保持不变。
+  - 如果小标题下面的内容较短(例如) 只有一个段落和一个代码块，考虑使用黑体字，而不是一个小标题。
+- 包含**结论**部分总结了学到的东西，强化了要点，并祝贺学员完成了教程。
+- (_**可选**_) 包括一个**下一节**指向良好的后续教程或其他资源(项目、文章等)。
+- (_**可选**_) 包括**关于The** **作者** 部分。 您的 bio 应该包含一个链接到您的 GitHub 资料 (它将包含您的姓名、网站等) 和一个链接到您的 Telegram 配置文件 (以便使用者可以联系/标记您寻求帮助和问题).
+- 如果您从其它文档、GitHub repos、或其它教程获得任何帮助，**参考** 部分**必须** 存在。 可能时添加信用来源名称和文档链接(如果不是数字文档) 其中包括一个国际生物多样性网络或其他参考资料)。
 
-## 样式指南
+## Style Guide
 
-- **写作措辞 -** 教程由社区贡献者为他们的同行撰写。
-  - Given this, we recommend creating a tone of inclusion and interaction throughout the tutorial. 鉴于此，我们建议在整个教程中创造一种包容和互动的语调。使用“我们”、“我们的”这样的词语。
-    - _例如_："我们已经成功部署了我们的合约。"
-  - 提供直接指导时，可以自由使用“你”、“你的”等。
-    - _例如_："_你的文件应该看起来像这样：_"
+- **写音频-** 教程由社区贡献者为他们的同伴编写。
+  - 有鉴于此，我们建议在整个教程中创建一个包容和互动的音调。 使用“我们”、“我们”、“我们”等词语。
+    - _例如，"我们已成功地部署了我们的合约。"
+  - 在提供直接指示时，请随时使用“你”、“你的”等。
+    - _示例：“_你的文件看起来像这样：_”。
 
-- **Use Markdown properly** throughout your tutorial. **在您的教程中正确使用 Markdown**。参考 [GitHub 的 markdown 指南](https://guides.github.com/features/mastering-markdown/) 以及 [示例教程结构](/contribute/tutorials/sample-tutorial)。
+- **在整个教程中正确使用 Markdown** 。 参考[GitHub的Markdown guide](https://guides.github.com/features/mastering-markdown/) 以及[示例教程结构](/contribute/tutorials/sample-tutororial).
 
-- **不要使用预格式化文本进行强调**，_例如_：
-  - ❌ "TON 计数器 `智能合约` 名为 `counter.fc`" 是不正确的。
-  - ✅ "TON 计数器 **智能合约** 名为 `counter.fc`" 是正确的。
+- **不要使用预定格式的文本来强调**，_例如_：
+  - ❌ "TON count `smart contract" name `country. fc\`" 是不正确的。
+  - :check_mark_buton: "TON count **smark contract** name `country. fc`" 是正确的。
 
-- **不要在节标题中使用任何 markdown 格式**，_例如_：
-  - ❌ # **简介** 是不正确的。
-  - ✅ # 简介 是正确的。
+- **不要在章节标题中使用任何标记格式**，_例如_：
+  - ❌ # **Introduction** 不正确。
+  - :check_mark_buton: # 导言正确。
 
-- **解释你的代码！** 不要只让学习者盲目地复制和粘贴。
+- **解释你的代码！** 不要仅仅要求学生们盲目复制和粘贴。
   - 函数名称、变量和常量 **必须** 在整个文档中保持一致。
-  - 使用代码块开头的注释来显示代码所在的路径和文件名。_例如_： _For example_:
+  - 在代码块开头使用注释来显示代码存在的路径和文件名。 _例如_：
 
     ```jsx
     // test-application/src/filename.jsx
 
-    import { useEffect, useState } from 'react';
+    从 'react'导入 { useEffect, useState } ;
 
     ...
     ```
 
 - **选择合适的语言** 用于代码块语法高亮！
-  - 所有代码块 _必须_ 有语法高亮。如果您不确定要应用哪种类型的语法高亮，请使用 **`text**。 Use **`text** if you are not sure what kind of syntax highlighting to apply.
+  - 所有代码 _必须_ 都有语法高亮。 如果你不知道要应用哪种语法高亮，请使用 **\`\`\`text** 。
 
-- **不要将代码块语法用于预格式化文本**，_例如_：
-  - ❌ \`filename.jsx\` 是不正确的。
-  - ✅ \`filename.jsx\` 是正确的。
+- **不要对预定格式文本使用代码块语法，** 例如\*：
+  - ❌ \\`\`\`filename.jsx\\`\`\`\` 不正确。
+  - :check_mark_buton: \`filename.jsx\` 是正确的。
 
-- **您的代码块应该有较好的注释**。注释应该简短（通常是两到三行）且有效。如果您需要更多空间来解释一段代码，请在代码块外进行。 Comments should be short (usually two or three lines at a time) and effective. **提供图片或截图** 来说明复杂过程，如有需要。
+- **你的代码块应该得到很好的评论**。 评论应当简短(通常每次两行或三行)，并且有效。 如果你需要更多的空间来解释一种代码，请在代码块之外执行它。
 
-- **记得在所有代码块前后留一个空行**。\
-  _例如_：\
-  _For example_:
+- **记住，在所有代码块之前和之后留下一个空白行**。\
+  _例如_：
 
 ```jsx
   
 // test-application/src/filename.jsx  
   
-import { useEffect, useState } from 'react';
+导入 { useEffect, useState } 从 'React';
   
 ```
 
-- **使用 linter 和 prettifier** 在将代码粘贴到代码块之前。对于 JavaScript/React，我们推荐使用 `eslint`。对于代码格式化，请使用 `prettier`。 We recommend `eslint` for JavaScript/React. Use `prettier` for code formatting.
-- **避免过度使用项目符号**、编号列表或复杂的文本格式。使用 **粗体** 或 _斜体_ 强调是允许的，但应保持最少。 The use of **bold** or _italic_ emphasis is allowed but should be kept to a minimum.
+- **在将你的代码粘贴到代码块中之前使用 linter 和 prettifier** 。 我们推荐JavaScript/React使用 `eslint` 。 使用 "pretier" 进行代码格式化。
+- **避免过度使用子点**，编号列表或复杂的文本格式。 允许使用 **bold** 或 _italic_ 强调但应保持在最低限度。
 
-# **应用设置**
+# **App 設定**
 
-- Web3 项目通常会包含几个现有的代码库。编写教程时，请考虑到这一点。在可能的情况下，提供一个 GitHub 库作为学习者入门的起点。 Be sure to account for this when writing your tutorial. Where possible, provide a GitHub repository as a starting point to make it easier for learners to get started.
-- 如果您_不_使用 GitHub 库来包含教程中使用的代码，请记得向读者解释如何创建文件夹以保持良好的代码组织。
-  _例如_：`mkdir example && cd example`
-  _For example_: `mkdir example && cd example`
-- 如果使用 `npm init` 来初始化项目目录，请解释提示或使用 `-y` 标志。
-- 如果使用 `npm install`，请采用 `-save` 标志。
+- Web3项目通常包括几个现有的代码库。 在编写教程时一定要说明这一点。 尽可能提供一个 GitHub 仓库作为起点，让学习者更容易开始学习。
+- 如果您使用 GitHub repo 来包含您教程中使用的代码，_不_， 记得向读者解释如何创建一个文件夹来保持代码组织。
+  _示例_: `mkdir 示例 && cd 示例`
+- 如果您使用 `npm init` 来初始化项目目录，解释提示或使用 `-y` 标记。
+- 如果您使用 `npm install` ，请使用 `-save` 标记。
