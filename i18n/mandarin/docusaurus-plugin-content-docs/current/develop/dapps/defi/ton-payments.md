@@ -1,39 +1,39 @@
-# TON付款
+# TON Payments
 
-TON 付款是小额支付渠道的平台。
+TON Payments is the platform for micropayment channels.
 
-它允许即时支付，无需将所有交易提交到区块链，支付相关的交易费 (e)。 .等候五秒钟，直到包含有关交易的
-方块得到确认。
+It allows instant payments without the need to commit all transactions to the blockchain, pay the associated transaction fees (e.g., for the gas consumed), and wait five seconds until the block
+containing the transactions in question is confirmed.
 
-由于这种即时支付的总费用如此之低，它们可以用于游戏、API和脱链应用中的微额支付。 [见例子](/develop/dapps/违抗/ton-payments#examps)。
+Because the overall expense of such instant payments is so minimal, they can be used for micropayments in games, APIs, and off-chain apps. [See examples](/develop/dapps/defi/ton-payments#examples).
 
-- [TON付款](https://blog.ton.org/ton-pays)
+- [Payments on TON](https://blog.ton.org/ton-payments)
 
-## 支付频道
+## Payment channels
 
-### 智能合同
+### Smart contracts
 
-- [ton-blockchain/pay-channels](https://github.com/ton-blockchain/pay-channels)
+- [ton-blockchain/payment-channels](https://github.com/ton-blockchain/payment-channels)
 
 ### SDK
 
-要使用付款通道，您不需要深入了解加密技术。
+To use payment channels, you don’t need deep knowledge of cryptography.
 
-您可以使用准备的 SDK：
+You can use prepared SDKs:
 
-- [toncenter/tonweb](https://github.com/toncenter/tonweb) JavaScript SDK
-- [toncenter/pay-channels-example](https://github.com/toncenter/payment-channels-example)-如何使用带有tonweb的付款频道。
+- [toncenter/tonweb](https://github.com/toncenter/tonweb)  JavaScript SDK
+- [toncenter/payment-channels-example](https://github.com/toncenter/payment-channels-example)—how to use a payments channel with tonweb.
 
-### 示例：
+### Examples
 
-查找在[Hack-a-TON #1](https://ton.org/hack-a-ton-1) 中使用付款渠道的例子：
+Find examples of using payment channels in the [Hack-a-TON #1](https://ton.org/hack-a-ton-1) winners:
 
-- [grejwood/Hack-a-TON](https://github.com/Grejwood/Hack-a-TON)-OnlyTONs付款项目([website](https://main.d3puvu1kvbh8ti.amplifyapp.com/), [video](https://www.youtube.com/watch?v=38JpX1vRNTk))
-- [nns2009/Hack-a-TON-1_Tonario](https://github.com/nns2009/Hack-a-TON-1_Tonario)-仅支付项目([website](https://onlygrams.io/), [video](https://www.youtube.com/watch?v=gm5-FPWn1XM))
-- [sevezing/hack-a-ton](https://github.com/sevezing/hack-a-ton)-Pay-per Request API 使用于TON ([video](https://www.youtube.com/watch?v=7lAnbyJdpOA\&feature=youtu.be))
-- [illright/diamonds](https://github.com/illright/diamonds)__pay-per Minute learning platform ([website](https://diamonds-ton.vercel.app/), [video](https://www.youtube.com/watch?v=g9wmdOjAv1s))
+- [grejwood/Hack-a-TON](https://github.com/Grejwood/Hack-a-TON)—OnlyTONs payments project ([website](https://main.d3puvu1kvbh8ti.amplifyapp.com/), [video](https://www.youtube.com/watch?v=38JpX1vRNTk))
+- [nns2009/Hack-a-TON-1_Tonario](https://github.com/nns2009/Hack-a-TON-1_Tonario)—OnlyGrams payments project ([website](https://onlygrams.io/), [video](https://www.youtube.com/watch?v=gm5-FPWn1XM))
+- [sevenzing/hack-a-ton](https://github.com/sevenzing/hack-a-ton)—Pay-per-Request API usage in TON ([video](https://www.youtube.com/watch?v=7lAnbyJdpOA\&feature=youtu.be))
+- [illright/diamonds](https://github.com/illright/diamonds)—Pay-per-Minute learning platform ([website](https://diamonds-ton.vercel.app/), [video](https://www.youtube.com/watch?v=g9wmdOjAv1s))
 
-## 另见：
+## See Also
 
-- [付款处理](/develop/dapps/asset-processing)
-- [TON 连接](/develop/dapps/ton-connect)
+- [Payments Processing](/develop/dapps/asset-processing)
+- [TON Connect](/develop/dapps/ton-connect)
