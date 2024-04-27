@@ -1,14 +1,14 @@
-# 小贴士和技巧
+# 小贴士和砖块
 
-在本页中，您将找到一系列与TMA中常见问题相关的常见问题解答。
+在这个页面上，你会找到一个常见问题的列表，这些问题与TMA中的问题有关。
 
-### 如何解决 TMA 中的缓存溢出问题？
+### 如何解决TMA中的缓存溢出问题？
 
 :::tip
-只有重新安装Telegram应用程序可能会有所帮助。
+只有重新安装 Telegram 应用程序才会有帮助。
 :::
 
-### 有关 HTML 文件的缓存头部是否有任何推荐？
+### 是否有关于缓存HTML文件头的建议？
 
 :::tip
 It's preferable to switch off cache in the HTML. To ensure your cache switched off, specify headers in your request according the following:
@@ -21,15 +21,15 @@ Expires: 0
 
 :::
 
-### 推荐用于 TMA 开发的 IDE 是什么？
+### 发展信息交流中心建议采取哪些措施促进发展？
 
-在Google Chrome中进行开发过程更加方便，因为有熟悉的开发工具。
+由于熟悉的开发工具，谷歌Chrome的开发进程更加方便。
 
-You can retrieve the launch parameters of the mini-app and open this link in Chrome. 您可以检索小程序的启动参数并在Chrome中打开此链接。在我们的案例中，最简单的方法是从Telegram的Web版本检索启动参数：<https://web.telegram.org/>
+您可以检索微型应用程序的启动参数，并在 Chrome 中打开此链接。 就我们而言，最简单的方法是从 web 版本的 Telegram 获取启动参数：<https://web.telegram.org/>
 
 ### 关闭行为
 
-在许多Web应用程序中，用户在向上滚动时可能会无意中关闭应用。如果他们将应用程序的一个部分拖得太远，无意中触发了应用关闭，就会发生这种情况。 This can happen if they drag a section of the application too far, inadvertently triggering the app to close.
+在许多网页应用程序中，用户可能会在滚动到顶部时意外关闭应用程序。 如果他们拖动应用程序的部分太远，无意中触发应用程序关闭，就会发生这种情况。
 
 <p align="center">
     <br />
@@ -37,13 +37,13 @@ You can retrieve the launch parameters of the mini-app and open this link in Chr
     <br />
 </p>
 
-为了防止这种意外关闭，启用TMA中的`closing_behavior`。这个方法会添加一个对话框，用户可以批准或拒绝关闭Web应用。 This method will add a dialog where the user can either approve or decline the closing of the Web App.
+为了防止这种意外关闭，启用 "closing_behavior" 在 TMA 中。 此方法将添加一个对话框，用户可以在哪里批准或拒绝关闭Web 应用程序。
 
 ```typescript
-window.Telegram.WebApp.enableClosingConfirmation()
+window Telegram.WebApp.enable. 关闭()
 ```
 
-## 如何为 TMA 中特定语言指定描述？
+## 如何在 TMA中为特定语言指定描述？
 
 :::tip
 You can configure your description with following methods:
