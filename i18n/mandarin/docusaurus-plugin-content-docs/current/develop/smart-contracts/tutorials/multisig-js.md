@@ -1,34 +1,34 @@
 ---
-description: At the end of this guide you will deploy multisig wallet and send some transactions using ton library
+description: 在本指南结束时，您将部署多重签名钱包并使用ton库发送一些交易
 ---
 
-# Interact with multisig wallets using TypeScript
+# 使用 TypeScript 与多重签名钱包交互
 
-## Introduction
+## 引言
 
-If you don't know what is multisig wallet in TON, you can check it out [here](/develop/smart-contracts/tutorials/multisig)
+如果您不知道TON中的多重签名钱包是什么，可以在[此处](/develop/smart-contracts/tutorials/multisig)查看。
 
-Following this steps you will learn how to:
+按照以下步骤操作，您将学习如何：
 
-- Create and deploy multisig wallet
-- Create, sign and send transactions with that wallet
+- 创建并部署多重签名钱包
+- 使用该钱包创建、签名并发送交易
 
-We will create a TypeScript project and use [ton](https://www.npmjs.com/package/ton) library, so you need to install it first. We will also use the [ton-access](https://www.orbs.com/ton-access/):
+我们将创建一个TypeScript项目，并使用[ton](https://www.npmjs.com/package/ton)库，因此您需要首先安装它。我们还将使用[ton-access](https://www.orbs.com/ton-access/)：
 
 ```bash
 yarn add typescript @types/node ton ton-crypto ton-core buffer @orbs-network/ton-access
 yarn tsc --init -t es2022
 ```
 
-The full code of this guide is available here:
+本指南的完整代码可在此处查看：
 
 - https://github.com/Gusarich/multisig-ts-example
 
-## Create and deploy multisig wallet
+## 创建并部署多重签名钱包
 
-Let's create a source file, `main.ts` for example. Open it in your favorite code editor and follow this guide!
+首先创建一个源文件，例如`main.ts`。在您喜欢的代码编辑器中打开它，然后按照本指南操作！
 
-At first we need to import all important stuff
+首先我们需要导入所有重要的东西
 
 ```js
 import { Address, beginCell, MessageRelaxed, toNano, TonClient, WalletContractV4, MultisigWallet, MultisigOrder, MultisigOrderBuilder } from "ton";
@@ -36,20 +36,20 @@ import { KeyPair, mnemonicToPrivateKey } from 'ton-crypto';
 import { getHttpEndpoint } from "@orbs-network/ton-access";
 ```
 
-Create `TonClient` instance:
+创建`TonClient`实例：
 
 ```js
 const endpoint = await getHttpEndpoint();
 const client = new TonClient({ endpoint });
 ```
 
-Than we need keypairs to work with:
+然后我们需要一些密钥对来操作：
 
 ```js
 let keyPairs: KeyPair[] = [];
 
 let mnemonics[] = [
-    ['orbit', 'feature', ...], //this should be the seed phrase of 24 words
+    ['orbit', 'feature', ...], //这应该是24个单词的种子短语
     ['sing', 'pattern',  ...],
     ['piece', 'deputy', ...],
     ['toss', 'shadow',  ...],
@@ -59,46 +59,46 @@ let mnemonics[] = [
 for (let i = 0; i < mnemonics.length; i++) keyPairs[i] = await mnemonicToPrivateKey(mnemonics[i]);
 ```
 
-There are two ways to create `MultisigWallet` object:
+创建`MultisigWallet`对象有两种方式：
 
-- Import existing one from address
+- 从地址导入现有钱包
 
 ```js
 let addr: Address = Address.parse('EQADBXugwmn4YvWsQizHdWGgfCTN_s3qFP0Ae0pzkU-jwzoE');
 let mw: MultisigWallet = await MultisigWallet.fromAddress(addr, { client });
 ```
 
-- Create a new one
+- 创建一个新的
 
 ```js
 let mw: MultisigWallet = new MultisigWallet([keyPairs[0].publicKey, keyPairs[1].publicKey], 0, 0, 1, { client });
 ```
 
-There are also two ways to deploy it
+部署它也有两种方式
 
-- Via internal message
+- 通过内部消息
 
 ```js
 let wallet: WalletContractV4 = WalletContractV4.create({ workchain: 0, publicKey: keyPairs[4].publicKey });
-//wallet should be active and have some balance
+//钱包应该处于活动状态并且有一些余额
 await mw.deployInternal(wallet.sender(client.provider(wallet.address, null), keyPairs[4].secretKey), toNano('0.05'));
 ```
 
-- Via external message
+- 通过外部消息
 
 ```js
 await mw.deployExternal();
 ```
 
-## Create, sign and send an order
+## 创建、签名并发送订单
 
-We need an `MultisigOrderBuilder` object to create a new order.
+我们需要一个`MultisigOrderBuilder`对象来创建新订单。
 
 ```js
 let order1: MultisigOrderBuilder = new MultisigOrderBuilder(0);
 ```
 
-Then we can add some messages to it.
+然后我们可以向它添加一些消息。
 
 ```js
 let msg: MessageRelaxed = {
@@ -108,7 +108,9 @@ let msg: MessageRelaxed = {
         bounced: false,
         createdAt: 0,
         createdLt: 0n,
-        dest: Address.parse('EQArzP5prfRJtDM5WrMNWyr9yUTAi0c9o6PfR4hkWy9UQXHx'),
+        dest: Address.parse('EQArzP5prfRJtDM5WrMNWyr9yUTAi0c9o6PfR4hkWy9UQXH
+
+x'),
         forwardFee: 0n,
         ihrDisabled: true,
         ihrFee: 0n,
@@ -120,14 +122,14 @@ let msg: MessageRelaxed = {
 order1.addMessage(msg, 3);
 ```
 
-After you finish with adding messages, transform the `MultisigOrderBuilder` to `MultisigOrder` by calling `build()` method.
+添加消息后，通过调用`build()`方法将`MultisigOrderBuilder`转换为`MultisigOrder`。
 
 ```js
 let order1b: MultisigOrder = order1.build();
 order1b.sign(0, keyPairs[0].secretKey);
 ```
 
-Now let's create another order, add a message to it, sign it with some other set of keys and union the signatures of these orders.
+现在让我们创建另一个订单，向其中添加消息，使用另一组密钥对其进行签名，并合并这些订单的签名。
 
 ```js
 let order2: MultisigOrderBuilder = new MultisigOrderBuilder(0);
@@ -135,63 +137,63 @@ order2.addMessage(msg, 3);
 let order2b = order2.build();
 order2b.sign(1, keyPairs[1].secretKey);
 
-order1b.unionSignatures(order2b); //Now order1b have also have all signatures from order2b
+order1b.unionSignatures(order2b); //现在order1b也有order2b的所有签名
 ```
 
-And finally, send the signed order:
+最后，发送已签名的订单：
 
 ```js
 await mw.sendOrder(order1b, keyPairs[0].secretKey);
 ```
 
-Now build the project
+现在构建项目
 
 ```bash
 yarn tsc
 ```
 
-And run the compiled file
+运行编译后的文件
 
 ```bash
 node main.js
 ```
 
-If it does not throw any errors, you made everything right! Now check if your transaction succeed with any explorer or wallet.
+如果没有抛出任何错误，您就做对了！现在使用任何浏览器或钱包检查您的交易是否成功。
 
-## Other methods and properties
+## 其他方法和属性
 
-You can easily clear messages from `MultisigOrderBuilder` objects:
+您可以轻松地从`MultisigOrderBuilder`对象中清除消息：
 
 ```js
 order2.clearMessages();
 ```
 
-You also can clear signatures from `MultisigOrder` objects:
+您还可以从`MultisigOrder`对象中清除签名：
 
 ```js
 order2b.clearSignatures();
 ```
 
-And of course you can get public properties from `MultisigWallet`, `MultisigOrderBuilder` and `MultisigOrder` objects
+当然，您还可以从`MultisigWallet`、`MultisigOrderBuilder`和`MultisigOrder`对象中获取公共属性
 
-- MultisigWallet:
-  - `owners` - `Dictionary<number, Buffer>` of signatures _ownerId => signature_
-  - `workchain` - workchain where the wallet is deployed
-  - `walletId` - wallet id
-  - `k` - number of signatures required to confirm a transaction
-  - `address` - wallet address
-  - `provider` - `ContractProvider` instance
+- MultisigWallet：
+  - `owners` - 签名的`Dictionary<number, Buffer>` _ownerId => signature_
+  - `workchain` - 钱包部署的工作链
+  - `walletId` - 钱包ID
+  - `k` - 确认交易所需的签名数量
+  - `address` - 钱包地址
+  - `provider` - `ContractProvider`实例
 
 - MultisigOrderBuilder
-  - `messages` - array of `MessageWithMode` to be added to the order
-  - `querryId` - golbal time until which the order is valid
+  - `messages` - 要添加到订单的`MessageWithMode`数组
+  - `querryId` - 订单有效的全局时间
 
 - MultisigOrder
-  - `payload` - `Cell` with order payload
-  - `signatures` - `Dictionary<number, Buffer>` of signatures _ownerId => signature_
+  - `payload` - 带有订单有效载荷的`Cell`
+  - `signatures` - 签名的`Dictionary<number, Buffer>` _ownerId => signature_
 
-## References
+## 参考资料
 
-- [Low-level multisig guide](/develop/smart-contracts/tutorials/multisig)
-- [ton.js Documentation](https://ton-community.github.io/ton/)
-- [Multisig contract sources](https://github.com/ton-blockchain/multisig-contract)
+- [低层级多重签名指南](/develop/smart-contracts/tutorials/multisig)
+- [ton.js文档](https://ton-community.github.io/ton/)
+- [多重签名合约源代码](https://github.com/ton-blockchain/multisig-contract)
