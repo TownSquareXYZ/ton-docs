@@ -1,33 +1,33 @@
-# 碎片
+# Shards
 
 :::warning
-页面正在开发中
+Page is under development
 :::
 
-隐藏是TON区块链中允许处理大量交易的机制。 隐藏在TON中的主要想法是，当帐户A向帐户B发出消息，而帐户C则向帐户D发出消息时，这两项操作都可以异步进行。
+Sharding is a mechanism in TON blockchain which allows to process a large number of transactions. The main idea of sharding in TON is that when account A sends a message to account B and account C sends a message to account D both of these operations can be performed asynchronously.
 
-默认情况下，Basechain(`workchain=0`)中只有一个碎片，其碎片号为`0x80000000000000`(或`1000000000000000000000000000000000000000000000000000000000`二进制表示)。 大师级链(“工作链=-1”)总是有一张，只有一张。
+By default in the Basechain (`workchain=0`) there is only one shard with a shard number `0x8000000000000000` (or `1000000000000000000000000000000000000000000000000000000000000000` in binary representation). The masterchain (`workchain=-1`) always has one and only one shard.
 
-## 拆分
+## Splitting
 
-每个仓库负责一些带有一些常见二进制前缀的子帐户。 这个前缀出现在一个64位整数呈现出来并具有以下结构：`<binary prefix>100000...` 。 例如，id为 `1011100000...` 的店铺包含所有开头为 `1011`的账户。
+Each shard is responsible for some subset of accounts with some common binary prefix. This prefix appears in shard id which presented by a 64-bit integer and has the following structure: `<binary prefix>100000...`. For example, shard with id `1011100000...` contains all accounts started with prefix `1011`.
 
-当交易数量在某些碎片增长时，它会分成两块碎片。 获取以下ID的新碎片：`<parent prefix>01000...`和`<parent prefix>11000... 并相应地负责从`<parent prefix>0`和`<parent prefix>1\`开始的账户。 碎片中方块的下划线从上一节加1开始。 拆分碎片后独立运行，可能有不同的下划线。
+When number of transactions in some shard growth, it splits into two shards. New shards obtaining the following ids: `<parent prefix>01000...` and `<parent prefix>11000...` and responsible for accounts starting with `<parent prefix>0` and `<parent prefix>1` correspondingly. The seqnos of blocks in shards goes continuously starting from parent last seqno plus 1. After split shards go independently and may have different seqnos.
 
-Masterchain 块包含关于其头部碎片的信息。 当区块出现在大师链头上，它可以被视为已经完成(不能回滚)。
+Masterchain block contains information about shards in its header. After the block of shard appears in masterchain header it may be considered as finished (it cannot be rolled back).
 
-示例：
+Example:
 
-- Masterchain 块 `seqno=34607821` 有 2 shards: `(0,40000000000000,40485798)` 和 `(0,c0000000000000000000,40485843)` (https://toncenter.com/api/v2/shards?seqno=34607821)。
-- Shard `shard=400000000000` 被分割成`shard=200000000000` 和 `shard=600000000000` 和 `shard=600000000000` ，masterchain 块 `seqno=34607822` 已经有三个碎片：`(0200000000000000000,40485799)` 和 `(06000000000000000,40485799)` 。 请注意，两张新的碎片都有相同的下划界块，但不同的碎片ID(https://toncenter.com/api/v2/shards?seqno=34607822)。
-- 新的碎片独立去，100个大师链块(在masterchain block `seqno=34607921`)后，一个碎片有最后一个块`(0,20000000000000,40485901)`，另一个块有`(0,6000000000000000,40485897)` (https://toncenter.com/api/v2/shards?seqno=34607921)。
+- Masterchain block `seqno=34607821` has 2 shards: `(0,4000000000000000,40485798)` and `(0,c000000000000000,40485843)` (https://toncenter.com/api/v2/shards?seqno=34607821).
+- Shard `shard=4000000000000000` was splitted into `shard=2000000000000000` and `shard=6000000000000000` and masterchain block `seqno=34607822` already has 3 shards: `(0,2000000000000000,40485799)` and `(0,6000000000000000,40485799)`. Note, that both new shards has the same seqnos but different shard IDs (https://toncenter.com/api/v2/shards?seqno=34607822).
+- New shards go independently and after 100 masterchain blocks (in masterchain block `seqno=34607921`) one shard has last block `(0,2000000000000000,40485901)` and another one has `(0,6000000000000000,40485897)` (https://toncenter.com/api/v2/shards?seqno=34607921).
 
-## 合并
+## Merging
 
-当碎片负载下来时，它们可以合并到下面：
+When shards load goes down they can merge back as follow:
 
-- 两张碎片如果有共同的父级，就可以合并它们的碎片号为`<parent prefix>010...` 和 `<父级前缀110...'。 Merged shard will have shard id `<parent prefix>10...`(for example`10010...`+`10110...`=`1010...`). 合并后的第一个块将有 `seqno=max(seqno1, seqno2) + 1\` 。
+- Two shards can merge if they have common parent and, therefore, their shard ids are `<parent prefix>010...` and `<parent prefix110...`. Merged shard will have shard id `<parent prefix>10...` (for example `10010...` + `10110...` = `1010...`). The first block of merged shard will have `seqno=max(seqno1, seqno2) + 1`.
 
-示例：
+Example:
 
-- 在masterchain 块`seqno=34626306`中，五个碎片中的两个，最后一个块`(0,a0000000000000,40492030)`和`(0,e0000000000000,40492216)`并入一个块`(0,c0000000000000,40492217)` (https://toncenter.com/api/v2/shards?seqno=34626306和https://toncenter.com/api/v2/shards?seqno=34626307)。
+- In masterchain block `seqno=34626306` two of five shards with last blocks `(0,a000000000000000,40492030)` and `(0,e000000000000000,40492216)` merged into one with block `(0,c000000000000000,40492217)` (https://toncenter.com/api/v2/shards?seqno=34626306 and https://toncenter.com/api/v2/shards?seqno=34626307).
