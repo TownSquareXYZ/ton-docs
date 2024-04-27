@@ -1,92 +1,92 @@
 import ConceptImage from '@site/src/components/conceptImage'
 
-# 测试小程序
+# 测试迷你应用
 
 ## 在测试环境中使用机器人
 
-要登录测试环境，请使用以下任一方式：
+若要登录到测试环境，使用下列任一方法：
 
-- **iOS：** 在设置图标上点击 10 次 > 账号 > 登录另一个账户 > 测试。
-- **Telegram 桌面版：** 打开 ☰ 设置 > Shift + Alt + 右键点击“添加账号”并选择“测试服务器”。
-- **macOS：** 点击设置图标 10 次以打开调试菜单，⌘ + 点击“添加账号”并通过电话号码登录。
+- **iOS:** 在设置图标>帐户>登录到另一个帐户>测试上点击10次。
+- **Telegram Desktop：** 打开配置设置 > Shift + Alt + 右键单击“添加帐户”并选择'测试服务器。
+- **macOS:** 点击设置图标10次打开调试菜单，按下“添加帐户”并通过电话号码登录。
 
-测试环境与主环境完全分开，因此你需要创建一个**新的用户账号**和一个与 @BotFather 的**新机器人**。
+试验环境与主要环境完全分离。 所以你需要创建一个**新的用户帐户** 和一个**新的机器人** 与 @BotFather。
 
-收到你的机器人令牌后，你可以按照此格式向 Bot API 发送请求：
+在收到你的机器人令牌后，你可以以这种格式向机器人API发送请求：
 
 `https://api.telegram.org/bot<token>/test/METHOD_NAME`
 
-**注意：** 在使用测试环境时，你可以使用未启用 TLS 的 HTTP 链接来测试你的小程序。
+**注意：** 在测试环境中工作时，您可以使用 HTTP 链接来测试您的 Mini 应用程序。
 
-## 小程序的调试模式
+## Mini 应用的调试模式
 
-使用这些工具在你的小程序中找到特定于应用程序的问题：
+使用这些工具在您的 Mini App中找到特定应用的问题：
 
-### 安卓
+### Android
 
-- 在你的设备上[启用 USB-调试](https://developer.chrome.com/docs/devtools/remote-debugging/)。
-- 在 Telegram 设置中，一直滚动到底部，两次按住**版本号**。
+- [启用 USB-调试](https://developer.chrome.com/docs/devtools/remote-debuging/)。
+- 在 Telegram 設置中，向下滚动一遍，按住**版本号**2次。
 - 在调试设置中选择_启用 WebView 调试_。
-- 将手机连接到电脑并在 Chrome 中打开 chrome://inspect/#devices - 当你在手机上启动时，你会在那里看到你的小程序。
+- 将您的手机连接到您的电脑，打开Chrome://查看/#设备——当您在您的手机上启动它时，您将在那里看到您的 Mini 应用程序。
 
-### Telegram 桌面版（Windows 和 Linux）
+### Windows 和 Linux 上的 Telegram 桌面
 
-- 在**Windows**或**Linux**上下载并启动 Telegram 桌面版的[测试版](https://desktop.telegram.org/changelog#beta-version)（尚不支持 macOS 上的 Telegram 桌面版）。
-- 转到 _设置 > 高级 > 实验性设置 > 启用 webview 检查_。
-- 在 WebView 中点击右键并选择 _审查_。
+- 下载并启动 Telegram Desktop 的[测试版](https://desktop.telegram.org/changelog#beta-version) 在 **Windows** 或 **Linux ** 上(尚未在 Telegram Desktop for macOS 上支持)。
+- 转到_设置 > 高级> 实验设置 > 启用 Web 视图检查_。
+- 右键点击WebView 并选择 _Inspect_。
 
 ### Telegram macOS
 
 - 下载并启动 Telegram macOS 的[测试版](https://telegram.org/dl/macos/beta)。
-- 快速点击设置图标 5 次以打开调试菜单并启用“调试小程序”。
+- 快速点击设置图标上的5次打开调试菜单并开启“Debug Mini App”。
 
-在小程序中点击右键并选择 _检查元素_。
+右键点击Mini应用并选择 _检查元素_。
 
-## 使用 Eruda 测试
+## 与Eruda测试
 
-[Eruda](https://github.com/liriliri/eruda) 是一个提供基于 Web 的控制台的工具，用于在移动设备和桌面浏览器上调试和检查网页。以下是在 Telegram 小程序项目中使用 Eruda 的逐步指南。 Here's a step-by-step guide on how to use Eruda in a Telegram Mini Apps project.
+[Eruda](https://github.com/liriri/eruda) 是一个提供网络控制台的工具，用于在移动设备和桌面浏览器上调试和检查网页的工具。 这是一个如何在 Telegram Mini Apps 项目中使用 Eruda 的分步指南。
 
 ![1](/img/docs/telegram-apps/eruda-1.png)
 
-### 步骤 1：包含 Eruda 库
+### 第 1 步：包括Eruda 库
 
-首先，你需要在你的 HTML 文件中包含 Eruda 库。你可以通过 CDN 包含它： You can include it from a CDN:
+首先，您需要将 Eruda 库纳入您的 HTML 文件。 您可以从 CDN 中包含它：
 
 ```html
-<!-- 从 CDN 包含 Eruda （推荐） -->
+<!-- Include Eruda from CDN (Recommended) -->
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 ```
 
-或者你可以在 npm 上获取它。
+或者你可以在 npm 上拿到。
 
 ```bash npm2yarn
 npm install eruda --save
 ```
 
-### 步骤 2：初始化 Eruda
+### 第 2 步：初始化Eruda
 
-Next, you need to initialize Eruda. You typically do this when the web page loads. 接下来，你需要初始化 Eruda。你通常在网页加载时执行此操作。如果你通过 CDN 运行 Eruda。
+接下来，你需要初始化 Eruda。 您通常在网页加载时执行此操作。 如果您从 CDN 运行 Eruda
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 <script>
-  // 初始化 Eruda
+  // Initialize Eruda
   eruda.init();
 </script>
 
 ```
 
-如果你喜欢新的工具和包，则将此脚本添加到你的项目中：
+如果您喜欢现代的配刀和包，将此脚本添加到您的项目：
 
 ```jsx
-import eruda from 'eruda'
+导入 'eruda'
 
 eruda.init()
 ```
 
-### 步骤 3：启动 Eruda
+### 第 3 步：启动Eruda
 
-部署你的小程序，启动它，然后只需按 Eruda 图标即可开始调试！
+部署您的 Mini 应用程序，启动它，只需按 Eruda 图标就可以开始调试！
 
 <ConceptImage style={{maxWidth:'200pt', margin: '10pt 20pt 0 0', display: 'flex-box'}} src="/img/docs/telegram-apps/eruda-2.png" />
 <ConceptImage style={{maxWidth:'200pt', margin: '10pt 20pt', display: 'flex-box'}}  src="/img/docs/telegram-apps/eruda-3.png" />
