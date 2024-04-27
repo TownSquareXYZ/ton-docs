@@ -1,20 +1,20 @@
-# Creating manifest.json
+# 创建 manifest.json
 
-Every app needs to have its manifest to pass meta information to the wallet. Manifest is a JSON file named as `tonconnect-manifest.json` following format:
+每个应用都需要有它的 manifest 文件，用以向钱包传递元信息。Manifest 是一个名为 `tonconnect-manifest.json` 的 JSON 文件，遵循以下格式：
 
 ```json
 {
-    "url": "<app-url>",                        // required
-    "name": "<app-name>",                      // required
-    "iconUrl": "<app-icon-url>",               // required
-    "termsOfUseUrl": "<terms-of-use-url>",     // optional
-    "privacyPolicyUrl": "<privacy-policy-url>" // optional
+    "url": "<app-url>",                        // 必填
+    "name": "<app-name>",                      // 必填
+    "iconUrl": "<app-icon-url>",               // 必填
+    "termsOfUseUrl": "<terms-of-use-url>",     // 可选
+    "privacyPolicyUrl": "<privacy-policy-url>" // 可选
 }
 ```
 
-## Example
+## 示例
 
-You can find an example of the manifest below:
+您可以在下面找到一个 manifest 的示例：
 
 ```json
 {
@@ -24,17 +24,17 @@ You can find an example of the manifest below:
 }
 ```
 
-## Best practices
+## 最佳实践
 
-- Best practice is to place the manifest in the root of your app and repository, e.g. `https://myapp.com/tonconnect-manifest.json`. It allows the wallet to handle your app better and improve the UX connected to your app.
-- Make sure that `manifest.json` file is available to GET by its URL.
+- 最佳实践是将 manifest 放置在您应用和库的根目录，例如 `https://myapp.com/tonconnect-manifest.json`。这样可以让钱包更好地处理您的应用，并提升与您应用相关的用户体验。
+- 确保 `manifest.json` 文件通过其 URL 可以被 GET 访问。
 
-## Fields description
+## 字段描述
 
-| Field              | Requirement | Description                                                                                                                                                                                                                                                                                                                                                                                       |
-| ------------------ | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `url`              | required    | app URL. Will be used as the DAppidentifier. Will be used to open the DAppafter click to its icon in the wallet. It is recommended to pass url without closing slash, e.g. 'https://mydapp.com' instead of 'https://mydapp.com/'. |
-| `name`             | required    | app name. Might be simple, will not be used as identifier.                                                                                                                                                                                                                                                                                                        |
-| `iconUrl`          | required    | Url to the app icon. Must be PNG, ICO, ... format. SVG icons are not supported. Perfectly pass url to a 180x180px PNG icon.                                                                                                                                                       |
-| `termsOfUseUrl`    | optional    | url to the Terms Of Use document. Optional for usual apps, but required for the apps which is placed in the Tonkeeper recommended apps list.                                                                                                                                                                                                                      |
-| `privacyPolicyUrl` | optional    | url to the Privacy Policy document. Optional for usual apps, but required for the apps which is placed in the Tonkeeper recommended apps list.                                                                                                                                                                                                                    |
+| 字段                 | 要求 | 描述                                                                                                                                                                          |
+| ------------------ | -- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url`              | 必填 | 应用 URL。将被用作 DApp 标识符。点击钱包中的图标后，将用来打开 DApp。推荐传递不带关闭斜杠的 url，例如 'https://mydapp.com' 而非 'https://mydapp.com/'。 |
+| `name`             | 必填 | 应用名称。可以简单，不会被用作标识符。                                                                                                                                                         |
+| `iconUrl`          | 必填 | 应用图标的 URL。必须是 PNG、ICO 等格式，不支持 SVG 图标。最好传递指向 180x180px PNG 图标的 url。                                                                                                          |
+| `termsOfUseUrl`    | 可选 | 使用条款文档的 url。普通应用为可选，但对于放在 Tonkeeper 推荐应用列表中的应用则为必填。                                                                                                                         |
+| `privacyPolicyUrl` | 可选 | 隐私政策文档的 url。普通应用为可选，但对于放在 Tonkeeper 推荐应用列表中的应用则为必填。                                                                                                                         |
