@@ -1,24 +1,24 @@
-# 通用文档Principles
+# Common Documentation Principals
 
 为了获得最佳的用户体验和清晰度，请在创建 docs.ton.org 上的新内容时，牢记我们旨在应用于所有文档的一般性和重要需求列表。
 
 ## 为从业者制作的文档
 
-文档页面主要是为了文档的目的，而不是一个教程， 因此，必须尽量减少在案文中使用个人例子或类比。 必须确保内容既适合专业人员，也适合非专业人员，同时仍然提供宝贵的信息。
+Documentations pages is primarily intended for documentation purposes and not as a tutorial, so it is important to minimize the use of personal examples or analogies in the text. It is crucial to ensure that the content is suitable for both professionals and non-professionals alike, while still providing valuable information.
 
-## 使用一致的格式
+## Use a consistent format
 
-为了使读者更容易浏览文件，必须在整个文件中使用一致的格式。 使用标题、小标题、小标题、点数和编号列表来拆分文本，使其更容易阅读。
+To make it easier for readers to navigate through the documentation, it is important to use a consistent format throughout the document. Use headings, subheadings, bullet points, and numbered lists to break up the text and make it easier to read.
 
-## 在特殊章节中提供示例
+## Provide examples in special section
 
-提供示例可以帮助读者更好地了解内容和如何应用内容。 如果您正在撰写文档页面并需要参考几个Exmaples, 请在引用之前创建特殊的章节示例, 并查看另外的章节。 不要在文档页面中混合描述和示例。
-使用代码片断、屏幕截图或图表来说明您的点数，并使文档更具相关性。
+Providing examples can help readers better understand the content and how to apply it. If you are writing documentation page and need refer several exmaples, please create special section Examples right before References and See Also sections. Do not mix description and examples in documentation pages.
+Use code snippets, screenshots, or diagrams to illustrate your points and make the documentation more engaging.
 
-## 保持更新
+## Keep it up to date
 
-由于技术变化或软件更新，技术文件可能很快过时。 必须定期审查和更新文件，以确保文件准确无误，并与软件的现有版本相关。
+Tech documentation can quickly become outdated due to changes in technology or software updates. It is important to review and update the documentation regularly to ensure that it remains accurate and relevant to the current version of the software.
 
 ## Get feedback
 
-在发表文件之前，最好能够从其他贡献者或用户获得反馈。 这可能有助于找出可能引起混淆或不明确的领域，使您能够在文件公布之前做出改进。
+Before publishing the documentation, it is a good idea to get feedback from other contributors or users. This can help identify areas that may be confusing or unclear, and allow you to make improvements before the documentation is released.
