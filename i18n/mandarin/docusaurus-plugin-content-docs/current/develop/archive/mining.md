@@ -1,200 +1,199 @@
-# TON 挖矿指南
+# TON采矿指南
 
-:::warning deprecated
-此信息可能已过时，不再有效。可以忽略它。 Feel free to omit it.
+:::warning 已弃用
+这种资料可能已经过时，不再有用。 请随时省略它。
 :::
 
-## <a id="introduction"></a>简介
+## <a id="introduction"></a>介绍
 
-本文档提供了使用PoW提供者挖掘Toncoin的过程介绍。请访问[ton.org/mining](https://ton.org/mining)以获取TON挖矿的最新状态。 最新信息可在[ton.org/mining](https://ton.org/mining)上找到，参见`bleed`图表。PoW Giver合约有其限制，一旦用户挖出所有可用的Toncoin，它们就会枯竭。
+本文档介绍了使用 PoW giver 开采Tonco币的过程。 请访问 [ton.org/mining](https://ton.org/mining) 获取最新的TON采矿状态。
 
-## <a id="quick-start"></a>快速开始
+## <a id="quick-start"></a>快速启动
 
-立即开始挖矿：
+立即开始开采：
 
-1. 获取[适用于挖矿的计算机](#hardware)。
-2. 安装[Ubuntu](https://ubuntu.com) 20.04桌面或服务器发行版。
-3. 在`lite`模式下安装[mytonctrl](https://github.com/igroman787/mytonctrl#installation-ubuntu)。
-4. 运行`mytonctrl`中的`emi`命令，检查您的硬件和[预期挖矿收入](#faq-emi)。
-5. 如果您还没有钱包地址，请使用其中一个[钱包](https://www.ton.org/wallets)创建`钱包地址`。
-6. 通过在`mytonctrl`中执行`set minerAddr "..."`命令，将您的`钱包地址`定义为挖矿目标。
-7. 从[ton.org/mining](https://ton.org/mining)上提供的列表中选择一个giver合约，并通过在`mytonctrl`中执行`set powAddr "..."`命令设置您的miner以挖掘它。
-8. 通过在`mytonctrl`中执行`mon`命令开始挖矿。
-9. 检查您计算机上的CPU负载；名为`pow-miner`的进程应使用您大部分的CPU。
-10. 等待好运；第4步的输出应该告诉您挖到一个区块的大致几率。
+1. 获取一台适合采矿的电脑](#硬件)。
+2. 安装 [Ubuntu](https://ubuntu.com) 20.04 桌面或服务器分布。
+3. 在 `lite` 模式中安装 [mytonctrl](https://github.com/igroman787/mytonctrl#installation-ubuntu)。
+4. 在`mytonctrl`中运行`emi`命令来检查你的硬件和[预期的采矿收入](#faq-emi)。
+5. 如果你还没有一个，使用一个 [wallets](https://www.ton.org/wallets)创建 \`钱包地址'。
+6. 在`mytonctrl`中执行 `set minerAddr `...`，将你的钱包地址` 定义为采矿目标。
+7. 从 [ton.org/mining](https://ton.org/mining) 中选择一个给定合同，并通过在 `mytonctrl` 中执行 \`powAddr "..." 将你的矿工设置为矿工。
+8. 开始挖掘时，在 `mytonctrl` 中执行 `mon`
+9. 在您的电脑上检查 CPU 负载；名为 `pow-miner` 的进程应该使用您的大部分CPU。
+10. 等待运气；第4步的输出应该告诉你你你你有多少机会去挖一个块。
 
-## <a id="basics"></a>基础知识
+## <a id="basics"></a>Basics
 
-Toncoin are distributed by so-called `PoW Givers` which are smart contracts with certain amounts of TONs assigned to them. Currently, there are 10 active PoW givers on the TON Network. Givers hand out coins in blocks of 100 TON each. In order to receive such a block, your computer needs to solve a complex mathematical challenge issued by a giver and do that as fast as possible; you will compete against other miners for the reward of 100 TON. If someone manages to solve the problem before you, all the work your machine has done is in vain, and a new round/race begins.
+Tonco币由所谓的`PoW Givers`分发，这是与分配给他们的一定数量的TON的智能合同。 目前，TON网络上有10个活跃的PoW givers。 提供者在每个方块100TON里赠送硬币。 要接收此块， 您的计算机需要解决一个由提供者发出的复杂的数学挑战，并尽快完成这项工作； 您将与其他矿工竞争100TON的奖励。 如果有人设法解决你面前的问题，你的机器完成的所有工作都是徒劳的，新的回合/竞赛开始了。
 
-Toncoin通过所谓的`PoW Givers`（工作量证明提供者）进行分发，它们是分配了一定数量TON的智能合约。目前，TON网络上有10个活跃的PoW giver。Giver每次分发100 TON的币。为了接收这样一个块，您的计算机需要解决giver发布的复杂数学挑战，并且要尽可能快地完成；您将与其他矿工竞争100 TON的奖励。如果有人在您之前解决了问题，您的机器所做的所有工作都将作废，新的一轮/竞赛开始。 重要的是要理解，挖矿的收益不是随着机器工作而“逐渐增加”的，而是每成功解决一个giver挑战就以100 TON的批次形式出现。这意味着，如果您的机器有在24小时内计算出一个区块的10%机会（见[快速开始](#quickStart)的第4步），那么您可能需要等待大约10天时间才能获得100 TON的奖励。
+重要的是要认识到，采矿的利润并不像你的机器在工作中那样“滴入”。 为了成功地解决给予的挑战，她们分成100个TON。 这意味着如果您的机器在24小时内有10%的机会计算方块(见[快速启动](#quickStart)第4步)，那么您可能需要等待 ~10 天才能获得100个TON奖励。
 
-The process of mining is largely automated by `mytonctrl`. 挖矿过程在很大程度上由`mytonctrl`自动化。关于挖矿过程的详细信息可以在[PoW givers](https://www.ton.org/#/howto/pow-givers)文档中找到。
+采矿过程基本上是通过“mytonctrl”自动化的。 关于采矿过程的详细资料可在[PoW givers](https://www.ton.org/#/howto/pow-givers)文件中查找。
 
-## <a id="advanced"></a>高级
+## <a id="advanced"></a>高级版
 
-如果您认真对待挖矿并希望操作多台机器/矿场，那么您真的需要了解TON以及挖矿的工作原理；请参阅[HOWTO](https://ton.org/#/howto/)部分以获取深入信息。以下是一些通用建议： Here is some general advice:
+如果你真的想要采矿并想要操作一个以上的机器/采矿场， 然后您真的需要学习TON和采矿如何工作； 请查看 [HOWTO](https://ton)。 rg/#/howto/) 深入信息部分。 以下是一些一般性建议：
 
-- **应该**在单独的机器上运行您自己的节点/轻服务器；这将确保您的矿场不依赖于可能发生故障或无法及时处理您的查询的外部轻服务器。
-- **不要**用`get_pow_params`查询轰炸公共轻服务器，如果您有高频率轮询giver状态的自定义脚本，您**必须**使用您自己的轻服务器。违反此规则的客户端可能会导致其IP在公共轻服务器上被列入黑名单。 Clients that violate this rule risk having their IPs blacklisted on public lite servers.
-- **应该**尝试了解[挖矿过程](https://www.ton.org/#/howto/pow-givers)的工作原理；大多数大型矿工使用自己的脚本，在多个挖矿机器的环境中提供比`mytonctrl`更多的优势。
+- **DO** 在一个单独的机器上运行您自己的节点/lite 服务器； 这将确保您的采矿农场不依赖外部简单服务器，可以停下来或不及时处理您的查询。
+- **DO NOT** 用`get_pow_params`查询轰炸公共lite服务器， 如果你有自定义的脚本，在高频率调查givers状态，你**必须** 使用你自己的简单服务器。 违反此规则的客户端有可能在公共服务器上将他们的 IP 列入黑名单。
+- **DO** 试图了解如何[开采过程](https://www.ton)。 rg/#/howto/pow-givers)工作; 大多数较大的矿工使用自己的脚本，在有多个采矿机的环境中比`mytonctrl`提供许多优势。
 
-## <a id="hardware"></a>矿工硬件
+## <a id="hardware"></a>Miner hardware
 
-TON挖矿的总网络哈希率非常高；如果矿工希望成功，他们需要高性能的机器。在标准家用计算机和笔记本电脑上挖矿是徒劳的，我们不建议尝试。 Mining on standard home computers and notebooks is futile, and we advise against such attempts.
+TON采矿的网络哈希率很高；矿工若想成功，就需要高性能的机器。 在标准家用计算机和笔记本上采矿是徒劳无益的，我们建议不要这种企图。
 
 #### CPU
 
-支持[Intel SHA扩展](https://zh.wikipedia.org/wiki/Intel_SHA_extensions)的现代CPU是**必须的**。大多数矿工使用至少32核心和64线程的AMD EPYC或Threadripper系列机器。 Most miners use AMD EPYC or Threadripper-based machines with at least 32 cores and 64 threads.
+支持 [Intel SHA 扩展](https://en.wikipedia.org/wiki/Intel_SHA_extensions) 的 CPU 是一个 **必须**。 大多数矿工使用AMD EPYC 或 Threadripper 基于机器，至少有32个核心和64个线程。
 
 #### GPU
 
-Yes! You can mine TON using GPU. 是的！您可以使用GPU挖TON。有一个PoW矿工版本能够使用Nvidia和AMD GPU；您可以在[POW Miner GPU](https://github.com/tontechio/pow-miner-gpu/blob/main/crypto/util/pow-miner-howto.md)库中找到代码和使用说明。
+是的！ 您可以使用 GPU 开采TON。 有一个能够同时使用Nvidia和AMD GPU的PoW矿工版本； 你可以在[POW矿工GPU](https://github)中找到如何使用它的代码和说明。 om/tontechio/pow-miner-gpu/blob/main/crypto/util/pow-miner-howto.md) 存储库。
 
-目前，需要技术熟练才能使用这个，但我们正在开发更用户友好的解决方案。
+就现在而言，要使用这种方法，就需要技术上的手法，但我们正在努力寻找一种更方便用户的解决办法。
 
 #### 内存
 
-Almost the entire mining process happens in the L2 cache of the CPU. That means that memory speed and size play no role in mining performance. 几乎整个挖矿过程都发生在CPU的L2缓存中。这意味着内存速度和大小在挖矿性能中没有作用。一个只在一个内存通道上装有单个DIMM的双AMD EPYC系统将与占用所有通道的16个DIMM挖矿一样快地。
+几乎整个采矿过程都发生在CPU的L2缓存中。 这意味着内存速度和大小在采矿性能中不起作用。 在一个内存通道上有一个单一的DIMM的双重AMD EPYC系统将与占用所有通道的16个DIMM一样快速挖掘。
 
-请注意，这**只**适用于普通挖矿过程，如果您的机器还运行全节点或其他进程，那么情况会改变！但这超出了本指南的范围。 But this is outside the scope of this guide.
+请注意，这适用于纯采矿过程**仅**，如果你的机器也运行全节点或其他过程，那么事情就会改变！ 但这超出了本指南的范围。
 
 #### 存储
 
-以lite模式运行的普通矿工使用最少的空间，并且不在存储中存储任何数据。
+纯矿工在简单模式下运行时使用最小空间且不存储任何数据。
 
 #### 网络
 
-普通矿工需要能够打开对外的互联网连接。
+普通矿工需要能够打开连接到互联网。
 
 #### FPGA / ASIC
 
-参见[我可以使用FPGA / ASIC吗？](#faq-hw-asic)
+查看[我可以使用 FPGA / ASICs?](#faq-hw-asic)
 
-### <a id="hardware-cloud"></a>云机器
+### <a id="hardware-cloud"></a>云机
 
-Many people mine using AWS or Google compute cloud machines. As outlined in the specs above, what really matters is CPU. 许多人使用AWS或Google计算云机器进行挖矿。如上所述，真正重要的是CPU。因此，我们建议AWS [c5a.24xlarge](https://aws.amazon.com/ec2/instance-types/c5/)或Google [n2d-highcpu-224](https://cloud.google.com/compute/vm-instance-pricing)实例。
+许多人使用 AWS 或 Google 计算云机开采。 如上文所概述，真正重要的是CPU。 因此，我们建议AWS [c5a.24xlarge](https://aws.amazon.com/ec2/instance-types/c5/) 或 Google [n2d-highcpu-224](https://cloud.google.com/compute/vm-instance-pricing) 实例。
 
-### <a id="hardware-estimates"></a>收入估算
+### <a id="hardware-estimates"></a>Income estimates
 
-**重要**：请注意，所提供的信息基于_执行时刻的网络哈希率_。您实际的长期收入将取决于许多因素，例如不断变化的网络哈希率、选择的giver以及好运。 This will give you **current** estimate. 计算收入的公式非常简单：`($total_bleed / $total_hashrate) * $your_hashrate`。这将给您**当前**的估算。您可以在[ton.org/mining](https://ton.org/mining)上找到这些变量，也可以在`mytonctrl`中使用估算挖矿收入计算器（`emi`命令）。以下是2021年8月7日使用i5-11400F CPU进行的样本输出： Here is sample output made on August 7th, 2021 using i5-11400F CPU:
+The formula for calculating the income is quite simple: `($total_bleed / $total_hashrate) * $your_hashrate`. 这将给您**当前** 估计数。 你可以在 [ton.org/mining](https://ton.org/mining) 上找到变量，或者使用 `mytonctrl` 中的估计矿产收入计算器 (`emi` 命令)。 下面是2021年8月7日使用 i5-11400F CPU 做出的样本输出：
 
 ```
-Mining income estimations
------------------------------------------------------------------
-Total network 24h earnings:         171635.79 TON
-Average network 24h hashrate:       805276100000 HPS
-Your machine hashrate:              68465900 HPS
-Est. 24h chance to mine a block:    15%
-Est. monthly income:                437.7 TON
+采矿收入估计值
+-------------------------------------------------------------------------------
+网络总收入：171635 9 TON
+24小时平均网络哈希率：8052761000 HPS
+您的机器哈希率：68465900 HPS
+Est。 24小时开采区块的几率：15%
+Est. 每月收入：437.7 TON
 ```
 
-**Important**: Please do note that the information provided is based on _network hashrate at the moment of execution_. Your actual income over time will depend on many factors, such as changing network hashrate, the chosen giver, and a good portion of luck.
+**重要**：请注意所提供的信息基于执行时的网络哈希率\*。 随着时间的推移，您的实际收入将取决于许多因素，如网络哈希率、选定的巨人和运气的很大一部分。
 
-## <a id="faq"></a>常见问题解答
+## <a id="faq"></a>FAQ
 
-### <a id="faq-general"></a>一般
+### <a id="faq-general"></a>General
 
-#### <a id="faq-general-posorpow"></a>TON是PoS还是PoW网络？
+#### <a id="faq-general-posorpow"></a>Is TON PoS or PoW network?
 
-TON Blockchain uses the Proof-of-Stake consensus. Mining is not required to generate new blocks.
+TON Blockchain 使用利益关系证明的共识。 不需要挖矿来生成新块。
 
-#### <a id="faq-general-pow"></a>那TON为什么是工作量证明（Proof-of-Work）？
+#### <a id="faq-general-pow"></a>So how come TON is Proof-of-Work?
 
-原因是最初的50亿Toncoin被转移到临时工作量证明提供者智能合约中。
-挖矿用于从这个智能合约中获取Toncoin。
-TON区块链使用权益证明（Proof-of-Stake）共识。挖矿不是生成新块所必需的。
+原因在于，50亿吨硬币的最初发行已转入临时工作证明智能合同。
+采矿用来从这个智能合约中获取Toncoins
 
-#### <a id="faq-general-supply"></a>还有多少币可以挖？
+#### <a id="faq-general-supply"></a>还有多少硬币可供开采？
 
-The most actual information is available on [ton.org/mining](https://ton.org/mining), see `bleed` graphs. PoW Giver contracts have their limits and will dry out once users mine all the available Toncoins.
+最实际的信息见[ton.org/mining](https://ton.org/mining)，见`bleed`graphs。 PoW Giver合约有其限度，一旦用户开采所有可用的Toncoins，就会干枯。
 
-#### <a id="faq-general-mined"></a>到目前为止已经挖出多少币？
+#### <a id="faq-general-mined"></a>已经开采多少硬币？
 
-截至2021年8月，约有49亿Toncoin被挖出。
+截至2021年8月，约有4.9BN Toncoins 被埋设了地雷。
 
-#### <a id="faq-general-whomined"></a>谁挖出了这些币？
+#### <a id="faq-general-whomined"></a>谁开采了这些硬币？
 
-这些币被挖到超过70,000个钱包中，这些钱包的所有者是未知的。
+金币已开采到70 000多个钱包，这些钱包的所有者不详。
 
-#### <a id="faq-general-elite"></a>开始挖矿难吗？
+#### <a id="faq-general-elite"></a>开始采矿是否困难？
 
-Not at all. 一点也不难。您所需要的是[合适的硬件](#hardware)和按照[快速开始](#quickStart)部分中概述的步骤操作。
+根本不是。 你需要的只是[足够的硬件](#硬件)，并按照[快速启动](#quickStart)部分概述的步骤进行。
 
-#### <a id="faq-general-pissed"></a>还有其他方式挖矿吗？
+#### <a id="faq-general-pissed"></a>还有其他方法可以开采吗？
 
-是的，有一个第三方应用——[TON Miner Bot](https://t.me/TonMinerBot)。
+是的，有第三方应用程序 — [TON Miner Bo](https://t.me/TonMinerBot)。
 
-#### <a id="faq-general-stats"></a>我在哪里可以看到挖矿统计？
+#### <a id="faq-general-stats"></a>我在哪里可以看到采矿统计？
 
 [ton.org/mining](https://ton.org/mining)
 
-#### <a id="faq-general-howmany"></a>有多少矿工？
+#### <a id="faq-general-howmany"></a>How many miners are out there?
 
-We cannot say this. All we know is the total hashrate of all miners on the network. 我们无法说出这个数字。我们所知道的是网络上所有矿工的总哈希率。然而，在[ton.org/mining](https://ton.org/mining)上有图表试图估算提供近似总哈希率的某种类型机器的数量。
+我们不能这样说。 我们知道的只是网络上所有矿工的总哈希率。 然而，[ton.org/mining](https://ton.org/mining)的图表试图估计提供近距离哈希率所需的陶瓷型机数。
 
-#### <a id="faq-general-noincome"></a>我需要Toncoin才能开始挖矿吗？
+#### <a id="faq-general-noincome"></a>我需要Tonco币来开始采矿吗？
 
-No, you do not. 不，您不需要。任何人都可以在不拥有任何Toncoin的情况下开始挖矿。
+不，你不这样做。 任何人都可以在不拥有单个Tonco的情况下开始采矿。
 
-#### <a id="faq-mining-noincome"></a>我挖了几个小时，为什么我的钱包总额没有增加，甚至没有增加1 TON？
+#### <a id="faq-mining-noincome"></a>I mine for hours, why my wallet total does not increase, not even by 1 TON?
 
-TON在区块中是以每100进行开采的，你要么猜中一个区块并获得100 TON，要么一无所获。请参见[基础知识](#basics)。 Please see [basics](#basics).
+TON是在100个方块中开采的，您要么猜测一个方块，要么接收100个TON，要么没有收到任何东西。 请查看 [basics](#basics).
 
-#### <a id="faq-mining-noblocks"></a>我挖了几天，为什么看不到结果？
+#### <a id="faq-mining-noblocks"></a>I've been mining for days and I see no results, why?
 
-您检查了当前的[收入估算](#hardware-estimates)了吗？如果`Est. If field `Est. 24h chance to mine a block\`字段小于100%，那么您需要耐心等待。另外，请注意，24小时内挖到一个块的50%几率并不自动意味着您将在2天内挖到一个块；每天分别适用50%。 Also, please note that a 50% chance to mine a block within 24 hours does not automatically mean that you will mine one within 2 days; 50% applies to each day separately.
+您是否检查您当前的[收入估计数](#硬件估计数)？ 如果字段 \`Est. 24小时开采方块的几率不到100%，然后您需要耐心等待。 另外，请注意，有50%的机会在24小时内挖一个方块并不自动意味着您将在2天内挖掘一个方块； 50%分别适用于每天。
 
-#### <a id="faq-mining-pools"></a>有挖矿池吗？
+#### <a id="faq-mining-pools"></a>是否有采矿池？
 
-截至目前，还没有挖矿池的实现，每个人都为自己挖矿。
+没有采矿池，每个人都有采矿。
 
-#### <a id="faq-mining-giver"></a>我应该挖哪个giver？
+#### <a id="faq-mining-giver"></a>我应该给哪个赠与者？
 
-It does not really matter which giver you choose. The difficulty tends to fluctuate on each giver, so the current easiest giver on [ton.org/mining](https://ton.org/mining) might become the most complex within an hour. The same applies in the opposite direction.
+给予哪一个人并不重要。 难度往往在每个巨型上浮动，因此目前最容易的 [ton.org/mining](https://ton.org/mining)上的赠与者可能在一小时内变得最复杂。 相反的方向也是如此。
 
 ### <a id="faq-hw"></a>硬件
 
-#### <a id="faq-hw-machine"></a>更快的机器是否总是胜出？
+#### <a id="faq-hw-machine"></a>一台更快的机器是否会赢得胜利？
 
-不，所有矿工采取不同的途径来找到解决方案。更快的机器成功的概率更高，但并不保证胜利！ A faster machine has a higher probability of success, but it doesn't guarantee victory!
+不，所有矿工都要走不同的道路来寻找解决办法。 一个更快的机器成功的概率更高，但它不能保证胜利！
 
-#### <a id="faq-hw-machine"></a>我的机器能产生多少收入？
+#### <a id="faq-hw-machine"></a>我的机器会产生多少收入？
 
-请参见[收入估算](#hardware-estimates)。
+请见[收入估计数](#硬件估计)。
 
-#### <a id="faq-hw-asic"></a>我能用我的BTC/ETH装置来挖TON吗？
+#### <a id="faq-hw-asic"></a>Can I use my BTC/ETH rig to mine TON?
 
-不，TON使用单个SHA256散列方法，与BTC、ETH等不同。为挖其他加密货币而构建的ASIC或FPGA将不起作用。 ASICS or FPGAs wbich are built for mining other cryptos will not help.
+不，TON使用单一的 SHA256 散列法，不同于BTC、ETH 等方法。 ASICS 或 FPGA wbich 是为了挖掘其他加密点不会有帮助。
 
-#### <a id="faq-hw-svsm"></a>一台快速机器还是几台慢机器更好？
+#### <a id="faq-hw-svsm"></a>什么是更好的，一个单一的快车或几个慢车？
 
-This is controversial. 这是有争议的。见：矿工软件为系统上的每个核心启动线程，每个核心都获得自己要处理的密钥集，所以如果您有一台能运行64线程的机器和4台能各自运行16线程的机器，那么它们将在成功方面完全相同，假设每个线程的速度相同。
+这是有争议的。 见：矿工软件为系统上的每个核心启动线程，每个核心获取自己的一组密钥。 如果你有一个能够运行64条线程的机器和4个能够运行16条线程的机器， 然后假定每个线程的速度是一样的，它们将是同样成功的。
 
-然而，在现实世界中，核心数量较少的CPU通常时钟频率更高，所以您可能会用多台机器取得更好的成绩。
+然而，在实际世界中，核心计数较低的 CPU 通常更高，因此你可能会使用多台机器获得更好的成功。
 
-#### <a id="faq-hw-mc"></a>如果我运行多台机器，它们会合作吗？
+#### <a id="faq-hw-mc"></a>如果我运行许多机器，他们会合作吗？
 
-No, they will not. 不，它们不会。每台机器各自挖矿，但寻找解决方案的过程是随机的：没有机器，甚至没有单个线程（见上文）会采取相同的路径。因此，它们的哈希率加起来对你有利，而无需直接合作。 Thus, their hashrates add up in your favor without direct cooperation.
+不，他们不会这样做。 每个机器都有自己的地雷，但溶液寻找过程是随机的：没有机器， 甚至连单个线程都没有一个线程(见上文)也不会走同样的道路。 因此，如果没有直接合作，他们的散列就会对你有利。
 
-#### <a id="faq-hw-CPU"></a>我可以使用ARM CPU挖矿吗？
+#### <a id="faq-hw-CPU"></a>我能使用ARM CPU开采吗？
 
-这取决于CPU，AWS Graviton2实例确实是非常有能力的miner，并能够在性价比方面与基于AMD EPYC的实例相媲美。
+根据消费物价指数，AWS Graviton2实例确实是非常能干的矿工，能够与基于AMD的EPYC实例保持价格/性能比率。
 
 ### <a id="faq-software"></a>软件
 
-#### <a id="faq-software-os"></a>我可以使用Windows/xBSD/其他操作系统挖矿吗？
+#### <a id="faq-software-os"></a>我能使用Windows/xBSD/一些其他操作系统来开采吗？
 
-当然，[TON源代码](https://github.com/ton-blockchain/ton)已知可以在Windows、xBSD和其他操作系统上构建。然而，没有像Linux下的`mytonctrl`那样舒适的自动安装，您需要手动安装软件并创建自己的脚本。对于FreeBSD，有一个[port](https://github.com/sonofmom/freebsd_ton_port)源代码允许快速安装。 However, there is no comfortable automated installation, as under Linux with `mytonctrl`, you will need to install the software manually and create your own scripts. 您选择哪个giver并不真正重要。难度在每个giver上都会波动，所以[ton.org/mining](https://ton.org/mining)上当前最简单的giver可能在一个小时内变得最复杂。反之亦然。
+当然，[TON source code](https://github.com/ton-blockchain/ton)已知是建立在Windows、 xBSD 和其他操作系统上。 然而，没有舒服的自动安装，如在 Linux 下使用 `mytonctrl`，您需要手动安装软件并创建您自己的脚本。 对于FreeBSD，有一个允许快速安装的 [port](https://github.com/sonofmom/freebsd_ton_port) 源代码。
 
-#### <a id="faq-software-node1"></a>如果我以完整节点模式运行mytonctrl，我的挖矿会变得更快吗？
+#### <a id="faq-software-node1"></a>如果我在全节点模式下运行mytonctrl，我的挖掘速度会更快吗？
 
-计算过程本身不会变快，但如果您操作自己的完整节点/轻服务器，您将获得一些稳定性和最重要的是灵活性。
+计算过程本身将不会更快，但你将获得一些稳定性和稳定性。 最重要的是，如果您运行您自己的全节点/单点服务器。
 
-#### <a id="faq-software-node2"></a>我需要什么/如何操作一个完整节点？
+#### <a id="faq-software-node2"></a>我需要什么？ / 我如何操作一个完整的节点？
 
-这超出了本指南的范围，请参阅[完整节点howto](https://ton.org/#/howto/full-node)和/或[mytonctrl说明](https://github.com/igroman787/mytonctrl)。
+这超出了本指南的范围，请查看[完整节点如何](https://ton.org/#/howto/fullnode)和/或[mytonctrl 指令](https://github.com/igroman787/mytonctrl)。
 
-#### <a id="faq-software-build"></a>你能帮我在我的操作系统上构建软件吗？
+#### <a id="faq-software-build"></a>你能帮助我在我的操作系统上构建软件吗？
 
-这超出了本指南的范围，请参阅[完整节点howto](https://ton.org/#/howto/full-node)以及[Mytonctrl安装脚本](https://github.com/igroman787/mytonctrl/blob/master/scripts/toninstaller.sh#L44)，以获取有关依赖项和过程的信息。
+这超出了本指南的范围，请查阅[完整节点如何](https://ton.org/#/howto/fullnode)以及[Mytonctrl 安装脚本](https://github.com/igroman787/mytonctrl/blob/master/scripts/toninstaller.sh#L44)以了解依赖关系和过程。
