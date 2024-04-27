@@ -1,61 +1,61 @@
-# 钱包准则
+# Wallet Guidelines
 
-## 网络
+## Networks
 
-### 没有很多网络。
+### There aren't many networks.
 
-目前，只有两个网络――主网和试验网。
-在可预见的将来，预计不会出现新的主要网络TON式网络。 请注意当前的Mainnet有一个内置的替代网络――工作链机制。
+At the moment, there are only two networks - Mainnet and Testnet.
+In the foreseeable future, the emergence of new Mainnet TON-like networks is not expected. Note that the current Mainnet has a built-in mechanism for alternative networks - workchains.
 
-### 向普通用户隐藏测试网。
+### Hide the Testnet from ordinary users.
 
-测试网仅供开发者使用。 普通用户不应查看 Testnet。
-这意味着切换到 Testnet 不应轻松可用，用户SHOULD 不会被提示将钱包切换到 Testnet ，即使DAppis 在 Testnet。
-用户切换到 Testnet，不了解这个动作，不能切换回Mainnet。
+Testnet is used exclusively by developers. Ordinary users should not see the Testnet.
+This means that switching to Testnet should not be readily available and users SHOULD NOT be prompted to switch wallet to Testnet even if DAppis in Testnet.
+Users switch to Testnet, don't understand this action, can't switch back to Mainnet.
 
-由于这些原因，dapps不需要在运行时切换网络。 更可取的做法是 DAppon 不同域名的不同实例。 om, Testnet.dapp.com。
-出于同样的原因，Ton Connect 协议中没有`NetworkChanged`或`ChainChanged`事件。
+For these reasons, dapps do not need to switch networks in runtime, on the contrary, it is more preferable to have different instances of DAppon different domains dapp.com, Testnet.dapp.com.
+For the same reason there is no `NetworkChanged` or `ChainChanged` event in the Ton Connect protocol.
 
-### 如果数据库在 Testnet 和 Mainnet，请勿发送任何信息。
+### Do not send anything if the DAppis in Testnet and the wallet is in Mainnet.
 
-当DApp试图在 Testnet中发送交易和钱包在 Mainnet中发送交易时，必须防止资金流失。
+It is necessary to prevent loss of funds when DApptries to send a transaction in Testnet, and the wallet sends it in Mainnet.
 
-Dapps应在 `SendTransaction` 请求中明确显示 `network` 字段。
+Dapps should explicitly indicate `network` field in `SendTransaction` request.
 
-如果设置了 `network` 参数，但钱包有不同的网络集合。 钱包应该显示警报，不要再发送此交易。
+If the `network` parameter is set, but the wallet has a different network set, the wallet should show an alert and DO NOT ALLOW TO SEND this transaction.
 
-在这种情况下，钱包不能切换到另一个网络。
+The wallet SHOULD NOT offer to switch to another network in this case.
 
-## 多账户
+## Multi accounts
 
-可以为一个密钥对创建多个网络帐户。 在你的钱包中实现这个功能——用户会发现它是有用的。
+Multiple network accounts can be created for one key pair. Implement this functionality in your wallet - users will find it useful.
 
-### 总的来说没有当前的“活动”账户
+### In general, there is no current "active" account
 
-目前，TON Connect 并不是建立在钱包中有一个选定账户的模式上的。 当用户切换到另一个帐户时，`AccountChanged`事件将被发送到舞台。
+At the moment, the TON Connect is not built on the paradigm that there is one selected account in the wallet, and when the user switches to another account, the `AccountChanged` event is sent to dapp.
 
-我们认为钱包是一个实际钱包，可以包含许多“银行卡”(帐户)。
+We think of a wallet as a physical wallet that can contain many "bank cards" (accounts).
 
-在大多数情况下，发件人地址对编程并不重要， 在这些情况下，用户可以在批准交易时选择适当的账户，交易将从选定的账户中发送。
+In most cases the sender address is not important to dapp, in these cases the user can select the appropriate account at the time of approving the transaction and the transaction will be sent from selected account.
 
-在某些情况下，DApp必须从一个特定地址发送交易。 在这种情况下，它在`SendTransaction`请求中明确指定`from`字段。 如果设置了 `from` 参数，钱包应该不允许用户选择发件人的地址； 如果无法从指定地址发送，钱包应显示警报，不要再发送此交易。
+In some cases, it is important for DAppto send the transaction from a specific address, in which case it explicitly specifies the `from` field in `SendTransaction` request. If `from` parameter is set, the wallet should DO NOT ALLOW user to select the sender's address; If sending from the specified address is impossible, the wallet should show an alert and DO NOT ALLOW TO SEND this transaction.
 
-### 登录流程
+### Login flow
 
-当DApp连接钱包时，用户在钱包中选择他们想要登录到数据库的账户之一。
+When DAppconnects the wallet, the user selects in the wallet one of their accounts that they want to log into dapp.
 
-无论用户在钱包中使用什么帐户，DApp都与他在连接上收到的帐户合作。
+Regardless of what accounts the user uses next in the wallet, DAppworks with the account he received on the connection.
 
-就像您使用您的电子邮件帐户登录网络服务一样——如果您随后更改电子邮件服务中的电子邮件帐户的话。 网站服务继续使用他在登录时得到的服务。
+Just like if you logged into a web service with one of your email accounts - if you then change the email account in the email service, the web service continues to use the one he got when you logged in.
 
-为此原因，协议没有提供 `AccountChanged` 事件。
+For this reason, the protocol does not provide the `AccountChanged` event.
 
-要切换帐户，用户需要断开连接 (注销) 并在 DAppUI 中再次连接 (登录)。
+To switch account user need to disconnect (Log out) and connect  (Login) again in DAppUI.
 
-我们推荐钱包提供了与指定的DApp断开会话的能力，因为DApp可能有不完整的UI。
+We recommend wallets provide the ability to disconnect session with a specified DAppbecause the DAppmay have an incomplete UI.
 
-## 另见：
+## See Also
 
-- [TON Connect Overview](/dapps/ton-connect/overview.)
+- [TON Connect Overview](/dapps/ton-connect/overview)
 - [Protocol specifications](/dapps/ton-connect/protocol/)
 - [Connect a Wallet](/dapps/ton-connect/wallet)
