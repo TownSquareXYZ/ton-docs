@@ -1,6 +1,6 @@
-# Running an Archive Node
+# 运行归档节点
 
-## Overview
+## 概述
 
 :::caution System Administrator Required
 For running nodes basic knowledge of Linux/Ubuntu system administration is required.
@@ -41,7 +41,7 @@ In general, you need the following steps to run an Archive Node:
 
 ### Install ZFS and Prepare Volume
 
-Dumps come in form of ZFS Snapshots compressed using plzip, you need to install zfs on your host and restore the dump, see [Oracle Documentation](https://docs.oracle.com/cd/E23824_01/html/821-1448/gavvx.html#scrolltoc) for more details.
+通常，为您的节点在_专用SSD驱动器_上创建一个单独的ZFS池是个好主意，这将使您更容易管理存储空间并备份您的节点。
 
 Usually, it's a good idea to create a separate ZFS pool for your node on a _dedicated SSD drive_, this will allow you to easily manage storage space and backup your node.
 
@@ -67,7 +67,7 @@ sudo zfs set compression=lz4 data
 
 Please, use a [Running Full Node](/participate/run-nodes/full-node) to install mytonctrl.
 
-### Run an Archive Node
+### 准备节点
 
 #### Prepare the node
 
@@ -93,7 +93,7 @@ mv /var/ton-work /var/ton-work.bak
 wget --user <usr> --password <pwd> -c https://archival-dump.ton.org/dumps/latest.zfs.lz | pv | plzip -d -n <cores> | zfs recv data/ton-work
 ```
 
-Size of the dump is **~1.5TB**, so it will take some time to download and restore it.
+准备并运行命令：
 
 Prepare and run the command:
 
@@ -117,7 +117,7 @@ cp -r /var/ton-work.bak/keys /var/ton-work/keys
 cp -r /var/ton-work.bak/db/keyring /var/ton-work/db/keyring
 ```
 
-3. Make sure that permissions for `/var/ton-work` and `/var/ton-work/keys` dirs promoted correctly:
+3. `/var/ton-work/db`目录的所有者应为`validator`用户：
 
 - The owner for the `/var/ton-work/db` dir should be `validator` user:
 
