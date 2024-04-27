@@ -1,47 +1,47 @@
-# Canonical Cell Serialization
+# 规范化cell序列化
 
-## Cell weight
+## cell权重
 
-`Weight` is a characteristic of each cell in tree of cells that defines by the following:
+`Weight`是定义每个cell在cell树中的特征，具体如下：
 
-- If cell is a leave node in a tree of cell: `weight = 1`;
-- For ordinary cells (not leaves) weight is a sum: `cell weight = children weight + 1`;
-- If cell is a _special_, its weight is set to zero.
+- 如果cell是cell树中的叶节点：`weight = 1`；
+- 对于普通cell（非叶子），权重是一个总和：`cell weight = children weight + 1`；
+- 如果cell是_特殊_的，其权重设为零。
 
-The algorithm below explains how and when we assign weights to each cell to create a weight balanced tree.
+以下算法解释了我们如何以及何时为每个cell分配权重以创建一个权重平衡的树。
 
-## Weight reorder algorithm
+## 权重重排序算法
 
-Each cell is weight balanced tree and [reorder_cells()](https://github.com/ton-blockchain/ton/blob/15088bb8784eb0555469d223cd8a71b4e2711202/crypto/vm/boc.cpp#L249) method
-reassigns weights based on cumulative child weight. The traversal order is roots -> children. It's a breadth-first search, _probably_ used to preserve cache linearity. It also triggers hashes size recalculation and reindexes the bag (roots) and each tree, sets new indexes for empty references. Reindexing is depth-first though, probably there is something that depends on this order of indexing, as whitepaper states it is preferred.
+每个cell都是权重平衡树，[reorder_cells()](https://github.com/ton-blockchain/ton/blob/15088bb8784eb0555469d223cd8a71b4e2711202/crypto/vm/boc.cpp#L249) 方法
+基于累积子权重重新分配权重。遍历顺序是根 -> 子节点。这是一种广度优先搜索，_可能_用于保持缓存线性。它还触发哈希大小的重新计算，并对包（根）和每个树进行重新索引，为空引用设置新索引。尽管重新索引是深度优先的，可能存在某些依赖于此索引顺序的内容，正如白皮书所述，这是首选的。
 
-To follow the original node's bag of cells serialization you should:
+要遵循原始节点的cell序列化，您应该：
 
-- First, if the cell's weights are not set (node does this on cell import), we set the weight for each cell to `1 + sum_child_weight`, where `sum_child_weight` is the sum of its child node's weights. We add one so that leaves have a weight of 1.
+- 首先，如果cell的权重尚未设置（节点在cell导入时这样做），我们将每个cell的权重设置为`1 + sum_child_weight`，其中`sum_child_weight`是其子节点权重的总和。我们添加1以使叶子具有1的权重。
 
-- Iterate all roots, for each root cell:
-  - Check if each of its references has a weight less than `maximum_possible_weight - 1 + ref_index` divided by the number of root cell's refs so that they share parents weight uniformly, we do (+ index) to make sure if language casts towards 0 on division we always get a mathematically rounded number (like for 5 / 3, c++ would return 1, but we want 2 here)
+- 遍历所有根，对于每个根cell：
+  - 检查它的每个引用是否有一个权重小于`maximum_possible_weight - 1 + ref_index`除以根cell引用的数量，以便它们均匀地共享父权重，我们做(+ index)以确保如果语言在除法中向0取整，我们总是得到一个数学上四舍五入的数字（例如对于5 / 3，c++会返回1，但我们在这里希望2）
 
-  - If some references violate that rule, we add them to the list (or more efficiently create a bitmask, as the original node does) and then iterate again over those and clamp their weight to `weight_left / invalid_ref_count`, where `weight_left` is `maximum_possible_weight - 1 - sum_of_valid_refs_weights`. In the code it could be implemented as a decrement of a counter variable, which is first initialized to `maximum_possible_weight - 1` and then gets decremented as `counter -= valid_ref_weight`. So essentially we redistribute the remaining weight between these nodes (balance them)
+  - 如果一些引用违反了该规则，我们将它们添加到列表中（或更有效地创建一个位掩码，就像原始节点所做的那样），然后再次遍历这些引用，并将它们的权重限制为`weight_left / invalid_ref_count`，其中`weight_left`是`maximum_possible_weight - 1 - sum_of_valid_refs_weights`。在代码中，它可以实现为减少一个计数器变量，该变量首先初始化为`maximum_possible_weight - 1`，然后当`counter -= valid_ref_weight`时递减。因此，我们基本上在这些节点之间重新分配剩余权重（平衡它们）
 
-- Iterate over roots again, for each root:
-  - Make sure the new sum of its reference's weights is less than `maximum_possible_weight`, check if the new sum became less than the previous root cell's weight, and clamp its weight to the new sum. (if `new_sum < root_cell_weight` set `root_cell_weight` equal to `new_sum`)
-  - If the new sum is higher than the root's weight, then it should be a special node, which has 0 weight, set it. (Increment Internal hashes count here by the hashes count of the node)
+- 再次遍历根，对于每个根：
+  - 确保其引用的新权重总和小于`maximum_possible_weight`，检查新总和是否小于先前根cell的权重，并将其权重限制为新总和。（如果`new_sum < root_cell_weight`，则将`root_cell_weight`设置为等于`new_sum`）
+  - 如果新总和高于根的权重，则它应该是一个特殊节点，其权重为0，设置它。（这里通过节点的哈希计数增加内部哈希计数）
 
-- Iterate over roots again, for each root:
-  If it's not a special node (if its weight > 0), increment the Top hashes count by the hashes count of the node.
+- 再次遍历根，对于每个根：
+  如果它不是特殊节点（如果其权重> 0），则通过节点的哈希计数将顶部哈希计数增加。
 
-- Recursively reindex tree:
-  - First, we previsit all root cells. If we didn't previsit or visit this node before, check all its references recursively for special nodes. If we find a special node, we have to previsit and visit it before others, it does mean that the special node's children will come first in the list (their indexes will be the lowest ones). Then we add other node's children (order deepest -> highest). Roots come at the very end of the list (they have the biggest indexes). So in the end we get a sorted list where the deeper is node, the lower index it has.
+- 递归地重新索引树：
+  - 首先，我们预访问所有根cell。如果我们之前没有预访问或访问过此节点，请递归检查其所有引用以查找特殊节点。如果我们找到一个特殊节点，我们必须在其他节点之前预访问和访问它，这意味着特殊节点的子节点将首先出现在列表中（它们的索引将是最低的）。然后我们添加其他节点的子节点（顺序最深 -> 最高）。根在列表的最后（它们有最大的索引）。因此，最终我们得到一个排序的列表，其中节点越深，其索引就越低。
 
-`maximum_possible_weight` is a constant 64
+`maximum_possible_weight`是常数64
 
-## Denotes
+## 注释
 
-- The special cell does not have weight (it's 0)
+- 特殊cell没有权重（它是0）
 
-- Make sure weight on import is fitting into 8 bits (weight <= 255)
+- 确保导入时的权重适合8位（weight <= 255）
 
-- Internal hashes count is the sum of hash counts of all special root nodes
+- 内部哈希计数是所有特殊根节点的哈希计数之和
 
-- The top hashes count is the sum of hash counts of all other (not special) root nodes
+- 顶部哈希计数是所有其他（非特殊）根节点的哈希计数之和
