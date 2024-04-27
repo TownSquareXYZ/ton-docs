@@ -1,49 +1,49 @@
 # 贡献指南
 
-这是用 TON 文档撰写教程的逐步指南。
+这是一个带有教程的 TON 文档贡献的分步骤指南。
 
-:::tip 机会
-You're lucky! 很幸运！这是一个改善 TON 生态系统的好机会。
+:::tip 商业机会
+你很幸运！ 这是在这里改进TON生态系统的良好机会。
 :::
 
-如果你决定编写教程，你可以因杰出的贡献而获得奖励：
+如果你决定编写教程，你可以获得一些杰出材料的奖励：
 
-- **Special TON Footsteps NFT: 对 TON 最有价值的贡献**
-- **TON 奖励: 作为报酬提供给被批准的高质量的贡献（如教程）**
+- **Special TON Bounty NFT** 对TON 做出了最宝贵的贡献
+- \*\*在TON中获得奖励作为获得批准的高质量贡献的付款，如教程。
 
 让我们看看你如何参与贡献过程。
 
-## 决定你想写什么
+## 决定你想写的内容
 
-找到或编写你想描述的材料。
+查找或写一个你想要描述的材料。
 
-1. 检查带有 `tutorial` 标签的 [TON Docs GitHub 上的问题列表](https://github.com/ton-community/ton-docs/issues)。
-2. _或者_ 在 TON Docs GitHub 上用 [教程模板](https://github.com/ton-community/ton-docs/issues/new?assignees=\&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A\&template=suggest_tutorial.yaml\&title=Suggest+a+tutorial)写下你自己的想法。
+1. 查看 [TON Docs GitHub 上的问题列表](https://github.com/ton-community/ton-docs/issues) 带有“tutorial”标签。
+2. _OR_ 用[教程模板](https://github.com/ton-community/ton-docs/issues/new?asonies=\&labs=feature+%3Asparkles%3A%2Ccontent+%3Ainventain_pen%3A\&template=asest_tutorial.yaml\&title=建议+a+tutororial)在 TON Docs GitHub 上写您自己的想法。
 
-## 描述问题以获得奖励
+## 描述一个获得奖励的问题
 
-编写 _ton-footstep_ 来获得你的贡献资金。
+写一个 _ton-footstep_ 来接收您的贡献资金。
 
-1. Read about [TON Bounties](https://github.com/ton-society/grants-and-bounties/blob/main/bounties/BOUNTIES_PROGRAM_GUIDELINES.md) program more detailed.
-   1. **TLDR:** Use [Improve TVM Instructions article](https://github.com/ton-society/grants-and-bounties/issues/361) as an example.
-2. 编写[你自己的footstep](https://github.com/ton-society/ton-footsteps/issues/new/choose)来参与并等待批准。 [TON Bounties Creator Bot](https://t.me/footsteps_helper_bot) will help you.
-3. 在收到 `approved` 标签后开始编写你的教程。
+1. 阅读[TON Bounties](https://github.com/ton-society/grants-and-bounties/blob/main/bounties/BOUNTIEs_ProgrammeM_GUIDELINES.md) 程序更加详细。
+   1. **TLDR:** 使用[改进TVM说明](https://github.com/ton-society/grantsand-bounties/issues/361)作为例子。
+2. 写入 [你自己的休息](https://github.com/ton-society/grants-bounties/issues/new/selecte) 以参与并等待批准。 [TON Bounties Creator Bo](https://t.me/footsteps_helper_bot)将帮助您。
+3. 在收到`批准的` 标签后，开始编写你的教程。
 
-## 编写教程
+## 写一个教程
 
-**Preparations**. **准备工作**。尽量减少将来被要求更改的次数，从而_节省你的时间_：
+**准备**。 最小化请求更改的未来金额，_节省您的时间_：
 
-1. 遵循 [教程指南](/contribute/guidelines) 并使用 [示例教程结构](/contribute/sample-tutorial) 来检查。
-2. 阅读 [优秀教程原则](/contribute/principles-of-a-good-tutorial) 来编写出色的教程 :)
-3. 可以从源代码中以 [铸造你的第一个 Jetton](/develop/dapps/tutorials/jetton-minter) 作为示例来找到灵感。
-4. **Setup environment**. **设置环境**。[检查教程](/contribute#online-one-click-contribution-setup) 是在本地或使用 Gitpod 运行你的 fork。
-5. **Write tutorial**. **编写教程**。用到相应的环境，查看教程在你的 fork 上的样子。
-6. **Make a Pull Request**. Open PR to get some feedback from maintainers.
+1. 按照[教程指南](/contribute/guidelines)检查[示例教程结构](/contribute/sample-tutorial)
+2. 阅读[良好教程的原则](/contribute/principles-of-food tutorial) 以写入令人惊叹的教程:)
+3. 在源代码中以[Mint your first Jetton](/develop/dapps/tutorials/jetton-minter)为示例。
+4. **设置环境** 。 [检查教程](/contribute#online-one-one-click-contribution-setup)在本地运行或使用 Gitpod。
+5. **写入教程** 使用环境，看看教程在你的叉上看起来是怎样的。
+6. **制作一个合并请求**。 打开 PR 以从维护者获取一些反馈。
 7. 合并！
 
-## 收到奖励
+## 领取奖励
 
-1. 在 TON Docs中的 PR 合并后，请在你的 ton-footsteps 任务中进行记录。
-2. Follow a guide [How to complete ton-bounty?](https://github.com/ton-society/grants-and-bounties/blob/main/bounties/BOUNTIES_PROGRAM_GUIDELINES.md#got-assigned-submit-a-questbook-proposal) to complete bounty and get reward.
-3. 在你的任务中，你将被要求提供一个钱包，从而可以给你发送奖励。
+1. 您在 TON Docs 中的 PR 被合并后，请写入您的 ton-footsteps 任务。
+2. 按照指南[如何完成ton-bounty?](https://github.com/ton-society/grants-and-bounties/blob/main/bounties/BOUNTIEs_ProgrammeM_GUIDELINES.md#got-assigned-subit-a-questbook-proposal)完成奖励并获得奖励。
+3. 在你的任务中，你将被要求一个钱包来发送奖励。
 4. 获得奖励！
