@@ -1,43 +1,43 @@
-# API 类型
+# API Types
 
-**高可用性区块链API是安全、方便和快速开发有效应用的核心元素。**
+**High availability blockchain APIs are the core element of secure, convenient and fast development of useful applications on TON.**
 
-- [TON HTTP API](/develop/dapps/apis/toncenter) — API 允许使用 _indexed blockchain 信息_。
-- [TON ADNL API](/develop/dapps/apis/adnl) — secure API 以便基于ADNL 协议与TON进行通信。
+- [TON HTTP API](/develop/dapps/apis/toncenter) — API that allows to work with the _indexed blockchain information_.
+- [TON ADNL API](/develop/dapps/apis/adnl) — secure API to communicate with TON, based on ADNL protocol.
 
-## Toncent APIs
+## Toncenter APIs
 
-- [TON Index](https://toncenter.com/api/v3/) - TON Index 从一个完整节点收集数据到 PostgreSQL 数据库，并为索引区块链提供便捷的 API。
-- [toncenter/v2](https://toncenter)。 om/) - 此 API 允许访问 TON blockchain - 获取帐户和钱包信息 查找块和交易，发送消息到区块链，调用智能合约等方法。
+- [TON Index](https://toncenter.com/api/v3/) - TON Index collects data from a full node to PostgreSQL database and provides convenient API to an indexed blockchain.
+- [toncenter/v2](https://toncenter.com/) - This API enables HTTP access to TON blockchain - getting accounts and wallets information, looking up blocks and transactions, sending messages to the blockchain, calling get methods of smart contracts, and more.
 
-## 第三方APIs
+## Third party APIs
 
-- [tonapi.io](https://docs.tonconsole.com/tonapi/api-v2) - 快速索引API，提供有关账户、交易、块、应用程序的 NFT、拍卖、Jettons, TON DNS、订阅的基本数据。 它还提供了关于交易链的附加说明的数据。
-- [dton.io](https://dton)。 o/graphql/) - GraphQL API，可以提供帐户、交易和块的数据 以及关于NFT、拍卖、犹太人和TON DNS的具体应用数据。
-- [ton-api-v4](https://mainnet-v4.tonhubapi.com) - 另一个Lite-api通过在 CDN 中的主动提现注重速度。
-- [docs.nftscan.com](https://docs.nftscan.com/reference/ton/model/asset-modell) - 用于TON blockchain的 NFT API。
-- [evercloud.dev](https://ton-mainnet.evercloud.dev/graphql) - GraphQL API for basic questions in TON。
-- [everspace.center](https://everspace.center/toncoin) - 访问 TON Blockchain的简单RPC API。
+- [tonapi.io](https://docs.tonconsole.com/tonapi/api-v2) - fast indexed API which provides basic data about accounts, transactions, blocks, application-specific data about NFT, Auctions, Jettons, TON DNS, Subscriptions. It also provides annotated data on transaction chains.
+- [dton.io](https://dton.io/graphql/) - GraphQL API with that can provide data about accounts, transactions and blocks, as well as application-specific data about NFT, Auctions, Jettons and TON DNS.
+- [ton-api-v4](https://mainnet-v4.tonhubapi.com) - another lite-api focused on speed via aggressive cashing in CDN.
+- [docs.nftscan.com](https://docs.nftscan.com/reference/ton/model/asset-model) - NFT APIs for TON blockchain.
+- [evercloud.dev](https://ton-mainnet.evercloud.dev/graphql) - GraphQL API for basic queries in TON.
+- [everspace.center](https://everspace.center/toncoin) - Simple RPC API for accessing TON Blockchain.
 
-## 附加APIs
+## Additional APIs
 
-### Tonco币率 APIs
+### Toncoin rate APIs
 
-- https://tonapi.io/v2/rates?tokens=ton&curcies=ton%2Cusd%2Crub
+- https://tonapi.io/v2/rates?tokens=ton&currencies=ton%2Cusd%2Crub
 - https://coinmarketcap.com/api/documentation/v1/
-- https://apiguide.coingecko.com/getting-starting-started
+- https://apiguide.coingecko.com/getting-started
 
-### 地址转换 API
+### Address Convert APIs
 
 :::info
-最好是通过本地算法转换地址，在文档的 [Addresses](/learn/overviews/addresses) 部分中阅读更多内容。
+It is preferable to convert address via local algorithm, read more in the [Addresses](/learn/overviews/addresses) section of documentation.
 :::
 
-#### 从友好到原始表单
+#### From Friendly to Raw form
 
 /api/v2/unpackAddress
 
-曲线
+Curl
 
 ```curl
 curl -X 'GET' \
@@ -45,7 +45,7 @@ curl -X 'GET' \
 -H 'accept: application/json'
 ```
 
-响应体
+Response body
 
 ```curl
 {
@@ -54,11 +54,11 @@ curl -X 'GET' \
 }
 ```
 
-#### 从友好到原始表单
+#### From Friendly to Raw form
 
-/api/v2/packaddress
+/api/v2/packAddress
 
-曲线
+Curl
 
 ```curl
 curl -X 'GET' \
@@ -66,7 +66,7 @@ curl -X 'GET' \
 -H 'accept: application/json'
 ```
 
-响应体
+Response body
 
 ```json
 {
@@ -75,8 +75,8 @@ curl -X 'GET' \
 }
 ```
 
-## 另见：
+## See Also
 
 - [TON HTTP API](/develop/dapps/apis/toncenter)
-- [列出SDK](/develop/dapps/apis/sdk)
+- [List of SDKs](/develop/dapps/apis/sdk)
 - [TON Cookbook](/develop/dapps/cookbook)
