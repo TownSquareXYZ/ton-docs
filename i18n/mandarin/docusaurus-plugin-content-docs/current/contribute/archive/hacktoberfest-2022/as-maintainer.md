@@ -1,39 +1,39 @@
-# 作为维护者参与
+# Participate as a Maintainer
 
-Hacktoberfest活动是每年获得社区支持的最佳时间！
+The Hacktoberfest event is the best time of year to receive support from the community!
 
-如果您的存储库与TON生态系统相关，许多贡献者将对此感兴趣。 让我们帮助他们立即潜入你的项目 ！
+If your repository is relevant to the TON Ecosystem, many contributors will be interested in it. Let's help them dive right into your project!
 
-## 准备组队
+## Prepare to party
 
-为了正确地处理贡献者，你需要有一个良好的仓库。
+To handle contributors in the right way, you need to have a repository in good standing.
 
-遵循这些最佳做法来编写您的项目供贡献：
+Follow these best practices to prepare your project for contributions:
 
-1. 将“黑莓智能”主题添加到您的存储库中**OPT-IN to HACKTOBERFEST** 并表明您正在寻找贡献。
-2. 将黑莓智能标签应用于您想要贡献者帮助您进行GitHub 或 GitLab 项目的问题。
-3. 请阅读并使用 TON Society[为新的开放源码维护者提供的基本提示](https://blog.ton.org/essential-tips-for-new-open-source-servers)
-4. 准备接受合法的纸浆/合并请求，将其合并，留下一个全面的审批审查，或添加"黑客接受"标签。
-5. 拒绝您收到的任何垃圾邮件请求，将其标为“垃圾邮件”，并关闭或标记任何其他无效的报告为“无效”。
+1. Add the “hacktoberfest” topic to your repository to **OPT-IN TO HACKTOBERFEST** and indicate you are looking for contributions.
+2. Apply the “hacktoberfest” label to issues you want contributors to help you with in your GitHub or GitLab project.
+3. Please read and use [the essential tips for new open source maintainers](https://blog.ton.org/essential-tips-for-new-open-source-maintainers) by TON Society.
+4. Prepare to accept legitimate pull/merge requests by merging them, leaving an overall approving review, or adding the "hacktoberfest-accepted" label.
+5. Reject any spam requests you receive by labeling them as “spam,” and close or label any other invalid contributions as "invalid."
 
-这是一个完整仓库的示例：[ton-community/ton-compiler](https://github.com/ton-community/ton-compiler)
+Here is an example of a full repository: [ton-community/ton-compiler](https://github.com/ton-community/ton-compiler)
 
-之后，请随时将您的资源库添加到列表中。
+After that, feel free to add your repository to the list.
 
-## 维护者奖励
+## Rewards for Maintainers
 
-作为托管生态系统的仓库维护者，您将能够获得两种奖励：
+As a repository maintainer in the TON Ecosystem, you will be able to receive two types of rewards:
 
-1. [Hacktoberfest 奖励工具包](https://hacktoberfest.com/participation/#维护者 (_see REWARD for MAINTAINERS_)
-2. [有限的 Hack-TON-berfest NFT](/contribute/hacktoberfest/#what-the-rewards) (_see, 注册钱包地址在 [@toncontests_bo](https://t.me/toncontests_bot)_)
+1. [Hacktoberfest Reward Kit](https://hacktoberfest.com/participation/#maintainers) (_see REWARD FOR MAINTAINERS_)
+2. [Limited Hack-TON-berfest NFT](/contribute/hacktoberfest/#what-the-rewards) (_please, register the wallet address in the [@toncontests_bot](https://t.me/toncontests_bot)_)
 
-## 如何加入并被列入名单？
+## How to join and be listed?
 
-要参与Hack-TON-berfest ，请点击此链接：
+To participate in Hack-TON-berfest follow this link:
 
 <span className="DocsMarkdown--button-group-content">
   <a href="https://airtable.com/shrgXIgZdBKKX64NL"
      className="Button Button-is-docs-primary">
-    添加仓库到列表
+    Add a repository to the list
   </a>
 </span>
