@@ -1,30 +1,31 @@
 import Button from '@site/src/components/button'
 
-# Telegram 机器人的 TON Connect
+# TON Connect for Telegram Bots
 
-在本教程中，我们将创建一个示例 Telegram 机器人，使用 Javascript TON Connect SDK 支持 TON Connect 2.0 认证。
-我们将分析连接钱包、发送交易、获取关于已连接钱包的数据以及断开钱包连接。
+In this tutorial, we’ll create a sample telegram bot that supports TON Connect 2.0 authentication using Javascript TON Connect SDK.
+We will analyze connecting a wallet, sending a transaction, getting data about the connected wallet, and disconnecting a wallet.
 
-<Button href="https://t.me/ton_connect_example_bot" colorType={'primary'} sizeType={'sm'}>打开演示机器人</Button>
-<Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>查看 GitHub</Button>
+<Button href="https://t.me/ton_connect_example_bot" colorType={'primary'} sizeType={'sm'}>Open Demo Bot</Button>
+<Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>Check out GitHub</Button>
 
-## 文档链接
+## Documentation links
 
-- [TON Connect SDK 文档](https://www.npmjs.com/package/@tonconnect/sdk)
+- [TON Connect SDK documentation](https://www.npmjs.com/package/@tonconnect/sdk)
 
-## 必要条件
+## Prerequisites
 
-- 你需要使用 [@BotFather](https://t.me/BotFather) 创建一个 telegram 机器人，并保存其令牌。
-- 应安装 Node JS（本教程中我们使用版本 18.1.0）。
-- 应安装 Docker。
+- You need to create a telegram bot using [@BotFather](https://t.me/BotFather) and save its token.
+- Node JS should be installed (we use version 18.1.0 in this tutorial).
+- Docker should be installed.
 
+## Creating project
 
-## 创建项目
+### Set up dependencies
 
-### 设置依赖
-首先，我们要创建一个 Node JS 项目。我们将使用 TypeScript 和 [node-telegram-bot-api](https://www.npmjs.com/package/node-telegram-bot-api) 库（你也可以选择任何适合你的库）。此外，我们将使用 [qrcode](https://www.npmjs.com/package/qrcode) 库生成 QR 码，但你可以用任何其他同类库替换。
+Firstly we have to create a Node JS project. We will use TypeScript and [node-telegram-bot-api](https://www.npmjs.com/package/node-telegram-bot-api) library (you can choose any other suitable for you library as well). Also, we will use [qrcode](https://www.npmjs.com/package/qrcode) library for QR codes generation, but you can replace it with any other same library.
 
-让我们创建一个目录 `ton-connect-bot`。在那里添加以下的 package.json 文件：
+Let's create a directory `ton-connect-bot`. Add the following package.json file there:
+
 ```json
 {
   "name": "ton-connect-bot",
@@ -48,13 +49,14 @@ import Button from '@site/src/components/button'
 }
 ```
 
-运行 `npm i` 以安装依赖项。
+Run `npm i` to install dependencies.
 
-### 添加 tsconfig.json
-创建一个 `tsconfig.json`：
+### Add a tsconfig.json
+
+Create a `tsconfig.json`:
 
 <details>
-<summary>tsconfig.json 代码</summary>
+<summary>tsconfig.json code</summary>
 
 ```json
 {
@@ -94,14 +96,16 @@ import Button from '@site/src/components/button'
     "./tests","node_modules", "lib", "types"]
 }
 ```
+
 </details>
 
-[了解更多关于 tsconfig.json](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html)
+[Read more about tsconfig.json](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html)
 
-### 添加简单的机器人代码
-创建一个 `.env` 文件，并在其中添加你的机器人令牌、DAppmanifest 和钱包列表缓存存活时间：
+### Add simple bot code
 
-[了解更多关于 tonconnect-manifes.json](https://github.com/ton-connect/sdk/tree/main/packages/sdk#add-the-tonconnect-manifest)
+Create a `.env` file and add your bot token, DAppmanifest and wallets list cache time to live there:
+
+[See more about tonconnect-manifes.json](https://github.com/ton-connect/sdk/tree/main/packages/sdk#add-the-tonconnect-manifest)
 
 ```dotenv
 # .env
@@ -111,7 +115,7 @@ MANIFEST_URL=https://raw.githubusercontent.com/ton-connect/demo-telegram-bot/mas
 WALLETS_LIST_CAHCE_TTL_MS=86400000
 ```
 
-创建目录 `src` 和文件 `bot.ts`。在其中创建一个 TelegramBot 实例：
+Create directory `src` and file `bot.ts` inside. Let's create a TelegramBot instance there:
 
 ```ts
 // src/bot.ts
@@ -124,7 +128,7 @@ const token = process.env.TELEGRAM_BOT_TOKEN!;
 export const bot = new TelegramBot(token, { polling: true });
 ```
 
-现在我们可以在 `src` 目录内创建一个入口文件 `main.ts`：
+Now we can create an entrypoint file `main.ts` inside the `src` directory:
 
 ```ts
 // src/main.ts
@@ -140,9 +144,10 @@ bot.on('message', msg => {
 });
 ```
 
-我们可以了。你可以运行 `npm run compile` 和 `npm run start`，然后给你的机器人发送任何消息。机器人将回复“Received your message”。我们准备好进行 TonConnect 集成了。
+Here we go. You can run `npm run compile` and `npm run start`, and send any message to your bot. Bot will reply "Received your message". We are ready for the TonConnect integration.
 
-目前我们有以下文件结构：
+At the moment we have the following files structure:
+
 ```text
 ton-connect-bot
 ├── src
@@ -154,12 +159,14 @@ ton-connect-bot
 └── tsconfig.json
 ```
 
-## 连接钱包
-我们已经安装了 `@tonconnect/sdk`，因此我们可以直接导入它开始使用。
+## Connecting a wallet
 
-我们将从获取钱包列表开始。我们只需要 http-bridge 兼容的钱包。在 `src` 中创建文件夹 `ton-connect` 并添加 `wallets.ts` 文件：
-我们还定义了函数 `getWalletInfo` 来通过其 `appName` 查询详细的钱包信息。
-`name` 和 `appName` 之间的区别是 `name` 是钱包的人类可读标签，而 `appName` 是钱包的唯一标识符。
+We've already installed the `@tonconnect/sdk`, so we can just import it to get started.
+
+We will start with getting wallets list. We need only http-bridge-compatible wallets. Create a folder `ton-connect` into `src` and add `wallets.ts` file there:
+We also define function `getWalletInfo` that queries detailed wallet info by its `appName`.
+The difference between `name` and `appName` is that `name` is a human-readable label of the wallet, and `appName` is the wallet's uniq identifier.
+
 ```ts
 // src/ton-connect/wallets.ts
 
@@ -180,24 +187,24 @@ export async function getWalletInfo(walletAppName: string): Promise<WalletInfo |
 }
 ```
 
-现在我们需要定义一个 TonConnect 存储。TonConnect 在浏览器中运行时使用 `localStorage` 来保存连接详情，但是 NodeJS 环境中没有 `localStorage`。这就是为什么我们应该添加一个自定义的简单存储实现。
+Now we need to define a TonConnect storage. TonConnect uses `localStorage` to save connection details when running in the browser, however there is no `localStorage` in NodeJS environment. That's why we should add a custom simple storage implementation.
 
-[查看关于 TonConnect 存储的详情](https://github.com/ton-connect/sdk/tree/main/packages/sdk#init-connector)
+[See details about TonConnect storage](https://github.com/ton-connect/sdk/tree/main/packages/sdk#init-connector)
 
-在 `ton-connect` 目录内创建 `storage.ts`：
+Create `storage.ts` inside `ton-connect` directory:
 
 ```ts
 // src/ton-connect/storage.ts
 
 import { IStorage } from '@tonconnect/sdk';
 
-const storage = new Map<string, string>(); // 临时存储实现。我们将稍后用 redis 替换它
+const storage = new Map<string, string>(); // temporary storage implementation. We will replace it with the redis later
 
 export class TonConnectStorage implements IStorage {
-  constructor(private readonly chatId: number) {} // 我们需要为不同的用户拥有不同的存储 
+  constructor(private readonly chatId: number) {} // we need to have different stores for different users 
 
   private getKey(key: string): string {
-    return this.chatId.toString() + key; // 我们将简单地为不同的用户使用不同的键前缀
+    return this.chatId.toString() + key; // we will simply have different keys prefixes for different users
   }
 
   async removeItem(key: string): Promise<void> {
@@ -214,8 +221,9 @@ export class TonConnectStorage implements IStorage {
 }
 ```
 
-我们正在进行实现钱包连接。
-修改 `src/main.ts` 并添加 `connect` 命令。我们打算在这个命令处理器中实现一个钱包连接。
+We are moving on implementing a wallet connection.
+Modify `src/main.ts` and add `connect` command. We are going to implement a wallet connection in this command handler.
+
 ```ts
 import dotenv from 'dotenv';
 dotenv.config();
@@ -253,13 +261,13 @@ bot.onText(/\/connect/, async msg => {
 });
 ```
 
-让我们分析一下我们在这里做的事情。首先我们获取钱包列表并创建一个TonConnect实例。
-之后，我们订阅钱包变化。当用户连接一个钱包时，机器人会发送信息 `${wallet.device.appName} wallet connected!`。
-接下来我们找到Tonkeeper钱包并创建连接链接。最后我们生成一个带有链接的二维码，并将其作为照片发送给用户。
+Let's analyze what we are doing here. Firstly we fetch the wallets list and create a TonConnect instance.
+After that we subscribe to wallet change. When user connects a wallet, bot will send a message `${wallet.device.appName} wallet connected!`.
+Next we find the Tonkeeper wallet and create connection link. In the end we generate a QR code with the link and send it as a photo to the user.
 
-现在，你可以运行机器人（接着运行 `npm run compile` 和 `npm run start`）并向机器人发送 `/connect` 信息。机器人应该会回复二维码。用Tonkeeper钱包扫描它。你将在聊天中看到 `Tonkeeper wallet connected!` 的信息。
+Now you can run the bot (`npm run compile` and `npm run start` then) and send `/connect` message to the bot. Bot should reply with the QR. Scan it with the Tonkeeper wallet. You will see a message `Tonkeeper wallet connected!` in the chat. 
 
-我们会在许多地方使用连接器，因此让我们将创建连接器的代码移动到一个单独的文件中：
+We will use connector in many places, so let's move connector creating code to a separate file:
 
 ```ts
 // src/ton-connect/conenctor.ts
@@ -276,7 +284,7 @@ export function getConnector(chatId: number): TonConnect {
 }
 ```
 
-并在 `src/main.ts` 中导入它
+And import it in the `src/main.ts`
 
 ```ts
 // src/main.ts
@@ -313,7 +321,8 @@ bot.onText(/\/connect/, async msg => {
 });
 ```
 
-目前我们有以下文件结构：
+At the moment we have the following files structure:
+
 ```text
 bot-demo
 ├── src
@@ -329,30 +338,34 @@ bot-demo
 └── tsconfig.json
 ```
 
-## 创建连接钱包菜单
-### 添加内联键盘
-我们已经完成了Tonkeeper钱包的连接。但我们还没有实现通过通用二维码连接所有钱包，并且没有允许用户选择合适的钱包。现在让我们来实现它。
+## Creating connect wallet menu
 
-为了更好的用户体验，我们打算使用 Telegram 的 `callback_query` 和 `inline_keyboard` 功能。如果你不熟悉，可以在[这里](https://core.telegram.org/bots/api#callbackquery)阅读更多。
+### Add inline keyboard
 
-我们将为钱包连接实现以下用户体验：
+We've done the Tonkeeper wallet connection. But we didn't implement connection via universal QR code for all wallets, and didn't allow the user to choose suitable wallet. Let's cover it now.
+
+For better UX we are going to use `callback_query` and `inline_keyboard` Telegram features. If you don't fill familiar with that, you can read more about it [here](https://core.telegram.org/bots/api#callbackquery).
+
+We will implement following UX for wallet connection:
+
 ```text
-首屏:
-<统一二维码>
-<打开 @wallet>, <选择钱包按钮 (打开第二屏)>, <打开钱包统一链接> 
+First screen:
+<Unified QR>
+<Open @wallet>, <Choose a wallet button (opens second screen)>, <Open wallet unified link> 
 
-第二屏:
-<统一二维码>
-<返回 (打开首屏)>
-<@wallet 按钮 (打开第三屏)>, <Tonkeeper 按钮 (打开第三屏)>, <Tonhub 按钮 (打开第三屏)>, <...> 
+Second screen:
+<Unified QR>
+<Back (opens first screen)>
+<@wallet button (opens third screen)>, <Tonkeeper button (opens third screen)>, <Tonhub button (opens third screen)>, <...> 
 
-第三屏:
-<选定钱包二维码>
-<返回 (打开第二屏)>
-<打开选定钱包链接> 
+Third screen:
+<Selected wallet QR>
+<Back (opens second screen)>
+<Open selected wallet link> 
 ```
 
-让我们开始在 `src/main.ts` 中的 `/connect` 命令处理程序中添加内联键盘
+Let's start with adding inline keyboard to the `/connect` command handler in the `main.ts`
+
 ```ts
 // src/main.ts
 bot.onText(/\/connect/, async msg => {
@@ -393,17 +406,18 @@ bot.onText(/\/connect/, async msg => {
 });
 ```
 
-我们需要将TonConnect深层链接包装为https://ton-connect.github.io/open-tc?connect=${encodeURIComponent(link)}，因为在Telegram内联键盘中只允许使用`http`链接。
-网站https://ton-connect.github.io/open-tc仅将用户重定向到`connect`查询参数中传递的链接，因此这只是在Telegram中打开`tc://`链接的一种间接方式。
+We need to wrap TonConnect deeplink as https://ton-connect.github.io/open-tc?connect=${encodeURIComponent(link)} because only `http` links are allowed in the Telegram inline keyboard.
+Website https://ton-connect.github.io/open-tc just redirects user to link passed in the `connect` query param, so it's only workaround to open `tc://` link in the Telegram.
 
-注意我们替换了 `connector.connect` 调用参数。现在我们为所有钱包生成一个统一链接。
+Note that we replaced `connector.connect` call arguments. Now we are generating a unified link for all wallets. 
 
-接下来我们告诉 Telegram，在用户点击 `选择钱包` 按钮时以 `{ "method": "chose_wallet" }` 值调用 `callback_query` 处理程序。
+Next we tell Telegram to call `callback_query` handler with `{ "method": "chose_wallet" }` value when user clicks to the `Choose a Wallet` button.
 
-### 添加选择钱包按钮处理程序
-创建文件 `src/connect-wallet-menu.ts`。
+### Add Choose a Wallet button handler
 
-让我们在那里添加“选择钱包”按钮点击处理程序：
+Create a file `src/connect-wallet-menu.ts`.
+
+Let's add 'Choose a Wallet' button click handler there:
 
 ```ts
 // src/connect-wallet-menu.ts
@@ -435,21 +449,22 @@ async function onChooseWalletClick(query: CallbackQuery, _: string): Promise<voi
     );
 }
 ```
-这里我们用一个包含点击列表的钱包和“返回”按钮的新内联键盘替换了信息内联键盘。
 
+Here we are replacing the message inline keyboard with a new one that contains clickable list of wallets and 'Back' button.
 
-现在我们将添加全局 `callback_query` 处理程序并在其中注册 `onChooseWalletClick`：
+Now we will add global `callback_query` handler and register `onChooseWalletClick` there:
+
 ```ts
 // src/connect-wallet-menu.ts
 import { CallbackQuery } from 'node-telegram-bot-api';
 import { getWallets } from './ton-connect/wallets';
 import { bot } from './bot';
 
-export const walletMenuCallbacks = { // 定义按钮回调
+export const walletMenuCallbacks = { // Define buttons callbacks
     chose_wallet: onChooseWalletClick
 };
 
-bot.on('callback_query', query => { // 解析回调数据并执行对应函数
+bot.on('callback_query', query => { // Parse callback data and execute corresponing function 
     if (!query.data) {
         return;
     }
@@ -469,36 +484,37 @@ bot.on('callback_query', query => { // 解析回调数据并执行对应函数
     walletMenuCallbacks[request.method as keyof typeof walletMenuCallbacks](query, request.data);
 });
 
-// ... 上一个步骤的其它代码
+// ... other code from the previous ster
 async function onChooseWalletClick ...
 ```
 
-我们在这里定义了按钮处理程序列表和 `callback_query` 解析器。不幸的是，回调数据总是字符串，因此我们必须将JSON传递给 `callback_data`，并在 `callback_query` 处理程序中稍后解析它。
-然后我们查找请求的方法，并使用传递的参数调用它。
+Here we define buttons handlers list and `callback_query` parser. Unfortunately callback data is always string, so we have to pass JSON to the `callback_data` and parse it later in the `callback_query` handler. 
+Then we are looking for the requested method and call it with passed parameters.
 
-现在我们应该将 `connect-wallet-menu.ts` 导入到 `src/main.ts`
+Now we should add `conenct-wallet-menu.ts` import to the `main.ts`
+
 ```ts
 // src/main.ts
 
-// ... 其它导入
+// ... other imports 
 
 import './connect-wallet-menu';
 
-// ... 其它代码
+// ... other code
 ```
 
-编译并运行机器人。你现在可以点击选择钱包按钮，机器人将替换内联键盘按钮！
+Compile and run the bot. You can click to the Choose a wallet button and bot will replace inline keyboard buttons!
 
-### 添加其他的 buttons handlers
-让我们完成这个菜单并添加其余的命令处理程序。
+### Add other buttons handlers
 
-首先，我们将创建一个工具函数 `editQR`。编辑消息媒体（QR 图像）有点棘手。我们需要将图像存储到文件中并将其发送到 Telegram 服务器。然后我们可以删除这个文件。
+Let's complete this menu and add rest commands handlers.
 
+Firstly we will create a utility function `editQR`. Editing message media (QR image) is a bit tricky. We need to store image to the file and send it to the Telegram server. Then we can remove this file.
 
 ```ts
 // src/connect-wallet-menu.ts
 
-// ... 其他代码
+// ... other code
 
 
 async function editQR(message: TelegramBot.Message, link: string): Promise<void> {
@@ -521,11 +537,12 @@ async function editQR(message: TelegramBot.Message, link: string): Promise<void>
 }
 ```
 
-在 `onOpenUniversalQRClick` 处理器中，我们仅重新生成 QR 和 deeplink 并修改消息：
+In `onOpenUniversalQRClick` handler we just regenerate a QR and deeplink and modify the message:
+
 ```ts
 // src/connect-wallet-menu.ts
 
-// ... 其他代码
+// ... other code
 
 async function onOpenUniversalQRClick(query: CallbackQuery, _: string): Promise<void> {
     const chatId = query.message!.chat.id;
@@ -567,14 +584,15 @@ async function onOpenUniversalQRClick(query: CallbackQuery, _: string): Promise<
     );
 }
 
-// ... 其他代码
+// ... other code
 ```
 
-在 `onWalletClick` 处理程序中，我们为仅选定的钱包创建特殊的 QR 和通用链接，并修改消息。
+In `onWalletClick` handler we are creating special QR and universal link for selected wallet only, and modify the message.
+
 ```ts
 // src/connect-wallet-menu.ts
 
-// ... 其他代码
+// ... other code
 
 async function onWalletClick(query: CallbackQuery, data: string): Promise<void> {
     const chatId = query.message!.chat.id;
@@ -620,10 +638,10 @@ async function onWalletClick(query: CallbackQuery, data: string): Promise<void> 
     );
 }
 
-// ... 其他代码
+// ... other code
 ```
 
-现在我们必须将这些函数注册为回调（`walletMenuCallbacks`）：
+Now we have to register this functions as callbacks (`walletMenuCallbacks`):
 
 ```ts
 // src/connect-wallet-menu.ts
@@ -640,10 +658,11 @@ export const walletMenuCallbacks = {
     universal_qr: onOpenUniversalQRClick
 };
 
-// ... 其他代码
+// ... other code
 ```
+
 <details>
-<summary>目前 src/connect-wallet-menu.ts 看起来像这样</summary>
+<summary>Currently src/connect-wallet-menu.ts looks like that</summary>
 
 ```ts
 // src/connect-wallet-menu.ts
@@ -661,7 +680,7 @@ export const walletMenuCallbacks = {
     universal_qr: onOpenUniversalQRClick
 };
 
-bot.on('callback_query', query => { // 解析回调数据并执行对应函数
+bot.on('callback_query', query => { // Parse callback data and execute corresponing function 
     if (!query.data) {
         return;
     }
@@ -812,14 +831,15 @@ async function editQR(message: TelegramBot.Message, link: string): Promise<void>
     await new Promise(r => fs.rm(`./${fileName}`, r));
 }
 ```
+
 </details>
 
-编译并运行机器人以检查钱包连接功能现在如何工作。
+Compile and run the bot to check how wallet connection works now.
 
-您可能会注意到，我们还没有考虑到 QR 代码过期和停止连接器的问题。我们稍后会处理这个问题。
+You may note that we haven't considered QR code expiration and stopping connectors yet. We will handle it later. 
 
+At the moment we have the following files structure:
 
-目前我们有以下文件结构：
 ```text
 bot-demo
 ├── src
@@ -836,8 +856,9 @@ bot-demo
 └── tsconfig.json
 ```
 
-## 实现发送交易
-在编写发送交易的新代码之前，让我们清理一下代码。我们将为机器人命令处理程序（'/connect', '/send_tx', ...）创建一个新文件
+## Implement transaction sending
+
+Before write new code that sends a transaction, let's clean up the code. We're going to create a new file for bot commands handlers ('/connect', '/send_tx', ...)
 
 ```ts
 // src/commands-handlers.ts
@@ -884,7 +905,7 @@ export async function handleConnectCommand(msg: TelegramBot.Message): Promise<vo
 }
 ```
 
-让我们在 `main.ts` 中导入并将 `callback_query` 入口点从 `connect-wallet-menu.ts` 移动到 `main.ts`：
+Let's import that in the `main.ts` and also move `callback_query` entrypoint from `connect-wallet-menu.ts` to the `main.ts`:
 
 ```ts
 // src/main.ts
@@ -927,7 +948,7 @@ bot.onText(/\/connect/, handleConnectCommand);
 ```ts
 // src/connect-wallet-menu.ts
 
-// ... 导入
+// ... imports
 
 
 export const walletMenuCallbacks = {
@@ -938,15 +959,15 @@ export const walletMenuCallbacks = {
 
 async function onChooseWalletClick(query: CallbackQuery, _: string): Promise<void> {
     
-// ... 其他代码
+// ... other code
 ```
 
-现在我们可以添加 `send_tx` 命令处理程序：
+Now we can add `send_tx` command handler:
 
 ```ts
 // src/commands-handlers.ts
 
-// ... 其他代码
+// ... other code
 
 export async function handleSendTXCommand(msg: TelegramBot.Message): Promise<void> {
     const chatId = msg.chat.id;
@@ -1007,24 +1028,26 @@ export async function handleSendTXCommand(msg: TelegramBot.Message): Promise<voi
 }
 ```
 
-这里我们检查用户的钱包是否已连接并处理发送交易。
-然后我们向用户发送一条带有按钮的消息，该按钮打开用户的钱包（钱包通用链接，无需额外参数）。
-请注意，这个按钮包含一个空的deeplink。这意味着发送交易请求数据通过http-bridge传输，即使用户只是打开钱包应用而没有点击这个按钮，交易也会出现在用户的钱包中。
+Here we check if user's wallet is connected and process sending transaction.
+Then we send a message to the user with a button that opens user's wallet (wallet universal link without additional parameters).
+Note that this button contains an empty deeplink. It means that send transaction request data goes through the http-bridge, and transaction will appear it the user's wallet even if he just open the wallet app without clicking to this button.
 
-我们来注册这个处理程序：
+Let's register this handler:
+
 ```ts
 // src/main.ts
 
-// ... 其他代码
+// ... other code
 
 bot.onText(/\/connect/, handleConnectCommand);
 
 bot.onText(/\/send_tx/, handleSendTXCommand);
 ```
 
-编译并运行机器人以检查交易发送是否正常工作。
+Compile and run the bot to check that transaction sending works correctly.
 
-目前我们有以下文件结构：
+At the moment we have the following files structure:
+
 ```text
 bot-demo
 ├── src
@@ -1042,13 +1065,14 @@ bot-demo
 └── tsconfig.json
 ```
 
-## 添加断开连接和显示已连接钱包命令
-这些命令的实现很简单：
+## Add disconnect and show connected wallet commands
+
+This commands implementation is simple enough:
 
 ```ts
 // src/commands-handlers.ts
 
-// ... 其他代码
+// ... other code
 
 export async function handleDisconnectCommand(msg: TelegramBot.Message): Promise<void> {
     const chatId = msg.chat.id;
@@ -1092,11 +1116,12 @@ export async function handleShowMyWalletCommand(msg: TelegramBot.Message): Promi
 }
 ```
 
-注册这些命令：
+And register this commands:
+
 ```ts
 // src/main.ts
 
-// ... 其他代码
+// ... other code
 
 bot.onText(/\/connect/, handleConnectCommand);
 bot.onText(/\/send_tx/, handleSendTXCommand);
@@ -1104,15 +1129,17 @@ bot.onText(/\/disconnect/, handleDisconnectCommand);
 bot.onText(/\/my_wallet/, handleShowMyWalletCommand);
 ```
 
-编译并运行机器人以检查上述命令是否正常工作。
+Compile and run the bot to check that commands above works correctly.
 
-## 优化
-我们已完成所有基本命令。但值得注意的是，每个连接器保持 SSE 连接打开，直到它被暂停。
-此外，当用户多次调用 `/connect`，或调用 `/connect` 或 `/send_tx` 且不扫描 QR 码时，我们没有处理。我们应设置一个超时时间，并关闭连接以节省服务器资源。
-然后，我们应通知用户 QR / 交易请求已过期。
+## Optimisation
 
-### 发送交易优化
-让我们创建一个实用函数，将一个promise包装起来，并在指定的超时后拒绝它：
+We've done all basic commands. But it is important to keep in mind that each connector keeps SSE connection opened until it is paused. 
+Also, we didn't handle case when user calls `/connect` multiple times, or calls `/connect` or `/send_tx` and doesn't scan the QR. We should set a timeout and close the connection to save server resources. 
+Then we should notify user that QR / transaction request is expired.
+
+### Send transaction optimisation
+
+Let's create a utility function that wraps a promise and rejects it after the specified timeout:
 
 ```ts
 // src/utils.ts
@@ -1132,19 +1159,19 @@ export function pTimeout<T>(
 }
 ```
 
-你可以使用这段代码或选择你喜欢的库。
+You can use this code or pick a library you like.
 
-在 `.env` 中添加超时参数值
+Let's add a timeout parameter value to the `.env`
 
 ```dotenv
 # .env
-TELEGRAM_BOT_TOKEN=<你的机器人令牌，像 1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA>
+TELEGRAM_BOT_TOKEN=<YOUR BOT TOKEN, LIKE 1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA>
 MANIFEST_URL=https://raw.githubusercontent.com/ton-connect/demo-telegram-bot/master/tonconnect-manifest.json
 WALLETS_LIST_CAHCE_TTL_MS=86400000
 DELETE_SEND_TX_MESSAGE_TIMEOUT_MS=600000
 ```
 
-现在我们要改进 `handleSendTXCommand` 函数，并将 tx 发送包装到 `pTimeout`
+Now we are going to improve `handleSendTXCommand` function and wrap tx sending to the `pTimeout`
 
 ```ts
 // src/commands-handlers.ts
@@ -1183,11 +1210,11 @@ pTimeout(
     })
     .finally(() => connector.pauseConnection());
 
-// ... 其他代码
+// ... other code
 ```
 
 <details>
-<summary>完整的 handleSendTXCommand 代码</summary>
+<summary>Full handleSendTXCommand code</summary>
 
 ```ts
 export async function handleSendTXCommand(msg: TelegramBot.Message): Promise<void> {
@@ -1260,17 +1287,18 @@ export async function handleSendTXCommand(msg: TelegramBot.Message): Promise<voi
 
 </details>
 
-如果用户在 `DELETE_SEND_TX_MESSAGE_TIMEOUT_MS`（10分钟）内未确认交易，交易将被取消并且机器人将发送消息“Transaction was not confirmed”。
+If user doesn't confirm the transaction during `DELETE_SEND_TX_MESSAGE_TIMEOUT_MS` (10min), the transaction will be cancelled and bot will send a message `Transaction was not confirmed`.
 
-你可以将此参数设置为 `5000`，编译并重新运行机器人，测试其行为。
+You can set this parameter to `5000` compile and rerun the bot and test its behaviour.
 
-### 钱包连接流程优化
-目前，我们在每次通过钱包连接菜单步骤时都会创建一个新的连接器。
-这种做法不太好，因为在创建新连接器时我们并没有关闭之前连接器的连接。
-让我们改进这种行为，为用户的连接器创建一个缓存映射。
+### Wallet connect flow optimisation
+
+At this moment we create a new connector on the every navigation through the wallet connection menu step.
+That is poorly because we don't close previous connectors connection when create new connectors.
+Let's improve this behaviour and create a cache-mapping for users connectors.
 
 <details>
-<summary>src/ton-connect/connector.ts 代码</summary>
+<summary>src/ton-connect/connector.ts code</summary>
 
 ```ts
 // src/ton-connect/connector.ts
@@ -1325,27 +1353,27 @@ export function getConnector(
 
 </details>
 
-这段代码可能看起来有点复杂，让我们来解释一下。
-这里我们为每个用户存储一个连接器、它的清理超时和在超时后应执行的回调列表。
+This code may look a little tricky, but here we go. 
+Here we store a connector, it's cleaning timeout and list of callback that should be executed after the timeout for each user.
 
-当`getConnector`被调用时，我们检查此`chatId`（用户）是否已在缓存中存在一个存在的连接器。如果存在，我们重置清理超时并返回连接器。
-这允许保持活跃用户的连接器在缓存中。如果缓存中没有连接器，我们创建一个新的，注册一个超时清理函数并返回此连接器。
+When `getConnector` is called we check if there is an existing connector for this `chatId` (user) it the cache. If it exists we reset the cleaning timeout and return the connector. 
+That allows keep active users connectors in cache. It there is no connector in the cache we create a new one, register a timeout clean function and return this connector.
 
-为了使它工作，我们必须在`.env`中添加一个新参数
+To make it works we have to add a new parameter to the `.env`
 
 ```dotenv
 # .env
-TELEGRAM_BOT_TOKEN=<你的机器人令牌，像 1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA>
+TELEGRAM_BOT_TOKEN=<YOUR BOT TOKEN, LIKE 1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA>
 MANIFEST_URL=https://ton-connect.github.io/demo-dapp-with-react-ui/tonconnect-manifest.json
 WALLETS_LIST_CAHCE_TTL_MS=86400000
 DELETE_SEND_TX_MESSAGE_TIMEOUT_MS=600000
 CONNECTOR_TTL_MS=600000
 ```
 
-现在让我们在handleConnectCommand中使用它
+Now let's use it in the handelConnectCommand
 
 <details>
-<summary>src/commands-handlers.ts 代码</summary>
+<summary>src/commands-handlers.ts code</summary>
 
 ```ts
 // src/commands-handlers.ts
@@ -1446,26 +1474,25 @@ export async function handleConnectCommand(msg: TelegramBot.Message): Promise<vo
     });
 }
 
-// ... 其他代码
+// ... other code
 ```
 
 </details>
 
-我们定义了 `newConnectRequestListenersMap` 来存储每个用户最后一次连接请求的清理回调。
-如果用户多次调用 `/connect`，机器人将删除之前带有二维码的消息。
-此外，我们还订阅了连接器到期超时，以便在二维码消息过期时将其删除。
+We defined `newConnectRequestListenersMap` to store cleanup callback for the last connect request for each user. 
+If user calls `/connect` multiple times, bot will delete previous message with QR. 
+Also, we subscribed to the connector expiration timeout to delete the QR-code message when it is expired.  
 
-
-现在我们应该从`connect-wallet-menu.ts`中的函数中移除`connector.onStatusChange`订阅，
-因为它们使用相同的连接器实例，且在`handleConnectCommand`中一个订阅足够了。
+Now we should remove `connector.onStatusChange` subscription from the `connect-wallet-menu.ts` functions,
+because they use the same connector instance and one subscription in the `handleConnectCommand` in enough.
 
 <details>
-<summary>src/connect-wallet-menu.ts 代码</summary>
+<summary>src/connect-wallet-menu.ts code</summary>
 
 ```ts
 // src/connect-wallet-menu.ts
 
-// ... 其他代码
+// ... other code
 
 async function onOpenUniversalQRClick(query: CallbackQuery, _: string): Promise<void> {
     const chatId = query.message!.chat.id;
@@ -1541,25 +1568,27 @@ async function onWalletClick(query: CallbackQuery, data: string): Promise<void> 
     );
 }
 
-// ... 其他代码
+// ... other code
 ```
 
 </details>
 
-这样就完成了！编译并运行机器人，尝试两次调用`/connect`。
+That's it! Compile and run the bot and try to call `/connect` twice.
 
-### 优化与 @wallet 的交互
-从 v3 版本开始，TonConnect 支持连接到如 @wallet 这样的 TWA 钱包。目前在教程中，机器人可以连接到 @wallet。
-然而，我们应该改进重定向策略以提供更好的用户体验。此外，让我们在第一个（“Universal QR”）屏幕上添加 `Connect @wallet` 按钮。
+### Improve interaction with @wallet
 
-首先，让我们创建一些实用函数：
+Starting from v3 TonConnect supports connection to TWA wallets like @wallet. At the moment in the tutorial the bot could be connected to the @wallet.
+However, we should improve redirection strategy to provide better UX. Moreover, let's add `Connect @wallet` button to the first ("Universal QR") screen.
+
+First, let's create some utility functions:
+
 ```ts
 // src/utils.ts
 import { encodeTelegramUrlParameters, isTelegramUrl } from '@tonconnect/sdk';
 
 export const AT_WALLET_APP_NAME = 'telegram-wallet';
 
-// ... 其他代码
+// ... other code
 export function addTGReturnStrategy(link: string, strategy: string): string {
     const parsed = new URL(link);
     parsed.searchParams.append('ret', strategy);
@@ -1584,14 +1613,15 @@ export function convertDeeplinkToUniversalLink(link: string, walletUniversalLink
 }
 ```
 
-TonConnect 在 Telegram 链接中的参数需要以特殊方式编码，这是为什么我们使用 `encodeTelegramUrlParameters` 来编码返回策略参数。
-我们将使用 `addTGReturnStrategy` 为 @wallet 提供正确的返回 URL 至演示机器人。
+TonConnect parameters in Telegram links have to be encoded in special way, that's why we use `encodeTelegramUrlParameters` to encode return strategy parameter.
+We will use `addTGReturnStrategy` to provide correct return url to the demo bot for @wallet.
 
-由于我们在两个地方使用通用 QR 页面创建代码，我们将其移动到单独的函数中：
+Since we use Universal QR page creation code in two places, we are moving it to the separate function:
+
 ```ts
 // src/utils.ts
 
-// ... 其他代码
+// ... other code
 
 export async function buildUniversalKeyboard(
     link: string,
@@ -1627,17 +1657,16 @@ export async function buildUniversalKeyboard(
 }
 ```
 
-这里我们为第一屏幕（通用 QR 屏幕）添加独立的 @wallet 按钮。接下来的工作是在 connect-wallet-menu 和
-command-handlers 中使用这个函数：
-
+Here we are adding separate button for @wallet to the First screen (Universal QR screen). All that remains is to use this function in 
+connect-wallet-menu and command-handlers:
 
 <details>
-<summary>src/connect-wallet-menu.ts 代码</summary>
+<summary>src/connect-wallet-menu.ts code</summary>
 
 ```ts
 // src/connect-wallet-menu.ts
 
-// ... 其他代码
+// ... other code
 
 async function onOpenUniversalQRClick(query: CallbackQuery, _: string): Promise<void> {
     const chatId = query.message!.chat.id;
@@ -1662,18 +1691,18 @@ async function onOpenUniversalQRClick(query: CallbackQuery, _: string): Promise<
     );
 }
 
-// ... 其他代码
+// ... other code
 ```
 
 </details>
 
 <details>
-<summary>src/commands-handlers.ts 代码</summary>
+<summary>src/commands-handlers.ts code</summary>
 
 ```ts
 // src/commands-handlers.ts
 
-// ... 其他代码
+// ... other code
 
 export async function handleConnectCommand(msg: TelegramBot.Message): Promise<void> {
     const chatId = msg.chat.id;
@@ -1744,21 +1773,20 @@ export async function handleConnectCommand(msg: TelegramBot.Message): Promise<vo
     });
 }
 
-// ... 其他代码
+// ... other code
 ```
 
 </details>
 
-
-现在，我们将正确处理用户在第二个屏幕（选择钱包时）点击钱包按钮时的 TG 链接：
+Now we are going to handle TG links properly when user clicks to a wallet button on the second Screen (Choosing a wallet):
 
 <details>
-<summary>src/connect-wallet-menu.ts 代码</summary>
+<summary>src/connect-wallet-menu.ts code</summary>
 
 ```ts
 // src/connect-wallet-menu.ts
 
-// ... 其他代码
+// ... other code
 
 
 async function onWalletClick(query: CallbackQuery, data: string): Promise<void> {
@@ -1806,24 +1834,23 @@ async function onWalletClick(query: CallbackQuery, data: string): Promise<void> 
     );
 }
 
-// ... 其他代码
+// ... other code
 ```
 
 </details>
 
-请注意，我们将不同的链接放置在 QR 和按钮链接（`qrLink` 和 `buttonLink`）中，
-因为当用户通过@wallet扫描 QR 时我们不需要重定向，而同时当用户使用按钮链接连接@wallet时我们需要返回到机器人。
+Note that we place different links to the QR and button-link (`qrLink` and `buttonLink`), 
+because we don't need redirection when user scans QR by @wallet, and at the same time we need redirect back to the bot when user connects @wallet using button-link.
 
-
-现在让我们在 `send transaction` 处理器中为 TG 链接添加返回策略：
+Now let's add return strategy for TG links in `send transaction` handler:
 
 <details>
-<summary>src/commands-handlers.ts 代码</summary>
+<summary>src/commands-handlers.ts code</summary>
 
 ```ts
 // src/commands-handlers.ts
 
-// ... 其他代码
+// ... other code
 
 export async function handleSendTXCommand(msg: TelegramBot.Message): Promise<void> {
     const chatId = msg.chat.id;
@@ -1898,29 +1925,32 @@ export async function handleSendTXCommand(msg: TelegramBot.Message): Promise<voi
     );
 }
 
-// ... 其他代码
+// ... other code
 ```
 
 </details>
 
-就是这样。现在用户能够使用主屏幕上的特殊按钮连接 @wallet，我们也为 TG 链接提供了适当的返回策略。
+That is it. Now user is able to connect @wallet using special button on the main screen, also we have provided proper return strategy for TG links. 
 
-## 添加永久存储
-目前，我们将 TonConnect 会话存储在 Map 对象中。但你可能希望将其存储到数据库或其他永久存储中，以便在重新启动服务器时保存会话。
-我们将使用 Redis 来实现，但你可以选择任何永久存储。
+## Add a permanent storage
 
-### 设置 redis
-首先运行 `npm i redis`。
+At this moment we store TonConnect sessions in the Map object. But you may want to store it to the database or other permanent storage to save the sessions when you restart the server.
+We will use Redis for that, but you can pick any permanent storage.
 
-[查看包详情](https://www.npmjs.com/package/redis)
+### Set up redis
 
-要使用 redis，你必须启动 redis 服务器。我们将使用 Docker 镜像：
+Firstly run `npm i redis`.
+
+[See package details](https://www.npmjs.com/package/redis)
+
+To work with redis you have to start redis server. We will use the Docker image:
 `docker run -p 6379:6379 -it redis/redis-stack-server:latest`
 
-现在将 redis 连接参数添加到 `.env`。默认的 redis url 是 `redis://127.0.0.1:6379`。
+Now add redis connection parameter to the `.env`. Default redis url is `redis://127.0.0.1:6379`.
+
 ```dotenv
 # .env
-TELEGRAM_BOT_TOKEN=<你的机器人令牌，像 1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA>
+TELEGRAM_BOT_TOKEN=<YOUR BOT TOKEN, LIKE 1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA>
 MANIFEST_URL=https://ton-connect.github.io/demo-dapp-with-react-ui/tonconnect-manifest.json
 WALLETS_LIST_CAHCE_TTL_MS=86400000
 DELETE_SEND_TX_MESSAGE_TIMEOUT_MS=600000
@@ -1928,7 +1958,7 @@ CONNECTOR_TTL_MS=600000
 REDIS_URL=redis://127.0.0.1:6379
 ```
 
-让我们将 redis 集成到 `TonConnectStorage` 中：
+Let's integrate redis to the `TonConnectStorage`:
 
 ```ts
 // src/ton-connect/storage.ts
@@ -1964,10 +1994,11 @@ export class TonConnectStorage implements IStorage {
 }
 ```
 
-要使其工作，我们必须在 `main.ts` 中等待 redis 初始化。让我们将此文件中的代码包装在一个异步函数中：
+To make it work we have to wait for the redis initialisation in the `main.ts`. Let's wrap code in this file to an async function:
+
 ```ts
 // src/main.ts
-// ... 导入
+// ... imports
 
 async function main(): Promise<void> {
     await initRedisClient();
@@ -2008,12 +2039,14 @@ async function main(): Promise<void> {
 main();
 ```
 
-## 总结
+## Summary
 
-接下来
-- 如果你想在生产环境中运行机器人，你可能想要安装并使用进程管理器，如 [pm2](https://pm2.keymetrics.io/)。
-- 你可以在机器人中增加更好的错误处理。
+What is next?
 
-## 参阅
-- [发送消息](/develop/dapps/ton-connect/transactions)
-- [集成手册](/develop/dapps/ton-connect/integration)
+- If you want to run the bot in production you may want to install and use a process manager like [pm2](https://pm2.keymetrics.io/).
+- You can add better errors handling in the bot.
+
+## See Also
+
+- [Sending messages](/develop/dapps/ton-connect/transactions)
+- [Integration Manual](/develop/dapps/ton-connect/integration)
