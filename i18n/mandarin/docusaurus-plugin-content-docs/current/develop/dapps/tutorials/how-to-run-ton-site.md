@@ -1,63 +1,63 @@
-# How to run TON Sites
+# 如何运行 TON 网站
 
-## 👋 Introduction
+## 👋 引言
 
-[TON Sites](https://blog.ton.org/ton-sites) work almost like regular sites except for their installation. A number of additional actions are required to launch them. In this tutorial I will show you how to do it.
+[TON 网站](https://blog.ton.org/ton-sites)的工作方式几乎与普通网站相同，除了它们的安装。需要执行一些额外的操作来启动它们。在这篇教程中，我将向您展示如何做到这一点。
 
-## 🖥 Running TON Site
+## 🖥 运行 TON 网站
 
-Install [Tonutils Reverse Proxy](https://github.com/tonutils/reverse-proxy) to use TON Proxy for your website.
+安装 [Tonutils 反向代理](https://github.com/tonutils/reverse-proxy) 来使用 TON 代理为您的网站服务。
 
-### Installation on any Linux
+### 在任何 Linux 上的安装
 
-##### Download
+##### 下载
 
 ```bash
 wget https://github.com/ton-utils/reverse-proxy/releases/download/v0.2.0/tonutils-reverse-proxy-linux-amd64
 chmod 777 tonutils-reverse-proxy-linux-amd64
 ```
 
-##### Run
+##### 运行
 
-Run with domain configuration, and follow the steps:
+用域配置运行，并按步骤操作：
 
 ```
 ./tonutils-reverse-proxy-linux-amd64 --domain your-domain.ton 
 ```
 
-Scan QR code from your terminal using Tonkeeper, Tonhub or any other wallet, execute transaction. Your domain will be linked to your site.
+使用 Tonkeeper、Tonhub 或任何其他钱包扫描你的终端中的 QR 码，执行交易。您的域将会链接到您的网站上。
 
-###### Run without domain
+###### 无域运行
 
-Alternatively, you can run in simple mode, with .adnl domain, if you don't have .ton or .t.me domain:
+作为替代，如果你没有 .ton 或 .t.me 域，你可以以简单模式运行，使用 .adnl 域：
 
 ```
 ./tonutils-reverse-proxy-linux-amd64
 ```
 
-##### Use
+##### 使用
 
-Now anyone can access your TON Site! Using ADNL address or domain.
+现在任何人都可以访问您的 TON 网站了！使用 ADNL 地址或域名。
 
-If you want to change some settings, like proxy pass url - open `config.json` file, edit and restart proxy. Default proxy pass url is `http://127.0.0.1:80/`
+如果您想更改一些设置，如代理pass url - 打开 `config.json` 文件，编辑后重启代理。默认的代理pass url是 `http://127.0.0.1:80/`
 
-Proxy adds additional headers:
-`X-Adnl-Ip` - ip of client, and `X-Adnl-Id` - adnl id of client
+代理添加了额外的头部：
+`X-Adnl-Ip` - 客户端的 IP 和 `X-Adnl-Id` - 客户端的 ADNL ID
 
-### Installation on any other OS
+### 在任何其他操作系统上的安装
 
-Build it from sources using `./build.sh`, and run as in the step 2 for linux. Go environment is required to build.
+使用 `./build.sh` 从源代码构建，然后如第 2 步中的 Linux 一样运行。构建需要 Go 环境。
 
-## 👀 Further steps
+## 👀 后续步骤
 
-### 🔍 Сhecking availability of the site
+### 🔍 检查网站的可用性
 
-After completing all the steps of the method you selected, the TON Proxy should have started. If everything was successful, your site will be available at the ADNL address received at the corresponding step.
+完成您选择的方法的所有步骤后，TON 代理应该已经启动。如果一切成功，您的网站将可在相应步骤收到的 ADNL 地址处访问。
 
-You can check the availability of the site by opening this address with the domain `.adnl`. Also note that in order for the site to open, you must have a TON Proxy running in your browser, for example through an extension [MyTonWallet](https://mytonwallet.io/).
+您可以通过使用域 `.adnl` 打开这个地址来检查网站的可用性。另请注意，为了打开网站，您必须在浏览器中运行 TON 代理，例如通过扩展 [MyTonWallet](https://mytonwallet.io/)。
 
-## 📌 References
+## 📌 参考资料
 
-- [TON Sites, TON WWW and TON Proxy](https://blog.ton.org/ton-sites)
-- [Tonutils Reverse Proxy](https://github.com/tonutils/reverse-proxy)
-- Authors: [Andrew Burnosov](https://github.com/AndreyBurnosov) (TG: [@AndrewBurnosov](https://t.me/AndreyBurnosov)), [Daniil Sedov](https://gusarich.com) (TG: [@sedov](https://t.me/sedov)), [George Imedashvili](https://github.com/drforse)
+- [TON 网站、TON WWW 和 TON 代理](https://blog.ton.org/ton-sites)
+- [Tonutils 反向代理](https://github.com/tonutils/reverse-proxy)
+- 作者: [Andrew Burnosov](https://github.com/AndreyBurnosov) (TG: [@AndrewBurnosov](https://t.me/AndreyBurnosov))，[Daniil Sedov](https://gusarich.com) (TG: [@sedov](https://t.me/sedov))，[George Imedashvili](https://github.com/drforse)
