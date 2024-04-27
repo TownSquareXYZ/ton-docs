@@ -1,10 +1,10 @@
-# Single Nominator Pool
+# 单一提名者池
 
 ## Using mytonctrl
 
 Currently [mytonctrl](https://github.com/ton-blockchain/mytonctrl) supports `single_nominator` contracts, but firstly you need to install mytonctrl 2.0.
 
-### mytonctrl 2.0
+### 准备验证者
 
 If you already have installed mytonctrl just use command `update mytonctrl2`. If you have no mytonctrl installed, follow these steps:
 
@@ -24,19 +24,19 @@ sudo bash ./install.sh -b mytonctrl2
 
 After you have created and activated validator's wallet, follow these steps:
 
-1. Enable single nominator mode
+1. 安装[nodejs](https://nodejs.org/en) v.16及以后版本和npm（[详细说明](https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions)）
 
 ```bash
 MyTonCtrl> enable_mode single-nominator
 ```
 
-2. Create pool
+2. 创建符号链接：
 
 ```bash
 MyTonCtrl> new_single_pool <pool-name> <owner_address>
 ```
 
-3. Type `pools_list` to display pool addresses
+3. 运行测试以确保一切设置正确：
 
 4. Send 1 TON to the pool and activate it
 
@@ -46,13 +46,13 @@ MyTonCtrl> activate_single_pool <pool-name>
 
 Now you can work with this pool via mytonctrl like with a standard nominator pool.
 
-## Without mytonctrl
+## 创建single_nominator池
 
 #### Prepare launched Validator
 
   If you have mytonctrl installed and validator running:
 
-1. Stop validation and withdraw all funds.
+1. 创建部署者地址：
 
 #### Prepare from the beginning
 
@@ -71,7 +71,7 @@ $ sudo apt install ts-node
 $ sudo npm i arg -g
 ```
 
-4. Create symlinks:
+4. 备份部署者私钥"./build/deploy.config.json"和"single-nominator.addr"文件
 
 ```bash
 $ sudo ln -s /usr/bin/ton/crypto/fift /usr/local/bin/fift
@@ -118,7 +118,7 @@ $ npm run deploy
 $ fift -s ./scripts/fift/str-to-addr.fif Ef-kC0..._WLqgs
 ```
 
-(Saving address to file single-nominator.addr)
+b.
 
 6. Backup deployer private key "./build/deploy.config.json" and "single-nominator.addr" files
 7. Copy "single-nominator.addr" to "mytoncore/pools/single-nominator-1.addr"
@@ -135,7 +135,7 @@ Fift:
 $ fift -s ./scripts/fift/withdraw.fif <withdraw_amount>
 ```
 
-2. Create and sign request from owner's wallet:
+2. [Single Nominator 池合约](https://github.com/orbs-network/single-nominator)
 
 ```bash
 $ fift -s wallet-v3.fif <my-wallet> <single_nominator_address> <sub_wallet_id> <seqno> <amount=1> -B withdraw.boc
