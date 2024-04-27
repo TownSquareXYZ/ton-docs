@@ -1,10 +1,10 @@
-# TMA 启动教程
+# TMA Launch Tutorial
 
-Telegram Mini Apps (TMA) 是在 Telegram messenger 中运行的Web 应用程序。 它们是使用网页技术——HTML、CSS 和 JavaScript来构建的。 Telegram Mini 應用程式可以用于创建 DApp、游戏和其他类型的 Telegram 中可以运行的应用。
+Telegram Mini Apps (TMA) are web applications that run inside the Telegram messenger. They are built using web technologies — HTML, CSS, and JavaScript. Telegram Mini Apps can be used to create DApps, games, and other types of apps that can be run inside Telegram.
 
-## 创建您的应用
+## Create your App
 
-1. 要连接您的 Mini 应用程序到 Telegram, 请使用此代码放置SDK 脚本`telegram-web-app.js`：
+1. To connect your Mini App to the Telegram, place the SDK script `telegram-web-app.js` using this code:
 
 ```html
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -21,43 +21,43 @@ Expires: 0
 
 :::
 
-2. 一旦脚本连接，**[window.Telegram.WebApp](https://core.telegram.org/bots/webapps#initializing-web-apps)** 对象便可用。 您可以在这里阅读更多关于使用 [`telegram-web-app.js`] (https://docs.ton.org/develop/dapps/telegram-apps/app-exampes#basic-twa-example) 创建 Mini 应用程序的信息。
+2. Once the script is connected, a **[window.Telegram.WebApp](https://core.telegram.org/bots/webapps#initializing-web-apps)** object become available. You can read more about creating Mini App utilising [`telegram-web-app.js`](https://docs.ton.org/develop/dapps/telegram-apps/app-examples#basic-twa-example) here.
 
-3. 连接SDK的现代方式是 Telegram Mini Apps SDK的 npm 包：
+3. The modern way to connect SDK is npm package for Telegram Mini Apps SDK:
 
 ```bash npm2yarn
 npm i @twa-dev/sdk
 ```
 
-你可以在这里找到[`@twa-dev/sdk`](https://docs.ton.org/develop/dapps/telegram-apps/app-exampes#modern-twa-example) 的指南。
+You can find guide for [`@twa-dev/sdk`](https://docs.ton.org/develop/dapps/telegram-apps/app-examples#modern-twa-example) here.
 
-5. 当您的 Mini 应用程序准备就绪并部署到网页服务器时，跟随下一步。
+5. When your Mini App is ready and deployed to the web server, follow to the next step.
 
-## 为应用程序设置Bot
+## Setting Up a Bot for the App
 
-要连接您的 Mini 应用程序到 Telegram ，您需要创建机器人并为此设置一个 Mini 应用。 按照这些步骤设置一个新的 Telegram 機器人：
+To connect your Mini App to the Telegram, you need to create a bot and set up a Mini App for it. Follow these steps to set up a new Telegram bot:
 
-### 1. 与BotFather开始聊天
+### 1. Start a Chat with BotFather
 
-- 打开 Telegram 应用程序或Web 版本。
-- 在搜索栏中搜索`@BotFather`，或点击链接<https://t.me/BotFather>。
-- 点击`START`按钮开始与 BotFather 聊天。
+- Open the Telegram app or web version.
+- Search for `@BotFather` in the search bar or follow the link <https://t.me/BotFather>.
+- Start a chat with BotFather by clicking on the `START` button.
 
-### 2. 创建一个新机器人
+### 2. Create a New Bot
 
-- 发送 `/newbot` 命令到 BotFather。
-- BotFather将要求你为你的机器人选择一个名字。 这是一个显示名称，可以包含空格。
-- 接下来，你将被要求为你的机器人选择一个用户名。 这必须以 `bot` 结尾(例如`sample_bot`)，并且是唯一的。
+- Send `/newbot` command to BotFather.
+- BotFather will ask you to choose a name for your bot. This is a display name and can contain spaces.
+- Next, you'll be asked to choose a username for your bot. This must end in `bot` (e.g., `sample_bot`) and be unique.
 
-### 3. 设置 Bot Mini 应用程序
+### 3. Set Up Bot Mini App
 
-- 发送 `/mybots` 命令到 BotFather。
-- 从列表中选择你的机器人和 **Botsettings** 选项
-- 选择 **菜单按钮** 选项
-- 选择 **编辑菜单按钮 URL** 选项，并将 URL 发送到您的 Telegram Mini App，例如从 GitHub 页面部署的链接。
+- Send `/mybots` command to BotFather.
+- Choose your bot from the list and the **Bot settings** option
+- Choose **Menu button** option
+- Choose **Edit menu button URL** option and send URL to your Telegram Mini App, for example link from GitHub Pages deploy.
 
-### 4. 正在访问机器人
+### 4. Accessing the Bot
 
-- 您现在可以在 Telegram 的搜索栏中使用它的用户名搜索您的機器人。
-- 点击旁边的按钮来在信使中启动您的 Telegram Mini App
-- 你太棒了！
+- You can now search for your bot using its username in Telegram's search bar.
+- Press the button next to attach picker to launch your Telegram Mini App in messenger
+- You’re awesome!
