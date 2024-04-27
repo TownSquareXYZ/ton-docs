@@ -1,31 +1,31 @@
 import ConceptImage from '@site/src/components/conceptImage';
 import ThemedImage from '@theme/ThemedImage';
 
-# 图形解释指南
+# 图形解释准则
 
-在文档中保持一致性至关重要，为此，已经制定了一个特定的标准，用于可视化智能合约中的流程。
+保持文件的一致性至关重要，为了做到这一点，已经制定了智能合同中可视化程序的具体标准。
 
-## 图形解释符号
+## 图形解释说明
 
 ### 消息处理图
 
-为了描述消息处理，建议使用类似于智能合约图的图形表示，包括交易和消息的标签。
+为了描绘消息的处理，最好使用类似于智能合同图表的图形表示，并且填写交易和消息的标签。
 
-If the order of transactions doesn't matter, you can omit their labels. This simplifies the diagram, making it easier to read and understand the details related to messages and contracts.
+如果交易顺序无关紧要，您可以省略他们的标签。 这简化了图表，便于阅读和理解与电文和合同有关的细节。
 
-#### Annotation Primitives
+#### 批注参数
 
-| 图形                                                                                                         | 描述            |
-| ---------------------------------------------------------------------------------------------------------- | ------------- |
-| ![](/img/docs/scheme-templates/message-processing-graphs/circle_for_smart_contract.svg?raw=true)           | 圆形 - 智能合约实体   |
-| ![](/img/docs/scheme-templates/message-processing-graphs/rectangle_for_regular_message.svg?raw=true)       | 矩形 - 消息实体     |
-| ![](/img/docs/scheme-templates/message-processing-graphs/dashed_rectgl_for_optional_message.svg?raw=true)  | 虚线矩形 - 可选消息实体 |
-| ![](/img/docs/scheme-templates/message-processing-graphs/line_for_transaction.svg?raw=true)                | 交易（编号可选）      |
-| ![](/img/docs/scheme-templates/message-processing-graphs/person_figure_for_actor.svg?raw=true)             | Actor         |
+| 图                                                                                                          | 描述                          |
+| ---------------------------------------------------------------------------------------------------------- | --------------------------- |
+| ![](/img/docs/scheme-templates/message-processing-graphs/circle_for_smart_contracts.svg?raw=true)          | 圆形-智能合同实体                   |
+| ![](/img/docs/scheme-templates/message-processing-graphs/rectangle_for_regular_message.svg?raw=true)       | 矩形 - 消息实体                   |
+| ![](/img/docs/scheme-templates/message-processing-graphs/dashed_rectgl_for_optional_message.svg?raw=true)  | 虚拟矩形 - 可选消息实体               |
+| ![](/img/docs/scheme-templates/message-processing-graphs/line_for_transaction.svg?raw=true)                | 交易(数字可选) |
+| ![](/img/docs/scheme-templates/message-processing-graphs/person_figure_for_actor.svg?raw=true)             | 执行者                         |
 
-- 避免使用大量不同和鲜艳的颜色。
-- 使用图形的修改，例如使用虚线边框。
-- 为了更好的理解，不同的交易可以用不同的线条样式（实线和虚线）显示。
+- 避免使用大量不同和明亮的颜色。
+- 使用修改数字，例如使用虚线的边线。
+- 为了更好的理解，不同的交易可以用不同的直线风格显示(实物和破折号)。
 
 #### 消息处理示例
 
@@ -39,34 +39,34 @@ If the order of transactions doesn't matter, you can omit their labels. This sim
 />
 <br></br>
 
-可以直接从 Visio 学习参考内容 [message-processing.vsdx](/static/schemes-visio/message-processing.vsdx)。
+直接从 Visio [message-processing.vsdx](/static/schemes-visio/message-processing.vsdx) 学习参考文献。
 
 ### 格式和颜色
 
 #### 字体
 
-- 图表中所有文本使用 **Inter** 字体系列。
+- **Inter** 图表中所有文本的字体类。
 
-#### 颜色 - 亮模式
+#### 颜色-光模式
 
 - 铅笔手绘(默认主题)
 
-#### 颜色 - 暗模式
+#### 颜色-暗色模式
 
-- 字体 `#e3e3e3`
-- 背景 `#232328`
-- 浅色高亮（箭头和方案边界） `#058dd2`
-- 深色高亮（箭头和方案边界） `#0088cc`
-- 内部背景（嵌套块） `#333337`
+- Font `#e3e3e3`
+- 背景`#232328`
+- Light Highlight(arrows and scheme borders) `#058dd2`
+- 暗色高亮(箭头和方案边界) `#0088cc`
+- InnerBackGround(用于嵌套区块) `#333337`
 
-#### 版本控制政策
+#### 版本控制策略
 
-- 以 SVG 格式设置文档中的图表，以确保在各种设备上的可读性。
-- 在项目的 Git 库的 "/static/visio" 目录下存储原始文件，以便将来更容易修改。
+- 以SVG格式为方案设置图表，以确保各种设备上的可读性。
+- 在“/static/visio”目录下，将原始文件存储在项目的Git仓库中，使其更容易在将来修改。
 
-### 时序图
+### 序列图
 
-In the case of complex and repetitive communication schemes between 2-3 actors, it is advisable to use a sequence diagram. For messages, use the notation of a common synchronous message arrow.
+对于2-3个行为者之间复杂和重复的沟通计划，最好使用一个顺序图表。 对于消息，使用通用同步消息箭头的标记。
 
 #### 示例
 
@@ -82,6 +82,6 @@ In the case of complex and repetitive communication schemes between 2-3 actors, 
 </div>
 <br></br>
 
-### 方案参考
+### Scheme 参考
 
 - [message-processing.vsdx](/schemes-visio/message_processing.vsdx)
