@@ -1,248 +1,247 @@
-import Button from '@site/src/components/button'
+从 '@site/src/components/buton' 导入按钮
 
-# 支付处理
+# 付款处理
 
-本页面包含了关于在TON区块链上处理（发送和接收）数字资产的概览和具体细节。
+此页面包含一个概述和具体细节来解释如何处理 (发送和接受) TON blockchain上的数字资产。
 
-:::info 如果这10笔交易都是未见过的，应加载接下来的10笔交易，重复步骤2、3、4、5。
-TON transactions are irreversible after just one confirmation. For the best user experience, it is suggested to avoid waiting on additional blocks once transactions are finalized on the TON Blockchain. Read more in the [Catchain.pdf](https://docs.ton.org/catchain.pdf#page=3).
+:::info 交易确认
+只有一次确认后，TON交易是不可逆的。 为了获得最好的用户体验，建议在TON Blockchain上完成交易后避免等待额外的块。 阅读更多 [Catchain.pdf](https://docs.ton.org/catchain.pdf#page=3)。
 :::
 
-## Best Practices
+## 最佳做法
 
-### 基于 Seqno 的钱包
+### 钱包的基础
 
-- [创建密钥对、钱包并获取钱包地址](https://github.com/toncenter/examples/blob/main/common.js)
+- [创建密钥对，一个钱包并获取一个钱包地址](https://github.com/toncenter/examples/blob/main/common.js)
 
-### 关于Toncoin处理的最佳实践和评论：
+### Toncoin
 
-#### 本地代币，这是可以附加到网络上任何消息的特殊类型资产。由于发行新本地代币的功能已关闭，这些资产目前未被使用。
+#### Tonco币存款
 
 :::info
-It is suggested to accept deposits across multiple wallets on your side.
+建议您接受多个钱包的存款。
 :::
 
-- [JS代码接受Toncoin存款](https://github.com/toncenter/examples/blob/main/deposits.js)
+- [[JS 代码接受Toncoin 存款](https://github.com/toncenter/examples es/blob/main/deposits.js)
 
-#### 关于处理jettons的最佳实践：
+#### Tonco币提款
 
-- 向计算出的地址发送一些Toncoin。注意，您需要以`non-bounce`模式发送它们，因为该地址尚无代码，因此无法处理传入消息。`non-bounce`标志表示，即使处理失败，资金也不应通过反弹消息返回。我们不建议对其他交易使用`non-bounce`标志，尤其是在处理大笔资金时，因为反弹机制提供了一定程度的防错保护。
+- [JS 代码将从批处理中的钱包中提取(发送) Toncode ](https://github.com/toncenter/exampes/ blob/main/removals-higload-batch.js)
 
-- [JS代码从钱包中提取（发送）Toncoins](https://github.com/toncenter/examples/blob/main/withdrawals.js)
+- [JS 代码要从钱包中提取(发送) Toncoins](https://github.com/toncenter/examples/blob/main/removals-higload.js)
 
 - [详细信息](https://docs.ton.org/develop/dapps/asset-processing#global-overview)
 
-### Jetton
+### 杰顿
 
-#### Jetton Deposits
+#### Jeton Deposits
 
 :::info
-It is suggested to accept deposits across multiple wallets on your side.
+建议您接受多个钱包的存款。
 :::
 
-- [JS代码接受jettons存款](https://github.com/toncenter/examples/blob/main/deposits-jettons.js)
+- [接受jettons deposits的JS代码](https://github.com/toncenter/examples/blob/main/deposits-jettons.js)
 
-#### Jetton Withdrawals
+#### 石头提款
 
-- [JS代码从钱包中提取（发送）jettons](https://github.com/toncenter/examples/blob/main/withdrawals-jettons.js)
+- [JS 代码要从钱包中提取(发送) jettons](https://github.com/toncenter/examples/blob/main/rewals-jettons-highload.js)
 
-- 如果您需要为简单用户流程进行简便集成，使用ton://链接是合适的。
-  最适合一次性支付和发票。
+- [JS 代码将从批处理中的钱包中提取(发送)jettons](https://github.com/toncenter/examples/ blob/main/rewrong-jettons-higload-batch.js)
 
 - [详细信息](https://docs.ton.org/develop/dapps/asset-processing/jettons)
 
-## 其他示例
+## 其他例子
 
 ### 自托管服务
 
-#### 社区制作
+#### 由社区制作的
 
-[Gobicycle](https://github.com/gobicycle/bicycle) 服务专注于补充用户余额和向区块链账户发送支付。支持TONs和Jettons。该服务考虑了开发人员可能遇到的许多陷阱（所有jettons的检查、正确的操作状态检查、消息重发、区块链被分片时的高负载性能）。提供简单的HTTP API、rabbit和webhook通知新支付。 Both TONs and Jettons are supported. The service is written with numerous pitfalls in mind that a developer might encounter (all checks for jettons, correct operations status check, resending messages, performance during high load when blockchain is splitted by shards). Provide simple HTTP API, rabbit and webhook notifications about new payments.
+[Gobicycle](https://github.com/gobicycle/bicycle) 服务侧重于充值用户余额和向区块链账户付款。 TON和Jettons都得到支持。 服务写入了许多陷阱，考虑到开发者可能遇到(所有的首饰检查)。 正确的操作状态检查，重新发送消息，当区块链被碎片拆分时的高负载性能)。 提供关于新付款的简单HTTP API、rabbit和web钩子通知。
 
 ### JavaScript
 
-#### 社区制作
+#### 由社区制作的
 
-使用TON社区支持的ton.js SDK：
+使用 ton.js SDK (TON社区支持)：
 
-- [创建钱包，获取余额，进行转账](https://github.com/ton-community/ton#usage)
+- format@@0(https://github.com/ton-community/ton#usage)
 
 ### Python
 
-#### 社区制作
+#### 由社区制作的
 
-使用psylopunk/pytonlib（The Open Network的简单Python客户端）：
+使用 psylopunk/pytonlib (Simple Python 客户端用于 Open Network)：
 
-- [发送交易](https://github.com/psylopunk/pytonlib/blob/main/examples/transactions.py)
+- [正在发送交易](https://github.com/psylopunk/pytonlib/blob/main/examples es/transactions.py)
 
-使用tonsdk库（类似于tonweb）：
+使用 tonsdk 库 (类似于tonweb)：
 
-- [初始化钱包，创建外部消息部署钱包](https://github.com/tonfactory/tonsdk#create-mnemonic-init-wallet-class-create-external-message-to-deploy-the-wallet)
+- [[Init wallet, 创建外部消息来部署钱包](https://github.com/tonfacty/tonsdk#create-mnemonic-init-wallet-class-create-external-message-to-departy-the-wallet)
 
 ### Golang
 
-#### 社区制作
+#### 由社区制作的
 
-- [查看完整示例列表](https://github.com/xssnick/tonutils-go#how-to-use)
+- [见完整的例子列表](https://github.com/xssnick/tonutils-go#how to-use)
 
-## 全局概览
+## A. 全球概览
 
-Embodying a fully asynchronous approach, TON Blockchain involves a few concepts which are uncommon to traditional blockchains. Particularly, each interaction of any actor with the blockchain consists of a graph of asynchronously transferred messages between smart contracts and/or the external world. The common path of any interaction starts with an external message sent to a `wallet` smart contract, which authenticates the message sender using public-key cryptography, takes charge of fee payment, and sends inner blockchain messages. That way, transactions on the TON network are not synonymous with user interaction with the blockchain but merely nodes of the message graph: the result of accepting and processing a message by a smart contract, which may or may not lead to the emergence of new messages. The interaction may consist of an arbitrary number of messages and transactions and span a prolonged period of time. Technically, transactions with queues of messages are aggregated into blocks processed by validators. The asynchronous nature of the TON Blockchain **does not allow to predict the hash and lt (logical time) of a transaction** at the stage of sending a message. The transaction accepted to the block is final and cannot be modified.
+TON Blockchain 显示完全异步的方法，涉及一些与传统区块链不同的概念。 尤其是，任何行为者与区块链的每个互动都包括智能合约和/或外部世界之间异步传输消息的图形。 任何互动的共同路径始于发送给一个 `wallet` 智能合约的外部消息。 它使用公用钥匙加密来验证消息发送者，收取费用，并发送内部区块链信息。 这样做， TON网络上的交易并不是用户与 blockchain 交互的同义词，只是消息图的节点：通过智能合约接受和处理消息的结果。 可能导致或不会导致出现新的信息。 这种互动可能包括任意数量的信息和交易，时间很长。 从技术上来说，与邮件队列的交易被归类为验证器处理的块。 TON Blockchain 的异步性质**不允许在发送消息阶段预测交易的散列和lt (逻辑时间)**。 接受到方块的交易是最终的，无法修改。
 
-**每个内部区块链消息都是从一个智能合约到另一个智能合约的消息，携带一定数量的数字资产以及任意部分数据。**
+\*\*每个内部区块链消息都是从一个智能合约到另一个智能合约的消息。 \*\* 本文件载有一定数量的数字资产以及数据的任意部分。
 
-智能合约指南建议将以32个二进制零开头的数据负载视为可读文本消息。大多数软件，如钱包和库，支持此规范，并允许在Toncoin中发送文本评论以及显示其他消息中的评论。 Most software, such as wallets and libraries, support this specification and allow to send text comments along with Toncoin as well as display comments in other messages.
+智能合同准则建议将数据有效载荷作为一个可读的文字信息处理，从32个二进制零开始。 大多数软件，如钱包和库； 支持此规格并允许与Tonco币一起发送文本评论以及在其他消息中显示评论。
 
-智能合约**支付交易费用**（通常来自输入消息的余额）以及**存储合约存储的代码和数据的存储费用**。费用取决于workchain配置，`masterchain`上的最大费用明显低于`basechain`。 Fees depend on workchain configs with maximal fees on `masterchain` and substantially lower fees on `basechain`.
+智能合同 **支付交易费用** (通常来自收到信件的余额) 和 **存储合同代码和数据的存储费** 。 收费取决于工作链配置，最大收费在 `masterchain` 和 `basechain` 大幅降低。
 
 ## TON 上的数字资产
 
-TON拥有三种类型的数字资产。
+TON有三种类型的数字资产。
 
-- Toncoin，网络的主要代币。它用于区块链上的所有基本操作，例如支付gas费或用于验证的质押。 It is used for all basic operations on the blockchain, for example, paying gas fees or staking for validation.
-- Native tokens, which are special kinds of assets that can be attached to any message on the network. These assets are currently not in use since the functionality for issuing new native tokens is closed.
-- Contract assets, such as tokens and NFTs, which are analogous to the ERC-20/ERC-721 standards and are managed by arbitrary contracts and thus can require custom rules for processing. 合约资产，如代币和NFT，类似于ERC-20/ERC-721标准，由任意合约管理，因此可能需要自定义处理规则。你可以在[处理NFTs](/develop/dapps/asset-processing/nfts)和[处理Jettons](/develop/dapps/asset-processing/jettons)文章中找到更多信息。
+- Toncoin，网络的主要令牌。 它用于区块链上的所有基本操作，例如支付煤气费或挂卡进行验证。
+- 本地令牌是特殊类型的资产，可以附加到网络上的任何消息。 由于发行新本地令牌的功能已经关闭，这些资产目前尚未使用。
+- 合同资产，如代币和净现值， 这些标准类似于ERC-20/ERC-721标准，并由任意合同管理，因此可能需要习惯规则进行处理。 您可以在[processe NFTs](/develop/dapps/asset-processing/nfts)和[processe Jettons](/develop/dapps/asset-processing/jettons)文章中找到更多关于它的处理信息。
 
-### 简单的 Toncoin 转账
+### 简单的Tonco币传输
 
-要发送Toncoin，用户需要通过外部消息发送请求，即从外部世界到区块链的消息，到一个特殊的`钱包`智能合约（见下文）。接收到此请求后，`钱包`将发送带有所需资产量和可选数据负载的内部消息，例如文本评论。 Upon receiving this request, `wallet` will send an inner message with the desired amount of assets and optional data payload, for instance a text comment.
+若要发送Toncoin，用户需要通过外部信息发送请求，即： 一个来自外部世界到区块链的消息到一个特殊的 `wallet` 智能合约(见下文)。 收到此请求时，`wallet`将发送一个内部消息，包含所需的资源和可选的数据有效载荷，例如文本注释。
 
-## 钱包智能合约
+## 钱包智能合同
 
-钱包智能合约是TON网络上的合约，其任务是允许区块链外的参与者与区块链实体互动。通常，它解决三个挑战： Generally, it solves three challenges:
+钱包智能合同是 TON 网络上的合同，用于让区块链外的行为者与区块链实体交互的任务。 一般而言，它解决了三个挑战：
 
-- 认证所有者：拒绝处理和支付非所有者请求的费用。
-- 重放保护：禁止重复执行一个请求，例如向某个智能合约发送资产。
+- 认证所有者: 拒绝处理非所有者的请求并支付费用。
+- 保护再放：禁止重复执行一个请求，例如发送资产到其他一些智能合同。
 - 启动与其他智能合约的任意互动。
 
-解决第一个挑战的标准解决方案是公钥密码学：`钱包`存储公钥并检查传入消息是否由相应的私钥签名，而该私钥仅由所有者知晓。第三个挑战的解决方案也很常见；通常，请求包含`钱包`向网络发送的完整内部消息。然而，对于重放保护，有几种不同的方法。 The solution to the third challenge is common as well; generally, a request contains a fully formed inner message `wallet` sends to the network. However, for replay protection, there are a few different approaches.
+第一个挑战的标准解决方案是公用钥匙加密：`wallet`储存公用钥匙，并检查收到请求的消息是否由对应的私钥签名，而私钥只有所有者才知晓。 解决第三个挑战的办法也是常见的；一般而言，请求包含一个完全形成的内部消息“wallet”发送到网络。 然而，为了保护回放，有几种不同的做法。
 
-### 基于Seqno的钱包采用最简单的消息排序方法。每条消息都有一个特殊的`seqno`整数，必须与`钱包`智能合约中存储的计数器相符。`钱包`在每个请求上更新其计数器，从而确保一个请求不会被重复处理。有几个`钱包`版本在公开可用方法方面有所不同：限制请求的过期时间的能力，以及拥有相同公钥的多个钱包的能力。然而，这种方法的固有要求是逐一发送请求，因为`seqno`序列中的任何间隙都将导致无法处理所有后续请求。
+### 基于 Seqno的钱包
 
-Seqno-based wallets follow the most simple approach to sequencing messages. Each message has a special `seqno` integer that must coincide with the counter stored in the `wallet` smart contract. `wallet` updates its counter on each request, thus ensuring that one request will not be processed twice. There are a few `wallet` versions that differ in publicly available methods: the ability to limit requests by expiration time, and the ability to have multiple wallets with the same public key. However, an inherent requirement of that approach is to send requests one by one, since any gap in `seqno` sequence will result in the inability to process all subsequent requests.
+基于 Seqno的钱包采用最简单的方法来排序信息。 每个消息都有一个特殊的`seqno`整数，必须与存储在 `wallet` 智能合同中的计数器重合。 `wallet` 在每个请求上更新计数器，从而确保一个请求不会被处理两次。 在公开可用的方法中有几个`wallet`版本不同：在到期前限制请求的能力 和拥有多个拥有相同公钥的钱包的能力。 然而，这种做法的一项固有要求是逐一发出请求。 因为`seqno`序列中的任何空白将导致无法处理所有其后的请求。
 
 ### 高负载钱包
 
-This `wallet` type follows an approach based on storing the identifier of the non-expired processed requests in smart-contract storage. In this approach, any request is checked for being a duplicate of an already processed request and, if a replay is detected, dropped. Due to expiration, the contract may not store all requests forever, but it will remove those that cannot be processed due to the expiration limit. Requests to this `wallet` may be sent in parallel without interfering with each other; however, this approach requires more sophisticated monitoring of request processing.
+这种“钱包”类型遵循一种基于在智能合同存储中存储未过期处理请求的标识符的方法。 在这个方法中，将检查任何请求是否与已处理过的请求重复，如果检测到重播，则丢弃。 由于到期，这项合同可能无法将所有请求永远存放，但它将删除由于过期限制而无法处理的请求。 对此钱包的请求可以同时发送，而不相互干扰；然而，这种方法需要对请求的处理进行更加复杂的监测。
 
-## 与区块链的互动
+## 与 blockchain 的互动
 
-Basic operations on TON Blockchain can be carried out via TonLib. It is a shared library which can be compiled along with a TON node and expose APIs for interaction with the blockchain via so-called lite servers (servers for lite clients). TonLib follows a trustless approach by checking proofs for all incoming data; thus, there is no necessity for a trusted data provider. 可以通过TonLib在TON区块链上进行基本操作。TonLib是一个共享库，可以与TON节点一起编译，并通过所谓的lite服务器（轻客户端服务器）公开API以与区块链互动。TonLib通过检查所有传入数据的证明采取无信任方法；因此，不需要可信数据提供者。TonLib的可用方法列在[TL方案中](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L234)。它们可以通过像[pyTON](https://github.com/EmelyanenkoK/pyTON)或[tonlib-go](https://github.com/mercuryoio/tonlib-go/tree/master/v2)（技术上这些是`tonlibjson`的包装器）这样的包装器或通过`tonlib-cli`使用共享库。 They can be used either as a shared library via wrappers like [pyTON](https://github.com/EmelyanenkoK/pyTON) or [tonlib-go](https://github.com/mercuryoio/tonlib-go/tree/master/v2) (technically those are the wrappers for `tonlibjson`) or through `tonlib-cli`.
+TON Blockchain 上的基本操作可以通过 TonLib进行。 这是一个共享的库，可以与TON节点一起编译，并透露API，通过所谓的 lite 服务器与区块链进行交互(针对简单客户端的服务器)。 Tonlib 通过检查所有收到数据的证据来遵循一种不可信的做法；因此，没有必要设立一个受信任的数据提供者。 TonLib 可用的方法[TL模式](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L234)。 它们可以用作一个共享库，通过封装程序如 [pyTON](https://github.com/EmelyanenkoK/pyTON) 或 [tonlib-go](https://github)。 om/mercuryoio/tonlib-go/tree/master/v2) (技术上是`tonlibjson`的包装器)或通过 `tonlib-clif`。
 
 ## 钱包部署
 
-要通过TonLib部署钱包，需要：
+要通过 Tonlib 部署一个钱包，需要：
 
-1. 通过[createNewKey](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L213)或其包装函数生成私钥/公钥对（例如在[tonlib-go](https://github.com/mercuryoio/tonlib-go/tree/master/v2#create-new-private-key)中）。注意，私钥是在本地生成的，不会离开主机。 Note that the private key is generated locally and does not leave the host machine.
-2. 形成对应于已启用`钱包`之一的[InitialAccountWallet](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L60)结构。目前可用的`wallet.v3`、`wallet.highload.v1`、`wallet.highload.v2`。 Currently `wallet.v3`, `wallet.highload.v1`, `wallet.highload.v2` are available.
-3. 通过[getAccountAddress](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L249)方法计算新`钱包`智能合约的地址。我们建议使用默认修订版`0`，并且还在`basechain` `workchain=0`中部署钱包，以降低处理和存储费用。 We recommend using a default revision `0` and also deploying wallets in the basechain `workchain=0` for lower processing and storage fees.
-4. 渠道，关于用户地址的信息 Note that you need to send them in `non-bounce` mode since this address has no code yet and thus cannot process incoming messages. `non-bounce` flag indicates that even if processing fails, money should not be returned with a bounce message. We do not recommend using the `non-bounce` flag for other transactions, especially when carrying large sums, since the bounce mechanism provides some degree of protection against mistakes.
-5. 形成所需的[action](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L148)，例如仅用于部署的`actionNoop`。然后使用[createQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L255)和[sendQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L260)启动与区块链的互动。 TON区块链采用完全异步的方法，涉及一些与传统区块链不同的概念。特别是，任何参与者与区块链的每次互动都包括在智能合约和/或外部世界之间异步传输消息。任何互动的常见路径始于向`钱包`智能合约发送外部消息，该合约使用公钥密码学认证消息发送者，负责支付费用，并发送内部区块链消息。因此，在TON网络上的交易不等同于用户与区块链的互动，而仅是消息图的节点：智能合约接受和处理消息的结果，可能会或可能不会产生新消息。互动可能包括任意数量的消息和交易，并持续一段较长的时间。技术上，带有消息队列的交易被聚合到由验证者处理的区块中。TON区块链的异步性质**不允许在发送消息阶段预测交易的哈希和lt（逻辑时间）**。被接受到区块中的交易是最终的，且不能被修改。
-6. 几秒钟后使用[getAccountState](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L254)方法检查合约。
+1. 通过 [createNewKey](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L213)或其包装器函数(例如在 [tonlib-go](https://github.com/mercuryoio/tonlib-go/tree/master/v2#create-new-private-key)生成私有/公钥对。 请注意，私钥是本地生成的，不会离开主机机。
+2. 表格 [InitialAccountWallet](https://github.com/ton-blockchain/ton/blob/master/tl/generate/tonlib_api.tl#L60) 与已启用的 `wallets` 之一相对应的结构。 当前`wallet.v3`, `wallet.higload.v1`, `wallet.higload.v2` 是可用的。
+3. 通过 [getAccountAddress](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L249)计算新的 `wallet` 智能合同的地址。 我们建议使用默认修订版 `0` 并同时在 basechain `workchain=0` 中部署钱包，用于较低的处理和存储费用。
+4. 发送一些Tonco币到计算地址。 请注意，您需要以`non-bounce`模式发送它们，因为此地址还没有代码，因此无法处理收到的消息。 `non-bounce`旗帜表示，即使处理失败，也不应在退回退信中退款。 我们不建议在其他交易中使用`non-bounce`旗帜，特别是当携带大额款项时， 因为退信机制提供了一定程度的保护，以免出现错误。
+5. 格式化所需的 [action](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L148)，例如只部署了 `actionNoop` 。 然后使用 [createQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L255) 和 [sendQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L260) 发起与blockchain的交互。
+6. 在 [getAccountState](https://github.com/ton-blockchain/ton/blob/master/tl/generate/libton_api.tl#L254) 方法几秒钟内检查合同。
 
 :::tip
-在[钱包教程](/develop/smart-contracts/tutorials/wallet#-deploying-a-wallet)中阅读更多
+在钱包教程中阅读更多信息](/develop/smart-contracts/tutorials/wallet#-deping-a-wallet)
 :::
 
-## 接收消息价值
+## 传入的消息值
 
-To calculate the incoming value that the message brings to the contract, one needs to parse the transaction. It happens when the message hits the contract. 可以使用[getTransactions](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L236)获取合约的交易。此方法允许从某个`transactionId`和更早的时间获取10笔交易。要处理所有传入交易，应遵循以下步骤： For an incoming wallet transaction, the correct data consists of one incoming message and zero outgoing messages. /tl/generate/scheme/tonlib_api.tl#L236)获得交易。对于传入钱包的交易，正确的数据包括一个传入消息和零个传出消息。否则，要么是外部消息发送到钱包，在这种情况下，所有者会花费Toncoin，要么钱包未部署，传入交易会反弹回去。
+为了计算电文给合同带来的接收值，需要解析交易。 这种情况发生在电文撞击合同时。 可以通过 [getTransactions]获取交易(https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L236)。 对于收到的钱包交易，正确的数据包含一个收到的消息和零发出的消息。 否则，就会向钱包发送外部消息，在这种情况下，所有者会花费Toncoin， 或者钱包未被部署，收到的交易将退回。
 
-无论如何，一般来说，消息带给合约的金额可以计算为传入消息的价值减去传出消息的价值总和减去费用：`value_{in_msg} - SUM(value_{out_msg}) - fee`。技术上，交易表示包含三个不同的带有`费用`名称的字段：`费用`、`存储费用`和`其他费用`，即总费用、与存储成本相关的费用部分和与交易处理相关的费用部分。只应使用第一个。 Technically, transaction representation contains three different fields with `fee` in name: `fee`, `storage_fee`, and `other_fee`, that is, a total fee, a part of the fee related to storage costs, and a part of the fee related to transaction processing. Only the first one should be used.
+Anyway, in general, the amount that a message brings to the contract can be calculated as the value of the incoming message minus the sum of the values of the outgoing messages minus the fee: `value_{in_msg} - SUM(value_{out_msg}) - fee`. 从技术上讲，交易表述包含三个不同的领域，名称为“fee”、“storage_fee”和“other_fee”， 也就是说，总收费、一部分费用与储存费用有关，一部分费用与交易处理有关。 只能使用第一个。
 
-## 检查合约的交易
+## 正在检查合同的交易
 
-要计算消息带给合约的接收值，需要解析交易。这发生在消息触及合约时。可以使用[getTransactions](https://github.com/ton-blockchain/ton/blob/master This method allows to get 10 transactions from some `transactionId` and earlier. To process all incoming transactions, the following steps should be followed:
+可以通过 [getTransactions]获得合同交易(https://github.com/ton-blockchain/ton/blob/master/tl/generate/libton_api.tl#L236)。 此方法允许从 'transactionId' 和更早的 10 笔交易。 为了处理所有入账交易，应遵循下列步骤：
 
-1. 最新的`last_transaction_id`可以使用[getAccountState](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L235)获得
-2. 应通过`getTransactions`方法加载10笔交易。
-3. 应处理此列表中未见过的交易。
-4. 传入支付是传入消息具有来源地址的交易；传出支付是传入消息没有来源地址并且还存在传出消息的交易。这些交易应相应处理。 These transactions should be processed accordingly.
-5. If all of those 10 transactions are unseen, the next 10 transactions should be loaded and steps 2,3,4,5 should be repeated.
+1. 最新的`last_transaction_id`可以通过 [getAccountState]获取(https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L235)
+2. 应该通过 `getTransactions` 方法加载10个交易列表。
+3. 应处理此列表中未查看的交易。
+4. 收取付款是指收到消息的来源地址的交易； 发送付款是指收到的消息没有源地址的交易，也是指发出的信息。 应相应处理这些交易。
+5. 如果所有这10项交易都未见过，则应加载今后10项交易，并应重复步骤2 3 4 5。
 
-## 接受支付
+## 接受付款
 
-接受支付有几种方法，它们在区分用户的方法上有所不同。
+在接受付款方面有几种不同的区分用户的方法。
 
-### 基于发票的方法
+### 基于发票的办法
 
-要基于附加评论接受支付，服务应：
+若要根据所附评论接受付款，服务应该：
 
-1. 部署`钱包`合约。
-2. Generate a unique `invoice` for each user. String representation of uuid32 will be enough.
-3. 用户应被指示向服务的`钱包`合约发送Toncoin，并附加`发票`作为评论。
-4. 服务应定期轮询`钱包`合约的getTransactions方法。
-5. 对于新交易，应提取传入消息，将`评论`与数据库匹配，并将值（见**接收消息价值**段落）存入用户账户。
+1. 部署钱包合同。
+2. 为每个用户生成一个唯一的\`发票'。 uuid32的精致代表就够了。
+3. 应指示用户发送Tonco币给服务的`wallet`合同，并附上\`发票'。
+4. 服务应该定期投票`wallet`合同的 getTransactions 方法。
+5. 对于新的交易，应提取收到的信息，\`评注'与数据库匹配。 和存入用户账户的值(见**传入消息值** 段落)。
 
 ## 发票
 
-### 带有ton://链接的发票
+### 带有音调//链接的发票
 
-If you need an easy integration for a simple user flow, it is suitable to use the ton:// link.
-Best suited for one-time payments and invoices.
+如果您需要简单的用户流程整合，它适合使用 ton:// 链接。
+最适合一次性付款和发票。
 
 ```bash
 ton://transfer/<destination-address>?
     [nft=<nft-address>&]
-    [fee-amount=<nanocoins>&]
-    [forward-amount=<nanocoins>] 
+    [收费金额=<nanocoins>&]
+    [前导金额=<nanocoins>] 
 ```
 
-- ✅ 简单集成
+- :check_mark_buton: 简单集成
 
-- ✅ 无需连接钱包
+- :check_mark_buton: 无需连接钱包
 
-- ❌ 用户需要为每次支付扫描新的二维码
+- ❌ 用户需要扫描每笔付款的新二维码
 
-- ❌ 无法追踪用户是否已签署交易
+- :cross_mark：无法跟踪用户是否签名交易
 
-- ❌ 关于用户地址的信息
+- :cross_mark：没有关于用户地址的信息
 
-- ❌ 在某些平台不可点击此类链接（例如Telegram桌面客户端的机器人消息）时需要变通方法
+- ❌ 在无法点击此链接的平台上需要工作条件(如Telegram 桌面客户端的机器人消息)
 
 \<Button href="https://github.com/tonkeeper/wallet-api#payment-urls"
 colorType="primary" sizeType={'lg'}>
 了解更多 </Button>
 
-### 带有 TON Connect 的发票
+### TON Connect 的发票
 
-最适合需要在会话中签署多个支付/交易的dApps，或需要一段时间保持与钱包的连接。
+最适合于需要在会话中签署多笔付款/交易或需要在一段时间内保持与钱包的连接。
 
-- ✅ 与钱包有永久通信
+- :check_mark_buton: 钱包有一个永久的通讯频道，用户地址信息
 
-- ✅ 用户只需扫描一次二维码
+- ✅ 用户只需要扫描二维码
 
-- ✅ 可以了解用户在钱包中是否确认了交易，通过返回的BOC追踪交易
+- :check_mark_buton: 可以找到用户是否确认了钱包中的交易，通过退回的 BOC 跟踪交易
 
-- ✅ 不同平台的现成SDK和UI工具包
+- :check_mark_buton: 已就绪的 SDKs 和 UI 套件可用于不同的平台
 
-- ❌ 如果您只需要发送一次支付，用户需要进行两个操作：连接钱包和确认交易
+- ❌ 如果您只需要一次付款，用户需要采取两项动作: 连接钱包并确认交易
 
-- ❌ 集成比ton://链接更复杂
+- ❌ 集成比音调// 链接更复杂.
 
 \<Button href="/develop/dapps/ton-connect/"
 colorType="primary" sizeType={'lg'}>
 了解更多 </Button>
 
-## 发送支付
+## 发送付款
 
-1. 服务应部署`钱包`并保持其资金，以防止合约因存储费用而被销毁。注意，存储费通常少于每年1 Toncoin。 Note that storage fees are generally less than 1 Toncoin per year.
-2. 服务应从用户获取`destination_address`和可选的`comment`。注意，目前我们建议要么禁止未完成的同一(`destination_address`、`value`、`comment`)集合的传出支付，要么适当安排这些支付；这样，下一个支付只有在前一个确认后才启动。 Note that for the meantime, we recommend either prohibiting unfinished outgoing payments with the same (`destination_address`, `value`, `comment`) set or proper scheduling of those payments; that way, the next payment is initiated only after the previous one is confirmed.
-3. 用`comment`作为文本形成[msg.dataText](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L98)。
-4. 形成包含`destination_address`、空`public_key`、`amount`和`msg.dataText`的[msg.message](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L108)。
-5. 形成包含一组传出消息的[Action](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L149)。
-6. 使用[createQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L255)和[sendQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L260)查询发送传出支付。
-7. 这种类型的`钱包`采用基于存储智能合约存储中非过期处理请求的标识符的方法。在这种方法中，任何请求都会被检查是否是已处理请求的重复，如果检测到重放，则丢弃。由于过期，合约可能不会永远存储所有请求，但它会删除由于过期限制而无法处理的请求。向此`钱包`发送请求可以并行进行，彼此不干扰；然而，这种方法需要更复杂的请求处理监控。 服务应定期轮询`钱包`合约的getTransactions方法。通过(`destination_address`、`value`、`comment`)匹配确认的交易与传出支付，可以将支付标记为完成；检测并向用户显示相应的交易哈希和lt（逻辑时间）。
-8. 对`v3`或`high-load`钱包的请求默认有60秒的过期时间。在此时间后，未处理的请求可以安全地重新发送到网络（见步骤3-6）。 After that time unprocessed requests can be safely resent to the network (see steps 3-6).
+1. 服务应该部署一个“钱包”并保持其资金，以防止由于储存费而破坏合同。 请注意储存费每年一般低于1吨币。
+2. 服务应该从用户 `destination_address` 和可选的 `comment` 中获取。 请注意，在这段时间里，我们要么建议禁止使用同样的（“目的地地址”、“价值”、“评论”）或适当安排这些付款的时间； 这样，下一次付款只是在上一次付款得到确认之后才开始支付。
+3. 表格 [msg.dataText](https://github.com/ton-blockchain/ton/blob/master/tl/generate/tonlib_api.tl#L98)，将“comment”作为文本。
+4. 表格 [msg.message](https://github.com/ton-blockchain/ton/blob/master/tl/generate/tonlib_api.tl#L108)，其中包含 `destination_address`, 空 `public_key`, `amount` 和 `msg.dataText`)。
+5. 表格 [Action](https://github.com/ton-blockchain/ton/blob/master/tl/generate/tonlib_api.tl#L149)，其中包含一组传出消息。
+6. 使用 [createQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L255) 和 [sendQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L260)
+7. 服务应该定期投票`wallet`合同的 getTransactions 方法。 通过`destination_address`, `value`, `comment`) 将已确认的交易与已完成的付款匹配起来； 检测并向用户显示相应的交易哈希和空调(逻辑时间)。
+8. `load`钱包`v3`的请求默认有60秒的到期时间。 此后未处理的请求可以安全地转回网络（见步骤3-6）。
 
-## 浏览器
+## 探险家
 
-区块链浏览器是https://tonscan.org。
+区块链浏览器是 https://tonscan.org。
 
-To generate a transaction link in the explorer, the service needs to get the lt (logic time), transaction hash, and account address (account address for which lt and txhash were retrieved via the getTransactions method). 要在浏览器中生成交易链接，服务需要获取lt（逻辑时间）、交易哈希和账户地址（通过getTransactions方法检索到的用于lt和txhash的账户地址）。然后https://tonscan.org和https://explorer.toncoin.org/可以以以下格式显示该tx的页面：
+要在探险者中生成交易链接，服务需要获取 lt (逻辑时间)，交易哈希。 和帐户地址 (通过getTransaction方法检索lt 和 txhash的帐户地址)。 https://tonscan.org 和 https://explorer.toncoin.org/ 然后可以以下格式显示该页面：
 
-为每个用户生成唯一的`发票`。uuid32的字符串表示形式就足够了。
+`https://tonviewer.com/transaction/{txhash as base64url}`
 
 `https://tonscan.org/tx/{lt as int}:{txhash as base64url}:{account address}`
 
-`https://explorer.toncoin.org/transaction?account={account address}&lt={lt as int}&hash={txhash as base64url}`
+\`https://explorer.toncoin.org/transaction?account={account address}&lt={lt as int}&hash={txhash as base64url}
