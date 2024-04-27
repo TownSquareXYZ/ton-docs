@@ -1,45 +1,45 @@
-# TON DNS & Domains
+# TON DNS和域名
 
-TON DNS is a service for translating human-readable domain names (such as `test.ton` or `mysite.temp.ton`) into TON Smart Contract Addresses, ADNL Addresses employed by services running on the TON Network (such as TON Sites) and so on.
+TON DNS是一项服务，用于将易于人类阅读的域名（如`test.ton`或`mysite.temp.ton`）转换为TON智能合约地址、TON网络上运行的服务（如TON网站）所使用的ADNL地址等。
 
-## Standard
+## 标准
 
-[TON DNS Standard](https://github.com/ton-blockchain/TIPs/issues/81) describes the format of domain names, the process of resolving a domain, the interface of DNS smart contracts and the format of DNS records.
+[TON DNS标准](https://github.com/ton-blockchain/TIPs/issues/81)描述了域名的格式、解析域的过程、DNS智能合约的接口以及DNS记录的格式。
 
 ## SDK
 
-Working with TON DNS is implemented in JavaScript SDK [TonWeb](https://github.com/toncenter/tonweb) and [TonLib](https://ton.org/#/apis/?id=_2-ton-api).
+在JavaScript SDK [TonWeb](https://github.com/toncenter/tonweb) 和 [TonLib](https://ton.org/#/apis/?id=_2-ton-api)中实现了与TON DNS的交互。
 
 ```js
 const address: Address = await tonweb.dns.getWalletAddress('test.ton');
 
-// or 
+// 或者
 
 const address: Address = await tonweb.dns.resolve('test.ton', TonWeb.dns.DNS_CATEGORY_WALLET);
 ```
 
-Also `lite-client` and `tonlib-cli` is supported by DNS queries.
+`lite-client` 和 `tonlib-cli` 也支持DNS查询。
 
-## First-level domain
+## 一级域名
 
-Currently, only domains ending in `.ton` are recognized as valid TON DNS domains.
+目前，只有以`.ton`结尾的域名被认为是有效的TON DNS域名。
 
-Root DNS smart contract source code - https://github.com/ton-blockchain/dns-contract/blob/main/func/root-dns.fc.
+根DNS智能合约源代码 - https://github.com/ton-blockchain/dns-contract/blob/main/func/root-dns.fc。
 
-This could change in the future. Adding a new first-level domain will require new root smart contract and general vote to change the [network config #4](https://ton.org/#/smart-contracts/governance?id=config).
+将来这可能会改变。添加新的一级域名将需要新的根智能合约和改变[网络配置#4](https://ton.org/#/smart-contracts/governance?id=config)的通用投票。
 
-## \*.ton domains
+## \*.ton域名
 
-\*.ton domains are implemented in the form of an NFT. Since they implement the NFT standard, they are compatible with regular NFT services (e.g. NFT marketplaces) and wallets that can display NFT.
+\*.ton域名以NFT的形式实现。由于它们实现了NFT标准，因此与常规NFT服务（例如NFT市场）和可以显示NFT的钱包兼容。
 
-\*.ton domains source code - https://github.com/ton-blockchain/dns-contract.
+\*.ton域名源代码 - https://github.com/ton-blockchain/dns-contract。
 
-.ton domains resolver implements an NFT collection interface and .ton domain implements an NFT item interface.
+.ton域名解析器实现了NFT集合接口，而.ton域名实现了NFT项接口。
 
-The primary sale of \*.ton domains happens via a decentralized open auction at https://dns.ton.org. Source code - https://github.com/ton-blockchain/dns.
+\*.ton域名的首次销售通过https://dns.ton.org上的去中心化公开拍卖进行。源代码 - https://github.com/ton-blockchain/dns。
 
-## Subdomains
+## 子域名
 
-The domain owner can make subdomains by setting the address of the smart contract responsible for resolving subdomains in the DNS record `sha256("dns_next_resolver")`.
+域名所有者可以通过在DNS记录`sha256("dns_next_resolver")`中设置负责解析子域名的智能合约地址来创建子域名。
 
-It can be any smart contract that implements the DNS standard.
+它可以是任何实现DNS标准的智能合约。
