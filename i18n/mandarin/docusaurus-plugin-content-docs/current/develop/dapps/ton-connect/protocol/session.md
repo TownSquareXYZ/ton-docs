@@ -1,60 +1,60 @@
-# 会话协议
+# Session protocol
 
-会话协议定义客户端标识符，并为应用程序和钱包提供端到端加密。 这意味着HTTP桥完全不受信任，无法读取用户在应用程序和钱包之间传输的数据。 JS bridge不使用此协议，因为钱包和应用程序都在同一设备上运行。
+Session protocol defines client identifiers and offers end-to-end encryption for the app and the wallet. This means the HTTP bridge is fully untrusted and cannot read the user’s data transmitted between the app and the wallet. JS bridge does not use this protocol since both the wallet and the app run on the same device.
 
-## 定 义
+## Definitions
 
 ### Client Keypair
 
-用于NaCl “crypto_box”协议的X25519密钥配对。
+X25519 keypair for the use with NaCl “crypto_box” protocol.
 
 ```
-a <-随机23 字节
-A <-X25519Pubkey(s)
+a <- random 23 bytes
+A <- X25519Pubkey(s)
 ```
 
-或
-
-```
-(a,A) <- nacl.box.keyPair()
-```
-
-### 客户端ID
-
-[客户端密钥](#client-keypair) (32 bytes) 的公钥部分。
-
-### 会议
-
-会话由两对客户端ID来定义。 应用程序和钱包都创建了他们自己的[客户端IDs](#客户端-id)。
-
-### 创建客户密钥对
+or
 
 ```
 (a,A) <- nacl.box.keyPair()
 ```
 
-### 加密
+### Client ID
 
-来自应用程序的所有请求(初始请求除外)以及来自钱包的所有响应都是加密的。
+The public key part of the [Client Keypair](#client-keypair) (32 bytes).
 
-给消息**m**、收件人[客户端ID](#客户端-id) **X** 和发送人的私钥**y** 的二进制编码：
+### Session
 
-```
-nonce <- 随机(24字节)
-ct <- nacl.box(m, nonce, X, y)
-M <- nonce ++ ct
-```
+A session is defined by a pair of two client IDs. Both the app and the wallet create their own [Client IDs](#client-id).
 
-也就是说，最后消息**M** 的前24字节设置为随机失调。
-
-### 解密文件
-
-要解密消息**M**，收件人使用其私钥 **x** 和发送人的公钥 **Y** (aka [client ID](#client-id)):
+### Creating client Keypair
 
 ```
-nonce <-M[0..24]
-ct <-M[24..]
-m <-nacl.box.open(ct, nonce, Y, )
+(a,A) <- nacl.box.keyPair()
 ```
 
-纯文本**m** 已被恢复并解析 [请求/响应](/develop/dapps/ton-connect/protocol/requests-responses#requests-and-responses)。
+### Encryption
+
+All requests from the app (except the initial request) and all responses from the wallet are encrypted.
+
+Given a binary encoding of message **m**, recipient’s [Client ID](#client-id) **X** and sender’s private key **y** the message is encrypted as follows:
+
+```
+nonce <- random(24 bytes)
+ct    <- nacl.box(m, nonce, X, y)
+M     <- nonce ++ ct
+```
+
+That is, the final message **M** has the first 24 bytes set to the random nonce.
+
+### Decryption
+
+To decrypt the message **M**, the recipient uses its private key **x** and sender’s public key **Y** (aka [Client ID](#client-id)):
+
+```
+nonce <- M[0..24]
+ct    <- M[24..]
+m     <- nacl.box.open(ct, nonce, Y, x)
+```
+
+Plaintext **m** is recovered and parsed per [Requests/Responses](/develop/dapps/ton-connect/protocol/requests-responses#requests-and-responses).
