@@ -1,15 +1,15 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Running a Full Node
+# 运行全节点
 
 :::caution System Administrator Required
 For running nodes basic knowledge of Linux/Ubuntu system administration is required.
 :::
 
-To install and manage your own node, use the **MyTonCtrl** open-source tool developed by the TON Foundation. The majority of TON Nodes are reliable and tested by **MyTonCtrl**.
+[MyTonCtrl](https://github.com/ton-blockchain/mytonctrl)是一个控制台应用程序，它是fift、lite-client和validator-engine-console的方便包装器。它专门开发用于简化在Linux操作系统上的钱包、域和验证者管理任务。
 
-[MyTonCtrl](https://github.com/ton-blockchain/mytonctrl) is a console application that is a convenient wrapper for fift, lite-client, and validator-engine-console. It has been specifically developed to streamline wallet, domain, and validator management tasks on the Linux operating system.
+我们正在积极寻求关于安装过程的反馈。如果您有任何问题或建议，请[联系我们](https://t.me/SwiftAdviser)。
 
 We are actively seeking feedback about the installation process. If you have any questions or suggestions, please [contact us](https://t.me/Alexgton).
 
@@ -34,7 +34,7 @@ These requirements are for a **full node with a validator**. If you want to run 
 - public IP address (_fixed IP address_)
 - 16 TB/month traffic on peak load
 
-You need a machine with a **fixed IP address** and a **high-bandwidth network connection** to run a TON Blockchain Full Node.
+通常，您需要在数据中心使用至少1 Gbit/s的连接的功能强大的服务器，以可靠地适应高峰负载（预计平均负载约为100 Mbit/s）。
 
 Typically you'll need a sufficiently powerful server in a data center with good network connectivity, using at least a 1 Gbit/s connection to reliably accommodate peak loads (the average load is expected to be approximately 100 Mbit/s).
 
@@ -106,7 +106,7 @@ The TON Foundation recommends the following providers for running a Validator:
 **Note:** Prices, configurations, and availability may vary. It is advisable to always check the official documentation and pricing pages of the respective cloud provider before making any decisions.
 :::
 
-## How to run a Node? (video)
+## Latitude
 
 [//]: # "<ReactPlayer controls={true} style={{borderRadius:'10pt', margin:'15pt auto', maxWidth: '100%'}} url='/docs/files/setup_validator.mp4' />"
 
@@ -124,7 +124,7 @@ Please, check this video step-by-step tutorial to start promptly:
 
 Login to your server as a **non-root** user with **sudo** privileges.
 
-#### Create and login non-root sudo user
+#### 必要条件
 
 If you don't have **non-root** user, you can create this with the following steps steps.
 
@@ -194,7 +194,7 @@ The following statuses should be displayed:
 - **Local validator status**: Should also be in green.
 - **Local validator out of sync**: Initially, a large number is displayed. As soon as the newly created validator connects with other validators, the number will be around 250k. As synchronization progresses, this number decreases. When it falls below 20, the validator is synchronized.
 
-Example of the **status** command output:
+![status](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/mytonctrl-status.png)
 
 ![status](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/mytonctrl-status.png)
 
@@ -205,7 +205,7 @@ Otherwise, [check troubleshooting section](/participate/run-nodes/full-node#stat
 
 Wait until `Local validator out of sync` becomes less than 20 seconds.
 
-## Become a Validator
+## 查看钱包列表
 
 ### View the List of Wallets
 
@@ -215,7 +215,7 @@ Check out the list of available wallets in the **MyTonCtrl** console using the `
 wl
 ```
 
-During the installation of **mytonctrl**, the **validator_wallet_001** wallet is created:
+![wallet list](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytonctrl-wl_ru.png)
 
 ![wallet list](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytonctrl-wl_ru.png)
 
@@ -223,9 +223,9 @@ During the installation of **mytonctrl**, the **validator_wallet_001** wallet is
 
 1. Send the necessary number of coins to the wallet and activate it.
 
-Recently (_at the end of 2023_), the approximate figures have been a minimum stake of around **340K TON** and a maximum of about **1M TON**.
+查看[tonscan.com](https://tonscan.com/validation)以了解所需coins数量。
 
-Check current stakes with [tonscan.com](https://tonscan.com/validation) to understand necessary amount of coins.
+阅读更多关于[如何计算最大和最小质押代币](/participate/network-maintenance/staking-incentives#values-of-stakes-max-effective-stake)。
 
 Read more [how maximum and minimum stakes calculated](/participate/network-maintenance/staking-incentives#values-of-stakes-max-effective-stake).
 
@@ -251,7 +251,7 @@ aw [wallet name]
 set stake 50000
 ```
 
-`set stake 50000` — this sets the stake size to 50k coins. If the bet is accepted and our node becomes a validator, the bet can only be withdrawn in the second election (according to the rules of the electorate).
+![setting stake](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytonctrl-set_ru.png)
 
 ![setting stake](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytonctrl-set_ru.png)
 
@@ -272,7 +272,7 @@ Compared to a [validator](/participate/run-nodes/full-node#hardware-requirements
 
 #### Recommended Providers
 
-Feel free to use cloud providers listed in the [Recommended Providers](/participate/run-nodes/full-node#recommended-providers) section.
+Hetzner和OVH被禁止运行验证者，但您可以使用它们运行liteserver：
 
 Hetzner and OVH are forbidden to run a validator, but you can use them to run a liteserver:
 
@@ -323,7 +323,7 @@ First, verify the Liteserver port specified in your `config.json` file. This por
 }
 ```
 
-If you are using a cloud provider, you need to open this port in the firewall settings. For example, if you are using AWS, you need to open the port in the [security group](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html).
+以下是在裸机服务器防火墙中打开端口的示例。
 
 Below is an example of opening a port in the bare metal server firewall.
 
@@ -536,19 +536,19 @@ func main() {
 
 3. Now you can interact with your own liteserver.
 
-### See also
+### 可用命令列表
 
-- [\[YouTube\]Tutorial how to launch liteserver](https://youtu.be/p5zPMkSZzPc)
+- 您可以使用`help`获取可用命令列表：
 
 ## Tips & Tricks
 
-### List of available commands
+### 检查日志
 
-- You can use `help` to get a list of available commands:
+- 要检查**mytoncrl**日志，请打开本地用户的`~/.local/share/mytoncore/mytoncore.log`，或者Root的`/usr/local/bin/mytoncore/mytoncore.log`。
 
-![Help command](/img/docs/full-node/help.jpg)
+![logs](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytoncore-log.png)
 
-### Check the mytonctrl logs
+### 故障排除
 
 - To check **mytoncrl** logs, open `~/.local/share/mytoncore/mytoncore.log` for a local user or `/usr/local/bin/mytoncore/mytoncore.log` for Root.
 
@@ -556,7 +556,7 @@ func main() {
 
 ### Check the node logs
 
-Check the node logs upon failure:
+有时，这个过程可能需要长达24小时。但是，如果您已经连续几天收到此错误，这意味着您的节点无法通过当前网络连接进行同步。
 
 ```bash
 tail -f /var/ton-work/log.thread*
@@ -579,7 +579,7 @@ It should allow incoming connections on one specific port and outgoing connectio
 
 ### Validator console is not settings
 
-If you encounter the `Validator console is not settings` error, it indicates that you are running `MyTonCtrl` from a user other than the one you used for the installation.
+**答：** 这是正常的，通常这意味着您试图检索尚未到达您请求的节点的区块。
 
 :::tip Solution
 
@@ -593,13 +593,13 @@ mytonctrl
 
 **Q:** Sometimes we get `block is not applied` or `block is not ready` for various requests - is this normal?
 
-**A:** This is normal, typically this means you tried to retrieve block, which does not reach the node you asked.
+如果您在使用`-d`标志下载`MyTonCtrl`后遇到`out of sync`等于时间戳的问题，可能是转储没有正确安装（或已经过时）。
 
 **Q:** If comparative frequency appears, does it mean there is a problem somewhere?
 
-**A:** No. You need to check "Local validator out of sync" value in mytonctrl. If it's less than 60 seconds, then everything is fine.
+如果同步花费异常长的时间，可能是转储出现了问题。请[联系我们](https://t.me/SwiftAdviser)寻求帮助。
 
-But you need to keep in mind that the node is constantly synchronizing. Sometimes, you may try to receive a block that has not reached the node you requested.
+请以您安装的用户身份运行`mytonctrl`。
 
 You need to repeat the request with a slight delay.
 
@@ -611,9 +611,10 @@ If you encounter an issue where the `out of sync` equals the timestamp after dow
 The recommended solution is to reinstall `MyTonCtrl` again with the new dump.
 :::
 
-If syncing takes an unusually long time, there may have been issues with the dump. Please [contact us](https://t.me/SwiftAdviser) for assistance.
+![](\img\docs\full-node\local-validator-status-absent.png)
 
-Please, run `mytonctrl` from the user you've installed it.
+如果节点状态中没有本地节点部分，通常意味着安装过程中出了问题，跳过了创建/分配验证者钱包的步骤。
+还要检查是否指定了验证者钱包。
 
 ### Error command\<...> timed out after 3 seconds
 
@@ -631,7 +632,7 @@ The solution to the problem is to wait for the local node to synchronize or exec
 If there is no local node section in the node status, typically this means, something went wrong during installation and the step of creating/assigning a validator wallet was skipped.
 Also check that the validator wallet is specified.
 
-Check directly the following:
+最好的方法（当暂时不验证的罚款很小时，可以不间断地进行）：
 
 ```bash
 mytonctrl> get validatorWalletName
