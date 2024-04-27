@@ -1,29 +1,29 @@
-# 本机令牌：Toncoin
+# Native token: Toncoin
 
-TON Blockchain 原生的加密货币是**Toncoin**。
+The native cryptocurrency of TON Blockchain is **Toncoin**.
 
-交易费、气体付款(即智能合同电文处理费)和持久性储存付款都在Toncoin收取。
+Transaction fees, gas payments (i.e., smart contract message processing fees), and persistent storage payments are collected in Toncoin.
 
-Tonco币用于使存款成为区块链验证器。
+Toncoin is used to make the deposits required to become a blockchain validator.
 
-支付Tonco币的过程在[相应章节](/develop/dapps/asset-processing)中描述。
+The process of making Toncoin payments is described in the [corresponding section](/develop/dapps/asset-processing).
 
-您可以在 [website](https://ton.org/coin)上找到购买或兑换Tonco币的地点。
+You can find out where to buy or exchange Toncoin on the [website](https://ton.org/coin).
 
-## 额外货币
+## Extra currencies
 
-TON Blockchain 最多支持2^32内置货币。
+TON Blockchain supports up to 2^32 built-in extra currencies.
 
-额外货币余额可以存储在每个区块链帐户上，然后本地转到其他帐户(从一个智能合同到另一个的内部消息)。 除了Tonco币金额外，您可以指定额外货币金额的哈希图。
+Extra currency balances can be stored on each blockchain account and transferred to other accounts natively (in an internal message from one smart contract to another, you can specify a hashmap of the extra currency amounts in addition to the Toncoin amount).
 
 TLB: `extra_currencies$_ dict:(HashmapE 32 (VarUInteger 32)) = ExtraCurrencyCollection;` - hashmap of currency ID and amount.
 
-然而，额外货币只能储存和转移(如Toncoin)并且没有自己的任意代码或功能。
+However, extra currencies can only be stored and transferred (like Toncoin) and do not have their own arbitrary code or functionality.
 
-请注意，如果创建了大量额外货币，帐户将会“精彩”，因为它们需要存储它们。
+Note that if there are a large number of extra currencies created, the accounts will "swell" because they need to store them.
 
-因此，额外货币最好用于众所周知的分散货币（例如： 包装的比特币或以太币，创建这种额外的货币应该是非常昂贵的。
+Thus, extra currencies are best used for well-known decentralized currencies (for example, Wrapped Bitcoin or Ether), and creating such an extra currency should be quite expensive.
 
-[Jettons](/develop/dapps/违抗/tokens#jettons) 适合其他任务。
+[Jettons](/develop/dapps/defi/tokens#jettons) are suitable for other tasks.
 
-目前，TON Blockchain没有创建额外货币。 TON Blockchain 通过帐户和消息完全支持额外的货币，但创建这些货币的矿工系统合同尚未创建。
+At the moment, no extra currency has been created on TON Blockchain. TON Blockchain has full support for extra currencies by accounts and messages, but the minter system contract for their creation has not yet been created.
