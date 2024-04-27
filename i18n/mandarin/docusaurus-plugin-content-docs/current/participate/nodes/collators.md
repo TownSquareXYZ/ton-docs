@@ -1,41 +1,41 @@
-# Validator/Collator separation
+# 验证者/收集者分离
 
-:::caution in development
-This feature is testnet only right now! Participate on your own risk.
+:::caution 开发中
+此功能目前仅在测试网中！参与风险自负。
 :::
 
-The key feature of TON blockchain is the ability to distribute transaction processing over network nodes, and switching from "everybody checks all transactions" to "every transaction is checked by secure validator subset". This ability to infinitely horizontally scale throughput over shards when one workchain splits to required number of _shardchains_ distinguishes TON from other L1 networks.
+TON区块链的关键特性是能够将交易处理分散到网络节点上，并从“每个人都检查所有交易”转变为“每笔交易由安全的验证者子集检查”。这种能力在一个工作链分裂为所需数量的_分片链_时，无限横向扩展吞吐量，使TON与其他L1网络区别开来。
 
-However it is necessary to regularly rotate validator subsets which process one or another shard to prevent collusion. At the same time to process transactions validators obiviously should know state of the shard prior transaction. The simplest approach is to require all validators to know state of all shards.
+然而，为了防止串谋，有必要定期轮换处理一个或另一个分片的验证者子集。同时，为了处理交易，验证者显然应该知道交易之前的分片状态。最简单的方法是要求所有验证者了解所有分片的状态。
 
-This approach works well while number of TON users is within range of a few millions and TPS (transactions per second) is under hundred. However, in the future, when TON will process many thousands transactions per second and server hundred millions or billions of people, no single server would be able to keep actual state of whole network. Fortunately, TON was designed with such loads in mind and supports sharding both throughput and state update.
+当TON用户数量在几百万范围内且每秒交易数（TPS）在一百以下时，这种方法运行良好。然而，在未来，当TON处理每秒成千上万笔交易并服务于数亿甚至数十亿人时，没有单一服务器能够保持整个网络的实时状态。幸运的是，TON在设计时就考虑到了这种负载，并支持吞吐量和状态更新的分片。
 
-This is achieived through separation of two roles:
+这是通过分离两个角色实现的：
 
-- _Collator_ - actor which watch for only part of the network, know actual state and _collate_ (generate) next blocks
-- _Validator_ - actor which gets new blocks from _Collator_, checks it's validity and signs it effectively guaranteeing correctness at the risk of losing the stake.
+- _收集者（Collator）_ - 观察网络的一部分，了解实际状态并_收集_（生成）下一个区块的行为者
+- _验证者（Validator）_ - 从_收集者_获得新区块，检查其有效性，并签署以实际保证正确性，否则将冒失去抵押的风险。
 
-At the same time architecture of TON allows _Validator_ effectively validate new blocks without actually storing state of blockchain, by cheking specially crafted proofs.
+同时，TON的架构允许_验证者_在不实际存储区块链状态的情况下有效验证新区块，通过检查特别制作的证明。
 
-That way, when throughput of TON will be to heavy to be processed by single machine, network will consist of subnetwork of collators each of which will process only part of the chains it is capable to process and subnetwork of validators which will form many secure sets for commiting new transactions.
+这样，当TON的吞吐量太大而无法由单一机器处理时，网络将由部分收集者子网络组成，每个收集者只处理其能够处理的链的一部分，以及由多个安全集组成的验证者子网络，用于提交新交易。
 
-Currently, TON testnet is used for testing this _Validator_/_Collator_ separation, where some validators works as usual, and some validators do not collate blocks for themselves and receive them from collators.
+目前，TON测试网正在测试这种_验证者_/_收集者_分离，其中一些验证者像往常一样工作，而一些验证者不为自己收集区块，而是从收集者那里接收。
 
-# Join with "lite validator"
+# 加入“轻验证者”
 
-New node software is available in [block-generation](https://github.com/SpyCheese/ton/tree/block-generation) branch.
+新的节点软件可在[区块生成](https://github.com/SpyCheese/ton/tree/block-generation)分支中获得。
 
-## Collator
+## 收集者
 
-To create new collator you need to setup TON node; you can use flag `-M` to force node not to keep eye on shardchains it doesn't process.
+要创建新的收集者，您需要设置TON节点；您可以使用`-M`标志强制节点不关注它不处理的分片链。
 
-In `validator-engine-console` create new key for collator, set adnl category `0` to this key and add collation entity through command:
+在`validator-engine-console`中为收集者创建新密钥，将adnl类别`0`设置为此密钥，并通过命令添加收集实体：
 
 ```bash
 addcollator <adnl-id> <chain-id> <shard-id>
 ```
 
-For example:
+例如：
 
 ```bash
 newkey
@@ -43,45 +43,45 @@ addadnl <adnl-id> 0
 addcollator <adnl-id> 0 -9223372036854775808
 ```
 
-Collator which is configured to shard wc:shard_pfx can collate blocks in shard wc:shard_pfx, its ancestors and its descendants; it also will monitor all shese shards because this is required for collation.
+配置为分片 wc:shard_pfx 的收集者可以收集分片 wc:shard_pfx 及其前者和后者的区块；它还会监控所有这些分片，因为这对于收集是必需的。
 
-Collator can be stopped with command:
+收集者可以通过命令停止：
 
 ```bash
 delcollator <adnl-id> 0 -9223372036854775808
 ```
 
 :::info
-Currently there is one collator in the Network and config **-41** is used to announce it's adnl address.
+目前网络中有一个收集者，配置\*\*-41\*\*用于宣布其adnl地址。
 :::
 
-## Validator
+## 验证者
 
-To run validator you need to setup TON node, use flag `--lite-validator` to force validator to request new blocks from collators instead of generating them, and set up staking process. Validator in lite mode takes collator nodes from `-41` config.
+要运行验证者，您需要设置TON节点，使用`--lite-validator`标志强制验证者从收集者请求新区块而不是生成它们，并设置质押过程。轻模式下的验证者从`-41`配置中获取收集者节点。
 
-The easiest way is the following:
+最简单的方式如下：
 
-- setup MyTonCtrl for testnet
-- Stop validator `sudo systemctl stop validator`
-- Update service file `sudo nano /etc/systemd/system/validator.service`: add `--lite-validator` flag
-- Reload systemctl `sudo systemctl daemon-reload`
-- Start validator `sudo systemctl start validator`
+- 为测试网设置MyTonCtrl
+- 停止验证者 `sudo systemctl stop validator`
+- 更新服务文件 `sudo nano /etc/systemd/system/validator.service`：添加`--lite-validator`标志
+- 重载systemctl `sudo systemctl daemon-reload`
+- 启动验证者 `sudo systemctl start validator`
 
 ## Liteserver
 
-Just like Collators, Liteservers can be configured to only monitor some part of the blockchain. It can be done by running a node with option `-M` and adding shards in `validator-engine-console`:
+就像收集者一样，Liteservers可以配置为只监控区块链的一部分。可以通过使用`-M`选项运行节点并在`validator-engine-console`中添加分片来实现：
 
 ```bash
 addshard 0 -9223372036854775808
 ```
 
-Masterchain is always monitored by default. Shards can be removed using `delshard 0 -9223372036854775808`.
+默认情况下，主链总是被监控的。分片可以使用`delshard 0 -9223372036854775808`移除。
 
-### Lite Client
+### 轻客户端
 
-Global config should contain at least one of two secions: `liteservers` and `liteservers_v2`. First section contains "full" Liteservers which have data about all shard states. Second section contains "partial" liteservers which contain data about some part of the blockchain.
+全局配置至少应包含两个部分之一：`liteservers`和`liteservers_v2`。第一个部分包含有关所有分片状态的“全”Liteservers。第二个部分包含有关区块链某些部分的数据的“部分”liteservers。
 
-"Partial" Liteservers are described as following:
+“部分”Liteservers如下描述：
 
 ```json
 "liteservers_v2": [
@@ -103,23 +103,23 @@ Global config should contain at least one of two secions: `liteservers` and `lit
 ]
 ```
 
-Lite Client and Tonlib support this config and can choose a suitable Liteserver for each query. Note that each Liteserver monitors masterchain by default, and each server in `liteservers_v2` is implicitly configured to accept queries about masterchain. Shard `wc:shard_pfx` in the config means that the server accepts queries about shard `wc:shard_pfx`, its ancestors and its descendsnts (just like configuration of collators).
+Lite Client和Tonlib支持此配置，并可以为每个查询选择合适的Liteserver。请注意，每个Liteserver默认监控主链，`liteservers_v2`中的每个服务器都隐含配置为接受有关主链的查询。配置中的分片`wc:shard_pfx`表示服务器接受有关分片`wc:shard_pfx`、其前者和后者（就像收集者的配置一样）的查询。
 
-## Full collated data
+## 完全收集的数据
 
-By default validators proposing new block in validator set do not attach data that proves "prior to block" state. This data should be obtained by other validators from locally stored state. That way old (from master branch) and new nodes may reach consensus, but new validators should keep eye on all network state.
+默认情况下，提议新区块的验证者在验证者集合中不会附加证明“区块之前”状态的数据。这些数据应由其他验证者从本地存储的状态中获取。通过这种方式，旧节点（来自主分支）和新节点可以达成共识，但新的验证者应该关注所有网络状态。
 
-Upgrade to new protocol when validators will share blocks with collated data attached can be done by
+当验证者将附有汇总数据的区块共享时，升级到新协议可以通过以下方式完成：
 
-- Upgrading all validators to new node version
-- Setting [full_collated_data](https://github.com/spycheese/ton/blob/block-generation/crypto/block/block.tlb#L737) to true
+- 将所有验证者升级到新节点版本
+- 将 [full_collated_data](https://github.com/spycheese/ton/blob/block-generation/crypto/block/block.tlb#L737) 设置为 true
 
-# Next steps
+# 下一步
 
-The practical ability to separate _Validator_ and _Collator_ roles is the main milestone on the road to limitless throughput, but to create truly decentralised and censorship-resistant network it necessary to
+将_验证者_和_收集者_角色分离的实际能力是实现无限吞吐量的主要里程碑，但要创建真正去中心化和抗审查的网络，有必要
 
-- ensure independence and redundancy of _Collators_
-- ensure stable and secure way to interaction of Validators and Collators
-- ensure suitable financial model for Collators which incentivize durable collation of new blocks
+- 确保_收集者_的独立性和冗余性
+- 确保验证者和收集者之间的稳定和安全的互动方式
+- 为收集者确立适当的财务模型，激励其持续收集新区块
 
-Currently, these tasks are out of the scope.
+目前，这些任务超出了范围。
