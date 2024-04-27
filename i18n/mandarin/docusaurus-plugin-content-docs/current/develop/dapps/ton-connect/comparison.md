@@ -1,19 +1,19 @@
-# TON 连接 2.0 vs 1.0
+# TON Connect 2.0 vs 1.0
 
-TON Connect 2.0 解决了许多存在于TON Connect 1.0中的问题。
+TON Connect 2.0 solves many problems that were present in TON Connect 1.0.
 
-TON Connect 2。 协议为开发分散的应用程序提供了最高级别的安全环境(dApp)， 有利于开发者的环境。 和由实时UX驱动的简化用户体验。
+The TON Connect 2.0 protocol provides the highest levels of security, a developer-friendly environment for the development of decentralized applications (dApps), and a streamlined user experience driven by real-time UX.
 
-请查看以下两个版本之间的比较：
+Please see the comparison between both versions below:
 
-|                   | TON&amp;nbsp;Connect&amp;nbsp;v1 |                    TON&amp;nbsp;Connect&amp;nbsp;v2                   |
-| :---------------: | :----------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------: |
-| 正在连接到 web 的 dApps |                                    ✔︎                                    |                                                       ✔︎                                                      |
-|        发送交易       |                                    ✔︎                                    |                                                       ✔︎                                                      |
-|   正在连接钱包内的dapps   |                                                                          |                                                       ✔︎                                                      |
-|       二维码扫描       |                                   为每个动作                                  |                                                    一次，在连接时                                                    |
-|     服务器的 dApp     |                                                                          |                                                       ✔︎                                                      |
-|    Realtime UX    |                                                                          |                                                       ✔︎                                                      |
-|        切换账户       |                                                                          |                                                      即将开始                                                     |
-|    在应用与用户之间发送消息   |                                                                          |                                                      即将开始                                                     |
-|       钱包兼容性       |                                    守护者                                   | 管理员、OpenMask、MyTonWallet TonHub (即将) 和 [others](/participate/wallets/apps#basics-features) |
+|                                       | TON&amp;nbsp;Connect&amp;nbsp;v1 |                          TON&amp;nbsp;Connect&amp;nbsp;v2                         |
+| :-----------------------------------: | :----------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------: |
+|     Connecting to web-based dApps     |                                    ✔︎                                    |                                                             ✔︎                                                            |
+|          Sending transactions         |                                    ✔︎                                    |                                                             ✔︎                                                            |
+|   Connecting dapps within the wallet  |                                                                          |                                                             ✔︎                                                            |
+|            QR code scanning           |                             for every action                             |                                                  once, during connection                                                  |
+|            Serverless dApps           |                                                                          |                                                             ✔︎                                                            |
+|              Realtime UX              |                                                                          |                                                             ✔︎                                                            |
+|           Switching accounts          |                                                                          |                                                            soon                                                           |
+| Messages sending between app and user |                                                                          |                                                            soon                                                           |
+|          Wallet compatibility         |                                 Tonkeeper                                | Tonkeeper, OpenMask, MyTonWallet TonHub (soon) and [others](/participate/wallets/apps#basics-features) |
