@@ -1,8 +1,8 @@
 # 通用文档原则
 
-为了获得最佳的用户体验和清晰度，请在创建 docs.ton.org 上的新内容时，牢记我们旨在应用于所有文档的一般性和重要要求列表。
+为了获得最佳的用户体验和清晰度，请在创建 docs.ton.org 上的新内容时，牢记我们旨在应用于所有文档的一般性和重要需求列表。
 
-## 为专业人士制作的文档
+## 为从业者制作的文档
 
 文档页面主要是为了文档目的而非作为教程，因此在文本中最小化使用个人示例或类比非常重要。确保内容既适合专业人士也适合非专业人士，同时仍然提供有价值的信息。 It is crucial to ensure that the content is suitable for both professionals and non-professionals alike, while still providing valuable information.
 
