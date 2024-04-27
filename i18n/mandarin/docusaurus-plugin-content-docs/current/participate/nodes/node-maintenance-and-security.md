@@ -1,191 +1,192 @@
-# Maintenance and Security
+# 维护与安全
 
-## <a id="introduction"></a>Introduction
+## <a id="introduction"></a>介绍
 
-This guide provides some basic information on maintaining and securing TON Validator nodes.
+本指南提供了关于维护和保护TON验证节点的一些基本信息。
 
-This document assumes that a validator is installed using the configuration and tools **[recommended by TON Foundation](/participate/run-nodes/full-node)**  but general concepts apply to other scenarios as well and can be useful for savvy sysadmins.
+本文档假设使用\*\*[TON基金会推荐](/participate/run-nodes/full-node)\*\*的配置和工具安装了验证者，但通用概念也适用于其他场景，并且对于精通的系统管理员也很有用。
 
-## <a id="maintenance"></a>Maintenance
+## <a id="maintenance"></a>维护
 
-### <a id="database-grooming"></a>Database grooming
+### <a id="database-grooming"></a>数据库整理
 
-TON Node/Validator keeps it's database within the path specified by `--db` flag of `validator-engine`, usually `/var/ton-work/db`, this directory is created and managed by the node but it is recommended to perform a database grooming/cleanup task once a month to remove some artefacts.
+TON节点/验证者将其数据库保存在`--db`标志指定的路径下，通常是`/var/ton-work/db`，这个目录由节点创建和管理，但建议每月进行一次数据库整理/清理任务，以移除一些残留物。
 
-**Important**: You **must** stop the validator process before performing the steps outlined below, failure to do that will likely cause database corruption.
+**重要**：在执行以下步骤之前，您**必须**停止验证者进程，否则很可能会导致数据库损坏。
 
-The procedure takes ~5 minutes to complete and will not cause major service disruption.
+这个过程大约需要5分钟完成，不会造成重大服务中断。
 
-#### Switch to root
+#### 切换到root用户
 
 ```sh
 sudo -s
 ```
 
-#### Stop validator service
+#### 停止验证者服务
 
 ```sh
 systemctl stop validator
 ```
 
-#### Verify that validator is not running
+#### 验证验证者是否停止运行
 
 ```sh
 systemctl status validator
 ```
 
-#### Perform database cleanup
+#### 执行数据库清理
 
 ```sh
 find /var/ton-work/db -name 'LOG.old*' -exec rm {} +
+rm -r /var/ton-work/db/files/packages/temp.archive.*
 ```
 
-#### Start validator service
+#### 启动验证者服务
 
 ```sh
 systemctl start validator
 ```
 
-Verify that the validator process is running by analysing the processes and log. Validator should re-sync with the network within a few minutes.
+通过分析进程和日志来验证验证者进程是否运行。验证者应该在几分钟内与网络重新同步。
 
-### <a id="backups"></a>Backups
+### <a id="backups"></a>备份
 
-The easiest and most efficient way to backup the validator is to copy crucial node configuration files, keys and mytonctrl settings:
+备份验证者的最简单和最有效的方法是复制关键节点配置文件、密钥和mytonctrl设置：
 
-- Node configuration file: `/var/ton-work/db/config.json`
-- Node private keyring: `/var/ton-work/db/keyring`
-- Node public keys: `/var/ton-work/keys`
-- mytonctrl configuration and wallets: `$HOME/.local/share/myton*` where $HOME is the home directory of the user who started the installation of mytonctrl **OR** `/usr/local/bin/mytoncore` if you installed mytonctrl as root.
+- 节点配置文件：`/var/ton-work/db/config.json`
+- 节点私钥环：`/var/ton-work/db/keyring`
+- 节点公钥：`/var/ton-work/keys`
+- mytonctrl配置和钱包：`$HOME/.local/share/myton*`，其中$HOME是启动mytonctrl安装的用户的主目录 **或者** `/usr/local/bin/mytoncore`，如果您以root用户安装了mytonctrl的话。
 
-This set is everything you need to perform a recovery of your node from scratch.
+这组文件是您从头恢复节点所需的全部内容。
 
-#### Snapshots
+#### 快照
 
-Modern file systems such as ZFS offer snapshot functionality, most cloud providers also allow their customers to make snapshots of their machines during which the entire disk is preserved for future use.
+现代文件系统如ZFS提供快照功能，大多数云提供商也允许他们的客户在快照期间保留整个磁盘以备将来使用。
 
-The problem with both methods is that you must stop node before performing a snapshot, failure to do so will most likely result in a corrupt database with unexpected consequences. Many cloud providers also require you power down the machine before performing a snapshot.
+两种方法的问题是，您必须在进行快照之前停止节点，否则很可能导致数据库损坏并带来意想不到的后果。许多云提供商在进行快照之前也要求您关闭机器。
 
-Such stops should not be performed often, if you snapshot your node once a week then in the worst case scenario after recovery you will have a node with a week-old database and it will take your node more time to catch up with the network then to perform a new installation using mytonctrl "install from dump" feature (-d flag added during invocation of `install.sh` script).
+这样的停机不应该频繁进行，如果您每周对节点进行一次快照，那么在最坏的情况下，恢复后您将拥有一个一周旧的数据库，节点赶上网络的时间将比使用mytonctrl的“从转储安装”功能（在调用`install.sh`脚本时添加-d标志）进行新安装更长。
 
-### <a id="disaster-recovery"></a>Disaster recovery
+### <a id="disaster-recovery"></a>灾难恢复
 
-To perform recovery of your node on a new machine:
+要在新机器上恢复您的节点：
 
-#### Install mytonctrl / node
+#### 安装mytonctrl / 节点
 
-For fastest node initialization add `-d` switch to invocation of installation script.
+为了快速初始化节点，在安装脚本调用中添加-d开关。
 
-#### Switch to root user
+#### 切换到root用户
 
 ```sh
 sudo -s
 ```
 
-#### Stop mytoncore and validator processes
+#### 停止mytoncore和验证者进程
 
 ```sh
 systemctl stop validator
 systemctl stop mytoncore
 ```
 
-#### Apply backed up node configuration files
+#### 应用备份的节点配置文件
 
-- Node configuration file: `/var/ton-work/db/config.json`
-- Node private keyring: `/var/ton-work/db/keyring`
-- Node public keys: `/var/ton-work/keys`
+- 节点配置文件：`/var/ton-work/db/config.json`
+- 节点私钥环：`/var/ton-work/db/keyring`
+- 节点公钥：`/var/ton-work/keys`
 
-#### <a id="set-node-ip"></a> Set node IP address
+#### <a id="set-node-ip"></a>设置节点IP地址
 
-If your new node has a different IP address then you must edit the node configuration file `/var/ton-work/db/config.json` and set the leaf `.addrs[0].ip` to **decimal** representation of new IP address. You can use **[this](https://github.com/sonofmom/ton-tools/blob/master/node/ip2dec.py)** python script to convert your IP to decimal.
+如果您的新节点有不同的IP地址，则必须编辑节点配置文件`/var/ton-work/db/config.json`，并将leaf`.addrs[0].ip`设置为新IP地址的**十进制**表示。您可以使用\*\*[这个](https://github.com/sonofmom/ton-tools/blob/master/node/ip2dec.py)\*\* python脚本将您的IP转换为十进制。
 
-#### Ensure proper database permissions
+#### 确保数据库权限正确
 
 ```sh
 chown -R validator:validator /var/ton-work/db
 ```
 
-#### Apply backed up mytonctrl configuration files
+#### 应用备份的mytonctrl配置文件
 
-Replace `$HOME/.local/share/myton*` where $HOME is home directory of user who started the installation of mytonctrl with backed-up content, make sure that the user is the owner of all files you copy.
+用备份的内容替换`$HOME/.local/share/myton*`，其中$HOME是启动mytonctrl安装的用户的主目录，确保您复制的所有文件的所有者是该用户。
 
-#### Start mytoncore and validator processes
+#### 启动mytoncore和验证者进程
 
 ```sh
 systemctl start validator
 systemctl start mytoncore
 ```
 
-## <a id="security"></a>Security
+## <a id="security"></a>安全
 
-### <a id="host-security"></a>Host level security
+### <a id="host-security"></a>主机级安全
 
-Host level security is a huge topic which lies outside the scope of this document, we do however advise that you never install mytonctrl under root user, use a service account to ensure privilege separation.
+主机级安全是一个庞大的话题，超出了本文档的范围，但我们建议您永远不要在root用户下安装mytonctrl，使用服务账户以确保权限分离。
 
-### <a id="network-security"></a>Network level security
+### <a id="network-security"></a>网络级安全
 
-TON Validators are high value assets that should be protected against external threats, one of the first steps you should take is to make your node as invisible as possible, this means locking down all network connections. On a validator node, only a UDP Port used for node operations should be exposed to the internet.
+TON验证者是高价值资产，应该被保护以抵御外部威胁，您应该采取的第一步是尽可能使您的节点不可见，这意味着锁定所有网络连接。在验证者节点上，只有用于节点操作的UDP端口应该对互联网公开。
 
-#### Tools
+#### 工具
 
-We will use a **[ufw](https://help.ubuntu.com/community/UFW)** firewall interface as well as a **[jq](https://github.com/stedolan/jq)** JSON command line processor.
+我们将使用\*\*[ufw](https://help.ubuntu.com/community/UFW)**防火墙界面以及**[jq](https://github.com/stedolan/jq)\*\* JSON命令行处理器。
 
-#### Management Networks
+#### 管理网络
 
-As a node operator, you need to retain full control and access to the machine, in order to do this you need at least one fixed IP address or range.
+作为节点运营商，您需要保留对机器的完全控制和访问权限，为此，您至少需要一个固定的IP地址或范围。
 
-We also advise you to setup a small "jumpstation" VPS with a fixed IP Address that can be used by you to access your locked down machine(s) if you do not have a fixed IP at your home/office or to add an alternative way to access secured machines should you lose your primary IP address.
+我们还建议您设置一个带有固定 IP 地址的小型“跳板机”VPS，如果您的家庭/办公室没有固定 IP 或者在您丢失主要 IP 地址时，可以作为访问受保护机器的备用方式供您使用。
 
-#### Install ufw and jq1
+#### 安装ufw和jq1
 
 ```sh
 sudo apt install -y ufw jq
 ```
 
-#### Basic lockdown of ufw ruleset
+#### ufw规则集的基本锁定
 
 ```sh
 sudo ufw default deny incoming; sudo ufw default allow outgoing
 ```
 
-#### Disable automated ICMP echo request accept
+#### 禁用自动ICMP回声请求接受
 
 ```sh
 sudo sed -i 's/-A ufw-before-input -p icmp --icmp-type echo-request -j ACCEPT/#-A ufw-before-input -p icmp --icmp-type echo-request -j ACCEPT/g' /etc/ufw/before.rules
 ```
 
-#### Enable all access from management network(s)
+#### 从管理网络启用所有访问
 
 ```sh
 sudo ufw insert 1 allow from <MANAGEMENT_NETWORK>
 ```
 
-repeat the above command for each management network / address.
+对每个管理网络/地址重复上述命令。
 
-#### Expose node / validator UDP port to public
+#### 向公众公开节点/验证者UDP端口
 
 ```sh
 sudo ufw allow proto udp from any to any port `sudo jq -r '.addrs[0].port' /var/ton-work/db/config.json`
 ```
 
-#### Doublecheck your management networks
+#### 仔细检查您的管理网络
 
-<mark>Important</mark>: before enabling firewall, please double-check that you added the correct management addresses!
+<mark>重要</mark>：在启用防火墙之前，请仔细检查您是否添加了正确的管理地址！
 
-#### Enable ufw firewall
+#### 启用ufw防火墙
 
 ```sh
 sudo ufw enable
 ```
 
-#### Checking status
+#### 检查状态
 
-To check the firewall status use the following command:
+使用以下命令检查防火墙状态：
 
 ```sh
     sudo ufw status numbered
 ```
 
-Here is an example output of a locked-down node with two management networks / addresses:
+以下是具有两个管理网络/地址的锁定节点的示例输出：
 
 ```
 Status: active
@@ -198,20 +199,20 @@ Status: active
 [ 4] <NODE_PORT>/udp (v6)       ALLOW IN    Anywhere (v6)
 ```
 
-#### Expose LiteServer port
+#### 公开LiteServer端口
 
 ```sh
 sudo ufw allow proto tcp from any to any port `sudo jq -r '.liteservers[0].port' /var/ton-work/db/config.json`
 ```
 
-Please note that the LiteServer port should not be exposed publicly on a validator.
+请注意，验证者上不应公开LiteServer端口。
 
-#### More information on UFW
+#### 更多关于UFW的信息
 
-See this excellent **[ufw tutorial](https://www.digitalocean.com/community/tutorials/ufw-essentials-common-firewall-rules-and-commands)** from Digital Ocean for more ufw magic.
+参见Digital Ocean提供的这篇优秀的\*\*[ufw教程](https://www.digitalocean.com/community/tutorials/ufw-essentials-common-firewall-rules-and-commands)\*\*，了解更多ufw的魔法。
 
-### <a id="ip-switch"></a>IP Switch
+### <a id="ip-switch"></a>IP切换
 
-If you believe that your node is under attack then you should consider switching IP Address. The way to achieve the switch depends on your hosting provider; you might pre-order a second address, clone your **stopped** VM into another instance or setup a new instance by performing a **[disaster recovery](#disaster-recovery)** process.
+如果您认为您的节点正在遭受攻击，则应考虑更换IP地址。实现切换的方式取决于您的托管提供商；您可能需要预订第二个地址、将**已停止**的VM克隆到另一个实例，或者通过执行\*\*[灾难恢复](#disaster-recovery)\*\*流程设置新的实例。
 
-In any case, please do make sure that you **[set your new IP Address](#set-node-ip)** in the node configuration file!
+无论如何，请确保您在节点配置文件中\*\*[设置新的IP地址](#set-node-ip)\*\*！
