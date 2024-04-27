@@ -1,20 +1,20 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Preparing Messages
+# 准备消息
 
-While using TON Connect, you should construct the Message Body for the Payload used in various transactions. On this page you can find the most relevant examples of payload for use with the TON Connect SDKs.
+在使用TON Connect时，您应该为在各种交易中使用的Payload构造消息体。在此页面上，您可以找到与TON Connect SDK一起使用的payload的最相关示例。
 
 :::info
-It is expected, that you learn basics on the creating TON Connect connection. Learn more with the [integration manual](/develop/dapps/ton-connect/integration).
+期望您学习了创建TON Connect连接的基础知识。了解更多请参阅[集成手册](/develop/dapps/ton-connect/integration)。
 :::
 
-## TON Connect JS SDK Examples
+## TON Connect JS SDK 示例
 
-### Transaction Template
+### 交易模板
 
-No matter what level of the task developer are solving, typically it is necessary to use connector entity from @tonconnect/sdk or @tonconnect/ui.
-Examples created based on @tonconnect/sdk and @tonconnect/ui:
+无论开发者正在解决的任务级别如何，通常都需要使用来自@tonconnect/sdk或@tonconnect/ui的连接器实体。
+基于@tonconnect/sdk和@tonconnect/ui创建的示例：
 
 <Tabs groupId="TON Connect template">
 
@@ -77,11 +77,11 @@ await connector.sendTransaction({
 
 </Tabs>
 
-### Regular TON Transfer
+### 常规 TON 转账
 
-TON Connect SDKs include wrappers for sending messages, making it easy to prepare regular transfers of Toncoins between two wallets as default transaction without payload.
+TON Connect SDK提供了发送消息的封装器，使准备两个钱包之间的Toncoin的常规转账作为默认交易无需载荷变得容易。
 
-A regular TON transfer using the TON Connect JS SDKs can be executed as follows:
+使用TON Connect JS SDK执行常规TON转账如下所示：
 
 <Tabs groupId="Regular Transfer">
 <TabItem value="tonconnect-react-ui" label="@tonconnect/react-ui">
@@ -160,15 +160,15 @@ await connector.sendTransaction({
 </Tabs>
 
 :::tip
-Learn more about [TON Smart Contract Addresses](/learn/overviews/addresses).
+了解更多信息请参阅[TON智能合约地址](/learn/overviews/addresses)。
 :::
 
-For specific custom transaction, a certain payload must be defined.
+对于特定的自定义交易，必须定义特定的载荷。
 
-### Transfer With a Comment
+### 添加评论的转账
 
-The simplest example is adding a payload with a comment. See more details on [this page](/develop/smart-contracts/guidelines/internal-messages#simple-message-with-comment).
-Before transaction, it is necessary prepare a `body` [cell](/develop/data-formats/cell-boc) via the [@ton/ton](https://github.com/ton-org/ton) JavaScript library.
+最简单的例子是添加一个包含评论的载荷。更多详情请查看[此页面](/develop/smart-contracts/guidelines/internal-messages#simple-message-with-comment)。
+在交易之前，需要通过[@ton/ton](https://github.com/ton-org/ton) JavaScript库准备一个`body` [cell](/develop/data-formats/cell-boc)。
 
 ```js
 import { beginCell } from '@ton/ton'
@@ -179,7 +179,7 @@ const body = beginCell()
   .endCell();
 ```
 
-The transaction body is created by the following:
+通过以下方式创建交易体：
 
 <Tabs groupId="Transfer With a Comment">
 
@@ -256,9 +256,9 @@ await connector.sendTransaction({
 </TabItem>
 </Tabs>
 
-### Jetton Transfer
+### Jetton 转账
 
-The `body` for Jetton Transfer([TEP-74](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md#1-transfer)) typically should be done according the following way:
+根据以下方式进行的 Jetton 转账操作的 `body`([TEP-74](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md#1-transfer)) 通常应如下所示：
 
 ```js
     import {beginCell, toNano} from '@ton/ton'
@@ -279,7 +279,7 @@ The `body` for Jetton Transfer([TEP-74](https://github.com/ton-blockchain/TEPs/b
         .endCell();
 ```
 
-Next, sending the transaction with this body to sender's jettonWalletContract executed:
+然后，将带有此 body 的交易发送到发送者的 jettonWalletContract 执行：
 
 <Tabs groupId="Jetton Transfer">
 <TabItem value="tonconnect-react-ui" label="@tonconnect/react-ui">
@@ -355,13 +355,13 @@ await connector.sendTransaction({
 </TabItem>
 </Tabs>
 
-- `validUntil` - UNIX-time until message valid
-- `jettonWalletAddress` - Address, JettonWallet address, that defined based on JettonMaser and Wallet contracts
-- `balance` - Integer, amount of Toncoin for gas payments in nanotons.
-- `body` - payload for the jettonContract
+- `validUntil` - 消息有效的 UNIX 时间
+- `jettonWalletAddress` - 地址，基于 JettonMaser 和 Wallet 合约定义的 JettonWallet 地址
+- `balance` - 整数，用于gas费用的 Toncoin 金额，以 nanotons 计。
+- `body` - 用于 jettonContract 的载荷
 
 <details>
-    <summary>Jetton Wallet State Init and Address preparation example</summary>
+    <summary>Jetton 钱包状态初始化和地址准备示例</summary>
 
 ```js
 import { Address, TonClient, beginCell, StateInit, storeStateInit } from '@ton/ton'
@@ -400,9 +400,9 @@ async function main() {
 
 </details>
 
-### Jetton Transfer with Comment
+### Jetton 销毁
 
-The `messageBody` for Jetton Transfer([TEP-74](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md#1-transfer)) with comment we should additionally to the regular transfer `body` serialize comment and pack this in the `forwardPayload`:
+Jetton 销毁([TEP-74](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md#2-burn)) 的`body`通常应该按照以下方式完成：
 
 ```js
     import {beginCell, toNano, Address} from '@ton/ton'
@@ -432,10 +432,10 @@ The `messageBody` for Jetton Transfer([TEP-74](https://github.com/ton-blockchain
 
 ```
 
-Next, sending the transaction with this body to sender's jettonWalletContract executed:
+消息放入以下请求中：
 
-<Tabs groupId="Jetton Transfer">
-  <TabItem value="tonconnect-react-ui" label="@tonconnect/react-ui">
+<Tabs groupId="Jetton Burn">
+<TabItem value="tonconnect-react-ui" label="@tonconnect/react-ui">
 
 ```js
     import { useTonConnectUI } from '@tonconnect/ui-react';
@@ -511,9 +511,9 @@ Next, sending the transaction with this body to sender's jettonWalletContract ex
 </TabItem>
 </Tabs>
 
-- `validUntil` - UNIX-time until message valid
-- `jettonWalletAddress` - Address, JettonWallet address, that defined based on JettonMaser and Wallet contracts
-- `balance` - Integer, amount of Toncoin for gas payments in nanotons.
+- `jettonWalletAddress` - Jetton 钱包合约地址，基于 JettonMaser 和 Wallet 合约定义
+- `amount` - 整数，用于gas费用的 Toncoin 金额，以 nanotons 计。
+- `body` - 带有 `burn#595f07bc` 操作码的 Jetton 钱包载荷
 - `body` - payload for the jettonContract
 
 <details>
@@ -577,8 +577,7 @@ The `body` for Jetton Burn([TEP-74](https://github.com/ton-blockchain/TEPs/blob/
 
 Message places into the following request:
 
-<Tabs groupId="Jetton Burn">
-<TabItem value="tonconnect-react-ui" label="@tonconnect/react-ui">
+<TabItem value="tonconnect-ui" label="@tonconnect/ui">
 
 ```js
 import { useTonConnectUI } from '@tonconnect/ui-react';
@@ -609,7 +608,7 @@ export const Settings = () => {
 
 </TabItem>
 
-<TabItem value="tonconnect-ui" label="@tonconnect/ui">
+<TabItem value="tonconnect-sdk" label="@tonconnect/sdk">
 
 ```js
 import TonConnectUI from '@tonconnect/ui'
@@ -629,6 +628,7 @@ const result = await tonConnectUI.sendTransaction(transaction)
 ```
 
 </TabItem>
+</Tabs>
 
 <TabItem value="tonconnect-sdk" label="@tonconnect/sdk">
 
@@ -654,7 +654,7 @@ await connector.sendTransaction({
 
 ### NFT Transfer
 
-The `body` message typically should be done according the following way:
+因为消息需要很多步骤，整个算法庞大，可以在此处找到：
 
 ```js
 import { beginCell, toNano} from '@ton/ton'
@@ -676,8 +676,7 @@ import { beginCell, toNano} from '@ton/ton'
 `WALLET_DST` - Address - The address of the initial NFT owner for the receiving excess
 Transfer the `NFTitem` to a new owner `NEW_OWNER_WALLET`.
 
-<Tabs groupId="NFT Transfer">
-<TabItem value="tonconnect-react-ui" label="@tonconnect/react-ui">
+</details>
 
 ```js
 import { useTonConnectUI } from '@tonconnect/ui-react';
@@ -706,7 +705,8 @@ export const Settings = () => {
 };
 ```
 
-</TabItem>
+<Tabs groupId="NFT Sale Fix Price">
+<TabItem value="tonconnect-react-ui" label="@tonconnect/react-ui">
 
 <TabItem value="tonconnect-ui" label="@tonconnect/ui">
 
@@ -727,7 +727,7 @@ const transaction = {
 const result = await tonConnectUI.sendTransaction(transaction)
 ```
 
-</TabItem>
+<TabItem value="tonconnect-ui" label="@tonconnect/ui">
 
 <TabItem value="tonconnect-sdk" label="@tonconnect/sdk">
 
@@ -744,8 +744,7 @@ await connector.sendTransaction({
 })
 ```
 
-</TabItem>
-</Tabs>
+<TabItem value="tonconnect-sdk" label="@tonconnect/sdk">
 
 - `NFTitem` - Address - The address of NFT item smart contract which we want transfer to a new owner `NEW_OWNER_WALLET`.
 - `balance` - Integer, amount of Toncoin for gas payments in nanotons.
@@ -755,7 +754,8 @@ await connector.sendTransaction({
 
 Here is an example of preparing message and transaction for sale on GetGems marketplace, according to contract [nft-fixprice-sale-v3r2](https://github.com/getgems-io/nft-contracts/blob/main/packages/contracts/sources/nft-fixprice-sale-v3r2.fc).
 
-To place NFT on GetGems Sale Contract, we should prepare special message body `transferNftBody` that will be transfer NFT to special NFT Sale Contract.
+购买 [nft-fixprice-sale-v3r2](https://github.com/getgems-io/nft-contracts/blob/main/packages/contracts/sources/nft-fixprice-sale-v3r2.fc) 销售合约的 NFT 的过程可以通过常规转账进行，无需负荷，唯一重要的是准确的 TON 数量，按如下计算：
+`buyAmount = Nftprice TON + 1.0 TON`。
 
 ```js
     const transferNftBody = beginCell()
@@ -774,8 +774,8 @@ To place NFT on GetGems Sale Contract, we should prepare special message body `t
 
 Because message requires a lot of steps, the entire algorithm huge and could be found here:
 
-<details>
-    <summary>Show entire algorithm for the creating NFT Sale message body</summary>
+</TabItem>
+<TabItem value="tonconnect-ui" label="@tonconnect/ui">
 
 ```js
 import { Address, beginCell, StateInit, storeStateInit, toNano, Cell } from '@ton/ton'
@@ -843,12 +843,13 @@ async function main() {
         .endCell();
 ```
 
-</details>
+</TabItem>
+<TabItem value="tonconnect-sdk" label="@tonconnect/sdk">
 
 Prepared `transferNftBody` should be sent to the NFT Item Contract with at least `1.08` TON, that expected for success processing. Excess will be returned to a sender's wallet.
 
-<Tabs groupId="NFT Sale Fix Price">
-<TabItem value="tonconnect-react-ui" label="@tonconnect/react-ui">
+</TabItem>
+</Tabs>
 
 ```js
 import { useTonConnectUI } from '@tonconnect/ui-react';
@@ -920,8 +921,7 @@ await connector.sendTransaction({
 
 ### NFT Buy (GetGems)
 
-The process of buy NFT for [nft-fixprice-sale-v3r2](https://github.com/getgems-io/nft-contracts/blob/main/packages/contracts/sources/nft-fixprice-sale-v3r2.fc) sale contract could be carry out with regular transfer without payload, the only important thing is accurate TON amount, that calculates as follows:
-`buyAmount = Nftprice TON + 1.0 TON`.
+带有评论的转账的最终交易体：
 
 <Tabs groupId="NFT Buy">
 <TabItem value="tonconnect-react-ui" label="@tonconnect/react-ui">
@@ -1003,7 +1003,7 @@ Python examples are using [PyTonConnect](https://github.com/XaBbl4/pytonconnect)
 Read examples [source](https://github.com/yungwine/ton-connect-examples/blob/master/main.py).
 :::
 
-### Regular TON Transfer
+### NFT 转账
 
 ```python
 connector = TonConnect(
@@ -1022,7 +1022,7 @@ transaction = {
 
 ### Transfer With Comment
 
-At first order, implement a message with comment via the following function:
+最终的交易体：
 
 ```python
     def get_comment_message(destination_address: str, amount: int, comment: str) -> dict:
@@ -1093,7 +1093,7 @@ def get_jetton_transfer_message(jetton_wallet_address: str, recipient_address: s
     return data
 ```
 
-Final transaction body:
+最终交易体：
 
 ```python
 transaction = {
@@ -1111,9 +1111,10 @@ transaction = {
 
 ```
 
-### Jetton Burn
+### NFT 购买 (GetGems)
 
-Example of function for building jetton burn transaction:
+使用 [nft-fixprice-sale-v3r2](https://github.com/getgems-io/nft-contracts/blob/main/packages/contracts/sources/nft-fixprice-sale-v3r2.fc) 销售合约购买 NFT 的过程可以通过不含有效负载的常规转账进行，唯一重要的是准确的 TON 数额，计算方式如下：
+`buyAmount = Nftprice TON + 1.0 TON`。
 
 ```python
 from pytoniq_core import begin_cell
@@ -1153,7 +1154,7 @@ transaction = {
 }
 ```
 
-### NFT Transfer
+### 参阅
 
 Example of function for a NFT transfer transaction:
 
