@@ -1,104 +1,106 @@
-# Types of Wallet Contracts
+# 钱包合约类型
 
-You have probably heard somewhere about different versions of wallets in TON Blockchain. But what do these versions really mean and how do they differ?
+您可能在某处听说过TON区块链中不同版本的钱包。但这些版本实际上意味着什么，它们之间有何不同？
 
-In this article, we'll look at all versions and modifications of TON wallets.
+在本文中，我们将研究TON钱包的所有版本和修改。
 
-## How can wallets be different?
+## 钱包有何不同？
 
-Before we start, we need to understand how wallets can differ at all.
+在我们开始之前，我们需要理解钱包究竟能有何不同。
 
-If we look at Ethereum, Solana or almost any other blockchain, there are not different types or versions of wallets. But why do they exist in TON? It's because wallets in TON are made by smart contracts. Basically, any wallet (even yours) is a smart contract running on TON Blockchain which can accept and send transactions to other wallets which are also smart contracts.
+如果我们看一下以太坊、Solana或几乎任何其他区块链，都没有不同类型或版本的钱包。但为什么TON中会存在它们呢？这是因为TON中的钱包是通过智能合约制作的。基本上，任何钱包（甚至是您的钱包）都是在TON区块链上运行的智能合约，它可以接受和发送交易到其他也是智能合约的钱包。
 
-These smart contracts can be set up in different ways and can have different features. That's why there are several versions of wallets in TON.
+这些智能合约可以以不同的方式设置，并且可以具有不同的功能。这就是为什么TON中有几个版本的钱包。
 
-## Basic wallets
+## 基础钱包
 
-### Wallet V1
+### 钱包V1
 
-This is the simplest one. It only allows you to send one transaction at the time and it doesn't check anything besides your signature and seqno.
+这是最简单的一个。它只允许您一次发送一笔交易，除了您的签名和序列号(seqno)，它不检查任何东西。
 
-This version isn't even used in regular apps because it has some major issues:
+这个版本甚至没有在常规应用中使用，因为它存在一些主要问题：
 
-- No easy way to retrieve the seqno and public key from the contract
-- No `valid_until` check, so you can't be sure that the transaction won't be confirmed too late.
+- 无法从合约中轻松检索序列号和公钥
+- 没有`valid_until`检查，所以您不能确定交易不会太晚被确认。
 
-The first issue is fixed in `V1R2` and `V1R3`. That `R` letter means `revision`. Usually revisions are just small updates which only add get-methods which allows you to retrieve seqno and public key from the contract.
-But this version also has a second issue, which is fixed in the next version.
+第一个问题在`V1R2`和`V1R3`中得到修复。`R`字母代表`修订版本`。通常修订版本只是添加get方法，允许您从合约中检索序列号和公钥。
+但这个版本还有第二个问题，这个问题在下一个版本中得到修复。
 
-Wallet source code:
+钱包源代码：
 
 - [ton/crypto/smartcont/wallet-code.fc](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/wallet-code.fc)
 
-### Wallet V2
+### 钱包V2
 
-This version introduces the `valid_until` parameter which is used to set a time limit for a transaction in case you don't want it to be confirmed too late. This version also doesn't have the get-method for public key, which is added in `V2R2`.
+这个版本引入了`valid_until`参数，用于设置交易的时间限制，以防您不希望交易太晚被确认。这个版本也没有公钥的get方法，它在`V2R2`中被添加。
 
-It can be used in most cases, but it misses one cool feature, which was added in `V3`.
+它在大多数情况下都可以使用，但它缺少`V3`中添加的一个酷功能。
 
-Wallet source code:
+钱包源代码：
 
 - [ton/crypto/smartcont/new-wallet-v2.fif](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/new-wallet-v2.fif)
 
-### Wallet V3
+### 钱包V3
 
-This version introduces the `subwallet_id` parameter, which allows you to create multiple wallets using the same public key (so you can have only one seed phrase and lots of wallets). And, as before, `V3R2` only adds the get-method for public key.
+这个版本引入了`subwallet_id`参数，允许您使用同一个公钥创建多个钱包（所以您可以只有一个种子短语和很多钱包）。和以前一样，`V3R2`只添加了公钥的get方法。
 
-Basically, `subwallet_id` is just a number which is added to the contract state when it is deployed. And since the contract address in TON is a hash of its state and code, the wallet address will change with a different `subwallet_id`.
+基本上，`subwallet_id`只是在部署时添加到合约状态的一个数字。由于TON中的合约地址是其状态和代码的哈希，所以不同的`subwallet_id`将会改变钱包地址。
 
-This version is the most used right now. It covers most use-cases and remains clean and simple.
+这个版本目前是最常用的。它涵盖了大多数用例，同时保持简洁和简单。
 
-Wallet source code:
+钱包源代码：
 
 - [ton/crypto/smartcont/wallet-v3-code.fif](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/wallet-v3-code.fif)
 
-### Wallet V4
+### 钱包V4
 
-It is the most modern wallet version at the moment. It still has all the functionality of the previous versions, but also introduces something very powerful — `plugins`.
+它是目前最现代的钱包版本。它仍然具有之前版本的所有功能，但还引入了一些非常强大的东西——`插件`。
 
-This feature allows developers to implement complex logic that will work in tandem with a user's wallet. For example, some DApp may require a user to pay a small amount of coins every day to use some features, so the user will need to install the plugin on their wallet by signing a transaction. This plugin will send coins to the destination address every day when it will be reqested by an external message.
+这个功能允许开发者实现与用户钱包并行工作的复杂逻辑。例如，某些DApp可能需要用户每天支付少量币以使用某些功能，因此用户需要通过签署交易在其钱包上安装插件。这个插件将在每天接收外部消息时向目的地址发送币。
 
-This is a very customizable feature which is unique to TON Blockchain.
+这是一个非常可定制的功能，是TON区块链独有的。
 
-Wallet source code:
+钱包源代码：
 
 - [ton-blockchain/wallet-contract](https://github.com/ton-blockchain/wallet-contract)
 
-## Special wallets
+## 特殊钱包
 
-Sometimes the functionality of basic wallets isn't enough. That's why there are several types of specialized wallet: `high-load`, `lockup` and `restricted`.
+有时基础钱包的功能不够。这就是为什么有几种类型的专用钱包：`高负载`、`锁定`和`受限`。
 
-Let's have a look at them.
+让我们来看看它们。
 
-### Highload Wallet v3
+### 高负载钱包
 
-This wallet is made for who need to send transactions at very high rates. For example, crypto exchanges.
+这种钱包适用于那些需要在短时间内发送数百笔交易的人。例如，加密货币交易所。
 
 - [Source code](https://github.com/ton-blockchain/highload-wallet-contract-v3)
 
 Any given external message (transfer request) to a highload v3 contains:
 
-- a signature (512 bits) in the top level cell - the other parameters are in the ref of that cell
-- subwallet ID (32 bits)
+- **存储大小限制。** 当前，合约存储的大小应小于65535个cell。如果old_queries的大小超过此限制，将在 Action Phase 中抛出异常，交易将失败。
+  失败的交易可能会重播。
+- **Gas限制。** 当前，Gas限制为1'000'000 GAS单位，这意味着一次交易中可以清理过期查询的数量有限。如果过期查询的数量过多，合约将卡住。
 - message to send as a ref (the serialized internal message that will be sent)
 - send mode for the message (8 bits)
 - composite query ID - 13 bits of "shift" and 10 bits of "bit number", however the 10 bits of bit number can only go up to 1022, not 1023, and also the last such usable query ID (8388605) is reserved for emergencies and should not be normally used
 - created at, or message timestamp
 - timeout
 
-Timeout is stored in highload as a parameter and is checked against the timeout in all requests - so the timeout for all requests is equal. The message should be not older than timeout at the time of arrival to the highload wallet, or in code it is required that `created_at > now() - timeout`. Query IDs are stored for the purposes of replay protection for at least timeout and possibly up to 2 \* timeout, however one should not expect them to be stored for longer than timeout. Subwallet ID is checked against the one stored in the wallet. Inner ref's hash is checked along with the signature against the public key of the wallet.
+这意味着不建议设置过高的过期时间：
+过期时间跨度内的查询数量不应超过1000。
 
-Highload v3 can only send 1 message from any given external message, however it can send that message to itself with a special op code, allowing one to set any action cell on that internal message invocation, effectively making it possible to send up to 254 messages per 1 external message (possibly more if another message is sent to highload wallet again among these 254).
+此外，一次交易中清理的过期查询数量应低于100。
 
-Highload v3 will always store the query ID (replay protection) once all the checks pass, however a message may not be sent due to some conditions, including but not limited to:
+钱包源代码：
 
-- **containing state init** (such messages, if required, may be sent using the special op code to set the action cell after an internal message from highload wallet to itself)
+- [ton/crypto/smartcont/highload-wallet-v2-code.fc](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/highload-wallet-v2-code.fc)
 - not enough balance
 - invalid message structure (that includes external out messages - only internal messages may be sent straight from the external message)
 
 Highload v3 will never execute multiple externals containing the same `query_id` **and** `created_at` - by the time it forgets any given `query_id`, the `created_at` condition will prevent such a message from executing. This effectively makes `query_id` **and** `created_at` together the "primary key" of a transfer request for highload v3.
 
-When iterating (incrementing) query ID, it is cheaper (in terms of TON spent on fees) to iterate through bit number first, and then the shift, like when incrementing a regular number. After you've reached the last query ID (remember about the emergency query ID - see above), you can reset query ID to 0, but if highload's timeout period has not passed yet, then the replay protection dictionary will be full and you will have to wait for the timeout period to pass.
+如果您出于某种原因需要在一段时间内锁定钱包中的币，而在这段时间过去之前无法取出它们，请看看锁定钱包。
 
 ### Highload wallet v2
 
@@ -106,7 +108,7 @@ When iterating (incrementing) query ID, it is cheaper (in terms of TON spent on 
 Legacy contract, it is suggest to use High-load wallet v3.
 :::
 
-This wallet is made for those who need to send hundreds of transactions in a short period of time. For example, crypto exchanges.
+钱包源代码：
 
 It allows you to send up to `254` transactions in one smart contract call. It also uses a slightly different approach to solve replay attacks instead of seqno, so you can call this wallet several times at once to send even thousands of transactions in a second.
 
@@ -120,8 +122,7 @@ Note, when dealing with highload-wallet the following limits need to be checked 
 2. **Gas limit.** Currently, gas limit is 1'000'000 GAS units, that means that there is a limit of how much
    old queries may be cleaned in one tx. If number of expired queries will be higher, contract will stuck.
 
-That means that it is not recommended to set too high expiration date:
-number of queries during expiration timespan should not exceed 1000.
+钱包源代码：
 
 Also, number of expired queries cleaned in one transaction should be below 100.
 
@@ -129,7 +130,7 @@ Wallet source code:
 
 - [ton/crypto/smartcont/highload-wallet-v2-code.fc](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/highload-wallet-v2-code.fc)
 
-### Lockup wallet
+### 参阅
 
 If you, for some reason, need to lock coins in a wallet for some time without the possibility to withdraw them before that time passes, have a look at the lockup wallet.
 
