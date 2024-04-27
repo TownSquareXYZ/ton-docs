@@ -1,16 +1,16 @@
-# Block layout
+# 区块布局
 
 :::info
-To maximize your comprehension of this page, familiarizing yourself with the [TL-B language](/develop/data-formats/cell-boc) is highly recommended.
+为了最大限度地理解本页内容，强烈建议您熟悉 [TL-B 语言](/develop/data-formats/cell-boc)。
 :::
 
-A block in the blockchain is a record of new transactions that, once completed, is added to the blockchain as a permanent and immutable part of this decentralized ledger. Each block contains information such as transaction data, time, and a reference to the previous block, thereby forming a chain of blocks.
+区块链中的一个区块是一条新交易记录，一旦完成，就会作为这个去中心化账本的永久且不可更改的一部分被添加到区块链上。每个区块包含交易数据、时间以及对前一个区块的引用等信息，从而形成一个区块链。
 
-The blocks in the TON Blockchain possess a rather complex structure due to the system's overall complexity. This page describes the structure and layout of these blocks.
+TON 区块链中的区块由于系统的整体复杂性而具有相当复杂的结构。本页描述了这些区块的结构和布局。
 
-## Block
+## 区块
 
-Raw TL-B scheme of a block looks as:
+一个区块的原始 TL-B 方案如下：
 
 ```tlb
 block#11ef55aa global_id:int32
@@ -19,15 +19,15 @@ block#11ef55aa global_id:int32
     extra:^BlockExtra = Block;
 ```
 
-Let's take a closer look at each field.
+让我们仔细看看每个字段。
 
 ## global_id:int32
 
-An ID of the network where this block is created. `-239` for mainnet and `-3` for testnet.
+创建此区块的网络的 ID。主网为 `-239`，测试网为 `-3`。
 
 ## info:^BlockInfo
 
-This field contains information about the block, such as its version, sequence numbers, identifiers, and other flags.
+此字段包含关于区块的信息，如其版本、序列号、标识符和其他标志位。
 
 ```tlb
 block_info#9bc7a987 version:uint32
@@ -52,20 +52,20 @@ block_info#9bc7a987 version:uint32
     = BlockInfo;
 ```
 
-| Field                           | Type                                         | Description                                                                                                                                           |
+| 字段                              | 类型                                           | 描述                                                                                                                                                    |
 | ------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `version`                       | uint32                                       | The version of the block structure.                                                                                                   |
-| `not_master`                    | (## 1)                    | A flag indicating if this block is a masterchain block.                                                                               |
-| `after_merge`                   | (## 1)                    | A flag indicating if this block was created right after the merge of two shardchains, so it has two parent blocks                                     |
-| `before_split`                  | (## 1)                    | A flag indicating if this block was created right before the split of its shardchain                                                                  |
-| `after_split`                   | (## 1)                    | A flag indicating if this block was created right after the split of its shardchain                                                                   |
-| `want_split`                    | Bool                                         | A flag indicating whether a shardchain split is desired.                                                                              |
-| `want_merge`                    | Bool                                         | A flag indicating whether a shardchain merge is desired.                                                                              |
-| `key_block`                     | Bool                                         | A flag indicating if this block is a key block.                                                                                       |
-| `vert_seqno_incr`               | (## 1)                    | Increment of the vertical sequence number.                                                                                            |
-| `flags`                         | (## 8)                    | Additional flags for the block.                                                                                                       |
-| `seq_no`                        | #                                            | Sequence number related to the block.                                                                                                 |
-| `vert_seq_no`                   | #                                            | Vertical sequence number related to the block.                                                                                        |
+| `version`                       | uint32                                       | 区块结构的版本。                                                                                                                                              |
+| `not_master`                    | (## 1)                    | 标志位，表示此区块是否为主链区块。                                                                                                                                     |
+| `after_merge`                   | (## 1)                    | 标志位，表示此区块是否在两个分片链合并后创建，因此它有两个父区块。                                                                                                                     |
+| `before_split`                  | (## 1)                    | 标志位，表示此区块是否在其分片链分裂前创建。                                                                                                                                |
+| `after_split`                   | (## 1)                    | 标志位，表示此区块是否在其分片链分裂后创建。                                                                                                                                |
+| `want_split`                    | Bool                                         | 标志位，表示是否希望分片链分裂。                                                                                                                                      |
+| `want_merge`                    | Bool                                         | 标志位，表示是否希望分片链合并。                                                                                                                                      |
+| `key_block`                     | Bool                                         | 标志位，表示此区块是否为关键区块。                                                                                                                                     |
+| `vert_seqno_incr`               | (## 1)                    | 垂直序列号的增量。                                                                                                                                             |
+| `flags`                         | (## 8)                    | 区块的附加标志位。                                                                                                                                             |
+| `seq_no`                        | #                                            | 与区块相关的序列号。                                                                                                                                            |
+| `vert_seq_no`                   | #                                            | 与区块相关的垂直序列号。                                                                                                                                          |
 | `shard`                         | ShardIdent                                   | The identifier of the shard where this block belongs.                                                                                 |
 | `gen_utime`                     | uint32                                       | The generation time of the block.                                                                                                     |
 | `start_lt`                      | uint64                                       | Start logical time associated with the block.                                                                                         |
