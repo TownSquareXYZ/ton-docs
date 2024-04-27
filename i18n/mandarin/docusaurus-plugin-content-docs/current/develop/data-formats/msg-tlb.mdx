@@ -1,14 +1,14 @@
 import ThemedImage from '@theme/ThemedImage';
 
-# Messages TL-B schemes
+# 消息 TL-B 方案
 
-In this section detailed explanation of TL-B schemes for messages.
+本节详细解释消息的 TL-B 方案。
 
-## Message TL-B
+## 消息 TL-B
 
 ### TL-B
 
-Main message TL-B scheme declared as a combination of several nested structures
+主要消息 TL-B 方案声明为几个嵌套结构的组合
 
 ```tlb
 message$_ {X:Type} info:CommonMsgInfo
@@ -22,24 +22,21 @@ body:(Either X ^X) = MessageRelaxed X;
 _ (Message Any) = MessageAny;
 ```
 
-Here `Message X` - is common message structure, `MessageRelaxed X` additional type with CommonMsgInfoRelaxed body and `Message Any` is a union of both.
-Message structure unified with X:Type, that in other words is a Cell.
-According to TL-B we can combine all data in one cell(if it will be fit to 1023 bits) or use references declared with caret `^`.
+这里 `Message X` - 是常见消息结构，`MessageRelaxed X` 是带有 CommonMsgInfoRelaxed 体的附加类型，而 `Message Any` 是两者的并集。消息结构与 X:Type 统一，换句话说就是一个 Cell。根据 TL-B，如果数据能够适应 1023 位，我们可以将所有数据组合在一个cell中，或者使用带有插入符号 `^` 的引用。
 
-Serialized `Message X` placed to action list with FunC method send_raw_message(), than smart contract execute this action and message send.
+序列化的 `Message X` 通过 FunC 方法 send_raw_message() 放置到动作列表中，然后智能合约执行此动作并发送消息。
 
-### Definition of explicit serialization
+### 显式序列化的定义
 
-For building valid binary data according TL-B structure we should do serialization, which defined for each type recurrently. It means, that for serialization of Message X we need to know how to serialize
-`StateInit`, `CommonMsgInfo` and so on.
+根据 TL-B 结构构建有效的二进制数据，我们应该进行序列化，这对每种类型都是递归定义的。这意味着，要序列化 Message X，我们需要知道如何序列化 `StateInit`、`CommonMsgInfo` 等。
 
-Every nested structure we should get from another TL-B scheme according to link recurrently, until serialization for top structure will be explicit - every bit defined by Boolean or bit-like type(bits, uint, varuint).
+我们应该根据递归链接从另一个 TL-B 方案中获取每个嵌套结构，直到顶层结构的序列化是显式的 - 每个位由布尔或类似位的类型（比特，uint，varuint）定义。
 
-Structures that currently does not use in regular development will mark with `*` in Type column, for example \*Anycast usually skipped in serialization.
+目前在常规开发中不使用的结构将在 Type 列中标记为 `*`，例如 \*Anycast 通常在序列化中被跳过。
 
 ### message$\_
 
-There is the top TL-B scheme whole messages `Message X`:
+这是整个消息 `Message X` 的顶层 TL-B 方案：
 
 ```tlb
 message$_ {X:Type} info:CommonMsgInfo
@@ -47,12 +44,12 @@ init:(Maybe (Either StateInit ^StateInit))
 body:(Either X ^X) = Message X;
 ```
 
-| Structure  | Type                              | Required | Description                                                                                                    |   |
-| ---------- | --------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------- | - |
-| message$\_ | Constructor                       |          | It defined according the constructor ruler. Empty tag `$_` means we will not add any bits in the beginning     |   |
-| info       | [CommonMsgInfo](#commonmsginfo)   | Required | Detailed Message properties define destination and its value. Always placed in message root cell.              |   |
-| init       | [StateInit](#stateinit-tl-b)      | Optional | General structure using in TON for initilizing new contracts. Could be write in cell reference or root cell.   |   |
-| body       | X                                 | Required | Message Payload. Could be write in cell reference or root cell.                                                |   |
+| 结构         | 类型                                  | 必需      | 描述                                                                                                            |   |
+| ---------- | ----------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------- | - |
+| message$\_ | 构造函数                                |         | 按照构造函数规则定义。空标记 `$_` 表示我们不会在开头添加任何位                                                                            |   |
+| info       | [CommonMsgInfo](#commonmsginfo)     | 必需      | 详细的消息属性定义目的地及其值。始终放置在消息的根cell中。                                                                               |   |
+| init       | [StateInit](#stateinit-tl-b)        | 可选      | 通用结构，用于 TON 中初始化新合约。可以写在cell引用或根cell中。                                                                        |   |
+| body       | X                                   | 必需      | 消息有效载荷。可以写在cell引用或根cell中。                                                                                     |   |
 
 ```tlb
 nothing$0 {X:Type} = Maybe X;
@@ -61,9 +58,9 @@ left$0 {X:Type} {Y:Type} value:X = Either X Y;
 right$1 {X:Type} {Y:Type} value:Y = Either X Y;
 ```
 
-Recall how `Maybe` and `Either` works, we can serialize different cases:
+回想一下 `Maybe` 和 `Either` 的工作方式，我们可以序列化不同的情况：
 
-- `[CommonMsgInfo][10][StateInit][0][X]` - `Message X` in the one cell
+- `[CommonMsgInfo][10][StateInit][0][X]` - `Message X` 在一个cell中
 
 <br></br>
 <ThemedImage
@@ -75,7 +72,7 @@ dark: '/img/docs/data-formats/tl-b-docs-9-dark.png?raw=true',
 />
 <br></br>
 
-- `[CommonMsgInfo][11][^StateInit][1][^X]` - `Message X` with references
+- `[CommonMsgInfo][11][^StateInit][1][^X]` - `Message X` 带引用
 
 <br></br>
 <ThemedImage
@@ -91,7 +88,7 @@ dark: '/img/docs/data-formats/tl-b-docs-8-dark.png?raw=true',
 
 ### CommonMsgInfo
 
-`CommonMsgInfo` is a list of parameters, that defines how message will be delivered in TON blockchain.
+`CommonMsgInfo` 是一系列参数的列表，定义了消息在 TON 区块链中的传递方式。
 
 ```tlb
 //internal message
@@ -111,8 +108,8 @@ ext_out_msg_info$11 src:MsgAddressInt dest:MsgAddressExt
 
 ### int_msg_info$0
 
-`int_msg_info` is a case of internal message. This means they could be sent between contracts, and only between contracts.
-Use case - ordinary cross contract messages.
+`int_msg_info` 是内部消息的一种情况。这意味着它们可以在合约之间发送，且只能在合约之间发送。
+用例 - 普通的跨合约消息。
 
 ```tlb
 nanograms$_ amount:(VarUInteger 16) = Grams;
@@ -123,24 +120,24 @@ int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
   created_lt:uint64 created_at:uint32 = CommonMsgInfo;
 ```
 
-| Structure      | Type                                       | Required | Description                                                                                                         |
-| -------------- | ------------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------- |
-| int_msg_info$0 | Constructor                                | Required | $0 tag means, that in serialization CommonMsgInfo started with 0 bit describes a internal message.                  |
-| ihr_disabled   | Bool                                       | Required | Hyper cube routing flag.                                                                                            |
-| bounce         | Bool                                       | Required | Message should be bounced if there are errors during processing. If message's flat bounce = 1, it calls bounceable. |
-| bounced        | Bool                                       | Required | Flag that describes, that message itself is a result of bounce.                                                     |
-| src            | [MsgAddressInt](#msgaddressint-tl-b)       | Required | Address of smart contract sender of message.                                                                        |
-| dest           | [MsgAddressInt](#msgaddressint-tl-b)       | Required | Address of smart contract destination of message.                                                                   |
-| value          | [CurrencyCollection](#currencycollection)  | Required | Structure which describes currency information including total funds transferred in message.                        |
-| ihr_fee        | [VarUInteger 16](#varuinteger-n)           | Required | Fees for hyper routing delivery                                                                                     |
-| fwd_fee        | [VarUInteger 16](#varuinteger-n)           | Required | Fees for forwarding messages assigned by validators                                                                 |
-| created_lt     | uint64                                     | Required | Logic time of sending message assigned by validator. Using for odering actions in smart contract.                   |
-| created_at     | uint32                                     | Required | Unix time                                                                                                           |
+| 结构             | 类型                                        | 必需      | 描述                                                                                                                   |
+| -------------- | ----------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------- |
+| int_msg_info$0 | 构造函数                                      | 必需      | $0 标记意味着序列化 CommonMsgInfo 以 0 位开始描述内部消息。                                                                             |
+| ihr_disabled   | 布尔                                        | 必需      | 超立方体路由标志位。                                                                                                           |
+| bounce         | 布尔                                        | 必需      | 如果处理过程中出现错误，消息应该被弹回。如果消息的 flat bounce = 1，它被称为可弹回。                                                                   |
+| bounced        | 布尔                                        | 必需      | 描述消息本身是弹回结果的标志位。                                                                                                     |
+| src            | [MsgAddressInt](#msgaddressint-tl-b)      | 必需      | 消息发送者智能合约的地址。                                                                                                        |
+| dest           | [MsgAddressInt](#msgaddressint-tl-b)      | 必需      | 消息目的地智能合约的地址。                                                                                                        |
+| value          | [CurrencyCollection](#currencycollection) | 必需      | 描述货币信息的结构，包括消息中转移的总资金。                                                                                               |
+| ihr_fee        | [VarUInteger 16](#varuinteger-n)          | 必需      | 超路由交付费用                                                                                                              |
+| fwd_fee        | [VarUInteger 16](#varuinteger-n)          | 必需      | 验证者指定的转发消息费用                                                                                                         |
+| created_lt     | uint64                                    | 必需      | 验证者指定的发送消息的逻辑时间。用于对智能合约中的动作进行排序。                                                                                     |
+| created_at     | uint32                                    | 必需      | Unix 时间                                                                                                              |
 
 ### ext_in_msg_info$10
 
-`ext_in_msg_info$10` is a case of external incoming message. This means this type of messages sent from contracts to off-chain space.\
-Use case - wallet application request to wallet contract.
+`ext_in_msg_info$10` 是外部传入消息的一种情况。这意味着这种类型的消息是从合约发送到链下空间的。\
+用例 - 钱包应用请求钱包合约。
 
 ```tlb
 nanograms$_ amount:(VarUInteger 16) = Grams;
@@ -255,22 +252,22 @@ workchain_id:int8 address:bits256  = MsgAddressInt;
 | workchain_id | int8                           | Required | Workchain where smart contract of destination address placed. At moment always equals zero.                      |
 | address      | (bits256)   | Required | Smart contract account ID number                                                                                 |
 
-### addr_var$11
+### addr_std$10
 
 ```tlb
 addr_var$11 anycast:(Maybe Anycast) addr_len:(## 9)
 workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
 ```
 
-| Structure    | Type                           | Required  | Description                                                                                                                                  |
+| 结构           | 类型                             | 必需        | 描述                                                                                                                                           |
 | ------------ | ------------------------------ | --------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| addr_var$11  | Constructor                    | Required  | `$11` tag means, that in the serialization MsgAddressInt started with a `11` bits describes an internal contract address.                    |
-| anycast      | Anycast\*                      | Optional  | Additional address data, currently do not used in ordinary internal messages                                                                 |
-| addr_len     | ## 9                           | Required  | Same as uintN - means an unsigned N-bit number                                                                                               |
-| workchain_id | int32                          | Required  | Workchain where smart contract of destination address placed. At moment always equals zero.                                                  |
+| addr_std$10  | 构造函数                           | 必需        | `$10` 标记意味着序列化 MsgAddressExt 以 `10` 位开始描述外部地址。                                                                                               |
+| anycast      | Anycast\*                      | 可选        | 额外的地址数据，目前普通内部消息中未使用                                                                                                                         |
+| workchain_id | int8                           | 必需        | 目的地地址的智能合约所在的工作链。目前始终为零。                                                                                                                     |
+| address      | (bits256)   | 必需        | 智能合约账户 ID 号                                                                                                                                  |
 | address      | (bits256)   | Required  | Payload address(could be account ID)                                                                                      |
 
-## Basic used types
+## addr_var$11
 
 ### CurrencyCollection
 
@@ -303,7 +300,7 @@ var_int$_ {n:#} len:(#< n) value:(int (len * 8))
 | len        | uintN                                                   | Required | bits len parameter for next value                                                                                                        |
 | value      | (uint (len \* 8)) | Optional | uint value for integer number wrote in (len \* 8) bits                                                                |
 
-## Message example
+## VarUInteger n
 
 ### Regular func internal message
 
