@@ -1,133 +1,133 @@
 # 示例教程结构
 
-## 简介
+## 一. 导言
 
-简介的标题 **必须** 为 H2: `## 简介`
+导言标题 **必须** 是 H2: `## 介绍`
 
-这一部分是用来解释这个教程的背景和重要性，我们将在本教程中构建和学习什么。
+本节是为您解释本教程的上下文和为什么重要， 我们将在本教程中构建和学习什么。
 
-- 像你对五岁小孩解释一样来阐述这一部分 (**[ELI5](https://www.dictionary.com/e/slang/eli5/)**)
-- Explain everything in 5–6 lines maximum.
+- 解释这个部分以便你向一个5岁的人解释它 (**[ELI5](https://www.dictionary.com/e/slang/eli5/)**)
+- 解释5-6 行最大值的一切。
 
-_例如:_
+* 例如:\*
 
-> 智能合约只是一个在TON区块链上运行的计算机程序，或者更具体地说，在其[TVM](/learn/tvm-instructions/tvm-overview)（_TON虚拟机_）上运行。合约由代码（_编译的TVM指令_）和数据（_持久状态_）组成，这些都存储在TON上的某个地址。 The contract is made of code (_compiled TVM instructions_) and data (_persistent state_) that are stored at some address on TON.
+> 智能合同只是一个在TON Blockchain上运行的计算机程序，或者更具体的在 [TVM](/learn/tvm-instructions/tvm-overview.) (_TON Virtual Machine_)。 合同是由存储在TON上的某个地址的代码 (_compiled TVM 指令) 和数据 (_persistent state_) 订立的。
 
-## 必要条件
+## 必备条件
 
-必要条件标题 **必须** 为 H2: `## 必要条件`
+前提条件标题 **必须** 是 H2: `## 前提条件`
 
-这一部分是用来解释开始本教程前任何需要预先掌握的知识或需要先完成的教程。如果需要任何的代币—要在这里提及。 Any tokens that are needed—mention them here.
+本节是为您解释需要先前的知识或任何需要先完成的已有教程。 任何需要的标记——在这里提到它们。
 
-_例如:_
+- 例如:\*
 
-> 在这个教程中，我们将在测试网上铸造Jetton。在我们继续之前，请确保你的[测试网](/develop/smart-contracts/environment/testnet)钱包有足够的余额。 Before we continue, make sure that your [testnet](/develop/smart-contracts/environment/testnet) wallet has sufficient balance.
+> 在这个教程中，我们要在测试网上迷你杰顿。 在我们继续之前，请确保您的 [testnet](/develop/smart-contracts/environment/testnet)钱包有足够的余额。
 
-## 要求
+## B. 所需经费
 
-要求标题 **必须** 为 H2: `## 要求`
+标题**必须** 为 H2：“## 要求”
 
-**可选 :** 如果你的教程有任何视频内容，请在这一部分嵌入。
+**OPTAL :** 如果你的教程有任何内容，请在本部分嵌入任何视频内容。
 
-在开始教程之前需要安装的任何技术程序，以及本教程不会涉及的内容（`TON钱包扩展`、`node`等）。请不要将要安装的程序包在教程中列出。 Do not list packages that will be installed during the tutorial.
+任何需要安装的 **优先** 启动本教程而教程将不包含的技术(`TON Wallet Extension`, `node`, 等等)。 不要列出将在教程中安装的软件包。
 
-采取错误驱动的方法来编写你的教程。添加常见错误和故障排除步骤。_例如:_
+- 例如:\*
 
-- 我们需要在本教程中使用TON钱包扩展；可以从[这里](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd)安装。
-- 确保已安装NodeJS 12.0.1+。
+- 在本教程中我们需要TON钱包扩展；从 [HERE](https://chrome.google.com/webstore/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) 安装它。
+- 请确保NodeJS 12.0.1+ 已安装。
 
-## 教程正文
+## 教程正文内容
 
-- 请不要使用“教程正文”作为标题，请使用与材料相关的自己的标题。
-  - 如果你想不出别的，使用“开始”也是可以接受的😉
-- 添加文本内容来引导读者通过你的教程，并_**记得在提交教程之前校对内容**_，以避免拼写和语法错误。
-  - [Grammarly](http://grammarly.com)是一个可以帮助你避免语法错误的免费程序。
+- 请不要使用“教程正文”作为标题，使用与材料相关的标题。
+  - 如果您不能想到其他 :winking_face 的东西，"开始"是可以接受的：
+- 添加任何必要的文本内容，通过您的教程引导阅读器， 并且_**记得校验你的内容**_ 以便在你提交教程之前拼写和语法.
+  - [Grammarly](http://techarly.com) 是一个很好的免费程序，可以帮助您避免语法错误。
 
-### 关键点
+### 要点
 
 - 不要使用“教程正文”作为标题！
 
-- \*\*保持所有子标题在H3，\*\*不要使用H4或更低。
-  - 在Markdown语法中，两个井号用于H2标题: ##
-  - 三个井号用于H3标题: ###
+- **将所有小标题保留在H3中** 不要进入H4或更低。
+  - 在Markdown 语法中，两个哈希标记用于H2标题：##
+  - H3标题使用了三个哈希标记：###
 
-- 保持简短。最多一两行。你可以包括你的GitHub个人资料链接+ Telegram个人资料。请避免在这里添加你的LinkedIn或Twitter。 只在代码块中添加必要的注释。_**不要**_在终端输入代码块中添加#样式的注释。
+- 只向代码块添加必要的注释。 _**不做**_ 添加#样式注释到终端输入代码块。
 
 - 添加所有相关的代码块：
-  - ## Markdown语法的代码块由代码块开始和结束时的三个反引号组成。同时，请确保在所有代码块的反引号前后都有一个新行。_例如_：  Also, make sure that there is a newline before and after the backticks in all code blocks. _For example_:
+  - ## 代码块的Markdown 语法由代码块开头和结尾的三个背杆组成。  另外，请确保在所有代码块的背杆前后有一个换行。 _例如_：
     \`js  
-          const testVariable = 'some string';  
-          someFunctionCall();  
-          \`
+          比赛测试变量 = '一些字符串；  
+          some FunctionCall();  
+    \`
 
-  - 所有代码块_**必须**_有语法高亮类型。如果不确定，使用\`text。 Use `text if you are not sure.
+  - 所有代码块 _**必须**_ 有语法高亮类型。 使用 \`\`\`text if you are not confirmed
 
-  - \\`\`\`text用于终端输出、终端命令和纯文本。
+  - \\`\`\`text must be used for 终端输出、终端命令和纯文本.
 
-  - \`javascript *或* `js可用于任何JavaScript代码。
+  - \`javascript *或* `js可以用于任何 JavaScript 代码。
 
-  - \`typescript或`ts可用于任何TypeScript代码。
+  - \`typescript 或 `ts 可以用于任意类型脚本代码。
 
-  - \\`\`\`jsx用于ReactJS代码。
+  - \\`\`\`jsx 是 ReactJS 代码。
 
-  - \\`\`\`cpp用于Func代码。
+  - \\`\`\`cpp 是 Func 代码。
 
-  - 使用\\`\`\`graphql突出显示GraphQL语法。
+  - 使用 \\`\`\`graphQL 语法高亮时使用
 
-  - 用最多5-6行来解释这一切。 使用\`json突出显示有效的JSON。（对于无效的JSON示例，请使用\`text。）
+  - 使用 \\`\`json 来突出强调有效的 JSON (用于无效的 JSON 示例使用 \\`\`\`text代替)
 
-  - \\`\`\`bash应_仅_用于需要#样式注释的代码块。这必须小心进行，因为在许多情况下，#字符将呈现为markdown标题。如果发生这种情况，通常目录会受到影响。 This must be done carefully because in many situations the # character will render as a markdown heading. Typically, the Table of Contents will be affected if this occurs.
+  - \\`\`\`bash 应该\*仅在代码块中使用，你需要#样式评论。 必须谨慎行事，因为在许多情况下，# 字符将会呈现为标记标题。 通常，如果出现这种情况，目录表将受到影响。
 
-- 不要使用`预格式化文本`来强调；而是只使用**粗体**或_斜体_文本。
+- 不要使用“预定格式文本”作为强调语句，只能使用 **bold** 或 _楷体_ 文本。
 
-- 添加图片或代码块以反映预期的终端输出。
+- 添加图像或代码块以反映预期的终端输出。
 
-- Take an error-driven approach when writing your tutorial. Add common errors and troubleshooting steps. _例如:_
+- 在编写您的教程时采取错误驱动的方法。 添加常见错误和故障排除步骤。 \* 例如:\*
 
-> **由于执行`node deploy:testnet`命令时出错，无法连接到Testnet。**
+> **由于执行
+> `节点部署:testnet` 命令时发生错误，无法连接到测试网。**
 >
-> 让我们看看一些常见原因：
+> 让我们看看一些常见的原因：
 
-- 确保你在`.env`中生成的测试网钱包有足够的资金。如果没有，请从水龙头赠送处添加一些测试网代币。 If not, please add some testnet coins from the faucet giver.
-- 如果你仍然遇到同样的问题，请向[Dev Chat](https://t.me/TonDev_eng/)中的开发者求助。
+- 请确保您在`.env`中生成的测试网钱包中有足够的资金。 如果不是，请从动物群巨型添加一些测试网硬币。
+- 如果你仍然遇到同样的问题，请联系[Dev聊天](https://t.me/TonDev_eng/)中的开发人员寻求帮助。
 
 >
 
-## 结论
+## 五. 结论
 
 结论标题 **必须** 为 H2: `## 结论`
 
-这一部分应总结在教程中学到的内容，强调关键点，并祝贺学习者完成教程。使用最多5-6行。
-_例如_: Use a maximum of 5–6 lines.
-我们创建了一个具有计数功能的简单新FunC合约。然后我们在链上构建并部署它，最后通过调用getter和发送消息与它进行交互。
+本节应总结本教程中学到的内容，强化关键内容，并祝贺学员完成本教程。 使用最多5-6 行.
+_例如_：
 
-> We created a simple new FunC contract with counter functionality. We then built and deployed it on-chain, and finally interacted with it by calling a getter and sending a message.
+> 我们创建了一个具有反功能的简单的新FunC合同。 然后我们在链上建立和部署它，最后与它进行互动，呼叫一个掌握者并发出信息。
 
-请记住，这段代码不适用于生产；如果你想将其部署到主网，还有一些其他事项需要考虑，例如，如果代币在市场上挂牌，就禁用转移的方法等等。
+请记住，这个代码不是要生产的； 还有其他一些事情要考虑，如果你想要将它部署到主机上， 比如，如果代币在市场上列出时禁用转移方法，等等。
 
 >
 
-## 参阅
+## 另见：
 
-下一步标题 **必须** 为 H2: `## 参阅`
+下一个步骤 **必须** 为 H2: `## 也看看`
 
-使用这一部分来解释完成本教程后接下来可以做什么以继续学习。可以添加与本教程相关的推荐项目和文章。如果你正在进行任何其他高级教程，可以在这里简要提及。通常，只有来自docs.ton.org的相关页面会放在这里。
-Feel free to add recommended projects and articles relating to this tutorial.
-If you're working on any other advanced tutorials, you can briefly mention them here.
-Typically, only related pages from docs.ton.org are placed here.
+使用本节来解释在本教程之后可以做些什么来继续学习。
+请随时添加推荐的与本教程相关的项目和文章。
+如果您正在开发任何其他高级教程，您可以在这里简单地提及它们。
+这里通常只放置来自docs.ton.org的相关页面。
 
 ## 关于作者 _(可选)_
 
-关于作者标题 **必须** 是 H2: `## 关于作者`
+关于作者标题 **必须** 为 H2: `## 关于作者`
 
-Keep it short. One or two lines at most. You can include a link to your GitHub profile + Telegram profile. Please refrain from adding your LinkedIn or Twitter here.
+保持短暂。 最多有一条或两条线。 您可以添加一个链接到您的 GitHub 配置文件 + Telegram 配置文件。 请不要在这里添加您的 LinkedIn或 Twitter。
 
-## 参考资料 _(可选)_
+## 参考\*(可选)\*
 
-参考资料标题 **必须** 是 H2: `## 参考资料`
+参考标题 **必须** 是 H2: `## References`
 
-如果你在编写本教程时从其他文档、GitHub库或现有教程中获得了任何帮助，则_**必须**_ 有这一部分。
+如果您已经从其他文档、GitHub 仓库或原有教程中获得任何帮助，那么这一部分_**必须**_ 在场。
 
-通过添加它们的名称和文档链接来致敬来源。
+尽可能添加信用来源名称和链接到文档。
 
-如果不是数字文档，请添加ISBN或其他形式的参考。
+如果不是数字文件，则包括ISBN或其他参考形式。
