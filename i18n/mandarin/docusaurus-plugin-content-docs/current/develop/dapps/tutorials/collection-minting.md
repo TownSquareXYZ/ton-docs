@@ -1,77 +1,76 @@
-# Step by step NFT collection minting
+# 逐步创建 NFT 集合的教程
 
-## 👋 Introduction
+## 👋 引言
 
-Non-fungible tokens, or NFTs, have become one of the hottest topics in the world of digital art and collectibles. NFTs are unique digital assets that use blockchain technology to verify ownership and authenticity. They have opened up new possibilities for creators and collectors to monetize and trade digital art, music, videos, and other forms of digital content. In recent
-years, the NFT market has exploded, with some high-profile sales reaching millions of dollars. In this article, we will build our NFT collection on TON step by step.
+非同质化代币（NFT）已成为数字艺术和收藏品世界中最热门的话题之一。NFT是使用区块链技术验证所有权和真实性的独特数字资产。它们为创作者和收藏家提供了将数字艺术、音乐、视频和其他形式的数字内容货币化和交易的新可能性。近年来，NFT市场爆炸性增长，一些高调的销售额达到了数百万美元。在本文中，我们将逐步在TON上构建我们的NFT集合。
 
-**This is the beautiful collection of ducks you will create by the end of this tutorial:**
+**这是你在本教程结束时将创建的鸭子集合的精美图片：**
 
 ![](/img/tutorials/nft/collection.png)
 
-## 🦄 What you will learn
+## 🦄 你将会学到什么
 
-1. You will mint NFT collection on TON
-2. You will understand how NFT's on TON works
-3. You will put NFT on sale
-4. You will upload metadata to [pinata.cloud](https://pinata.cloud)
+1. 你将在TON上铸造NFT集合
+2. 你将理解TON上的NFT是如何工作的
+3. 你将把NFT出售
+4. 你将把元数据上传到[pinata.cloud](https://pinata.cloud)
 
-## 💡 Prerequisites
+## 💡 必要条件
 
-You must already have a testnet wallet with at least 2 TON on it. It's possible to get testnet coins from [@testgiver_ton_bot](https://t.me/testgiver_ton_bot).
+你必须已经有一个测试网钱包，里面至少有2 TON。可以从[@testgiver_ton_bot](https://t.me/testgiver_ton_bot)获取测试网币。
 
-:::info How to open testnet version of my Tonkeeper wallet?\
-To open testnet network on tonkeeper go to the settings and click 5 times on the tonkeeper logo located in the bottom, after that choose testnet instead of mainnet.
+:::info 如何打开我的Tonkeeper钱包的测试网版本？\
+要在tonkeeper中打开测试网网络，请转到设置并点击位于底部的tonkeeper logo 5次，之后选择测试网而不是主网。
 :::
 
-We will use Pinata as our IPFS storage system, so you also need to create an account on [pinata.cloud](https://pinata.cloud) and get api_key & api_secreat. Official Pinata [documentation tutorial](https://docs.pinata.cloud/pinata-api/authentication) can help with that. As long as you get these api tokens, I'll be waiting for you here!!!
+我们将使用Pinata作为我们的IPFS存储系统，因此你还需要在[pinata.cloud](https://pinata.cloud)上创建一个帐户并获取api_key & api_secreat。官方Pinata [文档教程](https://docs.pinata.cloud/pinata-api/authentication)可以帮助完成这一点。只要你拿到这些api令牌，我就在这里等你！！！
 
-## 💎 What is it NFT on TON?
+## 💎 什么是 TON 上的 NFT?
 
-Before start of main part of our tutorial, we need to understand, how actually NFT works on TON in general terms. And unexpectedly, but we will start with an explanation of how NFT works in ETH, in order to understand what is the peculiarity of the implementation of NFT in TON, compared to the usual blockchains in the industry.
+在开始我们教程的主要部分之前，我们需要了解一下通常意义上TON中NFT是如何工作的。出乎意料的是，我们将从解释ETH中NFT的工作原理开始，为了理解TON中NFT实现的特殊性，与行业中常见的区块链相比。
 
-### NFT implementation on ETH
+### ETH 上的 NFT 实现
 
-The implementation of the NFT in ETH is extremely simple - there is 1 main contract of the collection, which stores a simple hashmap, which in turn stores the data of the NFT from this collection. All requests related to this collection(if any user wants to transfer the NFT, put it up for sale, etc.) are sent specifically to this 1 contract of the collection.
+ETH中NFT的实现极其简单 - 存在1个主要的集合合约，它存储一个简单的哈希映射，该哈希映射反过来存储此集合中NFT的数据。所有与此集合相关的请求（如果任何用户想要转移NFT、将其出售等）都特别发送到此1个集合合约。
 
 ![](/img/tutorials/nft/eth-collection.png)
 
-### Problems that can occur with such implementation in TON
+### 在 TON 中如此实现可能出现的问题
 
-The problems of such an implementation in the context of TON are perfectly described by the [NFT standart](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md) in TON:
+在TON的上下文中，此类实现的问题由[TON的NFT标准](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md)完美描述：
 
-- Unpredictable gas consumption. In TON, gas consumption for dictionary operations depends on exact set of keys. Also, TON is an asynchronous blockchain. This means that if you send a message to a smart contract, then you do not know how many messages from other users will reach the smart contract before your message. Thus, you do not know what the size of the dictionary will be at the moment when your message reaches the smart contract. This is OK with a simple wallet -> NFT smart contract interaction, but not acceptable with smart contract chains, e.g. wallet -> NFT smart contract -> auction -> NFT smart contract. If we cannot predict gas consumption, then a situation may occur like that the owner has changed on the NFT smart contract, but there were no enough Toncoins for the auction operation. Using smart contracts without dictionaries gives deterministic gas consumption.
+- 不可预测的燃料消耗。在TON中，字典操作的燃料消耗取决于确切的键集。此外，TON是一个异步区块链。这意味着，如果你向一个智能合约发送一个消息，那么你不知道有多少来自其他用户的消息会在你的消息之前到达智能合约。因此，你不知道当你的消息到达智能合约时字典的大小会是多少。这对于简单的钱包 -> NFT智能合约交互是可以的，但对于智能合约链，例如钱包 -> NFT智能合约 -> 拍卖 -> NFT智能合约，则不可接受。如果我们不能预测燃料消耗，那么可能会出现这样的情况：NFT智能合约上的所有者已经更改，但拍卖操作没有足够的Toncoin。不使用字典的智能合约可以提供确定性的燃料消耗。
 
-- Does not scale (becomes a bottleneck). Scaling in TON is based on the concept of sharding, i.e. automatic partitioning of the network into shardchains under load. The single big smart contract of the popular NFT contradicts this concept. In this case, many transactions will refer to one single smart contract. The TON architecture provides for sharded smart contracts(see whitepaper), but at the moment they are not implemented.
+- 不可扩展（成为瓶颈）。TON的扩展性基于分片的概念，即在负载下自动将网络划分为分片链。流行NFT的单个大智能合约与这一概念相矛盾。在这种情况下，许多交易将引用一个单一的智能合约。TON架构为分片的智能合约提供了设施（参见白皮书），但目前尚未实现。
 
-_TL;DR ETH solution it's not scalable and not suitable for asynchronous blockchain like TON._
+_简而言之，ETH的解决方案不可扩展且不适用于像TON这样的异步区块链。_
 
-### TON NFT implementation
+### TON 上的 NFT 实现
 
-In TON we have 1 master contract - smart-contract of our collection, that store it's metadata and address of it's owner and the main thing - that if we want to create("mint") new NFT Item - we just need to send message to this collection contract. And this collection contract will deploy contract of new NFT item for us, with the data we provided.
+在TON中，我们有1个主合约-我们集合的智能合约，它存储它的元数据和它所有者的地址，以及最重要的 - 如果我们想要创建（"铸造"）新的NFT项目 - 我们只需要向这个集合合约发送消息。而这个集合合约将为我们部署新NFT项目的合约，并提供我们提供的数据。
 
 ![](/img/tutorials/nft/ton-collection.png)
 
 :::info
-You can check [NFT processing on TON](/develop/dapps/asset-processing/nfts) article or read [NFT standart](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md) if you want to dive deeper into this topic
+如果你想更深入地了解这个话题，可以查看[TON上的NFT处理](/develop/dapps/asset-processing/nfts)文章或阅读[NFT标准](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md)
 :::
 
-## ⚙ Setup development environment
+## ⚙ 设置开发环境
 
-Let's start by creating an empty project:
+让我们从创建一个空项目开始：
 
-1. Create new folder
+1. 创建新文件夹
    `mkdir MintyTON`
-2. Open this folder
+2. 打开这个文件夹
    `cd MintyTON`
-3. Init our project `yarn init -y`
-4. Install typescript
+3. 初始化我们的项目 `yarn init -y`
+4. 安装typescript
 
 ```
 yarn add typescript @types/node -D
 ```
 
-5. Copy this config to tsconfig.json
+5. 将以下配置复制到tsconfig.json中
 
 ```json
 {
@@ -93,7 +92,7 @@ yarn add typescript @types/node -D
 }
 ```
 
-6. Add script to build & start our app to package.json
+6. 向package.json添加脚本以构建并启动我们的应用程序
 
 ```json
 "scripts": {
@@ -101,13 +100,13 @@ yarn add typescript @types/node -D
   },
 ```
 
-7. Install required libraries
+7. 安装所需的库
 
 ```
 yarn add @pinata/sdk dotenv ton ton-core ton-crypto
 ```
 
-8. Create `.env` file and add your own data based on this template
+8. 创建`.env`文件并根据此模板添加你自己的数据
 
 ```
 PINATA_API_KEY=your_api_key
@@ -116,15 +115,15 @@ MNEMONIC=word1 word2 word3 word4
 TONCENTER_API_KEY=aslfjaskdfjasasfas
 ```
 
-You can get toncenter api key from [@tonapibot](https://t.me/tonapibot) and choose mainnet or testnet. In `MNEMONIC` variable store 24 words of collection owner wallet seed phrase.
+你可以从[@tonapibot](https://t.me/tonapibot)获取toncenter api key并选择mainnet或testnet。在 `MNEMONIC` 变量中存储集合所有者钱包种子短语的24个单词。
 
-Great! Now we are ready to start writing code for our project.
+太好了！现在我们准备好开始为我们的项目编写代码了。
 
-### Write helper functions
+### 编写辅助函数
 
-Firstly let's create function in `src/utils.ts`, that will open our wallet by mnemonic and return publicKey/secretKey of it.
+首先，让我们在`src/utils.ts`中创建一个函数，该函数将通过助记词打开我们的钱包并返回它的publicKey/secretKey。
 
-We get a pair of keys based on 24 words(seed phrase):
+我们根据24个单词（种子短语）获取一对密钥：
 
 ```ts
 import { KeyPair, mnemonicToPrivateKey } from "ton-crypto";
@@ -146,7 +145,7 @@ export async function openWallet(mnemonic: string[], testnet: boolean) {
 }
 ```
 
-Create a class instance to interact with toncenter:
+创建一个类实例以与toncenter交互：
 
 ```ts
 const toncenterBaseEndpoint: string = testnet
@@ -159,7 +158,7 @@ const client = new TonClient({
 });
 ```
 
-And finally open our wallet:
+最后打开我们的钱包：
 
 ```ts
 const wallet = WalletContractV4.create({
@@ -171,9 +170,9 @@ const contract = client.open(wallet);
 return { contract, keyPair };
 ```
 
-Nice, after that we will create main entrypoint for our project - `app.ts`.
-Here will use just created function `openWallet` and call our main function `init`.
-Thats enough for now.
+很好，之后我们将创建我们项目的主要入口点`app.ts`。
+在这里，我们将使用刚刚创建的`openWallet`函数并调用我们的主函数`init`。
+目前足够了。
 
 ```ts
 import * as dotenv from "dotenv";
@@ -190,7 +189,7 @@ async function init() {
 void init();
 ```
 
-And by the end, let's create `delay.ts` file, in which we will create function to wait until `seqno` increases.
+最后，让我们创建`delay.ts`文件，在这个文件中，我们将创建一个函数来等待`seqno`增加。
 
 ```ts
 import { OpenedWallet } from "utils";
@@ -208,32 +207,32 @@ export function sleep(ms: number): Promise<void> {
 }
 ```
 
-:::info What is it - seqno?
-In simply words, seqno it's just a counter of outgoing transactions sent by wallet.
-Seqno used to prevent Replay Attacks. When a transaction is sent to a wallet smart contract, it compares the seqno field of the transaction with the one inside its storage. If they match, it's accepted and the stored seqno is incremented by one. If they don't match, the transaction is discarded. That's why we will need to wait a bit, after every outgoing transaction.
+:::info 什么是seqno?
+简单来说，seqno就是由钱包发送的外部交易的计数器。
+Seqno用于预防重放攻击。当交易发送到钱包智能合约时，它将交易的seqno字段与其存储中的字段进行比较。如果它们匹配，交易被接受并且存储的seqno增加一。如果它们不匹配，交易被丢弃。这就是为什么我们需要在每次发送外部交易后稍等一会儿。
 :::
 
-## 🖼 Prepare metadata
+## 🖼 准备元数据
 
-Metadata - is just a simple information that will describe our NFT or collection. For example it's name, it's description, etc.
+元数据 - 只是一些简单的信息，将描述我们的NFT或集合。例如它的名称、它的描述等。
 
-Firstly, we need to store images of our NFT's in `/data/images` with name `0.png`, `1.png`, ... for photo of items, and `logo.png` for avatar of our collection. You can easily [download pack](/img/tutorials/nft/ducks.zip) with ducks images or put your images into that folder. And also we will store all our metadata files in `/data/metadata/` folder.
+首先，我们需要在`/data/images`中存储我们NFT的图片，命名为`0.png`、`1.png`...用于物品的照片，以及`logo.png`用于我们集合的头像。你可以轻松[下载](/img/tutorials/nft/ducks.zip)包含鸭子图片的包或将你的图片放入该文件夹。我们还将在`/data/metadata/`文件夹中存储所有的元数据文件。
 
-### NFT specifications
+### NFT 规范
 
-Most of the products on TON supports such metatadata specifications to store information about NFT collection:
+TON上的大多数产品支持以下元数据规范来存储有关NFT集合的信息：
 
-| Name                              | Explanation                                                                                                                                                |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| name                              | Collection name                                                                                                                                            |
-| description                       | Collection description                                                                                                                                     |
-| image                             | Link to the image, that will be displayed as the avatar. Supported link formats: https, ipfs, TON Storage. |
-| cover_image  | Link to the image, that will be displayed as the collection’s cover image.                                                                 |
-| social_links | List of links to the project’s social media profiles. Use no more than 10 links.                                           |
+| 名称                                | 解释                                          |
+| --------------------------------- | ------------------------------------------- |
+| name                              | 集合名称                                        |
+| description                       | 集合描述                                        |
+| image                             | 将显示为头像的图片链接。支持的链接格式：https、ipfs、TON Storage。 |
+| cover_image  | 将显示为集合封面图片的图片链接。                            |
+| social_links | 项目社交媒体配置文件的链接列表。使用不超过10个链接。                 |
 
 ![image](/img/tutorials/nft/collection-metadata.png)
 
-Based on this info, let's create our own metadata file `collection.json`, that will describe metadata of our collection!
+根据这些信息，让我们创建我们自己的元数据文件`collection.json`，它将描述我们集合的元数据！
 
 ```json
 {
@@ -243,21 +242,21 @@ Based on this info, let's create our own metadata file `collection.json`, that w
 }
 ```
 
-Note that we didn't write the "image" parameter, you will know why a bit later, just wait!
+请注意，我们没有写"image"参数，稍后你会知道原因，请稍等！
 
-After creation of collection metadata file we need to create metadata of our NFT's
+在创建了集合的元数据文件之后，我们需要创建我们NFT的元数据。
 
-Specifications of NFT Item metadata:
+NFT项目元数据的规范：
 
-| Name                              | Explanation                                                                                                                                                                                                                           |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| name                              | NFT name. Recommended length: No more than 15-30 characters                                                                                                                                           |
-| description                       | NFT description. Recommended length: Up to 500 characters                                                                                                                                             |
-| image                             | Link to the image of NFT.                                                                                                                                                                                             |
-| attributes                        | NFT attributes. A list of attributes, where a trait_type (attribute name) and value (a short description of the attribution) is specified. |
-| lottie                            | Link to the json file with Lottie animation.  If specified, the Lottie animation from this link will be played on page with the NFT.                                                                  |
-| content_url  | Link to additional content.                                                                                                                                                                                           |
-| content_type | The type of content added through the content_url link. For example, a video/mp4 file.                                                                                           |
+| 名称                                | 解释                                                                                                            |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| name                              | NFT名称。推荐长度：不超过15-30个字符                                                                                        |
+| description                       | NFT描述。推荐长度：不超过500个字符                                                                                          |
+| image                             | NFT图片链接。                                                                                                      |
+| attributes                        | NFT属性。属性列表，其中指定了trait_type (属性名称)和value (属性的简短描述)。 |
+| lottie                            | Lottie动画的json文件链接。如果指定，在NFT页面将播放来自此链接的Lottie动画。                                                               |
+| content_url  | 额外内容的链接。                                                                                                      |
+| content_type | 通过content_url链接添加的内容的类型。例如，视频/mp4文件。                                                     |
 
 ![image](/img/tutorials/nft/item-metadata.png)
 
@@ -269,11 +268,11 @@ Specifications of NFT Item metadata:
 }
 ```
 
-After that, you can create as many files of NFT item with their metadata as you want.
+之后，你可以根据需要创建尽可能多的NFT项目及其元数据文件。
 
-### Upload metadata
+### 上传元数据
 
-Now let's write some code, that will upload our metadata files to IPFS. Create `metadata.ts` file and add all needed imports:
+现在让我们编写一些代码，将我们的元数据文件上传到IPFS。创建 `metadata.ts` 文件并添加所需的导入：
 
 ```ts
 import pinataSDK from "@pinata/sdk";
@@ -282,7 +281,7 @@ import { writeFile, readFile } from "fs/promises";
 import path from "path";
 ```
 
-After that, we need to create function, that will actually upload all files from our folder to IPFS:
+之后，我们需要创建一个函数，这个函数将把我们文件夹中的所有文件实际上传到IPFS：
 
 ```ts
 export async function uploadFolderToIPFS(folderPath: string): Promise<string> {
@@ -296,8 +295,8 @@ export async function uploadFolderToIPFS(folderPath: string): Promise<string> {
 }
 ```
 
-Excellent! Let's return to the question at hand: why did we leave the "image" field in the metadata files empty? Imagine a situation where you want to create 1000 NFTs in your collection and, accordingly, you have to manually go through each item and manually insert a link to your picture.
-This is really inconvenient and wrong, so let's write a function that will do this automatically!
+太棒了！让我们回到之前的问题：为什么我们在元数据文件中留下了“image”字段为空？想象一下你想在你的集合中创建1000个NFT，并且你必须手动遍历每个项目并手动插入图片链接。
+这真的很不方便，所以让我们编写一个函数来自动完成这个操作！
 
 ```ts
 export async function updateMetadataFiles(metadataFolderPath: string, imagesIpfsHash: string): Promise<void> {
@@ -318,13 +317,13 @@ export async function updateMetadataFiles(metadataFolderPath: string, imagesIpfs
 }
 ```
 
-Here we firstly read all of the files in specified folder:
+这里我们首先读取指定文件夹中的所有文件：
 
 ```ts
 const files = readdirSync(metadataFolderPath);
 ```
 
-Iterate over each file and get its content
+遍历每个文件并获取其内容
 
 ```ts
 const filePath = path.join(metadataFolderPath, filename)
@@ -333,9 +332,9 @@ const file = await readFile(filePath);
 const metadata = JSON.parse(file.toString());
 ```
 
-After that, we assign the value `ipfs://{IpfsHash}/{index}.jpg` to the image field if it's not last file in the folder, otherwise `ipfs://{imagesIpfsHash}/logo.jpg` and actually rewrite our file with new data.
+之后，如果不是文件夹中的最后一个文件，我们将图像字段的值分配为 `ipfs://{IpfsHash}/{index}.jpg`，否则为 `ipfs://{imagesIpfsHash}/logo.jpg` 并实际用新数据重写我们的文件。
 
-Full code of metadata.ts:
+metadata.ts 的完整代码：
 
 ```ts
 import pinataSDK from "@pinata/sdk";
@@ -371,14 +370,14 @@ export async function updateMetadataFiles(metadataFolderPath: string, imagesIpfs
 }
 ```
 
-Great, let's call this methods in our app.ts file.
-Add imports of our functions:
+太好了，让我们在我们的 app.ts 文件中调用这些方法。
+添加我们函数的导入：
 
 ```ts
 import { updateMetadataFiles, uploadFolderToIPFS } from "./metadata";
 ```
 
-Save variables with path to the metadata/images folder and call our functions to upload metadata.
+保存元数据/图片文件夹路径变量并调用我们的函数上传元数据。
 
 ```ts
 async function init() {
@@ -402,14 +401,13 @@ async function init() {
 }
 ```
 
-After that you can run `yarn start` and see link to your deployed metadata!
+之后你可以运行 `yarn start` 并查看部署的元数据链接！
 
-### Encode offchain content
+### 编码离线内容
 
-How will link to our metadata files stored in smart contract? This question can be fully answered by the [Token Data Standart](https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md).
-In some cases, it will not be enough to simply provide the desired flag and provide the link as ASCII characters, which is why let's consider an option in which it will be necessary to split our link into several parts using the snake format.
+我们如何将链接到智能合约中存储的元数据文件？这个问题可以通过[Token Data 标准](https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md)得到完全回答。在某些情况下，仅仅提供所需的标志并以ASCII字符提供链接是不够的，这就是为什么我们考虑使用蛇形格式将我们的链接分成几个部分的选项。
 
-Firstly create function, that will convert our buffer into chunks:
+首先创建一个函数，将我们的缓冲区转换成块：
 
 ```ts
 function bufferToChunks(buff: Buffer, chunkSize: number) {
@@ -422,7 +420,7 @@ function bufferToChunks(buff: Buffer, chunkSize: number) {
 }
 ```
 
-And create function, that will bind all the chunks into 1 snake-cell:
+并创建一个函数，将所有块绑定成1个蛇形cell：
 
 ```ts
 function makeSnakeCell(data: Buffer): Cell {
@@ -454,7 +452,7 @@ function makeSnakeCell(data: Buffer): Cell {
 }
 ```
 
-Finally, we need to create function that will encode offchain content into cell using this functions:
+最后，我们需要创建一个函数，使用这些函数将离线内容编码为cell：
 
 ```ts
 export function encodeOffChainContent(content: string) {
@@ -465,11 +463,11 @@ export function encodeOffChainContent(content: string) {
 }
 ```
 
-## 🚢 Deploy NFT Collection
+## 🚢 部署 NFT 集合
 
-When our metadata is ready and already uploaded to IPFS, we can start with deploying our collection!
+当我们的元数据已经准备好并且已经上传到IPFS时，我们可以开始部署我们的集合了！
 
-We will create file, that will store all logic related to our collection in `/contracts/NftCollection.ts` file. As always will start with imports:
+我们将在 `/contracts/NftCollection.ts` 文件中创建一个文件，该文件将存储与我们的集合相关的所有逻辑。我们将从导入开始：
 
 ```ts
 import {
@@ -484,7 +482,7 @@ import {
 import { encodeOffChainContent, OpenedWallet } from "../utils";
 ```
 
-And declare type wich will describe init data that we need for our collection:
+并声明一个类型，它将描述我们集合所需的初始化数据：
 
 ```ts
 export type collectionData = {
@@ -497,16 +495,16 @@ export type collectionData = {
 }
 ```
 
-| Name                 | Explanation                                                                                                  |
-| -------------------- | ------------------------------------------------------------------------------------------------------------ |
-| ownerAddress         | Address that will be set as owner of our collection. Only owner will be able to mint new NFT |
-| royaltyPercent       | Percent of each sale amount, that will go to the specified address                                           |
-| royaltyAddress       | Address of wallet, that will receive royalty from sales of this NFT collection                               |
-| nextItemIndex        | The index that the next NFT item should have                                                                 |
-| collectionContentUrl | URL to the collection metadata                                                                               |
-| commonContentUrl     | Base url for NFT items metadata                                                                              |
+| 名称                   | 解释                             |
+| -------------------- | ------------------------------ |
+| ownerAddress         | 将被设置为我们集合的所有者的地址。只有所有者能够铸造新NFT |
+| royaltyPercent       | 每次销售金额的百分比，将转到指定地址             |
+| royaltyAddress       | 将从这个NFT集合的销售中接收版税的钱包地址         |
+| nextItemIndex        | 下一个NFT项目应该有的索引                 |
+| collectionContentUrl | 集合元数据的URL                      |
+| commonContentUrl     | NFT项目元数据的基础URL                 |
 
-Firstly let's write private method, that will return cell with code of our collection.
+首先编写一个私有方法，用于返回带有我们集合代码的cell：
 
 ```ts
 export class NftCollection {
@@ -524,10 +522,9 @@ export class NftCollection {
 }
 ```
 
-In this code, we just read Cell from base64 representation of collection smart contract.
+在这段代码中，我们只是从集合智能合约的base64表示中读取cell。
 
-Okey, remained only cell with init data of our collection.
-Basicly, we just need to store data from collectionData in correct way. Firstly we need to create an empty cell and store there collection owner address and index of next item that will be minted.
+剩下的只有我们集合初始化数据的cell了。
 
 ```ts
 private createDataCell(): Cell {
@@ -624,7 +621,7 @@ public async deploy(wallet: OpenedWallet) {
 
 Deploy of new smart contract in our case - it's just sending a message from our wallet to the collection address(which one we can calculate if we have StateInit), with its StateInit!
 
-When owner mint a new NFT, the collection accepts the owner's message and sends a new message to the created NFT smart-contract(which requires paying a fee), so let's write a method that will replenish the balance of the collection based on the number of nfts for a mint:
+在我们的情况下，部署新智能合约就是从我们的钱包向集合地址（如果我们有StateInit，则可以计算出此地址）发送消息！
 
 ```ts
 public async topUpBalance(
@@ -674,7 +671,7 @@ await waitSeqno(seqno, wallet);
 
 When our collection is ready, we can start minting our NFT! We will store code in `src/contracts/NftItem.ts`
 
-Unexpectedly, but now we need to go back to the `NftCollection.ts`. And add this type near to `collectionData` at the top of the file.
+当我们的收藏准备好后，我们可以开始铸造我们的NFT！我们将存储代码在`src/contracts/NftItem.ts`
 
 ```ts
 export type mintParams = {
@@ -765,7 +762,7 @@ export class NftItem {
 
 By the end, we will write short method, that will get address of NFT by it's index.
 
-Start with creation of client variable, that will help us to call get-method of collection.
+最后，我们将编写简短方法，该方法将通过其索引获取NFT的地址。
 
 ```ts
 static async getAddressByIndex(
@@ -916,7 +913,7 @@ public async deploy(wallet: OpenedWallet): Promise<number> {
 
 As you can see, this code does not differ from the deployment of other smart contracts (nft-item smart contract, from the deployment of a new collection). The only thing is that you can see that we initially replenish our marketplace not by 0.05 TON, but by 0.5. What is the reason for this?  When a new smart sales contract is deployed, the marketplace accepts the request, processes it, and sends a message to the new contract (yes, the situation is similar to the situation with the NFT collection). Which is why we need a little extra tone to pay fees.
 
-By the end, let's add few lines of code to our `app.ts` file, to deploy our marketplace:
+如您所见，这段代码与其他智能合约的部署（nft-item智能合约，新集合的部署）并无不同。唯一的区别是您可以看到我们最初不是用0.05 TON而是用0.5 TON为我们的市场充值。这是什么原因呢？当部署新的智能销售合约时，市场接受请求，处理它，并向新合约发送消息（是的，情况类似于NFT集合）。这就是为什么我们需要额外的TON来支付费用。
 
 ```ts
 console.log("Start deploy of new marketplace  ");
@@ -930,7 +927,7 @@ console.log("Successfully deployed new marketplace");
 
 Great! Right now we can already deploy smart contract of our NFT sale. How it will works? We need to deploy new contract, and after that "transfer" our nft to sale contract(in other words, we just need to change owner of our NFT to sale contract in item data). In this tutorial we will use [nft-fixprice-sale-v2](https://github.com/getgems-io/nft-contracts/blob/main/packages/contracts/sources/nft-fixprice-sale-v2.fc) sale smart contract.
 
-First of all let's declare new type, that will describe data of our sale smart-contract:
+太好了！现在我们已经可以部署我们NFT销售的智能合约了。它将如何工作？我们需要部署新合约，之后将我们的nft“转让”给销售合约（换句话说，我们只需改变我们NFT的所有者为销售合约中的数据项）。在本教程中，我们将使用[nft-fixprice-sale-v2](https://github.com/getgems-io/nft-contracts/blob/main/packages/contracts/sources/nft-fixprice-sale-v2.fc)销售智能合约。
 
 ```ts
 import {
@@ -962,7 +959,7 @@ export type GetGemsSaleData = {
 
 And now let's create class, and basic method, that will create init data cell for our smart-contract.
 
-We will begin with creation of cell with the fees information. We need to store address that will receive fee's for marketplace, amount of TON to send to the marketplace as fee. Store address that will receive royalty from the sell and royalty amount.
+现在让我们创建类，并创建一个基本方法，用于为我们的智能合约创建初始化数据cell。
 
 ```ts
 export class NftSale {
@@ -1025,7 +1022,7 @@ private createCodeCell(): Cell {
 
 It remains only to form a message that we will send to our marketplace to deploy sale contract and actually send this message
 
-Firstly, we will create an cell, that will store StateInit of our new sale contract
+只剩下创建我们将发送到我们市场的消息以部署销售合约，并实际发送此消息
 
 ```ts
 public async deploy(wallet: OpenedWallet): Promise<number> {
@@ -1070,9 +1067,9 @@ Perfect, when sale smart-contract is deployed all that's left is to change owner
 
 What does it mean to transfer an item? Simply send a message from the owner's wallet to the smart contract with information about who the new owner of the item is.
 
-Go to `NftItem.ts` and create new static method in NftItem class, that will create body for such message:
+转移一个项目是什么意思？只需从所有者的钱包向智能合约发送消息，告知谁是该项目的新所有者即可。
 
-Just create an empty cell and fill the data.
+转到`NftItem.ts`，并在NftItem类中创建一个新的静态方法，用于创建此类消息的主体：
 
 ```ts
 static createTransferBody(params: {
@@ -1154,7 +1151,7 @@ const saleData: GetGemsSaleData = {
 
 Note, that we set nftOwnerAddress to null, because if we will do so, our sale contract would just accept our coins on deploy.
 
-Deploy our sale:
+请注意，我们将nftOwnerAddress设置为null，因为如果这样做，我们的销售合约将只接受我们部署时的币值。
 
 ```ts
 const nftSaleContract = new NftSale(saleData);
