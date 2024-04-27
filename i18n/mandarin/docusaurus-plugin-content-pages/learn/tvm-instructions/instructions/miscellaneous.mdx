@@ -6,14 +6,13 @@ wrapperClassName: bootstrap-wrapper
 import { SearchField } from '@site/src/components/SearchField';
 import { miscellaneousOpcodes as opcodes } from '@site/src/data/opcodes';
 
-# Debug and Codepage Primitives
+# 调试与代码页原语
 
-Opcodes beginning with `FE` are reserved for the debug primitives. These primitives have known fixed operation length and behave as (multibyte) [`NOP`](#instr-nop) operations.
+以 `FE` 开头的操作码保留给调试原语使用。这些原语具有已知的固定操作长度，并且作为（多字节）[`NOP`](#instr-nop) 操作行为。
 
-However, when invoked in a TVM instance with debug mode enabled, these primitives can produce a specific output into the text debug log of the TVM instance, never affecting the TVM state.
+然而，当在启用调试模式的 TVM 实例中调用时，这些原语可以产生特定输出到 TVM 实例的文本调试日志中，不影响 TVM 状态。
 
-[`DEBUG`](#instr-debug) and [`DEBUGSTR`](#instr-debugstr) are the two debug primitives, they cover all opcodes that start with `FE`.
-Other primitives listed here have opcodes from the same set. When debug is enabled, they have their specified effects. When debug is disabled, they behave as [`NOP`](#instr-nop).
+[`DEBUG`](#instr-debug) 和 [`DEBUGSTR`](#instr-debugstr) 是两个调试原语，它们涵盖了所有以 `FE` 开头的操作码。当调试启用时，这里列出的其他原语具有其指定的效果。当调试禁用时，它们表现为 [`NOP`](#instr-nop)。
 
 ### TVM Instructions Content List
 
@@ -43,16 +42,16 @@ Other primitives listed here have opcodes from the same set. When debug is enabl
   ]}
 />
 
-### Debug Primitives
+### 代码页原语
 
-| xxxxxxx<br/>Opcode | xxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>Fift syntax     | xxxxxxxxxxxxxxxxx<br/>Stack | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>Description                                                                                                                                                                                                                                                                                                                                  | xxxx<br/>Gas |
-| :----------------- | :----------------------------------------------- | :-------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------- |
-| **`FEnn`**         | `{nn} DEBUG`                                     | _`-`_                       | `0 <= nn < 240`                                                                                                                                                                                                                                                                                                                                                                         | `26`         |
-| **`FEFnssss`**     | `{string} DEBUGSTR`<br/>`{string} {x} DEBUGSTRI` | _`-`_                       | `0 <= n < 16`. Length of `ssss` is `n+1` bytes.<br/>`{string}` is a [string literal](https://github.com/Piterden/TON-docs/blob/master/Fift.%20A%20Brief%20Introduction.md#user-content-29-string-literals).<br/>[`DEBUGSTR`](#instr-debugstr): `ssss` is the given string.<br/>[`DEBUGSTRI`](#instr-debugstr): `ssss` is one-byte integer `0 <= x <= 255` followed by the given string. | `26`         |
-| **`FE00`**         | `DUMPSTK`                                        | _`-`_                       | Dumps the stack (at most the top 255 values) and shows the total stack depth.                                                                                                                                                                                                                                                                                        | `26`         |
-| **`FE2i`**         | `s[i] DUMP`                                      | _`-`_                       | Dumps `s[i]`.                                                                                                                                                                                                                                                                                                                                                                           | `26`         |
+| xxxxxxx<br/>操作码 | xxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>Fift 语法 | xxxxxxxxxxxxxxxxx<br/>堆栈 | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>描述                                                                                                    | xxxx<br/>Gas |
+| :-------------- | :--------------------------------------- | :----------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- | :----------- |
+| **`FFnn`**      | `[nn] SETCP`                             | _`-`_                    | 选择 TVM 代码页 `0 <= nn < 240`。如果不支持代码页，则抛出无效的操作码异常。                                                                                                 | `26`         |
+| **`FF00`**      | `SETCP0`                                 | _`-`_                    | 选择本文档描述的 TVM（测试）代码页零。                                                                                                                            | `26`         |
+| **`FFFz`**      | `[z-16] SETCP`                           | _`-`_                    | 选择 TVM 代码页 `z-16`，适用于 `1 <= z <= 15`。负代码页 `-13...-1` 保留用于验证其他代码页中 TVM 运行所需的限制性 TVM 版本。负代码页 `-14` 保留用于实验性代码页，不一定在不同 TVM 实现之间兼容，并且应在 TVM 的生产版本中禁用。 | `26`         |
+| **`FFF0`**      | `SETCPX`                                 | _`c - `_                 | 选择通过栈顶传入的代码页 `c`，`-2^15 <= c < 2^15`。                                                                                                            | `26`         |
 
-### Codepage primitives
+### TVM 指令内容列表
 
 | xxxxxxx<br/>Opcode | xxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>Fift syntax | xxxxxxxxxxxxxxxxx<br/>Stack | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>Description                                                                                                                                                                                                                                                                                                                   | xxxx<br/>Gas |
 | :----------------- | :------------------------------------------- | :-------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------- |
