@@ -1,13 +1,13 @@
 import ThemedImage from '@theme/ThemedImage';
 
-# TL-B Types
+# TL-B 类型
 
 :::caution advanced level
-This information is **very low-level** and could be hard to understand for newcomers.
-So feel free to read about it later.
+此信息属于**非常底层**的内容，对新手来说可能难以理解。
+因此，您可以稍后再阅读。
 :::
 
-In this section, complex and unconventional typed language binary (TL-B) structures are analyzed. To get started, we recommend reading [this documentation](/develop/data-formats/tl-b-language) first to become more familiar with the topic.
+在本节中，我们将分析复杂和非传统的类型化语言二进制（TL-B）结构。开始之前，我们建议先阅读[此文档](/develop/data-formats/tl-b-language)，以更熟悉该主题。
 
 <img alt="tlb structure" src="/img/docs/tlb.drawio.svg" width={'100%'}/>
 
@@ -18,9 +18,9 @@ left$0 {X:Type} {Y:Type} value:X = Either X Y;
 right$1 {X:Type} {Y:Type} value:Y = Either X Y;
 ```
 
-The Either type is used when one of two resulting types are possible. In this case, the type choice depends on the prefix bit shown. If the prefix bit is 0, the left type is serialized, while if the 1 prefix bit is used, the right one is serialized. 
+Either类型用于可能出现两种结果类型之一的情况。在这种情况下，类型选择取决于所示的前缀位。如果前缀位是0，则序列化左类型，而如果使用1前缀位，则序列化右类型。
 
-It is used, for example, when serializing messages, when the body is either part of the main cell or linked to another cell.
+例如，在序列化消息时使用它，当消息体要么是主cell的一部分，要么链接到另一个cell。
 
 ## Maybe
 
@@ -29,7 +29,7 @@ nothing$0 {X:Type} = Maybe X;
 just$1 {X:Type} value:X = Maybe X;
 ```
 
-The Maybe type is used in conjunction with optional values. In these instances, if the first bit is 0, the value itself is not serialized (and is actually skipped), while if the value is 1, it is serialized.
+Maybe类型与可选值一起使用。在这些情况下，如果第一位是0，则不会序列化该值（实际上被跳过），而如果值是1，则会被序列化。
 
 ## Both
 
@@ -37,48 +37,48 @@ The Maybe type is used in conjunction with optional values. In these instances, 
 pair$_ {X:Type} {Y:Type} first:X second:Y = Both X Y;
 ```
 
-The Both type variation is used only in conjunction with normal pairs, whereby both types are serialized, one after the other, without conditions.
+Both类型变体仅与普通对一起使用，两种类型依次序列化，没有条件。
 
 ## Unary
 
-The Unary functional type is commonly used for dynamic sizing in structures such as [hml_short](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb#L29).
+Unary函数类型通常用于动态大小的结构，例如[hml_short](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb#L29)。
 
-Unary presents two main options:
+Unary提供两个主要选项：
 
 ```tlb
 unary_zero$0 = Unary ~0;
 unary_succ$1 {n:#} x:(Unary ~n) = Unary ~(n + 1);
 ```
 
-### Unary serialization
+### Unary序列化
 
-Generally, using the `unary_zero` variation is quite simple: if the first bit is 0, then the result of whole Unary deserialization is 0.
+通常，使用`unary_zero`变体相当简单：如果第一位是0，则Unary反序列化的结果为0。
 
-That said, the `unary_succ` variation is more complex because it is loaded recursively and possesses a value of `~(n + 1)`. This means it sequentially calls itself until it reaches `unary_zero`. In other words, the desired value will be equal to the number of units in a row.
+然而，`unary_succ`变体更复杂，因为它是递归加载的，具有`~(n + 1)`的值。这意味着它会顺序调用自身，直到达到`unary_zero`。换句话说，所需的值将等于一连串单位的数量。
 
-For instance, let's analyze serialization of the bitstring `110`.
+例如，让我们分析位串`110`的序列化。
 
-The call chain will be as follows:
+调用链如下：
 
 ```tlb
 unary_succ$1 -> unary_succ$1 -> unary_zero$0
 ```
 
-Once we reach `unary_zero`, the value is returned to the end of a serialized bitstring similarly to a recursive function call.
+一旦到达`unary_zero`，值就会返回到序列化位串的末尾，类似于递归函数调用。
 
-Now, to understand the result more clearly, let's retrieve the return value path, which is displayed as follows:
+现在，为了更清楚地理解结果，让我们检索返回值路径，显示如下：
 
-`0 -> ~(0 + 1) -> ~(1 + 1) -> 2`, that means we serialized `110` in `Unary 2`.
+`0 -> ~(0 + 1) -> ~(1 + 1) -> 2`，这意味着我们将`110`序列化为`Unary 2`。
 
-### Unary deserialization
+### Unary反序列化
 
-Suppose we have `Foo` type:
+假设我们有`Foo`类型：
 
 ```tlb
 foo$_  u:(Unary 2) = Foo;
 ```
 
-According said above, `Foo` will be deserialized into:
+根据上述内容，`Foo`将被反序列化为：
 
 <br></br>
 <ThemedImage
@@ -96,9 +96,9 @@ foo u:(unary_succ x:(unary_succ x:(unnary_zero)))
 
 ## Hashmap
 
-The Hashmap complex type is used for storing dict from the FunC smart contract code(`dict`).
+Hashmap复杂类型用于存储FunC智能合约代码中的字典（`dict`）。
 
-The following TL-B structures are used to serialize a Hashmap with a fixed key length:
+以下TL-B结构用于序列化具有固定键长度的Hashmap：
 
 ```tlb
 hm_edge#_ {n:#} {X:Type} {l:#} {m:#} label:(HmLabel ~l n) 
@@ -119,11 +119,11 @@ hme_empty$0 {n:#} {X:Type} = HashmapE n X;
 hme_root$1 {n:#} {X:Type} root:^(Hashmap n X) = HashmapE n X;
 ```
 
-This means the root structure uses `HashmapE` and either of its two states: including `hme_empty` or `hme_root`.
+这意味着根结构使用`HashmapE`及其两种状态之一：包括`hme_empty`或`hme_root`。
 
-### Hashmap parsing example
+### Hashmap解析示例
 
-As an example, consider the following Cell, given in binary form.
+例如，考虑以下以二进制形式给出的Cell。
 
 ```json
 1[1] -> {
@@ -137,7 +137,7 @@ As an example, consider the following Cell, given in binary form.
 }
 ```
 
-This Cell makes use of the `HashmapE` structure type and possesses an 8-bit key size and its values make use of the `uint16` number framework (`HashmapE 8 uint16`). HashmapE makes use of distinct 3 key types:
+此Cell使用了`HashmapE`结构类型，并具有8位键大小，其值使用`uint16`数字框架（`HashmapE 8 uint16`）。HashmapE使用3种不同的键类型：
 
 ```
 1 = 777
@@ -145,14 +145,14 @@ This Cell makes use of the `HashmapE` structure type and possesses an 8-bit key 
 128 = 777
 ```
 
-To parse this Hashmap, we need to know in advance which structure type to use, `either hme_empty` or `hme_root`. This is determined by identifying the `correct prefix`. The hme empty variation uses one bit 0 (`hme_empty$0`), while hme root uses one bit 1 (`hme_root$1`). After reading the first bit, it is determined that it is equal to one (`1[1]`), meaning it is the `hme_root` variation.
+为了解析此Hashmap，我们需要预先知道使用哪种结构类型，`hme_empty`还是`hme_root`。这是通过识别`正确前缀`来确定的。hme empty变体使用一个位0（`hme_empty$0`），而hme root使用一个位1（`hme_root$1`）。读取第一位后，确定它等于一（`1[1]`），意味着它是`hme_root`变体。
 
-Now, let's fill out the structure variables with known values, with the initial result being:
+现在，让我们用已知值填充结构变量，初始结果为：
 `hme_root$1 {n:#} {X:Type} root:^(Hashmap 8 uint16) = HashmapE 8 uint16;`
 
-Here the one bit prefix is already read, yet within the `{}` denotes conditions that don’t need to be read. The condition `{n:#}` means that n is any uint32 number, while `{X:Type}` means that X can employ any type.
+这里已经读取了一位前缀，而`{}`中的条件不需要读取。条件`{n:#}`表示n是任何uint32数字，而`{X:Type}`表示X可以使用任何类型。
 
-The next portion that needs to be read is the `root:^(Hashmap 8 uint16)`, while the `^` symbol denotes a link that must be loaded.
+接下来需要读取的部分是`root:^(Hashmap 8 uint16)`，而`^`符号表示必须加载的链接。
 
 ```json
 2[00] -> {
@@ -164,18 +164,18 @@ The next portion that needs to be read is the `root:^(Hashmap 8 uint16)`, while 
   }
 ```
 
-#### Initiating Branch Parsing
+#### 初始化分支解析
 
-According to our schema, this is the correct `Hashmap 8 uint16` structure. Next, we fill it with known values and obtain a result of:
+根据我们的架构，这是正确的`Hashmap 8 uint16`结构。接下来，我们用已知的值填充它，并得到如下结果：
 
 ```tlb
 hm_edge#_ {n:#} {X:Type} {l:#} {m:#} label:(HmLabel ~l 8) 
           {8 = (~m) + l} node:(HashmapNode m uint16) = Hashmap 8 uint16;
 ```
 
-As is shown above, conditional variables `{l:#}` and `{m:#}` have now appeared, yet the values of both variables are unknown to us. Also, after reading the corresponding `label`, it's clear that `n` is involved in the equation `{n = (~m) + l}`, in this case we calculate `l` and `m`, the sign `tells us the resulting value of ~`.
+如上所示，现在出现了条件变量`{l:#}`和`{m:#}`，但我们不知道这两个变量的值。此外，在读取相应的`label`之后，很明显`n`涉及等式`{n = (~m) + l}`，在这种情况下我们计算`l`和`m`，符号`~`告诉我们结果值。
 
-To determine the value of `l`, we must load the `label:(HmLabel ~l uint16)` sequence. As is shown below, the `HmLabel` has 3 basic structural options:
+为了确定`l`的值，我们必须加载`label:(HmLabel ~l uint16)`序列。如下所示，`HmLabel`有三种基本结构选项：
 
 ```tlb
 hml_short$0 {m:#} {n:#} len:(Unary ~n) {n <= m} s:(n * Bit) = HmLabel ~n m;
@@ -183,40 +183,40 @@ hml_long$10 {m:#} n:(#<= m) s:(n * Bit) = HmLabel ~n m;
 hml_same$11 {m:#} v:Bit n:(#<= m) = HmLabel ~n m;
 ```
 
-Each option is determined by the corresponding prefix. Currently, our root cell is made up of 2 zero bits, which is displayed as: (`2[00]`). Therefore, the only logical option is `hml_short$0`, which makes use of a prefix beginning with 0.
+每个选项都由相应的前缀确定。目前，我们的根cell由两个零位组成，显示为：(`2[00]`)。因此，唯一合理的选项是以0开头的前缀`hml_short$0`。
 
-Fill `hml_short` with known values:
+用已知值填充`hml_short`：
 
 ```tlb
 hml_short$0 {m:#} {n:#} len:(Unary ~n) {n <= 8} s:(n * Bit) = HmLabel ~n 8
 ```
 
-In this case, we don't know the value of `n`, but since it has a `~` character, it’s possible to calculate it. To accomplish this, we load `len:(Unary ~n)`, [more about Unary here](#unary). 
+在这种情况下，我们不知道`n`的值，但由于它有一个`~`字符，可以计算它。为此，我们加载`len:(Unary ~n)`，[关于Unary的更多信息](#unary)。
 
-In this case, we started with `2[00]`, yet after defining the type `HmLabel`, only one of the two bits still exists. 
+在这种情况下，我们从`2[00]`开始，但在定义了`HmLabel`类型之后，两个位中只剩下一个。
 
-Therefore, we load it and see that its value is 0, which means it clearly uses the `unary_zero$0` variation. That means that the n value using the `HmLabel` variation is zero.
+因此，我们加载它并看到它的值是0，这意味着它显然使用了`unary_zero$0`变体。这意味着使用`HmLabel`变体的n值为零。
 
-Next, it is necessary to complete the `hml_short` variation sequence using the calculated n value:
+接下来，需要使用计算出的n值完成`hml_short`变体序列：
 
 ```tlb
 hml_short$0 {m:#} {n:#} len:0 {n <= 8} s:(0 * Bit) = HmLabel 0 8
 ```
 
-It turns out we have an empty `HmLabel` denoted as, s = 0, therefore there is nothing to download.
+结果我们得到一个空的`HmLabel`，表示为s = 0，因此没有什么可以下载的。
 
-Next, we supplement our structure with the calculated value of `l` as follows:
+接下来，我们用计算出的`l`值补充我们的结构，如下所示：
 
 ```tlb
 hm_edge#_ {n:#} {X:Type} {l:0} {m:#} label:(HmLabel 0 8) 
           {8 = (~m) + 0} node:(HashmapNode m uint16) = Hashmap 8 uint16;
 ```
 
-Now that we have calculated the value of `l`, we can also calculate `m` using the equation `n = (~m) + 0`, i.e. `m = n - 0`, m = n = 8.
+现在我们已经计算出`l`的值，我们可以使用等式`n = (~m) + 0`来计算`m`，即`m = n - 0`，m = n = 8。
 
-After determining all unknown values it is now possible to load the `node:(HashmapNode 8 uint16)`.
+确定所有未知值后，现在可以加载`node:(HashmapNode 8 uint16)`。
 
-As far as the HashmapNode goes, we have options:
+至于HashmapNode，我们有以下选项：
 
 ```tlb
 hmn_leaf#_ {X:Type} value:X = HashmapNode 0 X;
@@ -224,8 +224,7 @@ hmn_fork#_ {n:#} {X:Type} left:^(Hashmap n X)
            right:^(Hashmap n X) = HashmapNode (n + 1) X;
 ```
 
-In this case, we determine the option not by using the prefix, but by using the parameter. This means that if n = 0, then the correct end result will be either `hmn_leaf` or `hmn_fork`. 
-In this example, the result is n = 8 (the hmn_fork variation). We make use of the `hmn_fork` variation and fill in the known values:
+在这种情况下，我们不
 
 ```tlb
 hmn_fork#_ {n:#} {X:uint16} left:^(Hashmap n uint16) 
@@ -247,7 +246,7 @@ Next we load the left and right branches and for each subsequent branch [the pro
 
 Continuing with the previous example, let’s examine how the process of loading branches works (for dict values)., i.e. `28[1011100000000000001100001001]`
 
-The end result becomes `hm_edge` yet again and the next step is to fill the sequence with the correct known values as follows:
+继续前面的例子，让我们来看看加载分支的过程是如何工作的（对于dict值），即`28[1011100000000000001100001001]`
 
 ```tlb
 hm_edge#_ {n:#} {X:Type} {l:#} {m:#} label:(HmLabel ~l 7) 
@@ -275,7 +274,7 @@ hml_long$10 {m:#} n:(## 3) s:(n * Bit) = HmLabel ~n 7;
 
 Next we load `n` into the sequence, with an end result of `111`, which as we noted above = 7 coincidentally. Next, we load `s` into the sequence, 7 bits - `0000000`. Remember, `s` is part of the key.
 
-Next we return to the top of the sequence and fill in the resulting `l`:
+接下来我们将`n`加载到序列中，最终结果为`111`，如上所述，这与7相符。接下来，我们将`s`加载到序列中，7位 - `0000000`。记住，`s`是键的一部分。
 
 ```tlb
 hm_edge#_ {n:#} {X:Type} {l:#} {m:#} label:(HmLabel 7 7) 
@@ -291,11 +290,9 @@ hmn_leaf#_ {X:Type} value:X = HashmapNode 0 X;
 
 Next we substitute our uint16 type and load the value. The remaining 16 bits of `0000001100001001` in decimal form is 777, therefore our value.
 
-Now let's restore the key, we must combine the ordered list of all parts of the key that were computed previously. 
-Each of the two related key parts unite with one bit based on which type branches are used. 
-For the right branch, ‘1’ bit is added, and for the left branch ‘0’ bit is added. If a full HmLabel exists above, then its bits are added to the key.
+接下来我们替换我们的uint16类型并加载值。剩余的16位`0000001100001001`以十进制形式为777，因此这就是我们的值。
 
-In this case specifically, 7 bits are taken from the HmLabel `0000000` and ‘1’ bit is added before the sequence of zeros because the value was obtained from the right branch. The end result is 8 bits in total or `10000000`, meaning the key value equals `128`.
+现在让我们恢复键，我们必须将之前计算的所有键部分的有序列表组合起来。两个相关的键部分根据使用的分支类型合并为一位。对于右分支，添加‘1’位，对于左分支添加‘0’位。如果上面有完整的HmLabel，则将其位添加到键中。
 
 ## Other Hashmap Types
 
@@ -383,7 +380,7 @@ Standard addresses such as `EQBL2_3lMiyywU17g-or8N7v9hDmPCpttzBPE2isF2GTzpK4` us
 Typically, they have a length of 36 bytes, the last 2 of which are the crc16 checksum calculated with XMODEM table, while the first byte represents the flag, with the second representing the workchain. 
 The 32 bytes in the middle are the data of the address itself (also calls AccountID), often represented in schemas such as int256.
 
-[Decoding example](https://github.com/xssnick/tonutils-go/blob/3d9ee052689376061bf7e4a22037ff131183afad/address/addr.go#L156)
+标准地址，例如`EQBL2_3lMiyywU17g-or8N7v9hDmPCpttzBPE2isF2GTzpK4`，使用base64 uri对字节进行编码。通常它们长度为36字节，其中最后两个字节是使用XMODEM表计算的crc16校验和，而第一个字节表示标志，第二个表示工作链。中间的32字节是地址本身的数据（也称为AccountID），通常在诸如int256之类的架构中表示。
 
 ## References
 
