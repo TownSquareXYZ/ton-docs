@@ -1,55 +1,55 @@
-# 协议规范
+# Protocol specifications
 
-了解TON Connect 如何在这个尺寸下工作。
+Understand how TON Connect works under the hood.
 
-## 本节适用于谁？
+## Who is this section for?
 
-- 如果你实现了一个钱包
-- 如果你开发了 SDK
-- 如果您想要学习TON Connect 如何工作
+- If you implement a wallet
+- If you develop an SDK
+- If you want to learn how TON Connect works
 
-## 班级概览
+## Sections overview
 
-- [Protocol workflows](/develop/dapps/ton-connect/protocol/workflow) 是TON Connect所涉所有协议的概述。
-- [Bridge API](/develop/dapps/ton-connect/protocol/bridge)指定了如何在应用程序和钱包之间传输数据。
-- [Session protocol](/develop/dapps/ton-connect/protocol/session) 确保网上端到端的加密通信。
-- [请求协议](/develop/dapps/ton-connect/protocol/requests-responses) 定义了应用程序和钱包的请求和响应。
-- [钱包指南](/develop/dapps/ton-connect/protocol/wallet-guidelines) 定义了钱包开发者的指南。
+- [Protocol workflows](/develop/dapps/ton-connect/protocol/workflow) is an overview of all the protocols involved in TON Connect.
+- [Bridge API](/develop/dapps/ton-connect/protocol/bridge) specifies how the data is transmitted between the app and the wallet.
+- [Session protocol](/develop/dapps/ton-connect/protocol/session) ensures end-to-end encrypted communication over the bridge.
+- [Requests protocol](/develop/dapps/ton-connect/protocol/requests-responses) defines requests and responses for the app and the wallet.
+- [Wallet guidelines](/develop/dapps/ton-connect/protocol/wallet-guidelines) defines guidelines for wallet developers.
 
-## 常见问题
+## FAQ
 
-#### 我正在构建一个 HTML/JS 应用程序，我应该阅读什么？
+#### I am building an HTML/JS app, what should I read?
 
-只需使用 [支持的 SDKs](/develop/dapps/ton-connect/developers) 就可以不担心潜在的协议。
+Simply use the [Supported SDKs](/develop/dapps/ton-connect/developers) and do not worry about the underlying protocols.
 
-#### 我需要我最喜欢的语言的 SDK
+#### I need an SDK in my favorite language
 
-请将[JSSDK](/develop/dapps/ton-connect/developers)作为参考并查看上面的协议文档。
+Please take the [JS SDK](/develop/dapps/ton-connect/developers) as a reference and check out the protocol docs above.
 
-#### 您如何检测应用程序是否嵌入钱包？
+#### How do you detect whether the app is embedded in the wallet?
 
-JS SDK 为你这样做；只需获取钱包列表`connector.getWallets()`并检查相应列表项的`嵌入`属性。 如果你构建了自己的 SDK，你应该检查 `window。[targetWalletJsBridgeKey].tonconnect.isWaletBrowser` 。
+JS SDK does that for you; just get wallets list `connector.getWallets()` and check `embedded` property of the corresponding list item. If you build your own SDK you should check `window.[targetWalletJsBridgeKey].tonconnect.isWalletBrowser`.
 
-#### 你如何检测钱包是一个浏览器扩展？
+#### How do you detect if the wallet is a browser extension?
 
-像内嵌应用一样(见上文)，JSSDK通过相应的 `connector.getWallets()` 列表中的 `injected` 属性检测到它。 如果你构建了自己的 SDK，你应该检查 `windows。[targetWalletJsBridgeKey].tonconnect` 是否存在。
+Like with embedded apps (see above), JS SDK detects it for you via `injected` property of the corresponding `connector.getWallets()` list item. If you build your own SDK you should check that `window.[targetWalletJsBridgeKey].tonconnect` exists.
 
-#### 如何使用tonconnect来执行后端授权？
+#### How to implement backend authorization with tonconnect?
 
-[见一个 dapp-backend](https://github.com/ton-connect/demo-dapp-backend)
+[See an example of dapp-backend](https://github.com/ton-connect/demo-dapp-backend)
 
-#### 我如何建立自己的桥梁？
+#### How do I make my own bridge?
 
-除非你正在构建钱包，否则你不需要了。
+You don’t need to, unless you are building a wallet.
 
-如果你构建了一个钱包，你需要提供一个桥梁。 请参阅我们的 [reference implementation in Go](https://github.com/ton-connect/bridge)。
+If you build a wallet, you will need to provide a bridge. See our [reference implementation in Go](https://github.com/ton-connect/bridge).
 
-请记住，钱包里的 API 的一面没有授权。
+Keep in mind that the wallet’s side of the bridge API is not mandated.
 
-为了快速启动，您可以使用通用的 TON Connect 桥https://bridge.tonapio/bridge。
+For a quick start you can use the common TON Connect bridge https://bridge.tonapi.io/bridge.
 
-#### 我制作一个钱包，我如何将它添加到钱包列表中？
+#### I make a wallet, how do I add it to the list of wallets?
 
-提交一个 [wallets-list]的拉取请求 (https://github.com/ton-blockchain/wallets-list) 仓库并填写我们所有必要的元数据。
+Submit a pull request for the [wallets-list](https://github.com/ton-blockchain/wallets-list) repository and fill our all the necessary metadata.
 
-应用程序也可以直接通过 SDK 添加钱包。
+Apps may also add wallets directly through the SDK.
