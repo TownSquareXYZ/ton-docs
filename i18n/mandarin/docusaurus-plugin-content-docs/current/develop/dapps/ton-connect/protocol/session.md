@@ -1,43 +1,43 @@
-# Session protocol
+# 会话协议
 
-Session protocol defines client identifiers and offers end-to-end encryption for the app and the wallet. This means the HTTP bridge is fully untrusted and cannot read the user’s data transmitted between the app and the wallet. JS bridge does not use this protocol since both the wallet and the app run on the same device.
+会话协议定义了客户端标识符，并为应用程序和钱包提供了端到端加密。这意味着HTTP bridge是完全不受信任的，并且不能读取在应用程序和钱包之间传输的用户数据。JS bridge不使用此协议，因为钱包和应用程序都在同一设备上运行。
 
-## Definitions
+## 定义
 
-### Client Keypair
+### 客户端密钥对
 
-X25519 keypair for the use with NaCl “crypto_box” protocol.
+用于NaCl“crypto_box”协议的X25519密钥对。
 
 ```
 a <- random 23 bytes
 A <- X25519Pubkey(s)
 ```
 
-or
+或
 
 ```
 (a,A) <- nacl.box.keyPair()
 ```
 
-### Client ID
+### 客户端 ID
 
-The public key part of the [Client Keypair](#client-keypair) (32 bytes).
+[客户端密钥对](#client-keypair)的公钥部分（32 字节）。
 
-### Session
+### 会话
 
-A session is defined by a pair of two client IDs. Both the app and the wallet create their own [Client IDs](#client-id).
+会话由两个客户端 ID 的对定义。应用程序和钱包都创建自己的[客户端 ID](#client-id)。
 
-### Creating client Keypair
+### 创建客户端密钥对
 
 ```
 (a,A) <- nacl.box.keyPair()
 ```
 
-### Encryption
+### 加密
 
-All requests from the app (except the initial request) and all responses from the wallet are encrypted.
+应用程序的所有请求（初始请求除外）和钱包的所有响应都被加密。
 
-Given a binary encoding of message **m**, recipient’s [Client ID](#client-id) **X** and sender’s private key **y** the message is encrypted as follows:
+给定消息**m**的二进制编码、收件人的[客户端 ID](#client-id) **X** 和发送者的私钥 **y**，消息按如下方式加密：
 
 ```
 nonce <- random(24 bytes)
@@ -45,11 +45,11 @@ ct    <- nacl.box(m, nonce, X, y)
 M     <- nonce ++ ct
 ```
 
-That is, the final message **M** has the first 24 bytes set to the random nonce.
+也就是说，最终消息**M**的前24字节设置为随机的 nonce。
 
-### Decryption
+### 解密
 
-To decrypt the message **M**, the recipient uses its private key **x** and sender’s public key **Y** (aka [Client ID](#client-id)):
+为了解密消息**M**，收件人使用其私钥 **x** 和发送者的公钥 **Y**（也就是[客户端 ID](#client-id)）：
 
 ```
 nonce <- M[0..24]
@@ -57,4 +57,4 @@ ct    <- M[24..]
 m     <- nacl.box.open(ct, nonce, Y, x)
 ```
 
-Plaintext **m** is recovered and parsed per [Requests/Responses](/develop/dapps/ton-connect/protocol/requests-responses#requests-and-responses).
+恢复并按照[请求/响应](/develop/dapps/ton-connect/protocol/requests-responses#requests-and-responses)解析明文**m**。
