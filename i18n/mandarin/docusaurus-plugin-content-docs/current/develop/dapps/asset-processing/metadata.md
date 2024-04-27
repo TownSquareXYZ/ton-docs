@@ -1,25 +1,25 @@
-# TON 元数据解析
+# TON Metadata Parsing
 
-元数据标准涵盖了 NFT、NFT 集合和 Jettons，在 TON 增强提案 64 [TEP-64](https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md) 中有所描述。
+元数据标准涵盖NFT、NFT 收藏和Jetton，TON Enhancing Proposal 64 [TEP-64](https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md)
 
-在 TON 上，实体可以有三种类型的元数据：链上、半链上和链下。
+关于TON，各实体可以有三种类型的元数据：链上、半链和外部链。
 
-- **链上元数据：** 存储在区块链内部，包括名称、属性和图像。
-- **链下元数据：** 使用链接存储到链外托管的元数据文件。
-- **半链上元数据：** 两者之间的混合体，允许在区块链上存储小字段，如名称或属性，而将图像托管在链外，并仅存储指向它的链接。
+- **在链中的元数据：** 存储在区块链中，包括名称、属性和图像。
+- **离链元数据：** 使用链接存储到链外托管的元数据文件。
+- **半链元数据：** 两者之间的混合，允许区块链上的名称或属性等小字段存储。 当托管图像超链并只存储到它的链接。
 
-## 蛇形数据编码
+## 吸附数据编码
 
-蛇形编码格式允许部分数据存储在标准cell内，而剩余部分存储在子cell内（以递归方式）。Snake 编码格式必须使用 0x00 字节作为前缀。TL-B 方案： The Snake encoding format must be prefixed using the 0x00 byte. TL-B scheme:
+Snake编码格式允许部分数据存储在标准化单元格， 其余部分存放在儿童牢房里(以递归方式)。 Snake编码格式必须使用0x00字节预设。 TL-B scheme:
 
 ```
-tail#_ {bn:#} b:(bits bn) = SnakeData ~0;
-cons#_ {bn:#} {n:#} b:(bits bn) next:^(SnakeData ~n) = SnakeData ~(n + 1);
+text#_ {bn:#} b:(bits bn) = SnakeData ~0;
+cons_ {bn:#} {n:#} b:(bits bn) 接下来：^(SnakeData ~n) = SnakeData ~(n + 1)；
 ```
 
-当单个cell无法存储的数据超过最大大小时，使用 蛇形格式存储额外数据。这是通过在根cell中存储部分数据，其余部分存储在第一个子cell中，并继续递归进行，直到所有数据都被存储。 This is achieved by storing part of the data in the root cell and the remaining part in the first child cell, and continuing to do so recursively until all the data has been stored.
+当数据超过可存储在单个单元格中的最大尺寸时，吸附格式用于在单元格中存储额外数据。 这是通过将部分数据存储在根单元格中，其余部分存储在第一个儿童单元格中来实现的。 并继续递归地这样做，直到所有数据都已储存完毕。
 
-以下是 TypeScript 中 蛇形格式编码和解码的示例：
+下面是在 TypeScript 中的 Snake 格式编码和解码示例：
 
 ```typescript
 export function makeSnakeCell(data: Buffer): Cell {
@@ -72,17 +72,17 @@ export function flattenSnakeCell(cell: Cell): Buffer {
 }
 ```
 
-应该注意，使用 蛇形格式时在根cell中并不总是需要 `0x00` 字节前缀，就像链下 NFT 内容的情况一样。此外，cell中以字节而非位填充，以简化解析。为了避免在其父cell已经写入后再向下一个子cell添加引用的问题，snake cell是以反向顺序构造的。 Additionally, cells are filled with bytes instead of bits to simplify parsing. To avoid the issue of adding a reference (within the next child cell)  to a reference after it has already been written to its parent cell, the snake cell is constructed in reverse order.
+应该注意到，使用 snake 格式时，根单元格并不总是需要 `0x00` 字节前缀。 与链外NFT内容的情况相同。 此外，为了简化解析，单元格用字节而不是位填充。 为了避免在已经写入父单元之后(在下一个子单元中)添加提及的内容， 吸附单元格是按反向顺序构建的。
 
-## 分块编码
+## 区块编码
 
-The chunked encoding format is used to store data using a dictionary data structure as from the chunk_index to the chunk. Chunked encoding must be prefixed using the `0x01` byte. TL-B scheme:
+区块编码格式用于使用字典数据结构存储数据，从区块索引到区块。 区块编码必须使用 '0x01' 字节前缀。 TL-B scheme:
 
 ```
-chunked_data#_ data:(HashMapE 32 ^(SnakeData ~0)) = ChunkedData;
+chunked_data#_data:(HashMapE 32 ^(SnakeData ~0)) = ChunkedData;
 ```
 
-以下是使用 TypeScript 解码分块数据的示例：
+下面是使用TypeScript解码区块数据的示例：
 
 ```typescript
 interface ChunkDictValue {
@@ -112,70 +112,69 @@ export function ParseChunkDict(cell: Slice): Buffer {
 
 ## NFT 元数据属性
 
-| 属性            | 类型        | 要求 | 描述                                             |
-| ------------- | --------- | -- | ---------------------------------------------- |
-| `uri`         | ASCII 字符串 | 可选 | 指向由 "半链上内容布局" 使用的带有元数据的 JSON 文档的 URI。          |
-| `name`        | UTF8 字符串  | 可选 | 标识资产。                                          |
-| `description` | UTF8 字符串  | 可选 | 描述资产。                                          |
-| `image`       | ASCII 字符串 | 可选 | `image` - 可选。ASCII 字符串。指向带有图像 mime 类型的资源的 URI。 |
-| `image_data`  | 二进制\*     | 可选 | 链上布局的图像的二进制表示，或链外布局的 base64。                   |
+| 属性           | 类型        | 要求  | 描述                            |
+| ------------ | --------- | --- | ----------------------------- |
+| `uri`        | ASCII 字符串 | 可选的 | a URI指向JSON文档，元数据被“半链内容布局”使用。 |
+| `name`       | UTF8 字符串  | 可选的 | 识别资产                          |
+| `描述`         | UTF8 字符串  | 可选的 | 描述资产                          |
+| `image`      | ASCII 字符串 | 可选的 | 一个 URI 指向一个带有mime 类型图像的资源     |
+| `image_data` | 二进制\*     | 可选的 | 要么是二进制图像的链式布局或底层64的非链式布局。     |
 
-## Jetton 元数据属性
+## Jeton 元数据属性
 
-1. `uri` - Optional. Used by "Semi-chain content layout". ASCII string. `uri` - 可选。由 "半链上内容布局" 使用。ASCII 字符串。指向带有元数据的 JSON 文档的 URI。
-2. `name` - Optional. UTF8 string. Identifies the asset.
-3. `description` - Optional. `name` - 可选。UTF8 字符串。标识资产。 描述资产。
-4. `image` - Optional. ASCII string. 指向带有图像 mime 类型的资源的 URI。
-5. `image_data` - Optional. 链上布局的图像的二进制表示，或链下布局的 base64。
-6. `symbol` - Optional. `name` - 可选。UTF8 字符串。标识资产。 `symbol` - 可选。UTF8 字符串。代币的符号，例如 "XMPL"。使用格式 "你收到了 99 XMPL"。 Used in the form "You received 99 XMPL".
-7. `decimals` - Optional. If not specified, 9 is used by default. `decimals` - 可选。如未指定，默认使用 9。从 0 到 255 的数字的 UTF8 编码字符串。代币使用的小数位数，例如 8，意味着将代币数量除以 100000000 以获得其用户表示。 The number of decimals the token uses - e.g. 8, means to divide the token amount by 100000000 to get its user representation.
-8. `amount_style` - Optional. 外部应用需要了解显示什么样的 jettons 格式。定义为 _n_，_n-of-total_，_%_。
+1. `uri` - 可选的。 用于"半链内容布局"。 ASCII 字符串。 一个 URI 指向带元数据的 JSON 文档。
+2. `name` - 可选的。 UTF8 字符串。 确认资产。
+3. `description` - 可选的。 UTF8 字符串。 描述资产。
+4. `image` - 可选的。 ASCII 字符串。 一个 URI 指向一个 mime 类型图像的资源。
+5. `image_data` - 可选的。 要么是上链布局图像的二进制表现，要么是离链布局的基础64。
+6. `symbol` - 可选的。 UTF8 字符串。 令牌的符号 - 例如"XMPL"。 用于表单“你收到了99 XMPL”。
+7. `十进制` - 可选的。 如果未指定，则默认使用9。 UTF8 编码字符串的数字从 0 到 255。 代币使用的小数点数 - 例如8, 意味着将代币金额除以 100000000，以获得其用户代表性。
+8. `amount_style` - 可选的。 需要外部应用程序来了解显示珠宝数量的格式。
 
-- "n" - number of jettons (default value). "n" - jettons数量（默认值）。如果用户拥有 0 小数的 100 个代币，则显示用户拥有 100 个代币
-- "n-of-total" - the number of jettons out of the total number of issued jettons. For example, totalSupply Jetton = 1000. _n-of-total_ - 用户拥有的 jettons 数量与发行的总 jettons 数量之比。例如，如果 Jettons 的 totalSupply 是 1000，用户的钱包中有 100 jettons，那么它必须以用户钱包中的 100/1000 或以其他文字或图形方式显示，以展示用户代币与可用代币总量的比例。 For example must be displayed in the user's wallet as 100 of 1000 or in any other textual or graphical way to demonstrate the particular from the general.
-- "%" - percentage of jettons from the total number of issued jettons. For example, totalSupply Jetton = 1000. _%_ - 从发行的总 jettons 数量中 jettons 的百分比。例如，如果 Jettons 的 totalSupply 是 1000，用户持有 100 jettons，百分比应在用户钱包余额显示 10%（100 ÷ 1000 = 0.1 或 10%）。 For example it should be displayed in the user's wallet as 10%.
+- "n" - jettons 的数量 (默认值)。 如果用户有 100 个代币与小数位0，则显示该用户有 100 个代币。
+- “无总数”——发放的珠宝总数中的珠宝数量。 例如，供应总量=1000。 用户在jetton钱包里有 100 jetton。 例如，必须在用户的钱包中显示1000个中的100个或任何其他文字或图形的方式来显示一般的特定情况。
+- “%”——珠宝在发行珠宝总数中所占百分比。 例如，供应总量=1000。 用户在jetton钱包里有 100 jetton。 例如，它应该显示在用户的钱包中占10%。
 
-9. `render_type` - 可选。需要由外部应用程序来理解jettons属于哪个组，以及如何显示它。 外部应用需要了解 jetton 属于哪个组并如何显示它。"currency" - 作为货币显示（默认值）。“game” - 用于游戏的显示，显示为 NFT，但同时显示 jettons 的数量并考虑 amount_style 的值。
+9. `render_type` - 可选的。 需要外部应用程序来了解珠宝属于哪个组以及如何显示它。
 
-- "currency" - 作为代币显示（默认值）。
-- "game" - display for games. `amount_style` - 可选。需要由外部应用程序来理解显示jettons数量的格式。
+- "货币" - 以货币显示(默认值)。
+- "游戏" - 显示游戏。 它应该以NFT形式显示, 但同时显示考虑到 'amount_style' 的jettons 的数量
 
-| 属性             | 类型        | 要求 | 描述                                                                                                                                                                                                                                                                                                                                                       |
-| -------------- | --------- | -- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `uri`          | ASCII 字符串 | 可选 | 指向用于“半链上内容布局”的元数据的 JSON 文档的 URI。                                                                                                                                                                                                                                                                                                                         |
-| `name`         | UTF8 字符串  | 可选 | 标识资产。                                                                                                                                                                                                                                                                                                                                                    |
-| `description`  | UTF8 字符串  | 可选 | `description` - 可选。UTF8 字符串。描述资产。                                                                                                                                                                                                                                                                                                                        |
-| `image`        | ASCII 字符串 | 可选 | 指向资源的 URI，该资源具有图像的 mime 类型。                                                                                                                                                                                                                                                                                                                              |
-| `image_data`   | 二进制\*     | 可选 | `image_data` - 可选。链上布局的图像的二进制表示，或链下布局的 base64。                                                                                                                                                                                                                                                                                                           |
-| `symbol`       | UTF8 字符串  | 可选 | 代币的符号 - 例如 "XMPL"，使用形式 "您收到了 99 XMPL"。                                                                                                                                                                                                                                                                                                                   |
-| `decimals`     | UTF8 字符串  | 可选 | the number of decimals the token uses. If not specified, 9 is used by default. 代币使用的小数位数。如果未指定，默认使用 9。UTF8 编码的字符串，数字在 0 到 255 之间。 - 例如，8，意味着代币数量必须除以 100000000 来获取其用户表示形式。 - e.g. 8, means the token amount must be divided by 100000000 to get its user representation. |
-| `amount_style` |           | 可选 | needed by external applications to understand which format for displaying the number of jettons. Defines with _n_, _n-of-total_, _%_.                                                                                                                                                                                    |
-| `render_type`  |           | 可选 | 外部应用需要了解 jetton 属于哪个组并如何显示它。"currency" - 作为货币显示（默认值）。“game” - 用于游戏的显示，显示为 NFT，但同时显示 jettons 的数量并考虑 amount_style 的值。  "game" - 游戏显示。应该显示为 NFT，但同时显示jettons的数量，考虑到 `amount_style`。                                                                                                                                                    |
+| 属性             | 类型        | 要求  | 描述                                                                                                                                |
+| -------------- | --------- | --- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `uri`          | ASCII 字符串 | 可选的 | a URI指向JSON文档，元数据被“半链内容布局”使用。                                                                                                     |
+| `name`         | UTF8 字符串  | 可选的 | 识别资产                                                                                                                              |
+| `描述`           | UTF8 字符串  | 可选的 | 描述资产                                                                                                                              |
+| `image`        | ASCII 字符串 | 可选的 | 一个 URI 指向一个带有mime 类型图像的资源                                                                                                         |
+| `image_data`   | 二进制\*     | 可选的 | 要么是二进制图像的链式布局或底层64的非链式布局。                                                                                                         |
+| `符号`           | UTF8 字符串  | 可选的 | 代币符号 - 例如"XMPL" 并使用表单"你收到了99 XMPL"                                                                                                |
+| `小数`           | UTF8 字符串  | 可选的 | 代币使用的小数点数。 如果未指定，则默认使用9。 UTF8 编码字符串的数字介于 0 到 255 之间。 - 例如，8, 是指令牌金额必须除以100000000，才能获得用户表示权。                                       |
+| `amount_style` |           | 可选的 | 外部应用程序需要了解显示珠宝数量的格式。 定义为 _n_, _n-of-total_, _%_.                                                                  |
+| `render_type`  |           | 可选的 | 需要外部应用程序来了解珠宝属于哪个组以及如何显示它。  "货币" - 显示为货币(默认值)。 游戏" - 用于作为NFT显示的游戏的显示器，但也显示珠宝数量，并考虑数量_风格值。 |
 
-> `amount_style` 参数:
+> `amount_style` 参数：
 
-- _n_ - number of jettons (default value). _n_ - jettons 的数量（默认值）。如果用户拥有 0 小数的 100 个代币，则显示用户拥有 100 个代币。
-- _n-of-total_ - the number of jettons out of the total number of issued jettons. "n-of-total" - 总发行jettons数量中的jettons数量。例如，totalSupply Jetton = 1000。用户在jettons钱包中有 100 个jettons。例如，必须在用户的钱包中显示为 100 of 1000 或以任何其他文本或图形方式来表现从整体中的特定部分。
-- _%_ - the percentage of jettons from the total number of jettons issued. "%" - 从总发行jettons数量中的百分比。例如，totalSupply Jetton = 1000。用户在jettons钱包中有 100 个jettons。例如，应该在用户的钱包中显示为 10%。
+- _n_ - jettons (默认值) 如果用户有 100 个代币，小数为0，那么它会显示用户有 100 个代币。
+- - 发放珠宝总数中的珠宝数量。 例如，如果犹太人的总供应量是1000，用户在他们的钱包里拥有100头饰， 它必须在用户的钱包中显示1000或其他文本或图形的方式，以显示用户令牌与可用代币总量的比率。
+- _%_——喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷气式喷 例如，如果犹太人的总供应量为1000，如果用户拥有100首饰， 百分比应该显示为用户钱包余额的10% (100 mix 1000 = 0)。 或10%。
 
-> `render_type` 参数:
+> `render_type`参数:
 
-- _currency_ - 作为货币显示（默认值）。
-- _game_ - 用于游戏的显示，显示为 NFT，但同时显示 jettons 的数量并考虑 `amount_style` 值。
+- _cury_ - 显示为货币 (默认值)。
+- _game_ - 用于作为NFT显示的游戏的显示器，但同时也显示了珠宝数量，并考虑了“amount_style value”。
 
-## 解析元数据
+## Parsing Metadata
 
-分块编码格式使用字典数据结构存储数据，从 chunk_index 到 chunk。分块编码必须使用 `0x01` 字节作为前缀。TL-B 方案： 要解析元数据，首先必须从区块链获取 NFT 数据。为了更好地理解这个过程，请考虑阅读我们的 TON 资产处理文档章节中的[获取 NFT 数据](/develop/dapps/asset-processing/nfts#getting-nft-data)部分。
+要解析元数据，首先必须从 blockchain 获取NFT 数据。 为了更好地理解这个过程，请阅读我们的TON资产处理文档部分的[获取NFT数据](/develop/dapps/asset-processing/nfts#geting-nft-data) 部分。
 
-为了确定正在使用哪种类型的 NFT，开发者需要读取已知的 NFT 属性，例如 `uri`、`name`、`image`、`description` 和 `image_data`。如果元数据中存在 `uri` 字段，则表示半链上布局。在这种情况下，应该下载 uri 字段中指定的链外内容，并与字典值合并。 在获得链上 NFT 数据后，必须对其进行解析。要执行此过程，必须通过读取构成 NFT 内部结构的第一个字节来确定 NFT 的内容类型。
+在检索到上链NFT数据后，必须解析。 执行这一进程； NFT 内容类型必须通过读取构成NFT 内部工作的第一字节来确定。
 
-### 链下
+### 离链中
 
-如果元数据字节字符串以 `0x01` 开始，它表示链外 NFT 内容类型。NFT 内容的其余部分使用Snake编码格式解码为 ASCII 字符串。在正确的 NFT URL 被实现，并且检索到 NFT 标识数据后，过程即完成。以下是使用链下 NFT 内容元数据解析的 URL 示例：
-`https://s.getgems.io/nft/b/c/62fba50217c3fe3cbaad9e7f/95/meta.json` The remaining portion of the NFT content is decoded using a Snake encoding format as an ASCII string. After the correct NFT URL is realized, and the NFT identification data is retrieved, the process is complete. Below is an example of a URL that makes use of off-chain NFT content metadata parsing:
+如果元数据字节字符串以 `0x01` 开头，它表示一个超链的 NFT 内容类型。 NFT 内容的剩余部分将使用 Snake 编码格式解码为 ASCII 字符串。 在正确的 NFT URL实现后，检索NFT 识别数据后，过程已完成。 下面是一个使用超链NFT内容元数据解析的 URL 示例：
 `https://s.getgems.io/nft/b/c/62fba50217c3fe3cbaad9e7f/95/meta.json`
 
-URL 内容（从上面直接引用）:
+网址内容(直接来自上面)：
 
 ```json
 {
@@ -187,35 +186,35 @@ URL 内容（从上面直接引用）:
 }
 ```
 
-### 链上和半链上
+### 链条和半链条
 
-如果元数据字节字符串以 `0x00` 开始，它表示 NFT 使用链上或半链上格式。
+如果元数据字节字符串以 `0x00`开头，它表示NFT 要么使用在链或半链格式。
 
-我们的 NFT 元数据存储在一个字典中，其中键是属性名称的 SHA256 哈希，值是以Snake或分块格式存储的数据。
+我们的 NFT 元数据存储在字典中，键值是 SHA256 哈希属性名称，而值是存储在 Snake 或区块格式中的数据。
 
-To determine what type of NFT is being used it is necessary for the developer to read known NFT attributes such as the `uri`, `name`, `image`, `description`, and `image_data`. If the `uri` field is present within the metadata, it indicates a semi-chain layout. In such cases, the off-chain content specified in the uri field should be downloaded and merged with the dictionary values.
+要确定正在使用哪种类型的 NFT ，开发者必须读取已知的 NFT 属性，如`uri`， `name`, `image`, `description`, and `image_data`. 如果元数据中存在`uri`字段，则表示一个半链布局。 在这种情况下，应该下载uri 字段中指定的链外内容并将其与字典值合并。
 
-链上 NFT 的示例：[EQBq5z4N_GeJyBdvNh4tPjMpSkA08p8vWyiAX6LNbr3aLjI0](https://getgems.io/collection/EQAVGhk_3rUA3ypZAZ1SkVGZIaDt7UdvwA4jsSGRKRo-MRDN/EQBq5z4N_GeJyBdvNh4tPjMpSkA08p8vWyiAX6LNbr3aLjI0)
+链上NFT: [EQBq5z4N_GeJyBdvNh4tPjMpSkA08p8vWyiAX6LNbr3aLjI0](https://getgems.io/collection/EQAVGhk_3rUA3ypZAZ1SkVGZIaDt7UdvwA4jsGRKRo-MRDN/EQBq5z4N_GeJyBdvNh4tPjMpSkA08p8vWyiAX6LNbr3aLjI0)
 
-半链上 NFT 的示例： [EQB2NJFK0H5OxJTgyQbej0fy5zuicZAXk2vFZEDrqbQ_n5YW](https://getgems.io/nft/EQB2NJFK0H5OxJTgyQbej0fy5zuicZAXk2vFZEDrqbQ_n5YW)
+半链NFT：  [EQB2NJFK0H5OxJTgyQbej0fy5zuicZAXk2vFZEDrqbQ_n5YW](https://getgems.io/nft/EQB2NJFK0H5OxJTgyQbej0fy5zuicZAXk2vFZEDrqbQ_n5YW)
 
-链上 Jetton Master 的示例：[EQA4pCk0yK-JCwFD4Nl5ZE4pmlg4DkK-1Ou4HAUQ6RObZNMi](https://tonscan.org/jetton/EQA4pCk0yK-JCwFD4Nl5ZE4pmlg4DkK-1Ou4HAUQ6RObZNMi)
+Jeton Master的例子： [EQA4pCk0yK-JCwFD4Nl5ZE4pmlg4DkK-1Ou4HAUQ6RObZNMi](https://tonscan.org/jetton/EQA4pCk0yK-JCwFD4Nl5ZE4pmlg4DkK-1Ou4HAUQ6RObZNMi)
 
-链上 NFT 解析器的示例：[stackblitz/ton-onchain-nft-parser](https://stackblitz.com/edit/ton-onchain-nft-parser?file=src%2Fmain.ts)
+链上的 NFT 解析器示例：[stackblitz/ton-onchain-nft-parser](https://stackblitz.com/edit/ton-onchain-nft-parser?file=src%2Fmain.s)
 
-## NFT 元数据的重要说明
+## 重要的 NFT 元数据注释
 
-1. 对于 NFT 元数据，`name`、`description` 和 `image`（或 `image_data`）字段是显示 NFT 所必需的。
-2. 对于 Jetton 元数据，`name`、`symbol`、`decimals` 和 `image`（或 `image_data`）是主要的。
-3. 重要的是要意识到，任何人都可以使用任何 `name`、`description` 或 `image` 创建 NFT 或 Jetton。为避免混淆和潜在的骗局，用户应始终以一种清晰区分于其应用其他部分的方式显示他们的 NFT。恶意 NFT 和 Jettons 可以带有误导性或虚假信息被发送到用户的钱包。  To avoid confusion and potential scams, users should always display their NFTs in a way that clearly distinguishes them from the other parts of their app. Malicious NFTs and Jettons can be sent to a user's wallet with misleading or false information.
-4. 一些项目可能有一个 `video` 字段，链接到与 NFT 或 Jetton 相关联的视频内容。
+1. 对于NFT元数据来说，显示NFT需要“name”、“description”和“image`(或`image_data\`)”字段。
+2. 对于杰顿元数据来说，`name`, `symbol`, `decimals` 和 `image`(or `image_data`) 是主要的。
+3. 必须认识到，任何人都可以使用任何`name`、`description`或`image`创建一个 NFT 或 Jetton。  为了避免混乱和可能发生的丑闻， 用户应始终以明确区分其应用的其他部分的方式显示其NFT。 恶意的 NFT 和 Jettons 可以通过误导或虚假信息发送到用户的钱包。
+4. 有些项目可能有一个“视频”字段，它连接到与 NFT 或 Jetton 相关的视频内容。
 
-## 参考文献
+## 参考
 
-- [TON 增强提案 64（TEP-64）](https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md)
+- [TON Improvement Proposal 64 (TEP-64)](https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md)
 
-## 参阅
+## 另见：
 
-- [TON NFT 处理](/develop/dapps/asset-processing/nfts)
-- [TON Jetton 处理](/develop/dapps/asset-processing/jettons)
-- [首次打造你的 Jetton](/develop/dapps/tutorials/jetton-minter)
+- [TON NFT 正在处理](/develop/dapps/asset-processing/nfs)
+- [TON Jeton processing](/develop/dapps/asset-processing/jettons)
+- [Mint your first Jetton](/develop/dapps/tutorials/jetton-minter)
