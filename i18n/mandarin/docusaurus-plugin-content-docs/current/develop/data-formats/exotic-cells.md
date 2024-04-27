@@ -1,9 +1,6 @@
-# 特殊cell
+# Exotic Cells
 
-每个cell都有其自己的类型，由一个从 -1 到 255 的整数编码。
-类型为 -1 的cell是`普通`cell，所有其他类型的cell称为`异构`或`特殊`cell。
-特殊cell的类型存储在其数据的前八位中。如果特殊cell的数据位数少于八位，那么它是无效的。
-目前，有 4 种特殊cell类型：
+Every Cell has its own type encoded by an integer from -1 to 255.
 Cell with type -1 is an `ordinary` Cell, and all others Cells called `exotic` or `special`.
 The type of an exotic cell is stored as the first eight bits of its data. If an exotic cell has less than eight data bits, it is invalid.
 Currently, there are 4 exotic Cell types:
@@ -19,49 +16,49 @@ Currently, there are 4 exotic Cell types:
 
 ### Pruned Branch
 
-裁剪分支是代表已删除cell子树的cell。
+Pruned branches are Cells that represent deleted subtrees of Cells.
 
-它们可以有 `1 <= l <= 3` 的级别，并且包含恰好 `8 + 8 + 256 * l + 16 * l` 位。
+They can have level `1 <= l <= 3` and contain exactly `8 + 8 + 256 * l + 16 * l` bits.
 
 First byte is always `01` - Cell type. The second one is the Pruned Branch level mask. Then goes `l * 32` bytes hashes of deleted subtrees and after that `l * 2` bytes depths of deleted subtrees.
 
-裁剪分支cell的级别 `l` 可能被称为其德布鲁因指数(De Bruijn index)，因为它决定了裁剪分支是在构造哪个外部默克尔证明或默克尔更新时被修剪的。
+The level `l` of a Pruned branch Cell may be called its De Bruijn index, because it determines the outer Merkle proof or Merkle update during the construction of which the branch has been pruned.
 
-裁剪分支的更高哈希存储在其数据中，可以这样获得：
+Higher hashes of Pruned branches are stored in their data and can be obtained like this:
 
 ```cpp
 Hash_i = CellData[2 + (i * 32) : 2 + ((i + 1) * 32)]
 ```
 
-### 库引用
+### Library Reference
 
-库引用cell用于在智能合约中使用库。
+Library reference cells are used for using libraries in smart contracts.
 
-它们始终具有 0 级，并包含 `8 + 256` 位。
+They always have level 0, and contain `8 + 256` bits.
 
-First byte is always `02` - Cell type. 第一个字节始终是 `02` - cell类型。接下来的 32 字节是被引用的库cell的[ representation hash ](/develop/data-formats/cell-boc#standard-cell-representation-hash-calculation)。
+First byte is always `02` - Cell type. Next 32 bytes are [Representation hash](/develop/data-formats/cell-boc#standard-cell-representation-hash-calculation) of the library cell being referred to.
 
 ### Merkle Proof
 
-第一个字节始终是 `01` - cell类型。第二个字节是裁剪分支级别掩码。然后是 `l * 32` 字节的已删除子树的哈希，之后是 `l * 2` 字节的已删除子树的深度。 默克尔证明cell用于验证cell树数据的一部分属于完整树。这种设计允许验证者不存储树的全部内容，同时仍能通过根哈希验证内容。
+Merkle Proof cells are used to verify that a portion of the Cell tree data belongs to the full tree. This design allows the verifier to not store the whole content of the tree, while still being able to verify the content by root hash.
 
-默克尔证明恰好有一个引用，其级别 `0 <= l <= 3` 必须是 `max(Lvl(ref) - 1, 0)`。这些cell恰好包含 `8 + 256 + 16 = 280` 位。 These cells contain exactly `8 + 256 + 16 = 280` bits.
+Merkle Proof has exactly one reference and its level `0 <= l <= 3` must be `max(Lvl(ref) - 1, 0)`. These cells contain exactly `8 + 256 + 16 = 280` bits.
 
 First byte is always `03` - Cell type. Next 32 bytes are `Hash_1(ref)` (or `ReprHash(ref)` if reference level is 0). The next 2 bytes are depth of the deleted subtree, which was replaced by the reference.
 
-默克尔证明cell的更高哈希 `Hash_i` 的计算方式类似于普通cell，但使用 `Hash_i+1(ref)` 代替 `Hash_i(ref)`。
+The higher hashes `Hash_i` of Merkle Proof Cell are computed similarly to the higher hashes of an ordinary cell, but with `Hash_i+1(ref)` used instead of `Hash_i(ref)`.
 
-### 默克尔更新
+### Merkle Update
 
-默克尔更新cell始终有 2 个引用，并且行为类似于两者的默克尔证明。
+Merkle update cells are always have 2 refs and behave like a Merkle proof for both of them.
 
-默克尔更新的级别 `0 <= l <= 3` 是 `max(Lvl(ref1) − 1, Lvl(ref2) − 1, 0)`。它们恰好包含 `8 + 256 + 256 + 16 + 16 = 552` 位。 第一个字节始终是 `04` - cell类型。接下来的 64 字节是 `Hash_1(ref1)` 和 `Hash_2(ref2)` - 被称为旧哈希和新哈希。然后是 4 字节，表示已删除的旧子树和新子树的实际深度。
+Merkle Update level `0 <= l <= 3` is `max(Lvl(ref1) − 1, Lvl(ref2) − 1, 0)`. They contain exactly `8 + 256 + 256 + 16 + 16 = 552` bits.
 
-First byte is always `04` - Cell type. 第一个字节始终是 `03` - cell类型。接下来的 32 字节是 `Hash_1(ref)`（如果引用级别为 0，则为 `ReprHash(ref)`）。接下来的 2 字节是被引用替换的已删除子树的深度。 Then goes 4 bytes with actual depth of deleted old subtree and deleted new subtree.
+First byte is always `04` - Cell type. Next 64 bytes are `Hash_1(ref1)` and `Hash_2(ref2)` - called old hash and new hash. Then goes 4 bytes with actual depth of deleted old subtree and deleted new subtree.
 
-## 简单证明验证示例
+## Simple Proof verifying example
 
-假设有一个cell `c`：
+Let's assume there is a Cell `c`:
 
 ```json
 24[000078] -> {
@@ -82,10 +79,10 @@ First byte is always `04` - Cell type. 第一个字节始终是 `03` - cell类�
 }
 ```
 
-但我们只知道它的哈希 `44efd0fdfffa8f152339a0191de1e1c5901fdcfe13798af443640af99616b977`，我们想证明cell `a` `267[800DEB78CF30DC0C8612C3B3BE0086724D499B25CB2FBBB154C086C8B58417A2F040]` 实际上是 `c` 的一部分，而不接收整个 `c`。因此，我们要求提供者创建一个默克尔证明，将我们不感兴趣的所有分支替换为裁剪分支cell。
+But we know only its hash `44efd0fdfffa8f152339a0191de1e1c5901fdcfe13798af443640af99616b977`, and we want to prove that cell `a` `267[800DEB78CF30DC0C8612C3B3BE0086724D499B25CB2FBBB154C086C8B58417A2F040]` is actually a part of the `c`, without receiving the whole `c`.
 So we ask the prover to create a Merkle Proof, replacing all branches that we are not interested in with Pruned branch cells.
 
-从 `c` 中无法到达 `a` 的第一个后代是 `ref1`：
+The first `c` descendant from which there is no way to get to `a` is `ref1`:
 
 ```json
 32[0000000F] -> {
@@ -98,9 +95,9 @@ So we ask the prover to create a Merkle Proof, replacing all branches that we ar
 }
 ```
 
-因此，提供者计算其哈希（`ec7c1379618703592804d3a33f7e120cebe946fa78a6775f6ee2e28d80ddb7dc`），创建一个裁剪分支 `288[0101EC7C1379618703592804D3A33F7E120CEBE946FA78A6775F6EE2E28D80DDB7DC0002]` 并用此裁剪分支替换 `ref1`。
+So the prover computes its hash (`ec7c1379618703592804d3a33f7e120cebe946fa78a6775f6ee2e28d80ddb7dc`), creates a Pruned Branch `288[0101EC7C1379618703592804D3A33F7E120CEBE946FA78A6775F6EE2E28D80DDB7DC0002]` and replaces `ref1` with this Pruned Branch.
 
-第二个是 `512[0000000...00000000064]`，因此提供者也为此cell创建一个裁剪分支：
+The second one is `512[0000000...00000000064]`, so the prover creates Pruned branch to replace this Cell as well:
 
 ```json
 24[000078] -> {
@@ -114,7 +111,7 @@ So we ask the prover to create a Merkle Proof, replacing all branches that we ar
 }
 ```
 
-提供者发送给验证者（在此示例中是我们）的结果默克尔证明看起来是这样的：
+The result Merkle Proof which prover sends to verifier (us in this example) looks like this:
 
 ```json
 280[0344EFD0FDFFFA8F152339A0191DE1E1C5901FDCFE13798AF443640AF99616B9770003] -> {
@@ -122,9 +119,7 @@ So we ask the prover to create a Merkle Proof, replacing all branches that we ar
 		288[0101EC7C1379618703592804D3A33F7E120CEBE946FA78A6775F6EE2E28D80DDB7DC0002],
 		16[000B] -> {
 			4[80] -> {
-				267[800DEB78CF30DC0C8612C3B3BE
-
-0086724D499B25CB2FBBB154C086C8B58417A2F040],
+				267[800DEB78CF30DC0C8612C3B3BE0086724D499B25CB2FBBB154C086C8B58417A2F040],
 				288[0101A458B8C0DC516A9B137D99B701BB60FE25F41F5ACFF2A54A2CA4936688880E640000]
 			}
 		}
@@ -132,12 +127,12 @@ So we ask the prover to create a Merkle Proof, replacing all branches that we ar
 }
 ```
 
-当我们（验证者）得到证明cell时，我们确保其数据包含 `c` 的哈希，然后从唯一的证明引用计算 `Hash_1`：`44efd0fdfffa8f152339a0191de1e1c5901fdcfe13798af443640af99616b977`，并将其与 `c` 的哈希进行比较。
+When we (verifier) get the Proof Cell we make sure that its data contains the `c` hash and then compute `Hash_1` from the only Proof reference: `44efd0fdfffa8f152339a0191de1e1c5901fdcfe13798af443640af99616b977`, and compare it to the `c` hash.
 
-现在，当我们检查哈希是否匹配后，我们需要深入cell并验证是否存在我们感兴趣的cell `a`。
+Now, when we've checked that hashes are match, we need to go deep in the Cell and verify that there is a Cell `a` (we were interested in).
 
-这种证明反复减少了计算负载和需要发送给或存储在验证者中的数据量。
+Such proofs repeatedly reduce the computational load and the amount of data that needs to be sent to or stored in the verifier.
 
-## 参阅
+## See Also
 
-- [高级证明验证示例](/develop/data-formats/proofs)
+- [Advanced Proofs verifying examples](/develop/data-formats/proofs)
