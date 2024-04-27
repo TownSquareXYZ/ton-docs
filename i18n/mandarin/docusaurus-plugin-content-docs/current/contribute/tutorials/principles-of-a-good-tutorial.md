@@ -1,27 +1,27 @@
-# 优秀教程原则
+# Principles of a good tutorial
 
-由 [talkol](https://github.com/talkol)提供的原始评论：
+Original comment with these principles by [talkol](https://github.com/talkol):
 
-- [关于TON Footstep #7的原始评论](https://github.com/ton-society/ton-footsteps/issues/7#issuecomment-1187581181)
+- [Original comment on TON Footstep #7](https://github.com/ton-society/ton-footsteps/issues/7#issuecomment-1187581181)
 
-以下是为新的贡献者提供的这些点数的摘要。
+Here is a summary of these points for new contributors.
 
-## 原 则
+## Principles
 
-1. 完整的流程应该运行在用户的客户端上。 不应涉及任何第三方服务。 您需要做一切，以便用户可以简单地克隆仓库并立即运行它。
+1. The full flow should run on the user's client. There shouldn't be any third-party services involved. You need to do everything so that the user can simply clone the repository and immediately run it.
 
-2. README应该是详细的。 不要假定用户知道任何东西。 如果教程需要它，它还应该解释如何在您的设备上安装 FunC 编译器或 Lite-client 。 您可以在此文档中从其他教程复制这些部件。
+2. The README should be VERY detailed. Do not assume the users know anything. If the tutorial requires it, it should also explain how to install the FunC compiler or Lite-client on your device. You can copy these parts from other tutorials in this documentation.
 
-3. 如果仓库包含所用合同的整个源代码，将是很好的。 这样用户就可以对标准代码作小的修改。 例如，Jetton 智能合同允许用户尝试自定义行为。
+3. It would be good if the repository included the whole source code for the contracts used, so that users could make minor changes to the standard code. For example, the Jetton smart contract allows users to experiment with custom behavior.
 
-4. 如果可能， 创建一个方便用户的接口，允许用户部署或运行项目，而无需下载代码或配置任何东西。 请注意，此操作仍然应该是独立的，并从GitHub 页面运行100%客户端的用户设备。 例如：https://minter.ton.org/
+4. If it is possible, create a user-friendly interface that will allow users to deploy or run the project without having to download the code or configure anything. Notice that this should still be standalone and served from GitHub Pages to run 100% client-side on the user's device. Example: https://minter.ton.org/
 
-5. 向用户解释每个字段的选择意味着什么，并解释最佳做法。
+5. Explain to users what every field choice means and explain best practices.
 
-6. 解释有关安全的一切。 您必须充分解释创建者不犯错误并创建危险的智能合约/机器人/网站——您正在教他们最佳的安全做法。
+6. Explain everything there is to know about security. You must explain enough that creators do not make mistakes and create dangerous smart contracts/bots/websites—you are teaching them the best security practices.
 
-7. 最理想的情况是，仓库应该包括写得很好的测试，向读者展示如何在你的教程中最好地实现它们。
+7. Ideally, the repository should include well-written tests that show the reader how to best implement them in the context of your tutorial.
 
-8. 仓库应该有自己易于理解的编译/部署脚本。 用户应该能够只是`npm install` 并使用它们。
+8. The repository should have its own easy-to-understand compilation/deployment scripts. A user should be able to just `npm install` and use them.
 
-9. 有时，GitHub 版本库就够了，没有必要写完整文章。 只是一个带有你在仓库中需要的所有代码的README。 在这种情况下，应该很好地评论代码，以便用户能够轻松地阅读和理解。
+9. Sometimes a GitHub repository is enough and there is no need to write a full article. Just a README with all the code you need in the repository. In this case, the code should be well-commented so that the user can easily read and understand it.
