@@ -1,24 +1,24 @@
-# Common Documentation Principals
+# 教程样式指南
 
-为了获得最佳的用户体验和清晰度，请在创建 docs.ton.org 上的新内容时，牢记我们旨在应用于所有文档的一般性和重要需求列表。
+所以你决定为 TON 文档写一个教程？
 
-## 为从业者制作的文档
+## 为专业人士制作的文档
 
-Documentations pages is primarily intended for documentation purposes and not as a tutorial, so it is important to minimize the use of personal examples or analogies in the text. It is crucial to ensure that the content is suitable for both professionals and non-professionals alike, while still providing valuable information.
+重要的是，您需要花些时间熟悉教程结构和如何使用标题。在提交自己的教程之前，请阅读我们的一些现有教程，并查看 [以前的拉取请求](https://github.com/ton-community/ton-docs/pulls?q=is%3Apr+is%3Aclosed)。
 
-## Use a consistent format
+## 流程
 
-To make it easier for readers to navigate through the documentation, it is important to use a consistent format throughout the document. Use headings, subheadings, bullet points, and numbered lists to break up the text and make it easier to read.
+为了使读者更容易浏览文档，使用整个文档中一致的格式非常重要。使用标题、副标题、项目符号列表和编号列表来分隔文本，使其更易于阅读。
 
-## Provide examples in special section
+## 在特殊部分提供示例
 
-Providing examples can help readers better understand the content and how to apply it. If you are writing documentation page and need refer several exmaples, please create special section Examples right before References and See Also sections. Do not mix description and examples in documentation pages.
-Use code snippets, screenshots, or diagrams to illustrate your points and make the documentation more engaging.
+提供示例可以帮助读者更好地理解内容以及如何应用它。如果你正在编写文档页面并需要引用几个示例，请在“参考资料”和“参阅”部分之前创建一个特别的“示例”部分。请不要在文档页面中混合描述和示例。
+可以使用代码片段、截图或图表来阐述你的观点，使文档更具吸引力。
 
-## Keep it up to date
+## 保持内容更新
 
-Tech documentation can quickly become outdated due to changes in technology or software updates. It is important to review and update the documentation regularly to ensure that it remains accurate and relevant to the current version of the software.
+由于技术或软件更新可能导致技术文档迅速过时，因此定期审查和更新文档非常重要，以确保它保持准确和与当前软件版本相关。
 
-## Get feedback
+## 背景
 
-Before publishing the documentation, it is a good idea to get feedback from other contributors or users. This can help identify areas that may be confusing or unclear, and allow you to make improvements before the documentation is released.
+在 "TON" 前加上 "THE" 的主要问题是，在开发 TON 文档和政策编辑期间，市场营销、供应商和开发人员等多个部门加入了讨论，以大写 "Blockchain"、"Ecosystem" 等词汇与 "TON" 结合使用，以创建一个单一系统、网络和品牌的强大形象。经过长时间的讨论，我们得出结论，为了推出强大的品牌形象，我们应该创建一个词汇和短语表，可以不使用 "THE" 并大写书写。如果可以大写，就不需要冠词。目前有两个这样的词组：TON Blockchain 和 TON Ecosystem。
