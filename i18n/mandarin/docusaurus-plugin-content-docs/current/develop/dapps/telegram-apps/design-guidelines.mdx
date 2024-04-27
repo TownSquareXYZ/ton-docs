@@ -1,12 +1,12 @@
-# TMA 设计指南
+# TMA 设计准则
 
 :::info
-从 **6.10** 版本开始，Telegram 更新了小程序的配色方案：修正了一些旧的配色，同时添加了新的配色。
+从版本 **6.10**开始，Telegram 已更新了 Mini App的色板：已修复了一些旧版本，并且添加了新版本。
 :::
 
-为了更好地理解背景，让我们回顾一下更新历史。
+对于上下文，让我们记住更新的历史。
 
-更新日志。
+变更。
 
 1. `bg_color` 和 `secondary_bg_color` 已更新。
 
@@ -14,38 +14,38 @@
 
 原因是：
 
-• 最初，这些颜色是为页面背景而不是UI控制项设计的。
+• 这些颜色原本打算用于页面背景，而不是UI控制。
 
-• 因此，为了保持一致性，这些颜色已经被更新。
+• 因此，为了一致起见，已对其进行了更新。
 
-• 为了给不同部分和卡片着色，添加了 `section_bg_color`。
+• 为不同部分和卡片的背景颜色添加了section_bg_颜色
 
-为了提高应用程序的外观，您应该稍微调整颜色变量的使用。
+为了改善应用程序的外观，您应该稍微调整颜色变量。
 
-上述是一个清晰的例子，准确解释了iOS上会发生什么变化。在Android上不应有任何变化。 There should be no changes on Android.
+以上是一个明确的例子，它解释了iOS将会发生什么变化。 在 Android 上不应该有任何更改。
 
-New colors.
-Also, many new colors were added. Most of them are most noticeable on Android. Therefore, the examples below will be shown based on Android, but are relevant for all platforms.
+新颜色。
+此外，还增加了许多新颜色。 其中大多数在Android上最引人注目。 因此，下面的示例将基于Android显示，但适用于所有平台。
 
 ![](/img/docs/tma-design-guidelines/tma-design_2.png)
 
-2. 对于小程序，现在可以使用Telegram header的颜色。
+2. 对于微型应用，使用 Telegram header 颜色的能力已经可用。
 
 ![](/img/docs/tma-design-guidelines/tma-design_3.png)
 
-3. 变得可用的token `accent_text_color`，适用于应用程序中的任何强调元素。之前，大家都使用不太合适的 `link_color`。 Previously, everyone used the less suitable dark link_color.
+3. 令牌加权文本颜色已经可用，这对于您的应用程序中的任何加权元素都是有用的。 以前，每个人都使用不太合适的暗色链接。
 
 ![](/img/docs/tma-design-guidelines/tma-design_4.png)
 
-4. 对于所有次要cell标签，现在最好使用 `subtitle_text_color`。这将提供更高对比度的标签，提高应用程序的可访问性。 This will allow for more contrasting label, improving the accessibility of your applications.
+4. 对于所有二级单元格标签，现在最好使用 "字幕\_text_color"。 这将允许更多的对比标签，改善您应用程序的访问权限。
 
 ![](/img/docs/tma-design-guidelines/tma-design_5.png)
 
-5. 对于卡片的节的header，现在有了专用的token：`section_header_text_color`。
+5. 对于卡片的部分标题，现在有一个专用令牌：`section_header_text_color` 。
 
 ![](/img/docs/tma-design-guidelines/tma-design_6.png)
 
-6. 对于按下会导致破坏性行动的cell，现在可以使用 `destructive_text_color` 而不是自定义颜色。
+6. 对于按下将导致破坏性动作的单元格，您现在可以使用 'destructive_text_color' 代替自定义单元格。
 
 <p align="center">
     <br />
@@ -53,10 +53,10 @@ Also, many new colors were added. Most of them are most noticeable on Android. T
     <br />
 </p>
 
-7. 一个合理的问题是：现在应该如何使用 `link_color` 和 `hint_color`？
+7. 出现了一个合理的问题：现在应如何使用“link_color”和“hint_color”？
 
-我建议将它们用作部分下方的提示部分的颜色，以及 `secondary_bg_color` 这类背景的链接颜色。
+我建议将它们用作章节下的提示部分的颜色，以及`secondary_bg_color`等背景的链接颜色。
 
-## 参阅
+## 另见：
 
-- [原始来源](https://telegra.ph/Changes-in-Color-Variables-for-Telegram-Mini-Apps-11-20)
+- [原始源](https://telegra.php/Changesin Color-Variables-for-Telegram-Mini-Apps-11-20)
