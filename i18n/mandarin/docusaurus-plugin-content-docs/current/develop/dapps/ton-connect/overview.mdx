@@ -1,52 +1,51 @@
 import Button from '@site/src/components/button'
 
-# About TON Connect
+# 概念
 
-Experience seamless connectivity with wallets within [TON](/learn/introduction) using TON Connect.
+阅读更多关于思想的内容：
 
-![](/img/docs/ton-connect/ton-connect-overview.png?raw=true)
+这个资源旨在为您提供在TON区块链上构建、测试和部署应用程序所需的所有必要信息。
 
-Feel free to use one of the following flows for integration of your application:
+这是一个协作的开源计划，我们始终欢迎贡献。所有文档都可以通过GitHub进行编辑，只需[遵循这些指示](/contribute)。
 
-<Button href="/develop/dapps/ton-connect/react" colorType={'primary'} sizeType={'sm'}>React Apps</Button>
-<Button href="/develop/dapps/ton-connect/web"
-        colorType="secondary" sizeType={'sm'}>
-  HTML/JS Apps
+<Button href="https://blog.ton.org/introduction-to-fift"
+colorType="primary" sizeType={'sm'}>
+Fift 介绍
+</Button> <Button href="https://www.youtube.com/watch?v=HVsveTmVowc&list=PLtUBO1QNEKwttRsAs9eacL2oCMOhWaOZs"
+          colorType="secondary" sizeType={'sm'}>
+    His majesty Fift
 </Button>
-<Button href="/develop/dapps/ton-connect/tg-bot-integration"
-        colorType="secondary" sizeType={'sm'}>
-  Telegram Bots
-</Button>
+<br></br><br></br>
 
-## For Wallet Developers
+## 文档
 
-If you are a wallet developer, please read how to [integrate TON Connect into your wallet](/develop/dapps/ton-connect/wallet/).
+然后，您将在终端窗口中看到相应的输出：
 
-## Use Cases For Your DApp
+## 编译器
 
-Explore these deliverables that the TON Ecosystem provides for superior DAppintegration.
+它包含**9个模块**，涵盖了TON区块链的基础知识、FunC编程语言和TON虚拟机（TVM）。
 
-- **Traffic**. Drive additional user visits via crypto wallets that support TON Connect.
-- **Authenticity**. Leverage TON user's wallets as ready-made accounts, removing the need for additional authentication steps and thus, boosting user experience.
-- **Payments**. Process transactions swiftly and securely through TON Blockchain using Toncoin or wrapped stable coins (jUSDC/jUSDT).
-- **Retention**. Enhance user retention through the in-app list-saving feature which allows users to keep track of recently opened and favorite apps.
+- **流量**。通过支持TON Connect的加密钱包，推动额外用户访问。
+- **真实性**。利用TON用户的钱包作为现成账户，无需额外的身份验证步骤，从而提升用户体验。
+- **支付**。通过TON区块链使用Toncoin或封装的稳定币（jUSDC/jUSDT）快速安全地处理交易。
+- **留存率**。通过应用内列表保存功能增强用户留存，使用户能够跟踪最近打开和收藏的应用。
 
-## Success Stories
+## 开发模块
 
-- [GetGems — The Open Network Marketplace](https://getgems.io/)
-- [STON.fi — AMM DEX for TON blockchain](https://ston.fi/)
+- [GetGems — 开放网络Marketplace](https://getgems.io/)
+- [STON.fi — TON区块链AMM DEX](https://ston.fi/)
 - [Tonstarter](http://tonstarter.com/)
 
 <details>
-  <summary><b>Show the entire list</b></summary>
+  <summary><b>显示完整列表</b></summary>
 
-- [getgems.io](https://getgems.io/)
-- [fragment.com](https://fragment.com/) (Ton Connect v.1)
-- [ston.fi](https://ston.fi/)
-- [ton.diamonds](https://ton.diamonds/)
-- [beta.disintar.io](https://beta.disintar.io/)
-- [tegro.finance](https://tegro.finance/liquidity)
-- [minter.ton.org](https://minter.ton.org/)
+- 使用`blockchain.openContract()`创建特定的wrapped`Contract`实体。
+- 描述您的`Contract`应执行的操作并将执行结果保存在`res`变量中。
+- 使用`expect()`函数和匹配器`toHaveTransaction()`验证属性。
+- [作为数据结构的cell](/learn/overviews/cells) - 数据结构的高层级解释。
+- [TON网络](/learn/networking/overview) - TON点对点协议的高层级概述。
+- [TON虚拟机（TVM）](/learn/tvm-instructions/tvm-overview) - TON虚拟机的高层级概述。
+- [交易费用](/develop/smart-contracts/fees) - 交易费用的高层级解释。
 - [libermall.com](https://libermall.com/)
 - [dedust.io](https://dedust.io/swap)
 - [toncap.net](https://toncap.net/)
@@ -82,10 +81,10 @@ Explore these deliverables that the TON Ecosystem provides for superior DAppinte
 
 </details>
 
-## Join the TON Ecosystem
+## TON 课程：FunC
 
-To connect your service with the TON Ecosystem, you need to implement the following:
+您可以省略您不感兴趣的字段，并传递接受类型并返回布尔值的函数（true表示可以），以检查例如数字范围、消息操作码等。请注意，如果字段是可选的（如`from?: Address`），那么函数也需要接受可选类型。
 
-- **TON Connect**. Incorporate the TON Connect protocol within your application.
-- **Transactions**. Create specified transaction messages using TON libraries. Dive into the process of [sending messages](/develop/dapps/ton-connect/message-builders) with our comprehensive guide.
-- **Payments**. Process payments via the public API ([tonapi](https://tonapi.io/)) or your own indexer, for instance, [gobycicle](http://github.com/gobicycle/bicycle). Learn more from our extensive guide on [asset processing](/develop/dapps/asset-processing).
+- [**常见问题解答**](/develop/howto/faq) - 常见问题
+- [FunC文档](/develop/func/overview)
+- [Fift文档](/develop/fift/overview)
