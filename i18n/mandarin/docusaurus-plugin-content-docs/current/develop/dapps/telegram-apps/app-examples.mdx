@@ -2,114 +2,114 @@ import Button from '@site/src/components/button'
 
 # TMA 示例
 
-查看下面的示例，了解如何创建您自己的 Telegram 小程序。
+查看下面的示例以查看如何创建您自己的 Telegram Mini App。
 
-## 基础 TMA 示例
+## 基本的 TMA 示例
 
 <p align="center">
   <br />
-    <img width="240" src="/img/docs/telegram-apps/tapps.png" alt="telegram 小程序的 logo" />
+    <img width="240" src="/img/docs/telegram-apps/tapps.png" alt="logo of telegram mini apps" />
       <br />
 </p>
 
-这是一个使用纯 JavaScript、HTML 和 CSS 实现的基础且直接的 Telegram 小程序（TMA）。该项目旨在提供一个创建简单 TMA 并在 Telegram 内启动它的最简化示例，无需依赖复杂的构建工具或前沿库。 This project aims to provide a minimalistic example of how to create a simple TMA and launch it within Telegram without relying on complex build tools or bleeding-edge libraries.
+这是一个使用普通的 JavaScript, HTML 和 CSS 来实现的 Telegram Mini App(TMA)。 这个项目旨在提供一个简单的例子，说明如何创建一个简单的TMA，并在 Telegram 中启动它，而不依赖复杂的构建工具或出血式图书馆。
 
-- 可通过直接链接访问应用：[t.me/simple_telegram_mini_app_bot/app](https://t.me/simple_telegram_mini_app_bot/app)
-- 或者您可以通过机器人菜单按钮启动应用：[t.me/simple_telegram_mini_app_bot](https://t.me/simple_telegram_mini_app_bot)
-- 部署 URL：<https://telegram-mini-apps-dev.github.io/vanilla-js-boilerplate/>
+- 应用可通过直接链接获取：[t.me/simple_telegram_mini_app_bot/app](https://t.me/simple_telegram_mini_app_bot/app)
+- 或者您可以使用机器人菜单按钮启动应用程序：[t.me/simple_telegram_mini_app_bo](https://t.me/simple_telegram_mini_app_bot)
+- 部署 URL： <https://telegram-mini-apps-dev.github.io/vanilla-js-boilerplate/>
 
-<Button href="https://t.me/simple_telegram_mini_app_bot/app" colorType={'primary'} sizeType={'sm'}>打开演示</Button>
+<Button href="https://t.me/simple_telegram_mini_app_bot/app" colorType={'primary'} sizeType={'sm'}>Open Demo</Button>
 <Button href="https://github.com/Telegram-Mini-Apps-Dev/vanilla-js-boilerplate.git" colorType={'secondary'} sizeType={'sm'}>GitHub</Button>
 
-### 特点
+### 功能
 
-- 极简用户界面。
-- 未使用外部库或框架。
+- 最小用户界面。
+- 没有使用外部库或框架。
 - 易于理解和修改。
 
-### 入门
+### 正在开始
 
-#### 必要条件
+#### 必备条件
 
-要运行此示例，您需要一个支持 JavaScript 的现代 web 浏览器。
+要运行这个示例，您需要一个启用JavaScript的现代网页浏览器。
 
 #### 安装
 
-1. 克隆此库到您的本地机器：
+1. 将这个仓库复制到您的本地机器：
 
 ```bash
 git clone https://github.com/Telegram-Mini-Apps-Dev/vanilla-js-boilerplate.git
 ```
 
-2. 导航至项目目录：
+2. 导航到项目目录：
 
 ```bash
 cd vanilla-js-boilerplate
 ```
 
-在您偏好的代码编辑器或 IDE 中打开 index.html。
+在您首选的代码编辑器或 IDE 中打开 index.html 。
 
-### 使用
+### 用法
 
-1. 在您偏好的代码编辑器或 IDE 中打开 index.html。
-2. 做出您的改动
-3. 创建您自己的 GitHub 库，提交并推送您的更新。
-4. Go to your repository GitHub page and open Settings. Check the Pages tab and Build and deployment section. 转到您的 GitHub 库页面并打开设置。检查“页面”选项卡和“构建与部署”部分。如果选择了 GitHub Actions 选项，资产应该被部署到页面上，并且会有像 `https://<username>.github.io/vanilla-js-boilerplate/` 这样的 URL。您可以复制此 URL，并使用 [BotFather](https://tg.me/BotFather) 机器人创建您自己的 TWA。 You can copy this URL and use it with [BotFather](https://tg.me/BotFather) bot to create your very own TWA.
+1. 在您首选的代码编辑器或 IDE 中打开 index.html 。
+2. 进行更改
+3. 创建您自己的 GitHub 仓库，提交并推送您的更新。
+4. 转到您的仓库 GitHub 页面并打开设置。 检查页面标签以及构建和部署部分。 如果选择 GitHub 动作选项，资产应该被部署到页面上，并且会有一个 'https:///<username>.github.io/vanilla-js-boilerplate/\`. 您可以复制此 URL 并使用 [BotFather](https://tg.me/BotFather) 机器人来创建您自己的 TWA。
 
-## 当前 TMA 示例
+## 现代TMA 示例
 
-### 介绍
+### 一. 导言
 
-Vite（在法语中意味着“快”）是一个前端构建工具和开发服务器，旨在为现代 web 项目提供更快、更精简的开发体验。我们将利用 Vite 创建 Telegram 小程序示例。 We will utilise Vite to create Telegram Mini App example.
+Vite（意指法语的“快速”）是一个前端构建工具和开发服务器，旨在为现代网络项目提供更快和更干净的开发经验。 我们将使用 Vite 来创建 Telegram Mini App 示例。
 
-您可以在这里找到示例项目 <https://github.com/Telegram-Mini-Apps-Dev/vite-boilerplate> 或者您可以按照以下说明操作。
+您可以在这里找到示例项目<https://github.com/Telegram-Mini-Apps-Dev/vite-boilerplate>或您可以通过以下指示。
 
-### 必要条件
+### 必备条件
 
-我们将从搭建您的 Vite 项目开始。
+我们将从您的 Vite 项目的 scaffoling 开始。
 
-使用 NPM：
+使用NPM：
 
 ```bash
-$ npm create vite@latest
+$npm 创建 vite@最新版本
 ```
 
-使用 Yarn：
+用 Yarn：
 
 ```bash
-$ yarn create vite
+$ yarn 创建 vite
 ```
 
-然后按照提示操作！
+然后跟随提示！
 
-或者您可以直接运行以下命令创建带有 TypeScript 支持的 React 项目：
+或者你可以简单地运行此命令来使用 TypeScript 支持来创建React 项目：
 
 ```bash
-# npm 7+, 需要额外的双破折号：
+# npm 7+, 需要额外的双破折叠:
 npm create vite my-react-telegram-web-app -- --template react-ts
 
 # 或 yarn
 yarn create vite my-react-telegram-web-app --template react-ts
 
-# 这将会改变目录到最近创建的项目
+# 这将把目录更改为最近创建的项目
 cd my-react-telegram-web-app
 ```
 
-### 小程序的开发
+### 开发Mini App
 
-现在我们需要开始项目的开发模式，请在终端运行以下命令：
+现在我们需要启动项目的开发模式，在终端中运行以下命令：
 
 ```bash
 # npm
 npm install
 npm run dev --host
 
-# 或 yarn
+# or yarn
 yarn
 yarn dev --host
 ```
 
-`--host` option allows to get URL with IP address, which you can use for test purposes during development process. `--host` 选项允许获取带有 IP 地址的 URL，您可以在开发过程中用于测试。重要说明：在开发模式下，我们将使用自签名 SSL 证书，这将使我们能够仅在 Telegram 的 web 版本 [https://web.telegram.org](https://web.telegram.org/a/#6549734463)/ 中测试我们的应用，由于其他平台（iOS、Android、MacOS）的政策。
+`--host` 选项允许获取 IP 地址的 URL，您可以在开发过程中用于测试目的。 重要注意：在开发模式中，我们将使用自签名的 SSL 证书 这将使我们能够通过热重新加载来测试我们的应用，仅在 Telegram 中的 web 版本[https://web. elegram.org](https://web.telegram.org/a/#6549734463)/因为其他平台 (iOS, Android, MacOS) 政策。
 
 我们需要添加 `@vitejs/plugin-basic-ssl` 插件：
 
@@ -117,13 +117,13 @@ yarn dev --host
 npm install @vitejs/plugin-basic-ssl
 ```
 
-现在我们需要更改 `vite.config.ts`。添加导入： Add import:
+现在我们需要修改 `vite.config.ts` 。 添加导入：
 
 ```jsx
-import basicSsl from '@vitejs/plugin-basic-ssl';
+从 '@vitejs/plugin-basic-ssl'导入BasicSsl;
 ```
 
-并添加插件
+添加插件
 
 ```jsx
 export default defineConfig({
@@ -131,14 +131,14 @@ export default defineConfig({
 });
 ```
 
-您可以使用 `ngrok` 将您的本地服务器暴露给互联网并附加 SSL 证书。您将能够在所有 Telegram 平台上使用热模块替换进行开发。打开新的终端窗口并运行： You will be able to develop with hot module replacement on all Telegram platforms. Open new terminal window and run:
+您可以使用 `ngrok` 来通过SSL 证书将本地服务器曝光到互联网。 您将能够在所有 Telegram 平台上使用热模块替换。 打开新终端窗口并运行：
 
 ```bash
-# 其中 5173 是来自 npm/yarn dev --host 的端口号
-ngrok http 5173
+# 其中5173 是来自npm/yarn dev --host
+ngrok http 5173 的端口。
 ```
 
-此外，我们将准备我们的项目以部署到 GitHub Pages：
+我们还将准备部署到GitHub Pages的项目：
 
 ```jsx
 export default defineConfig({
@@ -150,44 +150,44 @@ export default defineConfig({
 });
 ```
 
-我们将使用 GitHub Actions 部署脚本，该脚本将在针对 master 分支的推送上运行。从您的项目根目录开始： From the root of your project:
+我们将使用 GitHub 动作的部署脚本，这些动作将在主分支的推送上运行。 从你的项目的根目录：
 
 ```bash
-# 我们将创建 GitHub Actions 配置以进行部署
+# 我们将创建 GitHub 动作配置，用于部署
 mkdir .github
-cd .github
-mkdir workflows
-cd workflows
-touch static.yml
+cd 。 ithub
+mkdir workflow
+cd workflow
+tout static.yml
 ```
 
-现在将此配置添加到 `static.yml`：
+现在将此配置添加到“static.yml”：
 
 ```yaml
-# 将静态内容部署到 GitHub Pages 的简单工作流
-name: 将静态内容部署到页面
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
 
 on:
-  # 针对默认分支的推送上运行
+  # Runs on pushes targeting the default branch
   push:
     branches: ['master']
 
-  # 允许您从操作选项卡手动运行此工作流
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# 设置 GITHUB_TOKEN 权限以允许部署到 GitHub Pages
+# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 允许一个并行部署
+# Allow one concurrent deployment
 concurrency:
-  group: '页面'
+  group: 'pages'
   cancel-in-progress: true
 
 jobs:
-  # 由于我们只是部署，因此单个部署作业
+  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
@@ -196,39 +196,39 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: 设置 Node
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 18
           cache: 'npm'
           cache-dependency-path: './'
-      - name: 安装依赖
+      - name: Install dependencies
         run: npm install
-      - name: 构建
+      - name: Build
         run: npm run build
-      - name: 设置页面
+      - name: Setup Pages
         uses: actions/configure-pages@v3
-      - name: 上传构件
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # 上传 dist 库
+          # Upload dist repository
           path: './docs'
-      - name: 部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
 ```
 
-别忘了在您的 GitHub 库的设置→页面中为构建和部署选择 GitHub Actions 选项。现在，每次推送后，您的代码将被部署到页面。 Now after each push, your code will be deployed to Pages.
+别忘了选择 GitHub 操作选项，在设置中构建和部署——您的GitHub 仓库的页面. 现在在每个push之后，你的代码将会被部署到页面。
 
-![Screenshot 2023-09-11 at 22.07.44.png](/img/docs/telegram-apps/modern-1.png)
+![屏幕截图2023-09-11 at 22.07.44.png](/img/docs/telegram-apps/modern-1.png)
 
-And now we are going two add `@twa-dev/sdk`. 现在我们将添加 `@twa-dev/sdk`。Telegram 通过[链接](https://core.telegram.org/bots/webapps#initializing-web-apps)分发 SDK。这是一种处理库的旧时方式。`@twa-dev/sdk` 包允许像处理 npm 包一样使用 SDK，并支持 TypeScript。 It's kinda old fashion way to work with a library. `@twa-dev/sdk` package allows to work with SDK as with an npm package and with TypeScript support.
+现在我们将增加两个`@twa-dev/sdk`。 Telegram 透過 [link](https://core.telegram.org/bots/webapps#initializing-web-apps)发行SDK 与一个库一起工作是一种好奇的方式。 `@twa-dev/sdk`软件包允许与 SDK 一样使用 npm 软件包和 TypeScript 支持。
 
 ```bash npm2yarn
 npm install @twa-dev/sdk
 ```
 
-打开 `/src/main.tsx` 文件并添加以下内容：
+打开`/src/main.tsx`文件并添加以下内容：
 
 ```tsx
 import WebApp from '@twa-dev/sdk'
@@ -238,9 +238,9 @@ WebApp.ready();
 ReactDOM.createRoot...
 ```
 
-`WebApp.ready()` - 是一个方法，向 Telegram 应用程序通知小程序已准备好显示。建议尽可能早地调用此方法，一旦加载了所有必要的接口元素。一旦调用此方法，加载的占位符将被隐藏，小程序将被显示。 It is recommended to call this method as early as possible, as soon as all essential interface elements are loaded. Once this method is called, the loading placeholder is hidden and the Mini App is shown.
+`WebApp.ready()` - 是一个告知Telegram 应用程序Mini App 已准备好显示的方法。 建议在所有必要的接口元素加载后尽快将这种方法调用。 一旦此方法被调用，加载占位符将被隐藏并显示 Mini 应用程序。
 
-Then we will add some interaction with user. 然后我们将添加与用户的一些交互。进入 `src/App.tsx`，我们将添加带有警告的按钮。
+然后我们将添加一些与用户的交互。 转到`src/App.tsx`，我们将以警示方式添加按钮。
 
 ```tsx
 import { useState } from 'react'
@@ -266,13 +266,13 @@ function App() {
       <h1>Vite + React</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
-          计数是 {count}
+          count is {count}
         </button>
       </div>
-		{/* 在此处添加带有警告回调的按钮 */}
+		{/* Here we add our button with alert callback */}
       <div className="card">
         <button onClick={() => WebApp.showAlert(`Hello World! Current count is ${count}`)}>
-            显示警告
+            Show Alert
         </button>
       </div>
     </>
@@ -282,16 +282,16 @@ function App() {
 export default App
 ```
 
-现在我们需要创建 Telegram 机器人，这样我们就可以在信使应用程序中启动 Telegram 小程序。
+现在我们需要创建 Telegram Bot，以便我们可以在信使应用程序中启动 Telegram Mini 应用程序。
 
-### 为应用设置机器人
+### 为应用程序设置Bot
 
-要将您的小程序连接到 Telegram，您需要创建一个机器人并为其设置小程序。按照以下步骤设置新的 Telegram 机器人： Follow these steps to set up a new Telegram bot:
+要连接您的 Mini 应用程序到 Telegram ，您需要创建机器人并为此设置一个 Mini 应用。 按照这些步骤设置一个新的 Telegram 機器人：
 
-<Button href="/develop/dapps/telegram-apps/step-by-step-guide#setting-up-a-bot-for-the-app" colorType={'primary'} sizeType={'sm'}>设置机器人</Button>
+<Button href="/develop/dapps/telegram-apps/step-by-step-guide#setting-up-a-bot-for-the-app" colorType={'primary'} sizeType={'sm'}>Setup a Bot</Button>
 
 ### 提示
 
-With self-signed SSL certificate you can challenge issues with this kind of alerts. Click “Advanced” button and the click `Proceed <local dev server address here>`. Without this steps you will not be able to debug in web version of Telegram
+有了自签名的 SSL 证书，您可以质疑这类警告的问题。 Click “Advanced” button and the click `Proceed <local dev server address here>`. 没有这个步骤，您将无法在 web 版本的 Telegram 中调试
 
-![Screenshot 2023-09-11 at 18.58.24.png](/img/docs/telegram-apps/modern-2.png)
+![屏幕截图2023-09-11 at 18.58.24.png](/img/docs/telegram-apps/modern-2.png)
