@@ -1,44 +1,44 @@
-# 贡献手册
+# 贡献准则
 
-在贡献任何 docs.ton.org 页面之前，请审查以下关于常见的和重要的要求，以确保顺利的提交。
+在提交任何docs.ton.org页面之前，请查看以下一般性和重要要求清单，以保证体验顺畅。
 
 ## 命名
 
-- It is essential to ensure the correct use of _THE_ in the TON documentation. 确保正确使用 _THE_ 在 TON 文档中至关重要。_TON Blockchain_ 和 _TON Ecosystem_ 是大写术语，因此，在使用时不需要 _THE_。
-- 我们将 _TON_ 与普通名词一起写，如果根据英语语法需要 _THE_，我们会使用它。例如："_The_ TON Connect _protocol_ is a..." For instance: "_The_ TON Connect _protocol_ is a..."
+- 必须确保TON文档中正确使用_THE_。 _TON Blockchain_和 _TON Ecosystem_是资本化的术语，因此在使用时不需要 _THE_。
+- 我们使用 _TON_ 使用普通名称，如果它需要 _THE_ 根据英语语法，我们使用它。 例如："_The_TON Connect _protocol_is a..."
 
 :::info
 TON Blockchain...
 
 TON Ecosystem...
 
-The TON Connect protocol...
+TON Connect 协议...
 :::
 
-请在[这里](https://ton.org/en/brand-assets)查看 TON 的品牌资产。
+请参阅实际的TON品牌资产 [here](https://ton.org/en/brand-assets)。
 
-## 文档引用
+## 参考文件
 
-TON 文档的每个页面应以“参阅”部分结束。在那里放置你认为与当前页面相关的页面，无需额外描述。 Place there page, you think relates to current page without additional description.
+TON文档中的每一页都应该用一节来完成。 将页面放在这里, 你认为与当前页面相关, 没有额外的描述。
 
 :::info
 
 ```
-## 参阅
-* [TON 贡献指南](/contribute/contribution-rules)
-* [教程样式指南](/contribute/tutorials/guidelines)
+## See Also
+* [TON Contribution Guidelines](/contribute/contribution-rules)
+* [Tutorial Styling Guidelines](/contribute/tutorials/guidelines)
 ```
 
 :::
 
-## 英文帮助资源
+## 英语有用的来源
 
-TON 生态系统正在为全世界建设，因此，确保每个人都能理解至关重要。在这里，我们提供对想提高英语技能的初级技术写作人员有帮助的材料。 Here, we provide materials that are helpful for junior tech writers who want to improve their English skills.
+TON生态系统正在为全世界建设，因此它对地球上每个人来说都是可以理解的。 在这里，我们提供了有助于希望提高英语技能的初级技术作家的材料。
 
-- [复数名词](https://www.grammarly.com/blog/plural-nouns/)
-- [文章：A 与 An](https://owl.purdue.edu/owl/general_writing/grammar/articles_a_versus_an.html)
+- [复数Nouns](https://www.techarly.com/blog/plural-nouns/)
+- [文章: A verse An](https://owl.purdue.edu/owl/general_writting/语法/articles_a_versus_an.html)
 
-## 参阅
+## 另见：
 
-- [TON 贡献指南](/contribute/contribution-rules)
-- [教程样式指南](/contribute/tutorials/guidelines)
+- [TON Contribution Guidelines](/contribute/contribution-rules)
+- [教程样式准则](/contribute/tutorials/guidelines)
