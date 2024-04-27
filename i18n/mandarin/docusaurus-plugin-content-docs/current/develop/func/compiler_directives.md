@@ -1,85 +1,83 @@
-# Compiler directives
+# 编译指令
 
-These are keywords that start with `#` and instruct the compiler to do some actions, checks, or change parameters.
+这些是以 `#` 开始的关键字，指示编译器执行某些动作、检查或更改参数。
 
-Those directives can be used only at the outermost level (not inside any function definition).
+这些指令只能在最外层使用（不在任何函数定义内部）。
 
 ## #include
 
-The `#include` directive allows to include another FunC source code file that will be parsed in place of include.
+`#include` 指令允许包含另一个 FunC 源代码文件，该文件将代替 include 处进行解析。
 
-Syntax is `#include "filename.fc";`. Files are automatically checked for re-inclusion, and attempts to include
-a file more than once will be ignored by default, with a warning if the verbosity level is no lower than 2.
+语法为 `#include "filename.fc";`。文件会自动检查是否重复包含，且默认情况下，尝试多次包含同一文件将被忽略，并在详细级别不低于 2 时发出警告。
 
-If an error happens during the parsing of an included file, additionally, a stack of inclusions is printed with the locations
-of each included file in the chain.
+如果在解析包含的文件期间发生错误，此外，将打印包含的堆栈，其中包含链中每个包含的文件的位置。
 
 ## #pragma
 
-The `#pragma` directive is used to provide additional information to the compiler beyond what the language itself conveys.
+`#pragma` 指令用于向编译器提供超出语言本身所传达的附加信息。
 
 ### #pragma version
 
-Version pragma is used to enforce a specific version of FunC compiler when compiling the file.
+版本编译指令用于在编译文件时强制使用特定版本的 FunC 编译器。
 
-The version is specified in a semver format, that is, _a.b.c_, where _a_ is the major version, _b_ is the minor, and _c_ is the patch.
+版本以 semver 格式指定，即 _a.b.c_，其中 _a_ 是主版本号，_b_ 是次版本号，_c_ 是修订号。
 
-There are several comparison operators available to a developer:
+开发者可用的比较运算符有几种：
 
-- _a.b.c_ or _=a.b.c_—requires exactly the _a.b.c_ version of the compiler
-- _>a.b.c_—requires the compiler version to be higher than _a.b.c_,
-  - _>=a.b.c_—requires the compiler version to be higher or equal to _a.b.c_
-- _\<a.b.c_—requires the compiler version to be lower than _a.b.c_,
-  - _<=a.b.c_—requires the compiler version to be lower or equal to _a.b.c_
-- _^a.b.c_—requires the major compiler version to be equal to the 'a' part and the minor to be no lower than the 'b' part,
-  - _^a.b_—requires the major compiler version to be equal to _a_ part and minor be no lower than _b_ part
-  - _^a_—requires the major compiler version to be no lower than _a_ part
+- _a.b.c_ 或 _=a.b.c_ — 要求编译器版本正好为 _a.b.c_
+- _>a.b.c_ — 要求编译器版本高于 _a.b.c_
+  - _>=a.b.c_ — 要求编译器版本高于或等于 _a.b.c_
+- _\<a.b.c_ — 要求编译器版本低于 _a.b.c_
+  - _<=a.b.c_ — 要求编译器版本低于或等于 _a.b.c_
+- _^a.b.c_ — 要求主编译器版本等于 'a' 部分且次版本不低于 'b' 部分
+  - _^a.b_ — 要求主编译器版本等于 _a_ 部分且次版本不低于 _b_ 部分
+  - _^a_ — 要求主编译器版本不低于 _a_ 部分
 
-For other comparison operators (_=_, _>_, _>=_, _<_, _<=_) short format assumes zeros in omitted parts, that is:
+对于其他比较运算符（_=_, _>_, _>=_, _<_, _<=_）简略格式假定省略部分为零，即：
 
-- _>a.b_ is the same as _>a.b.0_ (and therefore does NOT match thd _a.b.0_ version)
-- _<=a_ is the same as _<=a.0.0_ (and therefore does NOT match the _a.0.1_ version)
-- _^a.b.0_ is **NOT** the same as _^a.b_
+- _>a.b_ 等同于 _>a.b.0_（因此不匹配 _a.b.0_ 版本）
+- _<=a_ 等同于 _<=a.0.0_（因此不匹配 _a.0.1_ 版本）
+- _^a.b.0_ **不** 等同于 _^a.b_
 
-For example, _^a.1.2_ matches _a.1.3_ but not _a.2.3_ or _a.1.0_, however, _^a.1_ matches them all.
+例如，_^a.1.2_ 匹配 _a.1.3_ 但不匹配 _a.2.3_ 或 _a.1.0_，然而，_^a.1_ 匹配它们所有。
 
-This directive may be used multiple times; the compiler version must satisfy all provided conditions.
+可以多次使用此指令；编译器版本必须满足所有提供的条件。
 
 ### #pragma not-version
 
-The syntax of this pragma is the same as the version pragma but it fails if the condition is satisfied.
+此编译指令的语法与版本编译指令相同，但如果条件满足则会失败。
 
-It can be used for blacklisting a specific version known to have problems, for example.
+例如，它可以用于将已知有问题的特定版本列入黑名单。
 
 ### #pragma allow-post-modification
 
 _funC v0.4.1_
 
-By default it is prohibited to use variable prior to its modification in the same expression. In other words, expression `(x, y) = (ds, ds~load_uint(8))` won't compile, while `(x, y) = (ds~load_uint(8), ds)` is valid.
+默认情况下，禁止在同一表达式中先使用变量后修改它。换句话说，表达式 `(x, y) = (ds, ds~load_uint(8))` 无法编译，而 `(x, y) = (ds~load_uint(8), ds)` 是有效的。
 
-This rule can be overwritten, by `#pragma allow-post-modification`, which allow to modify variable after usage in mass assignments and function invocation; as usual sub-expressions will be computed left to right: `(x, y) = (ds, ds~load_bits(8))` will result in `x` containing initial `ds`; `f(ds, ds~load_bits(8))` first argument of `f` will contain initial `ds`, and second - 8 bits of `ds`.
+可以通过 `#pragma allow-post-modification` 覆盖此规则，允许在批量赋值和函数调用中在使用后修改变量；如常规，子表达式将从左到右计算：`(x, y) = (ds, ds~load_bits(8))` 将导致 `x` 包含初始 `ds`；`f(ds, ds~load_bits(8))` `f` 的第一个参数将包含初始 `ds`，第二个参数 - `ds` 的 8 位。
 
-`#pragma allow-post-modification` works only for code after the pragma.
+`#pragma allow-post-modification` 仅适用于编译指令之后的代码。
 
 ### #pragma compute-asm-ltr
 
 _funC v0.4.1_
 
-Asm declarations can overwrite order of arguments, for instance in the following expression
+Asm 声明可以覆盖参数的顺序，例如在以下表达式中
 
 ```func
 idict_set_ref(ds~load_dict(), ds~load_uint(8), ds~load_uint(256), ds~load_ref())
 ```
 
-order of parsing will be: `load_ref()`, `load_uint(256)`, `load_dict()` and `load_uint(8)` due to following asm declaration (note `asm(value index dict key_len)`):
+解析顺序将是：`load_ref()`、`load_uint(256)`、`load_dict()` 和 `load_uint(8)`，由于以下 asm 声明（注意 `asm(value index dict key_len)`）：
 
 ```func
 cell idict_set_ref(cell dict, int key_len, int index, cell value) asm(value index dict key_len) "DICTISETREF";
 ```
 
-This behavior can be changed to strict left-to-right order of computation via `#pragma compute-asm-ltr`
+可以通过 `#pragma compute-asm-ltr` 更改为严格的从左到右的计算顺序
 
-As a result in
+因此，在
 
 ```func
 #pragma compute-asm-ltr
@@ -87,6 +85,6 @@ As a result in
 idict_set_ref(ds~load_dict(), ds~load_uint(8), ds~load_uint(256), ds~load_ref());
 ```
 
-order of parsing will be `load_dict()`, `load_uint(8)`, `load_uint(256)`, `load_ref()` and all asm permutation will happen after computation.
+中解析顺序将是 `load_dict()`、`load_uint(8)`、`load_uint(256)`、`load_ref()`，所有 asm 排列将在计算之后发生。
 
-`#pragma compute-asm-ltr` works only for code after the pragma.
+`#pragma compute-asm-ltr` 仅适用于编译指令之后的代码。
