@@ -1,8 +1,8 @@
-# Content Subscriptions
+# TON 上的订阅服务
 
-Due to the fact that transactions in TON Blockchain are fast and the network fees are low, you can process recurring payments on-chain via smart contracts.
+由于 TON 区块链中的交易快速，网络费用低廉，您可以通过智能合约在链上处理定期支付。
 
-For example, users can subscribe to digital content (or anything else) and be charged a monthly fee of 1 TON.
+例如，用户可以订阅数字内容（或其他任何东西）并被收取每月 1 TON 的费用。
 
 :::tip
 This content is specific for wallets of version v4. Older wallets don't have this functionality; it is eligible to change in future versions as well.
@@ -11,8 +11,7 @@ This content is specific for wallets of version v4. Older wallets don't have thi
 :::warning
 Subscription contract requires authorization exactly once, on installation; then it can withdraw TON as it pleases. Do your own research before attaching unknown subscriptions.
 
-On the other hand, user can't get subscription installed without their knowledge.
-:::
+目前的标准方法：
 
 ## Example flow
 
