@@ -1,68 +1,68 @@
 # Bridge API
 
-Bridge 是一种传输机制，用于从应用程序到钱包，以及反向传达消息。
+桥是一个传输机制，可以将信息从应用程序传送到钱包，反之亦然。
 
-- **Bridge is maintained by the wallet provider**. App developers do not have to choose or build a bridge. **Bridge 由钱包提供商维护**。应用开发者不需要选择或构建 bridge。每个钱包的 bridge 都列在 [wallets-list](https://github.com/ton-blockchain/wallets-list) 配置中。
-- **消息是端到端加密的。** Bridge 无法看到应用或钱包的内容或长期标识符。
-- **通讯是对称的。** Bridge 不区分应用和钱包：两者都仅是客户端。
-- Bridge 为每个接收者的 **客户端 ID** 保持不同的消息队列。
+- **Bridge由钱包提供商维护**。 应用开发者不必选择或构建桥。 每个钱包的桥都在 [wallets-list](https://github.com/ton-blockchain/wallets-list) 配置中列出。
+- **消息是端到端加密。** 桥无法看到应用程序或钱包的内容或长期标识符。
+- **通信是对称的。** 桥并不区分应用和钱包：两者都只是客户端。
+- 桥将每个收件人**客户端ID**的消息单独列队列.
 
-Bridge 有两种形式：
+桥分为两种：
 
-- [HTTP Bridge](#http-bridge)：用于外部应用和服务。
-- [JS Bridge](#js-bridge)：用于在钱包中打开的应用；或钱包是浏览器扩展时。
+- [HTTP Bridge](#http-bridge): 用于外部应用和服务。
+- [JS Bridge](#js-bridge)：对于在钱包中打开的应用，或者当钱包是浏览器扩展时。
 
-## HTTP Bridge
+## HTTP 桥接
 
-客户端 ID 为 **A** 的客户端连接到 bridge 以监听传入请求。
+ID **A** 的客户端连接桥以听取收到的请求。
 
-\*\*客户端 ID 是半私有的：\*\*应用和钱包不应与其他实体共享他们的 ID，以避免他们的消息被意外删除。
+**客户端ID是半私有的：** 应用程序和钱包不应该与其他实体分享他们的ID，以避免他们的消息意外被删除。
 
-**客户端可以订阅多个客户端 ID** - 在这种情况下，它应该用逗号分隔ID进行枚举。例如：`?client_id=<A1>,<A2>,<A3>` For example: `?client_id=<A1>,<A2>,<A3>`
+**客户端可以订阅少数客户端ID** - 在这种情况下，它应该以逗号分隔开列ID。 例如：`?client_id=<A1>,<A2>,<A3>`
 
 ```tsx
-request
+请求
     GET /events?client_id=<to_hex_str(A)>
 
-    Accept: text/event-stream
+    接受：文本/事件流
 ```
 
-**第二次（或其他任何时间）订阅 bridge**
+**订阅桥第二个(任何其他)时间**
 
 ```tsx
-request
+请求
     GET /events?client_id=<to_hex_str(A)>&last_event_id=<lastEventId>
 
-    Accept: text/event-stream
+    接受：文本/事件流
 ```
 
-**lastEventId** – 钱包通过 bridge 获得的最后一个 SSE 事件的 eventId。在这种情况下，钱包将获取所有在上次连接后发生的事件。 In this case wallet will fetch all the events which happened after the last connection.
+**lastEventId** - 最后一个 SSE 事件的事件的事件Id 已经到达桥上。 在这种情况下，钱包将获取上次连接后发生的所有事件。
 
-从客户端 A 发送消息到客户端 B。如果 ttl 太高，bridge 返回错误。
+从客户端A发送消息到客户端B。如果ttl太高，Bridge返回错误。
 
 ```tsx
-request
+请求
     POST /message?client_id=<to_hex_str(A)>?to=<to_hex_str(B)>&ttl=300&topic=<sendTransaction|signData>
 
-    body: <base64_encoded_message>
+    正体： <base64_encoded_message>
 ```
 
-`topic` [可选] 查询参数可以被 bridge 用来将推送通知发送到钱包。如果给出参数，它必须对应于加密的 `message` 内部调用的 RPC 方法。 If the parameter is given, it must correspond to the RPC method called inside the encrypted `message`.
+"topic" [optional] 查询参数可以被桥用来向钱包发送推送通知。 如果给出了参数，它必须与加密的`message`中调用的 RPC 方法相对应。
 
-Bridge 将消息缓冲至 TTL（秒），但一旦接收者收到消息就会将其删除。
+桥接缓冲消息到 TTL (秒)，但收到消息后立即将其移除。
 
-如果 TTL 超出 bridge 服务器的硬限制，它应该响应 HTTP 400。Bridges 应该支持至少 300 秒 TTL。 参数 **v** 指定协议版本。不受支持的版本不会被钱包接受。
+如果TTL超过桥接服务器的硬限度，它应该使用 HTTP 400。 桥应至少支持300秒的 TTL。
 
-当 bridge 从客户端 `A` 接收到致客户端 `B` 的消息 `base64_encoded_message` 时，它生成一个消息 `BridgeMessage`：
+当桥接收到客户端`A`发出的消息`base64_encoded_message`时，它生成了一条消息`BridgeMessage`：
 
 ```js
-{
+主席:
   "from": <to_hex_str(A)>,
-  "message": <base64_encoded_message>
+  "消息": <base64_encoded_message>
 }
 ```
 
-并通过 SSE 连接发送给客户端 B
+通过 SSE 连接发送到客户端 B
 
 ```js
 resB.write(BridgeMessage)
@@ -70,52 +70,52 @@ resB.write(BridgeMessage)
 
 ### Heartbeat
 
-为了保持连接，bridge 服务器应定期向 SSE 频道发送“heartbeat”消息。客户端应忽略此类消息。因此，bridge 的 heartbeat 消息是一个包含单词 `heartbeat` 的字符串。 Client should ignore such messages.
-So, the bridge heartbeat message is a string with word `heartbeat`.
+为了保持连接，桥接服务器应定期向SSE频道发送一个“心谱”消息。 客户端应忽略这种消息。
+因此，桥的心跳消息是一个带有`心打`字的字符串。
 
 ## 通用链接
 
-当应用初始化连接时，它直接通过二维码或通用链接发送给钱包。
+当应用程序启动连接时，它会直接通过二维码或通用链接发送到钱包。
 
 ```bash
-https://<wallet-universal-url>?
+https:///<wallet-universal-url>?
                                v=2&
                                id=<to_hex_str(A)>&
                                r=<urlsafe(json.stringify(ConnectRequest))>&
                                ret=back
 ```
 
-Parameter **v** specifies the protocol version. Unsupported versions are not accepted by the wallets.
+参数 **v** 指定了协议版本。 钱包不接受不支持的版本。
 
-参数 **id** 指定应用的客户端 ID，以十六进制编码（不带 '0x' 前缀）。
+参数 **id** 指定应用程序客户端ID编码为十六进制(没有 '0x' 前缀)。
 
-参数 **r** 指定 URL 安全的 json [ConnectRequest](/develop/dapps/ton-connect/protocol/requests-responses#initiating-connection)。
+参数 **r** 指定 URL-safe json [ConnectRequest](/develop/dapps/ton-connect/protocol/requests-responses#initiating-connecess)。
 
-参数 **ret** （可选）指定用户签名/拒绝请求后深链接的返回策略。
+参数 **ret** (可选) 指定用户签署/拒绝请求时的离线返回策略。
 
-- 'back'（默认）意味着返回到初始化深链接跳转的应用（例如，浏览器，本地应用等），
-- 'none' 意味着用户操作后不跳转；
-- 一个 URL：完成用户操作后钱包将打开此 URL。请注意，如果您的应用是网页，您不应传递您的应用的 URL。此选项应用于本地应用，以解决可能的操作系统特定问题与 `'back'` 选项。 Note, that you shouldn't pass your app's URL if it is a webpage. This option should be used for native apps to work around possible OS-specific issues with `'back'` option.
+- 'back' (默认) 意味着返回初始化Deeplink 跳跃的应用程序(例如浏览器、本机应用...),
+- “无”表示用户操作后不跳跃；
+- 一个 URL：在用户完成操作后，钱包将打开此URL。 注意，如果是一个网页，您不应该通过您的应用的 URL。 这个选项应该用于本地应用围绕可能的 OSspecific 问题使用 "back" 选项。
 
-`ret` 参数应该支持空的深链接 -- 它可能用于指定完成其他操作确认后（发送交易，签名原始数据等）的钱包行为。
+“ret”参数应该支持空的Deeplinks — — 它可以用于在其他动作确认后指定钱包行为 (发送交易) 。 符号阵列。 ……。
 
 ```bash
 https://<wallet-universal-url>?ret=back
 ```
 
-链接可以嵌入在二维码中或直接点击。
+链接可能嵌入二维码或直接点击。
 
-初始请求是未加密的，因为 (1) 尚未传递个人数据，(2) 应用甚至不知道钱包的身份。
+初始请求未加密，因为(1) 尚未传送个人数据。 (2) 应用程序甚至不知道钱包的身份。
 
-### 统一深链接 `tc`
+### Unified deeplink `tc`
 
-除了其自己的通用链接外，钱包还必须支持统一深链接。
+除了自己的通用链接外，钱包还必须支持统一的深度链接。
 
-这允许应用创建一个单一的二维码，可以用来连接到任何钱包。
+这允许应用程序创建一个单一的 qr 代码，可以用来连接到任何钱包。
 
-更具体地说，钱包必须支持 `tc://` 深链接以及它自己的 `<wallet-universal-url>`。
+更具体地说，钱包必须支持 `tc://` deeplink以及它自己的 \`<wallet-universal-url>'。
 
-因此，钱包必须处理以下 `连接请求`：
+因此，下列“连接请求”必须由钱包处理：
 
 ```bash
 tc://?
@@ -125,22 +125,22 @@ tc://?
        ret=back
 ```
 
-## JS bridge
+## JS 桥
 
-通过注入的绑定 `window.<wallet-js-bridge-key>.tonconnect` 供嵌入式应用使用。
+嵌入式应用程序通过注入的绑定窗口使用。<wallet-js-bridge-key>.tonconnect\`。
 
 `wallet-js-bridge-key` 可以在 [wallets list](https://github.com/ton-blockchain/wallets-list) 中指定
 
-JS bridge 在与钱包和应用相同的设备上运行，因此通信未加密。
+JS bridge 运行于与钱包和应用程序相同的设备上，所以通信不会被加密。
 
-应用直接处理明文请求和响应，无需会话密钥和加密。
+应用程序直接使用纯文本请求和响应，无需会话键和加密。
 
 ```tsx
 interface TonConnectBridge {
-    deviceInfo: DeviceInfo; // 见请求/响应规范
+    deviceInfo: DeviceInfo; // see Requests/Responses spec
     walletInfo?: WalletInfo;
-    protocolVersion: number; // 支持的最大 Ton Connect 版本（例如 2）
-    isWalletBrowser: boolean; // 如果页面打开在钱包的浏览器中
+    protocolVersion: number; // max supported Ton Connect version (e.g. 2)
+    isWalletBrowser: boolean; // if the page is opened into wallet's browser
     connect(protocolVersion: number, message: ConnectRequest): Promise<ConnectEvent>;
     restoreConnection(): Promise<ConnectEvent>;
     send(message: AppRequest): Promise<WalletResponse>;
@@ -148,55 +148,54 @@ interface TonConnectBridge {
 }
 ```
 
-就像 HTTP bridge 一样，bridge 的钱包端在用户确认会话之前不接收应用请求，除了 [ConnectRequest](/develop/dapps/ton-connect/protocol/requests-responses#initiating-connection) 外。技术上，消息是从 webview 发送到 bridge 控制器的，但它们被静默忽略了。 Technically, the messages arrive from the webview into the bridge controller, but they are silently ignored.
+就像使用 HTTP 桥。 桥的钱包侧除了 [ConnectRequest](/develop/dapps/ton-connect/protocol/requests-responses#initiating-connection)之外没有收到应用程序请求，直到会话得到用户确认。 从技术上说，这些消息从网络视图传送到桥接控制器，但却被静默忽略。
 
-SDK 在实现中支持 **autoconnect()** 和 **connect()** 作为尝试建立连接的静默和非静默尝试。
+设备周围的 **自动连接()** 和 **connect()** 为建立连接的无声和非无声尝试。
 
-### walletInfo (可选)
+### 钱包信息(可选)
 
-Represents wallet metadata. 代表钱包元数据。即使钱包未列在 [wallets-list.json](https://github.com/ton-blockchain/wallets-list) 中，也可以定义它，使注入式钱包能够与 TonConnect 一起工作。
+表示钱包元数据。 即使钱包未在 [wallets-list.json]中列出（https://github.com/ton-blockchain/wallets-list），也可以定义使可注入钱包与 TonConnect 兼容。
 
 钱包元数据格式：
 
 ```ts
-interface WalletInfo {
+接口WalletInfo
     name: string;
-    image: <png image url>;
-    tondns?:  string;
+    image; <png image url>;
+    tondns?: string;
     about_url: <about page url>;
 }
 ```
 
-详细属性描述：https://github.com/ton-blockchain/wallets-list#entry-format。
+详细属性描述：https://github.com/ton-blockchain/wallets-list#entry-format
 
-如果定义了 `TonConnectBridge.walletInfo` 并且钱包列在 [wallets-list.json](https://github.com/ton-blockchain/wallets-list) 中，`TonConnectBridge.walletInfo` 的属性将覆盖 wallets-list.json 中相应钱包的属性。
+如果`TonConnectBridge.walletInfo`被定义，并且钱包已经被列出在 [wallets-list.json](https://github.com/ton-blockchain/wallets-list), `TonConnectBridge.walletInfo` 属性将覆盖钱包列表中相应的钱包属性。
 
 ### connect()
 
-发起连接请求，这类似于使用HTTP时的QR/link
+启动连接请求，这类似于使用 HTTP 桥时的QR/链接。
 
-如果应用先前已针对当前账户获得批准 - 使用 ConnectEvent 静默连接。否则向用户显示确认对话框。 Otherwise shows confirmation dialog to the user.
+如果此应用先前被批准为当前帐户 — — 与连接事件静默连接。 否则会向用户显示确认对话框。
 
-您不应在没有明确用户操作（例如，连接按钮点击）的情况下使用 `connect` 方法。如果您想自动尝试恢复先前的连接，您应该使用 `restoreConnection` 方法。 If you want automatically try to restore previous connection, you should use the `restoreConnection` method.
+您不应该在没有明确的用户动作的情况下使用 `connect` 方法(例如连接按钮点击)。 如果你想要自动尝试恢复前一个连接，你应该使用 "restoreConnection" 方法。
 
-### restoreConnection()
+### resturreConnection()
 
-尝试恢复先前的连接。
+尝试恢复上一次连接。
 
-如果应用先前已针对当前账户获得批准 - 使用新的 `ConnectEvent` 静默连接，其中只有 `ton_addr` 数据项。
+如果此应用先前被批准用于当前帐户 — — 与新的 `ConnectEvent` 和一个 `ton_addr` 数据项无声连接。
 
-否则返回 `ConnectEventError`，错误代码为 100（未知的应用）。
+否则返回 `ConnectEventError` 错误代码 100 (未知应用)。
 
-### send()
+### Send()
 
-发送 [消息](/develop/dapps/ton-connect/protocol/requests-responses#messages) 到 bridge，不包括ConnectRequest（使用HTTP网桥时进入QR码，使用JS Bridge时进入连接）。
-直接与 WalletResponse一起返回promise，因此您不需要等待 `listen` 的响应；
-Directly returns promise with WalletResponse, do you don't need to wait for responses with `listen`;
+发送一个 [message](/develop/dapps/ton-connect/protocol/requests-responses#messages) 到桥， 排除ConnectRequest (在使用 HTTP 桥时进入二维码，并在使用 JS 桥时连接)。
+直接通过 WalletResponse 返回许诺，您不需要等待 'listen' 响应；
 
 ### listen()
 
-为来自钱包的事件注册监听器。
+从钱包注册事件侦听器。
 
-返回取消订阅函数。
+返回退订函数。
 
-目前，只有 `disconnect` 事件可用。稍后将有切换账户事件和其他钱包事件。 Later there will be a switch account event and other wallet events.
+目前，只有"断开连接" 事件可用。 稍后将会有一个开关账户事件和其他钱包事件。
