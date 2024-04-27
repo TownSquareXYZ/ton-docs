@@ -1,18 +1,18 @@
-# IDE Support
+# IDE 支持
 
-### Highlight
+### 强调
 
-The [intellij-ton](https://github.com/andreypfau/intellij-ton) plugin supports the Fift and FunC programming languages as well as the typed language binary (TL-B) format.
+[intellij-ton](https://github.com/andreypfau/intellij-ton) 插件支持 Fift 和 FunC 编程语言以及类型化语言二进制（TL-B）格式。
 
-Additionally, the correct TL-B syntax specifications are described in the [TlbParser.bnf](https://github.com/andreypfau/intellij-ton/blob/main/src/main/grammars/TlbParser.bnf) file.
+此外，正确的 TL-B 语法规范在 [TlbParser.bnf](https://github.com/andreypfau/intellij-ton/blob/main/src/main/grammars/TlbParser.bnf) 文件中有描述。
 
-### TL-B Parsers
+### TL-B 解析器
 
-TL-B parsers help carry out the serialization of basic [TL-B types](/develop/data-formats/tl-b-types). Each of which implements TL-B types as an object, and returns serialized binary data.
+TL-B 解析器有助于执行基本 [TL-B 类型](/develop/data-formats/tl-b-types) 的序列化。每种类型都以对象的形式实现 TL-B 类型，并返回序列化的二进制数据。
 
-| Language   | SDK                                                                                                                         | Social                                                                      |
-| ---------- | --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| Kotlin     | [ton-kotlin](https://github.com/andreypfau/ton-kotlin/tree/main/ton-kotlin-tlb) (+ parsing `.tlb` files) | https://t.me/tonkotlin                      |
-| Go         | [tonutils](https://github.com/xssnick/tonutils-go/tree/master/tlb)                                                          | https://t.me/tonutils                       |
-| Go         | [tongo](https://github.com/tonkeeper/tongo/tree/master/tlb) (+ parsing `.tlb` files)                     | https://t.me/tongo_lib |
-| TypeScript | [tlb-parser](https://github.com/ton-community/tlb-parser)                                                                   | -                                                                           |
+| 语言         | SDK                                                                                             | 社交网址                                                                        |
+| ---------- | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Kotlin     | [ton-kotlin](https://github.com/andreypfau/ton-kotlin/tree/main/ton-kotlin-tlb)（+ 解析 `.tlb` 文件） | https://t.me/tonkotlin                      |
+| Go         | [tonutils](https://github.com/xssnick/tonutils-go/tree/master/tlb)                              | https://t.me/tonutils                       |
+| Go         | [tongo](https://github.com/tonkeeper/tongo/tree/master/tlb)（+ 解析 `.tlb` 文件）                     | https://t.me/tongo_lib |
+| TypeScript | [tlb-parser](https://github.com/ton-community/tlb-parser)                                       | -                                                                           |
