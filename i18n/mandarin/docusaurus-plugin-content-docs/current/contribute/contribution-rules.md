@@ -1,25 +1,25 @@
-# 贡献准则
+# Contribution Guidelines
 
-在提交任何docs.ton.org页面之前，请查看以下一般性和重要要求清单，以保证体验顺畅。
+Before contributing any docs.ton.org page, please review the following list of general and important requirements to guarantee a smooth experience.
 
-## 命名
+## Naming
 
-- 必须确保TON文档中正确使用_THE_。 _TON Blockchain_和 _TON Ecosystem_是资本化的术语，因此在使用时不需要 _THE_。
-- 我们使用 _TON_ 使用普通名称，如果它需要 _THE_ 根据英语语法，我们使用它。 例如："_The_TON Connect _protocol_is a..."
+- It is essential to ensure the correct use of _THE_ in the TON documentation. _TON Blockchain_ and _TON Ecosystem_ are capitalized terms, and therefore, do not require _THE_ in their usage.
+- We write _TON_ with regular nouns, and if it requires _THE_ according to English grammar, we use it. For instance: "_The_ TON Connect _protocol_ is a..."
 
 :::info
 TON Blockchain...
 
 TON Ecosystem...
 
-TON Connect 协议...
+The TON Connect protocol...
 :::
 
-请参阅实际的TON品牌资产 [here](https://ton.org/en/brand-assets)。
+Please refer to the actual TON brand assets [here](https://ton.org/en/brand-assets).
 
-## 参考文件
+## Documentation References
 
-TON文档中的每一页都应该用一节来完成。 将页面放在这里, 你认为与当前页面相关, 没有额外的描述。
+Every page in TON documentation should be finished with See Also section. Place there page, you think relates to current page without additional description.
 
 :::info
 
@@ -31,14 +31,14 @@ TON文档中的每一页都应该用一节来完成。 将页面放在这里, �
 
 :::
 
-## 英语有用的来源
+## English Helpful Sources
 
-TON生态系统正在为全世界建设，因此它对地球上每个人来说都是可以理解的。 在这里，我们提供了有助于希望提高英语技能的初级技术作家的材料。
+The TON Ecosystem is being built for the entire world, so it's crucial that it's understandable for everyone on Earth. Here, we provide materials that are helpful for junior tech writers who want to improve their English skills.
 
-- [复数Nouns](https://www.techarly.com/blog/plural-nouns/)
-- [文章: A verse An](https://owl.purdue.edu/owl/general_writting/语法/articles_a_versus_an.html)
+- [Plural Nouns](https://www.grammarly.com/blog/plural-nouns/)
+- [Articles: A versus An](https://owl.purdue.edu/owl/general_writing/grammar/articles_a_versus_an.html)
 
-## 另见：
+## See Also
 
 - [TON Contribution Guidelines](/contribute/contribution-rules)
-- [教程样式准则](/contribute/tutorials/guidelines)
+- [Tutorial Styling Guidelines](/contribute/tutorials/guidelines)
