@@ -1,19 +1,18 @@
 import ThemedImage from '@theme/ThemedImage';
 
-# 签名与验证
+# Verifying signed in users on backend
 
-## 使用案例
+This page describes a way for backend to ensure that the user truly owns the declared address.
+Please note that the user verification is not required for all DApps.
 
-请注意，并非所有DApps都需要 ton_proof 验证。
-这对于后端的授权是必要的，以确保用户确实拥有声明的地址，因此可以推断出用户有权访问其在后端的数据。
+It is useful if you want to verify a user to provide them with their personal information from the back end.
 
-如果您想验证用户以便从后端提供其个人信息，这将是有用的。
+## How does it work?
 
-## ton_proof 如何工作？
-
-- 向客户端发送DAppid。通常，DAppid嵌入在二维码中。
-- 检索带有 ton_proof 实体的已签名交易
-- 在后端验证 ton_proof
+- User initiates sign in process.
+- Backend generates a ton_proof entity and sends it to frontend.
+- Frontend signs in to wallet using ton_proof and receives back a signed ton_proof.
+- Frontend sends signed ton_proof to backend for verification.
 
 <br></br>
 <ThemedImage
@@ -25,9 +24,9 @@ import ThemedImage from '@theme/ThemedImage';
 />
 <br></br>
 
-## ton_proof 的结构
+## Structure of ton_proof
 
-ton_proof 在 TON Connect 中与特殊的 `TonProof` 实体一起工作，该实体在连接器内部实现。
+We will be using the TonProof entity, implemented inside connector.
 
 ```js
 type TonProofItemReply = TonProofItemReplySuccess | TonProofItemReplyError;
@@ -35,37 +34,39 @@ type TonProofItemReply = TonProofItemReplySuccess | TonProofItemReplyError;
 type TonProofItemReplySuccess = {
   name: "ton_proof";
   proof: {
-    timestamp: string; // 64位unix时代签名操作的时间（秒）
+    timestamp: string; // 64-bit unix epoch time of the signing operation (seconds)
     domain: {
-      lengthBytes: number; // AppDomain 长度
-      value: string;  // app 域名（作为url部分，无编码）
+      lengthBytes: number; // AppDomain Length
+      value: string;  // app domain name (as url part, without encoding)
     };
-    signature: string; // base64编码的签名
-    payload: string; // 来自请求的有效载荷
+    signature: string; // base64-encoded signature
+    payload: string; // payload from the request
   }
 }
 
 ```
 
-## 在服务器端检查 ton_proof
+## Checking ton_proof on Server Side
 
-1. 从用户处检索 `TonProofItemReply`。
-2. 验证接收到的域是否对应于应用程序的域。
-3. 检查 `TonProofItemReply.payload` 是否被原始服务器允许且仍然有效。
-4. 检查 `timestamp` 在当前是否真实。
-5. 根据[消息方案](/develop/dapps/ton-connect/sign#concept-explanation)组装消息。
-6. 通过API (a) 或 (b) 在后端实现的逻辑获取 `public_key`
+1. Retrieve `TonProofItemReply` from a user.
+2. Verify that the received domain corresponds to the domain of your application.
+3. Check if `TonProofItemReply.payload` is permitted by original server and is still active.
+4. Check if `timestamp` is actual at the moment.
+5. Assemble a message according to the [message scheme](/develop/dapps/ton-connect/sign#concept-explanation).
+6. Retrieve `public_key` either from API (a) or via back-end logic (b)
+
 - 6a:
-    - 通过 [TON API](https://docs.tonconsole.com/tonapi/api-v2#:~:text=/v2/-,tonconnect,-/stateinit) 方法 `POST /v2/tonconnect/stateinit` 从 `walletStateInit` 中检索 `{public_key, address}`。
-    - 验证从 `walletStateInit` 提取的 `address` 或对应于用户声明的钱包 `address`。
+  - Retrieve `{public_key, address}` from the `walletStateInit` with [TON API](https://docs.tonconsole.com/tonapi/api-v2#:~:text=/v2/-,tonconnect,-/stateinit) method `POST /v2/tonconnect/stateinit`.
+  - Check that the `address` extracted from `walletStateInit` corresponds to wallet `address` declared by user.
 - 6b:
-    - 通过钱包合约的 [get 方法](https://github.com/ton-blockchain/wallet-contract/blob/main/func/wallet-v4-code.fc#L174) 获得钱包的 `public_key`。
-    - 如果合约未激活，或者缺少在旧钱包版本（v1-v3）中发现的 get_method，则以这种方式获取密钥将是不可能的。相反，您将需要解析前端提供的 walletStateInit。确保 TonAddressItemReply.walletStateInit.hash() 等于 TonAddressItemReply.address.hash()，表示一个BoC哈希。
-7. 验证前端的 `signature` 实际上签署了组装的消息，并且对应于地址的 `public_key`。
+  - Obtain the wallet `public_key` via the wallet contract [get method](https://github.com/ton-blockchain/wallet-contract/blob/main/func/wallet-v4-code.fc#L174).
+  - If the contract is not active, or if it lacks the get_method found in older wallet versions (v1-v3), then obtaining the key in this manner will be impossible. Instead, you will need to parse the walletStateInit provided by the frontend. Ensure that TonAddressItemReply.walletStateInit.hash() is equal to TonAddressItemReply.address.hash(), indicating a BoC hash.
 
-## React 示例
+7. Verify that the `signature` from the frontend actually signs the assembled message and corresponds to the `public_key` of the address.
 
-1. 将token提供器添加到应用的根部：
+## React Example
+
+1. Add token provider to the root of your app:
 
 ```tsx
 function App() {
@@ -79,10 +80,10 @@ function App() {
 }
 ```
 
-2. 描述后端认证：
+2. Implement authentication on backend:
 
 <details>
-<summary>示例</summary>
+<summary>Example</summary>
 
 ```tsx
 import {useContext, useEffect, useRef} from "react";
@@ -151,17 +152,18 @@ export function useBackendAuth() {
     }, [wallet, isConnectionRestored, setToken])
 }
 ```
+
 </details>
 
-## 概念解释
+## Concept Explanation
 
-如果请求了 `TonProofItem`，钱包证明了账户所选密钥的所有权。签名消息绑定到：
+If `TonProofItem` is requested, wallet proves ownership of the selected account’s key. The signed message is bound to:
 
-- 独特的前缀，以将消息与链上消息分开。（`ton-connect`）
-- 钱包地址
-- App域
-- 签名时间戳
-- 应用的自定义有效载荷（服务器可能在其中放置其随机数、cookie id、过期时间）
+- Unique prefix to separate messages from on-chain messages. (`ton-connect`)
+- Wallet address
+- App domain
+- Signing timestamp
+- App’s custom payload (where server may put its nonce, cookie id, expiration time)
 
 ```
 message = utf8_encode("ton-proof-item-v2/") ++
@@ -173,40 +175,47 @@ message = utf8_encode("ton-proof-item-v2/") ++
 signature = Ed25519Sign(privkey, sha256(0xffff ++ utf8_encode("ton-connect") ++ sha256(message)))
 ```
 
-其中：
+where:
 
-* `Address` 是钱包地址编码为一系列：
- * `workchain`：32位有符号整数大端；
- * `hash`：256位无符号整数大端；
-* `AppDomain` 是长度 ++ 编码的域名
-- `长度` 是utf-8编码的应用域名长度的32位值（以字节为单位）
-- `编码的域名` 是长度字节的utf-8编码的应用域名
-* `Timestamp` 是签名操作的64位unix时代时间
-* `Payload` 是一个可变长度的二进制字符串。
+- `Address` is the wallet address encoded as a sequence:
+- `workchain`: 32-bit signed integer big endian;
+- `hash`: 256-bit unsigned integer big endian;
+- `AppDomain` is Length ++ EncodedDomainName
 
-注意：有效载荷是可变长度的不受信任数据。为避免使用不必要的长度前缀，我们将其放在消息的最后。
+<!---->
 
-公钥必须验证签名：
+- `Length` is 32-bit value of utf-8 encoded app domain name length in bytes
+- `EncodedDomainName` id `Length`-byte  utf-8 encoded app domain name
 
-1. 首先，尝试通过在 `Address` 部署的智能合约上的 `get_public_key` get-method 获得公钥。
+<!---->
 
-2. 如果智能合约尚未部署，或缺少get-method，您需要：
+- `Timestamp` 64-bit unix epoch time of the signing operation
+- `Payload` is a variable-length binary string.
 
-    1. 解析 `TonAddressItemReply.walletStateInit` 并从stateInit获取公钥。您可以将 `walletStateInit.code` 与标准钱包合约的代码进行比较，并根据找到的钱包版本解析数据。
+Note: payload is variable-length untrusted data. We put it last to avoid using unnecessary length prefixes.
 
-    2. 检查 `TonAddressItemReply.publicKey` 是否等于获得的公钥。
+The signature must be verified by public key:
 
-    3. 检查 `TonAddressItemReply.walletStateInit.hash()` 是否等于 `TonAddressItemReply.address`。`.hash()` 意味着BoC哈希。
+1. First, try to obtain public key via `get_public_key` get-method on smart contract deployed at `Address`.
 
+2. If the smart contract is not deployed yet, or the get-method is missing, then:
 
-### TON Proof 验证示例
+   1. Parse `TonAddressItemReply.walletStateInit` and get public key from stateInit. You can compare the `walletStateInit.code` with the code of standard wallets contracts and parse the data according to the found wallet version.
 
-* [GO 演示应用](https://github.com/ton-connect/demo-dapp-backend/blob/master/proof.go)
-* [TS 示例](https://gist.github.com/TrueCarry/cac00bfae051f7028085aa018c2a05c6)
-* [Python 示例](https://github.com/XaBbl4/pytonconnect/blob/main/examples/check_proof.py)
+   2. Check that `TonAddressItemReply.publicKey` equals to obtained public key
 
-## 参阅
+   3. Check that `TonAddressItemReply.walletStateInit.hash()` equals to `TonAddressItemReply.address`. `.hash()` means BoC hash.
 
-* [[YouTube] 为 @tonconnect/react-ui 检查 ton_proof [RU]](https://youtu.be/wIMbkJHv0Fs?list=PLyDBPwv9EPsCJ226xS5_dKmXXxWx1CKz_&t=2971)
-* [准备消息](/develop/dapps/ton-connect/message-builders)
-* [发送消息](/develop/dapps/ton-connect/transactions)
+### Examples of TON Proof Verification
+
+- [GO demo app](https://github.com/ton-connect/demo-dapp-backend/blob/master/proof.go)
+- [Rust demo app](https://github.com/liketurbo/demo-dapp-backend-rs)
+- [TS example](https://gist.github.com/TrueCarry/cac00bfae051f7028085aa018c2a05c6)
+- [Python example](https://github.com/XaBbl4/pytonconnect/blob/main/examples/check_proof.py)
+- [PHP example](https://github.com/vladimirfokingithub/Ton-Connect-Proof-Php-Check)
+
+## See Also
+
+- [\[YouTube\] Check ton_proof for @tonconnect/react-ui \[RU\]](https://youtu.be/wIMbkJHv0Fs?list=PLyDBPwv9EPsCJ226xS5_dKmXXxWx1CKz_&t=2971)
+- [Preparing Messages](/develop/dapps/ton-connect/message-builders)
+- [Sending Messages](/develop/dapps/ton-connect/transactions)
