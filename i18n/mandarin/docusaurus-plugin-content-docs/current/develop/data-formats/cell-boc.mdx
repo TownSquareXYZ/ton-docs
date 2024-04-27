@@ -1,9 +1,11 @@
 import ThemedImage from '@theme/ThemedImage';
 
-# cell与cell包 (BoC)
+# Cell & Bag of Cells (BoC)
 
-## cell
-cell是TON区块链上的一种数据结构。cell能够存储多达1023位，并且可以拥有最多4个对其他cell的引用。
+## Cell
+
+A cell represents a data structure on TON Blockchain. Cells are able to store up to 1023 bits and possess up to 4 references to other cells.
+
 <br></br>
 <ThemedImage
 alt=""
@@ -14,10 +16,9 @@ sources={{
 />
 <br></br>
 
+## Bag of Cells
 
-## cell包
-
-cell包 (BoC) 是一种将cell序列化为字节数组的格式，这一格式在 [TL-B schema](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/tl/boc.tlb#L25) 中有进一步描述。
+Bag of Cells (BoC) is a format for serializing cells into byte arrays, which is further described in the [TL-B schema](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/tl/boc.tlb#L25).
 
 <br></br>
 <ThemedImage
@@ -29,7 +30,7 @@ sources={{
 />
 <br></br>
 
-在TON上，所有东西都由cell构成，包括合约代码、存储的数据、区块等，实现了过程中的流线型和强大的灵活性。
+On TON, everything consists of cells, including contract code, stored data, blocks, achieving streamline and robust flexibility in the process.
 
 <br></br>
 <ThemedImage
@@ -41,8 +42,9 @@ sources={{
 />
 <br></br>
 
-### cell序列化
-让我们分析我们的第一个cell包示例：
+### Cell serialization
+
+Let's analyze our first example of a Bag of Cells :
 
 <br></br>
 <ThemedImage
@@ -62,66 +64,70 @@ sources={{
   }
 }
 ```
-在此示例中，我们有一个1位大小的根cell，它有2个链接：第一个指向一个24位cell，第二个指向一个7位cell，后者又有一个链接指向一个24位cell。
 
-为了使此框架按预期工作，需要将cell转换为单一的字节序列。为此，首先，我们只利用唯一的cell类型，下面3个中的2个如下所示：
+In this example we have a 1-bit size root cell that has 2 links: the first to a 24-bit cell and the second to a 7-bit cell which possesses 1 link to a 24-bit cell.
+
+For this framework to work as intended, it’s necessary to turn the cells into a single sequence of bytes. To accomplish this, first, we leverage only unique cell types, below 3 out of 4 are presented as follows:
+
 ```json
 1[8_]
 24[0AAAAA]
 7[FE]
 ```
+
 :::note
-为了只留下唯一的cell，需要进行比较。为此，我们需要比较cell的[哈希](#cell-hash)。
+In order to leave only unique cells they need to be compared. To do this, we need to compare the [hashes](#cell-hash) of the cells.
 :::
-现在，让我们将它们排列成这样一个顺序：父cell不会向后指。被其余cell指向的cell必须在指向它的那些cell之后出现在列表中。我们得到：
-```json
-1[8_]      -> 索引 0 (根cell)
-7[FE]      -> 索引 1
-24[0AAAAA] -> 索引 2
-```
-
-现在，让我们计算上述3个cell的描述。这些描述由2个字节组成，存储了有关数据长度和数据链接数量的标志信息。
-
-第一个字节 - **引用描述符** - 计算为 `r+8s+32l`，其中 `0 ≤ r ≤ 4` 是cell引用（链接）的数量，`0 ≤ s ≤ 1` 对于[异类](#special-exotic-cells)cell为1，对于普通cell为0，`0 ≤ l ≤ 3` 是cell的[层级](#cell-level)。
-
-第二个字节 - **位描述符** - 等于 `floor(b / 8) + ceil (b / 8)`，其中 `0 <= b <= 1023` 是cell中的位数。这个描述符代表cell数据的完整4位组的长度（但如果不为空至少为1）。
-
-结果是：
 
 ```json
-1[8_]      -> 0201 -> 2个引用，长度1
-7[FE]      -> 0101 -> 1个引用，长度1
-24[0AAAAA] -> 0006 -> 0个引用，长度6
+1[8_]      -> index 0 (root cell)
+7[FE]      -> index 1
+24[0AAAAA] -> index 2
 ```
-对于不完整的4位组的数据，在序列的末尾添加1位。这意味着它表示组的结束位，并用于确定不完整组的真实大小。让我们添加以下位：
 
+Now, let's calculate descriptions for each of the 3 cells touched on above. These descriptions are made up of 2 bytes that store flags composed of information about the length of the data and the number of data linkages. 
+
+The first byte - **refs descriptor** - is calculated as `r+8s+32l`, where `0 ≤ r ≤ 4` is amount of the Cell references (links), `0 ≤ s ≤ 1` is 1 for [exotic](#special-exotic-cells) cells and 0 for ordinary ones, and `0 ≤ l ≤ 3` is the [level](#cell-level) of the Cell.
+
+The second one - **bits descriptor** - is equals `floor(b / 8) + ceil (b / 8)` where `0 <= b <= 1023` is number of bits in the Cell. This descriptor represents the length of the full 4-bit groups of the Cell data (but at least 1 if it isn’t empty).
+
+The result is:
+
+```json
+1[8_]      -> 0201 -> 2 refs, length 1
+7[FE]      -> 0101 -> 1 ref, length 1
+24[0AAAAA] -> 0006 -> 0 refs, length 6
+```
+
+For data with incomplete 4-bit groups, 1 bit is added to the end of the sequence. This means it denotes the end bit of the group and is used to determine the true size of incomplete groups. Let's add the bits below:
 
 ```json
 1[8_]      -> C0     -> 0b10000000->0b11000000
 7[FE]      -> FF     -> 0b11111110->0b11111111
-24[0AAAAA] -> 0AAAAA -> 不变（完整组）
+24[0AAAAA] -> 0AAAAA -> do not change (full groups)
 ```
 
-现在让我们添加引用索引：
+Now let's add the refs indexes:
+
 ```json
-0 1[8_]      -> 0201 -> 指向索引为2的cell
-1 7[FE]      -> 02 -> 指向索引为2的cell
-2 24[0AAAAA] -> 无引用
+0 1[8_]      -> 0201 -> refers to 2 cells with such indexes
+1 7[FE]      -> 02 -> refers to cells with index 2
+2 24[0AAAAA] -> no refs
 ```
 
-并将其全部组合在一起：
+And put it all together:
+
 ```json
 0201 C0     0201  
 0101 FF     02
 0006 0AAAAA 
 ```
 
-并通过将相应的字符串连接成一个单一的字节数组来拼接它们：
-`0201c002010101ff0200060aaaaa`，大小14字节。
-
+And concat it by joining the corresponding strings into a single array of bytes: 
+`0201c002010101ff0200060aaaaa`, size 14 bytes.
 
 <details>
-  <summary><b>显示示例</b></summary>
+  <summary><b>Show example</b></summary>
 
 ```golang
 func (c *Cell) descriptors() []byte {
@@ -141,104 +147,113 @@ ceilBytes++
 	return []byte{byte(len(c.refs)) + specBit + c.level*32, byte(ln)}
 }
 ```
-[来源](https://github.com/xssnick/tonutils-go/blob/3d9ee052689376061bf7e4a22037ff131183afad/tvm/cell/serialize.go#L205)
+
+[Source](https://github.com/xssnick/tonutils-go/blob/3d9ee052689376061bf7e4a22037ff131183afad/tvm/cell/serialize.go#L205)
 
 </details>
 
-### 打包cell包
-让我们打包上一节直接提到的cell。我们已经将其序列化为一个扁平的14字节数组。
+### Packing a Bag of Cells
 
-因此，我们根据其[架构](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/tl/boc.tlb#L25)构建header。
+Let's pack the cell from the section directly above. We have already serialized it into a flat 14 byte array.
+
+Therefore, we build the header according to its [schema](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/tl/boc.tlb#L25).
 
 ```
-b5ee9c72                      -> BoC结构的tl-b ID
-01                            -> 标志和大小:(## 3)，在我们的案例中所有标志都是0，
-                                 以及存储cell数量所需的字节数为1。
-                                 我们得到 - 0b0_0_0_00_001
-01                            -> 存储序列化cell大小的字节数
-03                            -> cell数量，1字节（由头部的3位大小:(## 3)定义），等于3。
-01                            -> 根cell的数量 - 1
-00                            -> 不存在，当前实现中始终为0
-0e                            -> 序列化cell的大小，1字节（上面定义的大小），等于14
-00                            -> 根cell索引，大小1（由头部的3大小：(## 3)位确定），
-                                 始终为0
-0201c002010101ff0200060aaaaa  -> 序列化cell
+b5ee9c72                      -> id tl-b of the BoC structure
+01                            -> flags and size:(## 3), in our case the flags are all 0,
+                                 and the number of bytes needed to store the number of cells is 1.
+                                 we get - 0b0_0_0_00_001
+01                            -> number of bytes to store the size of the serialized cells
+03                            -> number of cells, 1 byte (defined by 3 bits size:(## 3), equal to 3.
+01                            -> number of root cells - 1
+00                            -> absent, always 0 (in current implementations)
+0e                            -> size of serialized cells, 1 byte (size defined above), equal to 14
+00                            -> root cell index, size 1 (determined by 3 size:(## 3) bits from header),
+                                 always 0
+0201c002010101ff0200060aaaaa  -> serialized cells
 ```
 
-接下来，我们将上述所有内容连接成一个字节数组，得到我们最终的BoC：
+Next, we concat everything above into an array of bytes into our final BoC:
 `b5ee9c7201010301000e000201c002010101ff0200060aaaaa`
 
-cell包实现示例：[序列化](https://github.com/xssnick/tonutils-go/blob/master/tvm/cell/serialize.go)，[反序列化](https://github.com/xssnick/tonutils-go/blob/master/tvm/cell/parse.go)
+Bag of Cells Implementation Examples: [Serialization](https://github.com/xssnick/tonutils-go/blob/master/tvm/cell/serialize.go), [Deserialization](https://github.com/xssnick/tonutils-go/blob/master/tvm/cell/parse.go)
 
-## 特殊cell
+## Special (Exotic) Cells
 
-通常，TON上运行的cell分为两大类：普通cell和特殊cell。用户处理的大多数cell是普通cell，负责携带信息。
+Generally, cells operating on TON are divided into two main types: ordinary cells and special cells. Most of the cells that the users work with are ordinary cells responsible for carrying information. 
 
-然而，为了实现网络的内部功能，有时需要特殊cell，并且它们用于多种目的，这取决于它们的子类型。
+Nevertheless, to realize internal functionality of the network, special cells are sometimes needed and are used for a diverse range of purposes, depending on their subtype.
 
-## cell层级
+## Cell Level
 
-每个cell都有一个称为`Level`的属性，它由0到3的整数表示。
+Every Cell has an attribute called `Level`, which is represented by an integer from 0 to 3.
 
-### 普通cell层级
+### Ordinary cells level
 
-普通cell的层级始终等于其所有引用的层级的最大值：
+The Level of an ordinary Cell is always equal to the maximum of the levels of all its references:
+
 ```cpp
 Lvl(c) = max(Lvl(r_0), ..., Lvl(r_i), ..., Lvl(r_e))
 ```
 
-其中`i`是`c`的引用索引，`e`是`c`的引用数量。
+Where `i` is a `c` reference index, `e` is a `c` reference amount.
 
-_没有引用的普通cell层级为零_
+_Ordinary Cell without refs level is zero_
 
-### 特殊cell层级
-特殊cell对其层级的设置有不同的规则，这些规则在[此文](/develop/data-formats/exotic-cells)中有描述。
+### Exotic cells level
 
-## cell哈希
-在大多数情况下，用户使用的是层级为0的普通cell，它们只有一个哈希，称为 representation hash（或 hash infinity）。
+Exotic cells have different rules for setting their level, which are described in [this](/develop/data-formats/exotic-cells) article.
 
-层级为`Lvl(c) = l`的cell`c`，其中`1 ≤ l ≤ 3`，除了 representation hash 外，还有`l`个**"更高"**的哈希。
+## Cell hash
 
-### 标准cell representation hash 计算
-首先，我们需要计算cell表示（类似于上面描述的cell序列化）
+In most cases users work with ordinary cells with level 0 which have only one hash, called representation hash (or hash infinity).
 
-1. 计算描述符字节
-2. 添加序列化cell数据
-3. 对于每个cell的引用，添加其深度
-4. 对于每个cell的引用，添加其 representation hash 
-5. 计算结果的SHA256哈希
+Cell `c` with level `Lvl(c) = l`, where `1 ≤ l ≤ 3` has representation hash and `l` **"higher"** hashes.
 
-让我们分析以下示例：
+### Standard Cell representation hash calculation
 
-#### 无引用的cell
+First, we need to calculate Cell representation (which is similar to Cell serialization described above)
+
+1. Compute descriptors bytes
+2. Add serialized Cell data
+3. For every Cell's refs add its depth
+4. For every Cell's refs add its representation hash
+5. Compute SHA256 hash of the result
+
+Let's analyze the following examples:
+
+#### Cell without references
+
 ```json
 32[0000000F]
 ```
-1. 描述符计算
 
-引用描述符等于 `r+8s+32l = 0 + 0 + 0 = 0 = 00`
+1. Descriptors computation
 
-位描述符等于 `floor(b / 8) + ceil (b / 8) = 8 = 08`
+The reference descriptor is equals to `r+8s+32l = 0 + 0 + 0 = 0 = 00`
 
-连接这些字节，我们得到 `0008`
+The bits descriptor is equals to `floor(b / 8) + ceil (b / 8) = 8 = 08`
 
-2. cell数据序列化
+Concatenating these bytes we get `0008`
 
-在这种情况下，我们有完整的4位组，所以我们不必向cell数据添加任何位。结果是 `0000000f`
+2. Cell data serialization
 
-3. 引用深度
+In this case we have complete 4-bit groups, so we don't have to add any bits to the Cell data. The result is `0000000f`
 
-我们跳过这部分，因为我们的cell没有任何引用
+3. Refs depth
 
-4. 引用哈希
+We skip this part, because our Cell doesn't have any refs
 
-我们跳过这部分，因为我们的cell没有任何引用
+4. Refs hashes
 
-5. SHA256计算
+We skip this part, because our Cell doesn't have any refs
 
-连接前面步骤的字节，我们得到 `00080000000f`，其SHA256为 `57b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9` - 这就是cell representation hash 。
+5. SHA256 computation
 
-#### 带有引用的cell
+Concatenating bytes from the previous steps we get `00080000000f` and the SHA256 from this bytestring is `57b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9` - that's the Cell representation hash.
+
+#### Cell with references
+
 ```json
 24[00000B] -> {
 	32[0000000F],
@@ -246,40 +261,41 @@ _没有引用的普通cell层级为零_
 }
 ```
 
-1. 描述符计算
+1. Descriptors computation
 
-引用描述符等于 `r+8s+32l = 2 + 0 + 0 = 0 = 02`
+The reference descriptor is equals to `r+8s+32l = 2 + 0 + 0 = 0 = 02`
 
-位描述符等于 `floor(b / 8) + ceil (b / 8) = 6 = 06`
+The bits descriptor is equals to `floor(b / 8) + ceil (b / 8) = 6 = 06`
 
-连接这些字节，我们得到 `0206`
+Concatenating these bytes we get `0206`
 
-2. cell数据序列化
+2. Cell data serialization
 
-在这种情况下，我们有完整的4位组，所以我们不必向cell数据添加任何位。结果是 `00000b`
+In this case we have complete 4-bit groups, so we don't have to add any bits to the Cell data. The result is `00000b`
 
-3. 引用深度
+3. Refs depth
 
-深度由2个字节表示。我们的cell有2个引用，每个的深度都是零，所以这一步的结果是 `00000000`。
+The depth is represented by 2 bytes. Our Cell has 2 refs and depth of each is zero so the result of this step is `00000000`.
 
-4. 引用哈希
+4. Refs hashes
 
-对于每个引用，我们添加其哈希（我们上面计算过），所以结果是 `57b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f957b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`
+For every reference we add its hash (we computed above), so the result is `57b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f957b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`
 
-5. SHA256计算
+5. SHA256 computation
 
-连接前面步骤的字节，我们得到 `020600000b0000000057b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f957b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`
-，其SHA256为 `f345277cc6cfa747f001367e1e873dcfa8a936b8492431248b7a3eeafa8030e7` - 这就是cell representation hash 。
+Concatenating bytes from the previous steps we get `020600000b0000000057b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f957b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`
+and the SHA256 from this bytestring is `f345277cc6cfa747f001367e1e873dcfa8a936b8492431248b7a3eeafa8030e7` - that's the Cell representation hash.
 
-### 更高哈希的计算
+### Higher hashes calculation
 
-普通cell`c`的更高哈希与其 representation hash 的计算类似，但使用其引用的更高哈希而不是它们的 representation hash。
+Higher hashes of an Ordinary Cell `c` are computed similarly to its representation hash,
+but using the higher hashes of its references instead of their representation hashes.
 
-特殊cell有其自己的计算更高哈希的规则，这些规则在[此文](/develop/data-formats/exotic-cells)中有描述。
+Exotic cells have their own rules for computing their higher hashes, which are described in [this](/develop/data-formats/exotic-cells) article.
 
+## See Also
 
-## 参阅
+[//]: # "* [Original article on RU](https://github.com/xssnick/ton-deep-doc/blob/master/Cells-BoC.md)"
 
-[//]: # (* [原文RU]&#40;https://github.com/xssnick/ton-deep-doc/blob/master/Cells-BoC.md&#41;)
-* [特殊cell](/develop/data-formats/exotic-cells)
-* [默克尔证明验证](/develop/data-formats/proofs)
+- [Exotic (Special) Cells](/develop/data-formats/exotic-cells)
+- [Merkle Proofs verifying](/develop/data-formats/proofs)
