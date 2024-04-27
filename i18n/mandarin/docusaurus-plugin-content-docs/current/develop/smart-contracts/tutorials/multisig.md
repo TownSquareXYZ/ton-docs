@@ -1,271 +1,270 @@
 ---
-description: At the end of the tutorial, you will have deployed multisig contract in TON Blockchain.
+description: 本教程结束时，您将在TON区块链上部署了多签合约。
 ---
 
-# How to make a simple multisig contract
+# 如何制作一个简单的多签合约
 
-## 💡 Overview
+## 💡 概览
 
-This tutorial help you learn how to deploy your multisig contract.\
-Recall, that (n, k)-multisig contract is a multisignature wallet with n private keys holders, which accepts requests to send messages if the request (aka order, query) collects at least k signatures of the holders.
+本教程将帮助您学习如何部署您的多签合约。回想一下，(n, k)多签合约是一个有n个私钥持有者的多签钱包，如果请求（又称订单、查询）至少收集到持有者的k个签名，则接受发送消息的请求。
 
-Based on original multisig contract code and updates by akifoq:
+基于akifoq对原始多签合约代码的更新：
 
-- [original TON Blockchain multisig-code.fc](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/multisig-code.fc)
-- [akifoq/multisig](https://github.com/akifoq/multisig) with fift libraries to work with multisig.
+- [原始TON区块链多签代码.multisig-code.fc](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/multisig-code.fc)
+- [akifoq/multisig](https://github.com/akifoq/multisig)，带有fift库以使用多签。
 
-:::tip starter tip
-For anyone new with multisig: [What is Multisig Technology? (video)](https://www.youtube.com/watch?v=yeLqe_gg2u0)
+:::tip 初学者提示
+对多签不熟悉的人可以看：[什么是多签技术？(视频)](https://www.youtube.com/watch?v=yeLqe_gg2u0)
 :::
 
-## 📖 What you'll learn
+## 📖 您将学到什么
 
-- How to create and customize a simple multisig wallet.
-- How to deploy multisig wallet using lite-client.
-- How to sign request and send it in message to blockchain.
+- 如何创建和定制一个简单的多签钱包。
+- 如何使用轻客户端部署多签钱包。
+- 如何签署请求并将其作为消息发送到区块链。
 
-## ⚙ Set your environment
+## ⚙ 设置您的环境
 
-Before we begin our journey, check and prepare your environment.
+在我们开始之前，检查并准备您的环境。
 
-- Install `func`, `fift`, `lite-client` binaries and `fiftlib` from the [Installation](/develop/smart-contracts/environment/installation) section.
-- Clone [repository](https://github.com/akifoq/multisig) and open its directory in CLI.
+- 从[安装](/develop/smart-contracts/environment/installation)部分中安装`func`、`fift`、`lite-client`二进制文件和`fiftlib`。
+- 克隆[库](https://github.com/akifoq/multisig)并在CLI中打开其目录。
 
 ```cpp
 https://github.com/akifoq/multisig.git
 cd ~/multisig
 ```
 
-## 🚀 Let's get started!
+## 🚀 开始吧！
 
-1. Compile the code to fift.
-2. Prepare multisig owners keys.
-3. Deploy your contract.
-4. Interact with deployed multisig wallet in blockchain.
+1. 将代码编译为fift。
+2. 准备多签所有者的密钥。
+3. 部署您的合约。
+4. 与区块链中部署的多签钱包进行交互。
 
-### Compile the contract
+### 编译合约
 
-Compile the contract to Fift with:
+使用以下命令将合约编译为Fift：
 
 ```cpp
 func -o multisig-code.fif -SPA stdlib.fc multisig-code.fc
 ```
 
-### Prepare multisig owners keys
+### 准备多签所有者密钥
 
-#### Create participants keys
+#### 创建参与者密钥
 
-To create a key you need to run:
+要创建一个密钥，您需要运行：
 
 ```cpp
 fift -s new-key.fif $KEY_NAME$
 ```
 
-- Where `KEY_NAME` is the name of the file where the private key will be written.
+- 其中`KEY_NAME`是将写入私钥的文件的名称。
 
-For example:
+例如：
 
 ```cpp
 fift -s new-key.fif multisig_key
 ```
 
-We'll receive a file `multisig_key.pk` with private key inside.
+我们将收到一个包含私钥的`multisig_key.pk`文件。
 
-#### Collect public keys
+#### 收集公钥
 
-Also, the script will issue a public key in the format:
+此外，脚本还会以以下格式发出一个公钥：
 
 ```
 Public key = Pub5XqPLwPgP8rtryoUDg2sadfuGjkT4DLRaVeIr08lb8CB5HW
 ```
 
-Anything after `"Public key = "` needs to be saved somewhere!
+在`"Public key = "`之后的任何内容都需要保存在某个地方！
 
-Let's store in file `keys.txt`. One Public Key per line, it's important.
+让我们将其存储在`keys.txt`文件中。每行一个公钥，这很重要。
 
-### Deploy your contract
+### 部署您的合约
 
-#### Deploy via lite-client
+#### 通过轻客户端部署
 
-After creating all the keys, you need to collect the public keys into a text file `keys.txt`.
+创建所有密钥后，您需要将公钥收集到文本文件`keys.txt`中。
 
-For example:
+例如：
 
 ```bash
 PubExXl3MdwPVuffxRXkhKN1avcGYrm6QgJfsqdf4dUc0an7/IA
 PubH821csswh8R1uO9rLYyP1laCpYWxhNkx+epOkqwdWXgzY4
 ```
 
-After that, you need to run:
+之后，您需要运行：
 
 ```cpp
 fift -s new-multisig.fif 0 $WALLET_ID$ wallet $KEYS_COUNT$ ./keys.txt
 ```
 
-- `$WALLET_ID$` - the wallet number assigned for current key. It is recommended to use a unique `$WALLET_ID$` for each new wallet with the same key.
-- `$KEYS_COUNT$` - the number of keys needed for confirmation, usually equal to the number of public keys
+- `$WALLET_ID$` - 分配给当前密钥的钱包号。对于每个使用相同密钥的新钱包，建议使用唯一的`$WALLET_ID$`。
+- `$KEYS_COUNT$` - 确认所需的密钥数量，通常等于公钥数量
 
-:::info wallet_id explained
-It's possible to create many wallets with the same keys (Alice key, Bob key). What to do if Alice and Bob already have treasure? That's why `$WALLET_ID$` is crucial here.
+:::info wallet_id 解释
+使用相同的密钥（Alice密钥，Bob密钥）可以创建许多钱包。如果Alice和Bob已经有treasure怎么办？这就是为什么`$WALLET_ID$`在这里至关重要。
 :::
 
-The script will output something like:
+脚本将输出类似于以下的内容：
 
 ```bash
 new wallet address = 0:4bbb2660097db5c72dd5e9086115010f0f8c8501e0b8fef1fe318d9de5d0e501
 
-(Saving address to file wallet.addr)
+(将地址保存到wallet.addr文件中)
 
-Non-bounceable address (for init): 0QBLuyZgCX21xy3V6QhhFQEPD4yFAeC4_vH-MY2d5dDlAbel
+不可弹回地址（用于初始化）：0QBLuyZgCX21xy3V6QhhFQEPD4yFAeC4_vH-MY2d5dDlAbel
 
-Bounceable address (for later access): kQBLuyZgCX21xy3V6QhhFQEPD4yFAeC4_vH-MY2d5dDlAepg
+可弹回地址（用于后续访问）：kQBLuyZgCX21xy3V6QhhFQEPD4yFAeC4_vH-MY2d5dDlAepg
 
-(Saved wallet creating query to file wallet-create.boc)
+(将创建钱包的查询保存到wallet-create.boc文件中)
 ```
 
 :::info
-If you have "public key must be 48 characters long" error, please make sure your `keys.txt` has unix type word wrap - LF. For example, word wrap can be changed via Sublime text editor.
+如果您遇到“公钥必须为48个字符长”的错误，请确保您的`keys.txt`具有unix类型的换行符 - LF。例如，可以通过Sublime文本编辑器更改换行符。
 :::
 
 :::tip
-Bounceable address is better to keep - this is the address of the wallet.
+最好保留可弹回地址 - 这是钱包的地址。
 :::
 
-#### Activate your contract
+#### 激活您的合约
 
-You need to send some TON to our newly generated _treasure_. For example 0.5 TON.
+您需要向我们新生成的_treasure_发送一些TON，例如0.5 TON。
 
-After that, you need to run lite-client:
+之后，您需要运行轻客户端：
 
 ```bash
 lite-client -C global.config.json
 ```
 
-:::info Where get `global.config.json`?
-You can get fresh config file `global.config.json` for [mainnet](https://ton.org/global-config.json) or [testnet](https://ton.org/testnet-global.config.json).
+:::info 如何获取`global.config.json`？
+您可以为[主网](https://ton.org/global-config.json)或[测试网](https://ton.org/testnet-global.config.json)获取最新的配置文件`global.config.json`。
 :::
 
-After starting lite-client, it's best to run the `time` command in lite-client console to make sure the connection was successful:
+启动轻客户端后，最好在轻客户端控制台运行`time`命令，以确保连接成功：
 
 ```bash
 time
 ```
 
-Okay, lite-client is works!
+好的，轻客户端工作正常！
 
-After you need to deploy the wallet. run the command:
+之后，您需要部署钱包。运行命令：
 
 ```
 sendfile ./wallet-create.boc
 ```
 
-After that, the wallet will be ready to work within a minute.
+之后，钱包将在一分钟内准备好可供使用。
 
-### Interact with multisig wallet
+### 与多签钱包进行交互
 
-#### Create a request
+#### 创建请求
 
-First you need to create a message request:
+首先，您需要创建一个消息请求：
 
 ```cpp
 fift -s create-msg.fif $ADDRESS$ $AMOUNT$ $MESSAGE$
 ```
 
-- `$ADDRESS$` - address where to send coins
-- `$AMOUNT$` - number of coins
-- `$MESSAGE$` - name of file for compiled message.
+- `$ADDRESS$` - 发送代币的地址
+- `$AMOUNT$` - 代币的数量
+- `$MESSAGE$` - 被编译消息的文件名。
 
-For example:
+例如：
 
 ```cpp
 fift -s create-msg.fif EQApAj3rEnJJSxEjEHVKrH3QZgto_MQMOmk8l72azaXlY1zB 0.1 message
 ```
 
 :::tip
-To add comment for your transaction, use `-C comment` attribute. To get more information, run _create-msg.fif_ file without parameters.
+要为您的交易添加评论，请使用`-C comment`属性。要获取更多信息，请在没有参数的情况下运行_create-msg.fif_文件。
 :::
 
-#### Choose a wallet
+#### 选择钱包
 
-Next you need to choose a wallet to send a coins from:
+接下来，您需要选择一个要发送代币的钱包：
 
 ```
 fift -s create-order.fif $WALLET_ID$ $MESSAGE$ -t $AWAIT_TIME$
 ```
 
-Where
+其中
 
-- `$WALLET_ID$` — is an ID of wallet backed by this multisig contract.
-- `$AWAIT_TIME$` — Time in seconds that smart contract will await signs from multisig wallet's owners for request.
-- `$MESSAGE$` — here is a name of message boc-file created on the previous step.
+- `$WALLET_ID$` — 是由此多签合约支持的钱包的ID。
+- `$AWAIT_TIME$` — 智能合约将等待多签钱包所有者对请求签名的时间（以秒为单位）。
+- `$MESSAGE$` — 上一步中创建的消息boc文件的名称。
 
 :::info
-If time equals `$AWAIT_TIME$` passed before the request signs, the request becomes expired. As usual, $AWAIT_TIME$ equals a couple of hours (7200 seconds)
+如果在请求得到签名之前，时间等于`$AWAIT_TIME$`这样的条件已经过去了，请求将过期。通常，$AWAIT_TIME$等于几个小时（7200秒）
 :::
 
-For example:
+例如：
 
 ```
 fift -s create-order.fif 0 message -t 7200
 ```
 
-Ready file will be saved in `order.boc`
+准备好的文件将保存在`order.boc`中
 
 :::info
-`order.boc` needs to be shared with key holders, they have to sign it.
+`order.boc`需要与密钥持有者共享，他们必须对其进行签名。
 :::
 
-#### Sign your part
+#### 签署您的部分
 
-To sign, you need to do:
+要签名，您需要执行：
 
 ```bash
 fift -s add-signature.fif $KEY$ $KEY_INDEX$
 ```
 
-- `$KEY$` - name of the file containing the private key to sign, without extension.
-- `$KEY_INDEX$` - index of the given key in `keys.txt` (zero-based)
+- `$KEY$` - 包含签名私钥的文件的名称，不带扩展名。
+- `$KEY_INDEX$` - `keys.txt`中给定密钥的索引（从零开始）
 
-For example, for our `multisig_key.pk` file:
+例如，对于我们的`multisig_key.pk`文件：
 
 ```
 fift -s add-signature.fif multisig_key 0
 ```
 
-#### Create a message
+#### 创建消息
 
-After everyone has signed the order, it needs to be turned into a message for the wallet and signed again with the following command:
+在每个人都签署了订单后，需要将其转换为钱包的消息，并再次使用以下命令进行签名：
 
 ```
 fift -s create-external-message.fif wallet $KEY$ $KEY_INDEX$
 ```
 
-In this case, will be enough only one sign of wallet's owner. The idea is that you can't attack a contract with invalid signatures.
+在这种情况下，只需要钱包所有者的一个签名即可。这样做的想法是，您无法使用无效签名攻击合约。
 
-For example:
+例如：
 
 ```
 fift -s create-external-message.fif wallet multisig_key 0
 ```
 
-#### Send sign to TON Blockchain
+#### 将签名发送到TON区块链
 
-After that, you need to start the light client again:
+之后，您需要再次启动轻客户端：
 
 ```bash
 lite-client -C global.config.json
 ```
 
-And after finally, we want to send our sign! Just run:
+最后，我们要发送我们的签名！只需运行：
 
 ```bash
 sendfile wallet-query.boc
 ```
 
-If everyone else signed the request, it will be completed!
+如果其他人都签署了请求，它将被完成！
 
-You did it, ha-ha! 🚀🚀🚀
+您做到了，哈哈！🚀🚀🚀
 
-## What's next?
+## 接下来
 
-- [Read more about multisig wallets in TON](https://github.com/akifoq/multisig) from akifoq
+- [阅读更多关于TON中多签钱包的信息](https://github.com/akifoq/multisig)，来自akifoq。
