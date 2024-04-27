@@ -1,33 +1,33 @@
-# Shards
+# 碎片
 
 :::warning
 页面正在开发中
 :::
 
-Sharding is a mechanism in TON blockchain which allows to process a large number of transactions. The main idea of sharding in TON is that when account A sends a message to account B and account C sends a message to account D both of these operations can be performed asynchronously.
+隐藏是TON区块链中允许处理大量交易的机制。 隐藏在TON中的主要想法是，当帐户A向帐户B发出消息，而帐户C则向帐户D发出消息时，这两项操作都可以异步进行。
 
-默认情况下，在基本链（`workchain=0`）中只有一个分片，其分片号为 `0x8000000000000000`（或二进制表示为 `1000000000000000000000000000000000000000000000000000000000000000`）。主链（`workchain=-1`）始终只有一个分片。 The masterchain (`workchain=-1`) always has one and only one shard.
+默认情况下，Basechain(`workchain=0`)中只有一个碎片，其碎片号为`0x80000000000000`(或`1000000000000000000000000000000000000000000000000000000000`二进制表示)。 大师级链(“工作链=-1”)总是有一张，只有一张。
 
 ## 拆分
 
-Each shard is responsible for some subset of accounts with some common binary prefix. This prefix appears in shard id which presented by a 64-bit integer and has the following structure: `<binary prefix>100000...`. For example, shard with id `1011100000...` contains all accounts started with prefix `1011`.
+每个仓库负责一些带有一些常见二进制前缀的子帐户。 这个前缀出现在一个64位整数呈现出来并具有以下结构：`<binary prefix>100000...` 。 例如，id为 `1011100000...` 的店铺包含所有开头为 `1011`的账户。
 
-When number of transactions in some shard growth, it splits into two shards. New shards obtaining the following ids: `<parent prefix>01000...` and `<parent prefix>11000...` and responsible for accounts starting with `<parent prefix>0` and `<parent prefix>1` correspondingly. The seqnos of blocks in shards goes continuously starting from parent last seqno plus 1. After split shards go independently and may have different seqnos.
+当交易数量在某些碎片增长时，它会分成两块碎片。 获取以下ID的新碎片：`<parent prefix>01000...`和`<parent prefix>11000... 并相应地负责从`<parent prefix>0`和`<parent prefix>1\`开始的账户。 碎片中方块的下划线从上一节加1开始。 拆分碎片后独立运行，可能有不同的下划线。
 
-Masterchain block contains information about shards in its header. 主链区块在其头部包含分片信息。分片区块出现在主链头部后，可以认为是完成的（不能回滚）。
+Masterchain 块包含关于其头部碎片的信息。 当区块出现在大师链头上，它可以被视为已经完成(不能回滚)。
 
 示例：
 
-- 主链块 `seqno=34607821` 有2个分片：`(0,4000000000000000,40485798)` 和 `(0,c000000000000000,40485843)` (https://toncenter.com/api/v2/shards?seqno=34607821)。
-- 分片 `shard=4000000000000000` 拆分成 `shard=2000000000000000` 和 `shard=6000000000000000`，主链区块 `seqno=34607822` 已经有3个分片：`(0,2000000000000000,40485799)` 和 `(0,6000000000000000,40485799)`。注意，两个新分片具有相同的序列号，但不同的分片ID (https://toncenter.com/api/v2/shards?seqno=34607822)。 Note, that both new shards has the same seqnos but different shard IDs (https://toncenter.com/api/v2/shards?seqno=34607822).
-- 新分片独立进行，经过100个主链区块（在主链块 `seqno=34607921` 中），一个分片有最后一个块 `(0,2000000000000000,40485901)`，另一个分片有 `(0,6000000000000000,40485897)` (https://toncenter.com/api/v2/shards?seqno=34607921)。
+- Masterchain 块 `seqno=34607821` 有 2 shards: `(0,40000000000000,40485798)` 和 `(0,c0000000000000000000,40485843)` (https://toncenter.com/api/v2/shards?seqno=34607821)。
+- Shard `shard=400000000000` 被分割成`shard=200000000000` 和 `shard=600000000000` 和 `shard=600000000000` ，masterchain 块 `seqno=34607822` 已经有三个碎片：`(0200000000000000000,40485799)` 和 `(06000000000000000,40485799)` 。 请注意，两张新的碎片都有相同的下划界块，但不同的碎片ID(https://toncenter.com/api/v2/shards?seqno=34607822)。
+- 新的碎片独立去，100个大师链块(在masterchain block `seqno=34607921`)后，一个碎片有最后一个块`(0,20000000000000,40485901)`，另一个块有`(0,6000000000000000,40485897)` (https://toncenter.com/api/v2/shards?seqno=34607921)。
 
 ## 合并
 
-当分片负载下降时，它们可以按如下方式合并回去：
+当碎片负载下来时，它们可以合并到下面：
 
-- 如果两个分片有共同的父分片，因此，它们的分片ID分别为 `<父前缀>010...` 和 `<父前缀110...`，则可以合并。合并后的分片将具有分片ID `<父前缀>10...`（例如 `10010...` + `10110...` = `1010...`）。合并分片的第一个区块将具有 `seqno=max(seqno1, seqno2) + 1`。 Merged shard will have shard id `<parent prefix>10...` (for example `10010...` + `10110...` = `1010...`). The first block of merged shard will have `seqno=max(seqno1, seqno2) + 1`.
+- 两张碎片如果有共同的父级，就可以合并它们的碎片号为`<parent prefix>010...` 和 `<父级前缀110...'。 Merged shard will have shard id `<parent prefix>10...`(for example`10010...`+`10110...`=`1010...`). 合并后的第一个块将有 `seqno=max(seqno1, seqno2) + 1\` 。
 
 示例：
 
-- 在主链区块 `seqno=34626306` 中，五个分片中的两个，最后区块为 `(0,a000000000000000,40492030)` 和 `(0,e000000000000000,40492216)`，合并成一个区块为 `(0,c000000000000000,40492217)` 的分片 (https://toncenter.com/api/v2/shards?seqno=34626306 和 https://toncenter.com/api/v2/shards?seqno=34626307)。
+- 在masterchain 块`seqno=34626306`中，五个碎片中的两个，最后一个块`(0,a0000000000000,40492030)`和`(0,e0000000000000,40492216)`并入一个块`(0,c0000000000000,40492217)` (https://toncenter.com/api/v2/shards?seqno=34626306和https://toncenter.com/api/v2/shards?seqno=34626307)。
