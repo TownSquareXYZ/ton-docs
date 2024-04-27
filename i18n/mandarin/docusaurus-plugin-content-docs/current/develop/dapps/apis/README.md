@@ -1,43 +1,43 @@
 # API 类型
 
-**高可用性区块链API是在TON上安全、便捷、快速开发有效应用程序的核心元素。**
+**高可用性区块链API是安全、方便和快速开发有效应用的核心元素。**
 
-- [TON HTTP API](/develop/dapps/apis/toncenter) — 允许处理_索引化区块链信息_的API。
-- [TON ADNL API](/develop/dapps/apis/adnl) — 基于ADNL协议的与TON通信的安全API。
+- [TON HTTP API](/develop/dapps/apis/toncenter) — API 允许使用 _indexed blockchain 信息_。
+- [TON ADNL API](/develop/dapps/apis/adnl) — secure API 以便基于ADNL 协议与TON进行通信。
 
-## Toncenter APIs
+## Toncent APIs
 
-- [TON Index](https://toncenter.com/api/v3/) - TON Index从全节点收集数据到PostgreSQL数据库，并提供方便的API来访问索引化的区块链。
-- [toncenter/v2](https://toncenter.com/) - 此API通过HTTP访问TON区块链 - 获取账户和钱包信息，查询区块和交易，向区块链发送消息，调用智能合约的get方法等。
+- [TON Index](https://toncenter.com/api/v3/) - TON Index 从一个完整节点收集数据到 PostgreSQL 数据库，并为索引区块链提供便捷的 API。
+- [toncenter/v2](https://toncenter)。 om/) - 此 API 允许访问 TON blockchain - 获取帐户和钱包信息 查找块和交易，发送消息到区块链，调用智能合约等方法。
 
-## 第三方 APIs
+## 第三方APIs
 
-- [tonapi.io](https://docs.tonconsole.com/tonapi/api-v2) - 快速索引API，提供关于账户、交易、区块的基本数据，以及NFT、拍卖、Jettons、TON DNS、订阅等应用特定数据。它还提供交易链的注释数据。 It also provides annotated data on transaction chains.
-- [dton.io](https://dton.io/graphql/) - GraphQL API，可以提供关于账户、交易和区块的数据，以及关于NFT、拍卖、Jettons和TON DNS的应用特定数据。
-- [ton-api-v4](https://mainnet-v4.tonhubapi.com) - 另一个专注于通过CDN的积极缓存以提高速度的轻量级API。
-- [docs.nftscan.com](https://docs.nftscan.com/reference/ton/model/asset-model) - TON区块链的NFT API。
-- [evercloud.dev](https://ton-mainnet.evercloud.dev/graphql) - 用于TON的基本查询的GraphQL API。
-- [everspace.center](https://everspace.center/toncoin) - 用于访问TON区块链的简单RPC API。
+- [tonapi.io](https://docs.tonconsole.com/tonapi/api-v2) - 快速索引API，提供有关账户、交易、块、应用程序的 NFT、拍卖、Jettons, TON DNS、订阅的基本数据。 它还提供了关于交易链的附加说明的数据。
+- [dton.io](https://dton)。 o/graphql/) - GraphQL API，可以提供帐户、交易和块的数据 以及关于NFT、拍卖、犹太人和TON DNS的具体应用数据。
+- [ton-api-v4](https://mainnet-v4.tonhubapi.com) - 另一个Lite-api通过在 CDN 中的主动提现注重速度。
+- [docs.nftscan.com](https://docs.nftscan.com/reference/ton/model/asset-modell) - 用于TON blockchain的 NFT API。
+- [evercloud.dev](https://ton-mainnet.evercloud.dev/graphql) - GraphQL API for basic questions in TON。
+- [everspace.center](https://everspace.center/toncoin) - 访问 TON Blockchain的简单RPC API。
 
-## 其他 APIs
+## 附加APIs
 
-### Toncoin 汇率 APIs
+### Tonco币率 APIs
 
-- https://tonapi.io/v2/rates?tokens=ton&currencies=ton%2Cusd%2Crub
+- https://tonapi.io/v2/rates?tokens=ton&curcies=ton%2Cusd%2Crub
 - https://coinmarketcap.com/api/documentation/v1/
-- https://apiguide.coingecko.com/getting-started
+- https://apiguide.coingecko.com/getting-starting-started
 
-### 地址转换 APIs
+### 地址转换 API
 
 :::info
-最好通过本地算法转换地址，更多信息请阅读文档中的[地址](/learn/overviews/addresses)部分。
+最好是通过本地算法转换地址，在文档的 [Addresses](/learn/overviews/addresses) 部分中阅读更多内容。
 :::
 
-#### 从原始形式到友好形式
+#### 从友好到原始表单
 
 /api/v2/unpackAddress
 
-Curl
+曲线
 
 ```curl
 curl -X 'GET' \
@@ -45,7 +45,7 @@ curl -X 'GET' \
 -H 'accept: application/json'
 ```
 
-响应正文
+响应体
 
 ```curl
 {
@@ -54,11 +54,11 @@ curl -X 'GET' \
 }
 ```
 
-#### 从友好形式到原始形式
+#### 从友好到原始表单
 
-/api/v2/packAddress
+/api/v2/packaddress
 
-Curl
+曲线
 
 ```curl
 curl -X 'GET' \
@@ -66,7 +66,7 @@ curl -X 'GET' \
 -H 'accept: application/json'
 ```
 
-响应正文
+响应体
 
 ```json
 {
@@ -75,8 +75,8 @@ curl -X 'GET' \
 }
 ```
 
-## 参阅
+## 另见：
 
 - [TON HTTP API](/develop/dapps/apis/toncenter)
-- [SDK列表](/develop/dapps/apis/sdk)
-- [TON 开发手册](/develop/dapps/cookbook)
+- [列出SDK](/develop/dapps/apis/sdk)
+- [TON Cookbook](/develop/dapps/cookbook)
