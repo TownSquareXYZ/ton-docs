@@ -1,135 +1,135 @@
-# 教程样式指南
+# Tutorial Styling Guidelines
 
-所以您已决定为 TON 文档编写一个教程吗？
+So you've decided to write a tutorial for TON Documentation?
 
-我们很高兴让你成为我们的贡献者！ 请检查下面的指南，以确保您的教程遵循TON Docs上原有内容的风格和质量。
+We're excited to have you among our contributors! Please review the guidelines below to make sure your tutorial follows the style and quality of the pre-existing content on TON Docs.
 
-重要的是，你需要一些时间才能熟悉教程结构和如何使用标题。 请阅读我们先前存在的一些教程，并在提交自己的教程之前查看[上一个Pull 请求](https://github.com/ton-community/ton-docs/pulls?q=is%3Apr+is%3A已关闭)。
+It is important that you take some time to become familiar with the tutorial structure and how headings should be used. Please read through some of our pre-existing tutorials and also have a look at [previous Pull Requests](https://github.com/ton-community/ton-docs/pulls?q=is%3Apr+is%3Aclosed) before submitting your own.
 
-## 进程
+## Process
 
-:::info 重要的
-在您开始写入之前，_阅读下面的准则_！ 它们将有助于确保标准化和质量水平，从而使审查过程更快些。
+:::info IMPORTANT
+Before you start writing, _read the guidelines below_! They will help you ensure the level of standardization and quality that will make the review process much faster.
 :::
 
-另外，请务必参考我们提供的 [**示例教程结构**](/contribute/tutorials/sample-tutorial) 。
+Also, be sure to refer to the [**sample tutorial structure**](/contribute/tutorials/sample-tutorial) we have provided.
 
-1. 先在 GitHub 上创建一个新分支，然后克隆一个 [ton-docs](https://github.com/ton-community/ton-docs/) 存储库。
-2. 写下你的教程保持质量和可读性！ 看看现有的教程，看看你应该想要什么。
-3. 当您准备好提交它供审核时，请从您的分支[打开Pull Request](https://docs.github.com/en/pull-requests/collating-with-pull-requests/creating-pull-requests/creating-a-pull-request)。 我们将接到通知，审查进程将开始：
-   1. **请尽一切努力只提交你的教程的最后草稿**。 一些轮胎和语法修复是可以接受的，但如果在我们发布教程之前还需要做出重大修改， 您需要更长的时间来审查并做出必要的更改。
-4. 一旦我们审阅了您的提交并做了所有必要的修改，我们将合并合并合并请求并在Ton文档上发布教程。 在这之后我们将与您联系，以安排您的付款！
-5. 一旦发布，请记得**推广** 您在社交媒体上的教程！ 只要你与我们合作，[文档维护者](/贡献者/维护者)就可以帮助扩大这种宣传。
+1. To begin, fork and then clone the [ton-docs](https://github.com/ton-community/ton-docs/) repository on GitHub and create a new branch in your local repository.
+2. Write your tutorial keeping quality and readability in mind! Have a look at the existing tutorials to see what you should aim for.
+3. When you're ready to submit it for review, [open a Pull Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) from your branch. We will be notified, and the review process will begin:
+   1. **Please make every effort to submit only the final draft of your tutorial**. Some typos and grammar fixes are acceptable, but if there are significant changes to be made before we can publish the tutorial, it will take much longer to review and have you make the necessary changes.
+4. Once we've reviewed your submission and you've made all necessary changes, we'll merge the Pull Request and publish the tutorial on TON Documentation. We'll contact you shortly after this to arrange your payment!
+5. Once it is published, remember to **promote** your tutorial on social media! The [documentation maintainers](/contribute/maintainers) can help to amplify this promotion as long as you cooperate with us.
 
-总之，工作流程如下：
+To summarize, the workflow is as follows:
 
-1. _**Fork 和 Clone**_ 存储库 **`ton-docs`**
-2. _**写入和打字**_ 你的教程
-3. _**提交合并请求**_ 供审核
-4. _**做出任何必要的修改**_
-5. 本教程_**合并并已发布**_
-6. _**在社交媒体上推广你的教程**_ ！
+1. _**Fork and Clone**_ the **`ton-docs`** repository
+2. _**Write and polish**_ your tutorial
+3. _**Submit a Pull Request**_ for review
+4. _**Make any necessary changes**_
+5. The tutorial is _**merged and published**_
+6. _**Promote your tutorial**_ on social media!
 
-## 二. 背景
+## Context
 
-在“TON”之前加上“THE”的主要问题是，在制定TON文件和编辑政策时，销售商等各部门， 和开发人员参加讨论，利用诸如“Blockchain”、“生态系统”等词， 与"TON"一起创建单一系统、网络和品牌的强烈图像。 经过长时间的讨论，我们得出的结论是，要树立一种强有力的品牌形象， 我们应该建立一个词语和短语汇编，这些词语和短语可以在没有“THE”和大写的情况下写成。 如果可以资本化，该条是没有必要的。 目前有两个词组合：TON区块链和TON生态系统。
+The primary issue with adding "THE" before "TON" is that during the development of TON documentation and editorial policy, various departments such as marketing, vendors, and developers joined the discussion to capitalize words such as "Blockchain," "Ecosystem," and others in conjunction with "TON" to create a strong image of a single system, network, and brand. After lengthy discussions, we concluded that for a strong brand image, we should create a glossary of words and phrases that can be written without "THE" and capitalized. If it can be capitalized, the article is unnecessary. Currently, there are two such word combinations: TON Blockchain and TON Ecosystem.
 
-对于TON Connect、TON SDK、TON Grants等其他TON 模块名称，它取决于上下文情况。 我们适用资本化规则，但对该条规则持灵活态度。 如果组件名称是单独的，最好是没有文章。 然而，如果它与一个共同的封口相结合，例如TON Connect 协议， 该条是必要的，因为它提到了实体议定书。
+For other TON module names such as TON Connect, TON SDK, TON Grants, etc., it depends on the context. We apply the capitalization rule but are flexible with the article rule. If the component name stands alone, it is better without the article. However, if it is combined with a common noun, such as the TON Connect protocol, the article is needed because it refers to the entity protocol.
 
-关于其他词组合，如“TON + noun”（如“TON world,”）、“TON community,”等。 我们不限制该条的使用，因为我们自然期望看到该条与修饰品结合在一起。
+Regarding other word combinations like "TON + noun" (e.g., "the TON world," "the TON community," etc.), we do not restrict the use of the article because we naturally expect to see the article in combination with a noun.
 
-## 一般提示
+## General tips
 
-- **不要复制并粘贴原有内容**。 掠夺主义是一个严重的问题，是不能容忍的。 如果本教程受一些现有内容的启发，请参考并链接到它。 当链接到其他教程/资源时，尽可能使用 TON Docs 资源。
-- **通过上传到Google Drive，在PR 中包含任何走访视频或视频内容** 。
-- **必须明确解释来源于动物的账户供资**，包括哪个账户正在从何处和为什么得到供资。 不要让学生自己完成这个任务！
-- **以终端片段或屏幕截图的形式显示示例输出** 以帮助学员了解预期的内容。 修剪长输出。
-- **采取错误驱动的方法** 你故意变成错误，教导学习者如何调试它们。 例如，如果您需要为一个帐户提供资金才能部署合同，请先尝试在没有资金的情况下进行部署。 观察返回的错误，然后修正错误(通过为帐户提供资金)，然后再试一次。
-- \*\*添加潜在的错误和故障排除。 \* 当然，教程不应列出每一个可能的错误，但它应该努力抓住重要或最常见的错误。
-- **在客户端使用React或Vue** 。
-- **在进行PR之前，你自己先运行代码** 以避免任何明显的错误并确保它能够正常工作。
-- **避免包括教程间不同来源的外部/交叉链接**。 如果你的教程更长，我们可以讨论如何将它变成更长的课程或路径。
-- **Provide** **图片或屏幕截图** 以说明需要时的复杂过程。
-- 将您的图像上传到学习教程存储库的`static`目录——**不要** 使用到外部站点的热链接。 因为这可能导致图像损坏。
+- **Do not copy and paste pre-existing content**. Plagiarism is a serious issue and will not be tolerated. If the tutorial is inspired by some existing content, reference it and link to it. When linking to other tutorials/resources, use TON Docs resources if possible.
+- **Include any walkthrough videos or video content** in the PR by uploading it to Google Drive.
+- **Account funding from faucets must be clearly explained**, including which account is being funded, from where, and why. Do not assume learners can accomplish this task on their own!
+- **Display sample outputs** in the form of Terminal snippets or screenshots to help learners understand what to expect. Trim long outputs.
+- **Take an error-driven approach** where you bump into errors on purpose to teach learners how to debug them. For example, if you need to fund an account to be able to deploy a contract, first try and deploy without funding, observe the error that is returned, then fix the error (by funding the account) and try again.
+- **Add potential errors and troubleshooting.** Of course, the tutorial shouldn't list every possible error, but it should make an effort to catch the important or most common ones.
+- **Use React or Vue** for the client-side.
+- **Before making the PR, run the code by yourself first** to avoid any obvious errors and make sure it works as expected.
+- **Avoid including external/cross-links** to different sources between tutorials. If your tutorial is longer, we can discuss how to turn it into a longer course or Pathway.
+- **Provide** **pictures or screenshots** to illustrate the complicated processes where needed.
+- Upload your images to the `static` directory of the learn-tutorials repository — **DO NOT** use hotlinks to external sites, as this can result in broken images.
 - **Image links must** **be in markdown format** and you must **ONLY** use the raw GitHub URL of the static directory in the repository: `![name of your image](https://raw.githubusercontent.com/ton-community/ton-docs/main/static/img/tutorials/<your image filename>.png?raw=true)`
-  - 记住，在URL末尾添加 `?raw=true` 。
+  - Remember to add `?raw=true` at the end of the URL.
 
-## 如何构建您的教程
+## How to structure your tutorial
 
-:::info 示例教程结构
-请随时查看[示例教程结构](/contribute/tutorials/sample-tutorial) 以查看。
+:::info Sample tutorial structure
+Feel free to check out the [sample tutorial structure](/contribute/tutorials/sample-tutorial) to see it with your own eyes.
 :::
 
-- **标题** 应该是直接和明确的，总结教程的目标。 不要在文档中添加教程标题作为标题；相反使用Markdown文档名。
+- The **Title** should be direct and clear, summarizing the tutorial's goal. Do not add the tutorial title as a heading inside the document; instead, use the markdown document filename.
   - _For example_: If your tutorial was titled "_Step by step guide for writing your first smart contract in FunC_," the filename should be:\
     `step-by-step-guide-for-writing-your-first-smart-contract-in-func.md`
-- 包含一个**导言**章节解释_为什么_本教程重要以及教程上的内容。 不要假定这是显而易见的。
-- 包含一个 **前提条件** 部分解释所需的任何_先前知识_ 或任何需要先完成的现有教程、所需的任何令牌等。
-- 包含一个 **Requirements** 部分解释任何_必须安装的技术_**优先**开始本教程，教程将不包括， 例如TON钱包扩展，节点。 s等 不要列出将在教程中安装的软件包。
-- 使用 **subheadings** (H2: ##) 来打破您在教程正文中的解释。 在使用子标题时牢记内容表，并试图使它们保持不变。
-  - 如果小标题下面的内容较短(例如) 只有一个段落和一个代码块，考虑使用黑体字，而不是一个小标题。
-- 包含**结论**部分总结了学到的东西，强化了要点，并祝贺学员完成了教程。
-- (_**可选**_) 包括一个**下一节**指向良好的后续教程或其他资源(项目、文章等)。
-- (_**可选**_) 包括**关于The** **作者** 部分。 您的 bio 应该包含一个链接到您的 GitHub 资料 (它将包含您的姓名、网站等) 和一个链接到您的 Telegram 配置文件 (以便使用者可以联系/标记您寻求帮助和问题).
-- 如果您从其它文档、GitHub repos、或其它教程获得任何帮助，**参考** 部分**必须** 存在。 可能时添加信用来源名称和文档链接(如果不是数字文档) 其中包括一个国际生物多样性网络或其他参考资料)。
+- Include an **Introduction** section explaining _why_ this tutorial matters and what the context of the tutorial is. Don't assume that it is obvious.
+- Include a **Prerequisites** section explaining any _prior knowledge_ required or any existing tutorials that need to be completed first, any tokens that are needed, etc.
+- Include a **Requirements** section explaining any _technologies that must be installed_ **prior** to starting the tutorial and that the tutorial will not cover, such as the TON Wallet extension, Node.js, etc. Do not list packages that will be installed during the tutorial.
+- Use **subheadings** (H2: ##) to break down your explanations within the body of the tutorial. Keep the Table of Contents in mind when using subheadings, and try to keep them on point.
+  - If the content below a subheading is short (for example, only a single paragraph and a code block), consider using bold text instead of a subheading.
+- Include a **Conclusion** section that summarizes what was learned, reinforces key points, and also congratulates the learner for completing the tutorial.
+- (_**Optional**_) Include a **What's Next** section pointing to good follow-up tutorials or other resources (projects, articles, etc.).
+- (_**Optional**_) Include an **About The** **Author** section at the end. Your bio should include a link to your GitHub profile (which will have your name, website, etc.) and a link to your Telegram profile (so that users can contact/tag you for help and questions).
+- A **References** section **must** be present if you have taken any help in writing this tutorial from other documents, GitHub repos, or other tutorials. Credit sources by adding their name and a link to the document when possible (if it is not a digital document, include an ISBN or other means of reference).
 
 ## Style Guide
 
-- **写音频-** 教程由社区贡献者为他们的同伴编写。
-  - 有鉴于此，我们建议在整个教程中创建一个包容和互动的音调。 使用“我们”、“我们”、“我们”等词语。
-    - _例如，"我们已成功地部署了我们的合约。"
-  - 在提供直接指示时，请随时使用“你”、“你的”等。
-    - _示例：“_你的文件看起来像这样：_”。
+- **Writing Tone -** Tutorials are written by community contributors for their peers.
+  - Given this, we recommend creating a tone of inclusion and interaction throughout the tutorial. Use words such as “we”, “us”, “our”.
+    - _For example_: "We have successfully deployed our contract."
+  - When providing direct instructions, feel free to use “you”, “your”, etc.
+    - _For example_: “_Your file should look like this:_”.
 
-- **在整个教程中正确使用 Markdown** 。 参考[GitHub的Markdown guide](https://guides.github.com/features/mastering-markdown/) 以及[示例教程结构](/contribute/tutorials/sample-tutororial).
+- **Use Markdown properly** throughout your tutorial. Refer to [GitHub's markdown guide](https://guides.github.com/features/mastering-markdown/) as well as the [sample tutorial structure](/contribute/tutorials/sample-tutorial).
 
-- **不要使用预定格式的文本来强调**，_例如_：
-  - ❌ "TON count `smart contract" name `country. fc\`" 是不正确的。
-  - :check_mark_buton: "TON count **smark contract** name `country. fc`" 是正确的。
+- **Do not use pre-formatted text for emphasis**, _for example_:
+  - ❌ "TON counter `smart contract` named `counter.fc`" is incorrect.
+  - ✅ "TON counter **smart contract** named `counter.fc`" is correct.
 
-- **不要在章节标题中使用任何标记格式**，_例如_：
-  - ❌ # **Introduction** 不正确。
-  - :check_mark_buton: # 导言正确。
+- **Do not use any markdown formatting in a section heading**, _for example_:
+  - ❌ # **Introduction** is incorrect.
+  - ✅ # Introduction is correct.
 
-- **解释你的代码！** 不要仅仅要求学生们盲目复制和粘贴。
-  - 函数名称、变量和常量 **必须** 在整个文档中保持一致。
-  - 在代码块开头使用注释来显示代码存在的路径和文件名。 _例如_：
+- **Explain your code!** Don't just ask learners to blindly copy and paste.
+  - Function names, variables, and constants **must** be consistent across the entire document.
+  - Use a comment at the beginning of a code block to show the path and filename where the code exists. _For example_:
 
     ```jsx
     // test-application/src/filename.jsx
 
-    从 'react'导入 { useEffect, useState } ;
+    import { useEffect, useState } from 'react';
 
     ...
     ```
 
-- **选择合适的语言** 用于代码块语法高亮！
-  - 所有代码 _必须_ 都有语法高亮。 如果你不知道要应用哪种语法高亮，请使用 **\`\`\`text** 。
+- **Select the appropriate language** for code block syntax highlighting!
+  - All code blocks _must_ have syntax highlighting. Use **\`\`\`text** if you are not sure what kind of syntax highlighting to apply.
 
-- **不要对预定格式文本使用代码块语法，** 例如\*：
-  - ❌ \\`\`\`filename.jsx\\`\`\`\` 不正确。
-  - :check_mark_buton: \`filename.jsx\` 是正确的。
+- **Do not use code block syntax for pre-formatted text,** _for example_:
+  - ❌ \`filename.jsx\` is incorrect.
+  - ✅ \`filename.jsx\` is correct.
 
-- **你的代码块应该得到很好的评论**。 评论应当简短(通常每次两行或三行)，并且有效。 如果你需要更多的空间来解释一种代码，请在代码块之外执行它。
+- **Your code blocks should be well commented**. Comments should be short (usually two or three lines at a time) and effective. If you need more space to explain a piece of code, do it outside of the code block.
 
-- **记住，在所有代码块之前和之后留下一个空白行**。\
-  _例如_：
+- **Remember to leave a blank line** before and after all code blocks.\
+  _For example_:
 
 ```jsx
   
 // test-application/src/filename.jsx  
   
-导入 { useEffect, useState } 从 'React';
+import { useEffect, useState } from 'react';
   
 ```
 
-- **在将你的代码粘贴到代码块中之前使用 linter 和 prettifier** 。 我们推荐JavaScript/React使用 `eslint` 。 使用 "pretier" 进行代码格式化。
-- **避免过度使用子点**，编号列表或复杂的文本格式。 允许使用 **bold** 或 _italic_ 强调但应保持在最低限度。
+- **Use a linter & prettifier** before pasting your code into the code blocks. We recommend `eslint` for JavaScript/React. Use `prettier` for code formatting.
+- **Avoid the overuse of bullet points**, numbered lists, or complicated text formatting. The use of **bold** or _italic_ emphasis is allowed but should be kept to a minimum.
 
-# **App 設定**
+# **App setup**
 
-- Web3项目通常包括几个现有的代码库。 在编写教程时一定要说明这一点。 尽可能提供一个 GitHub 仓库作为起点，让学习者更容易开始学习。
-- 如果您使用 GitHub repo 来包含您教程中使用的代码，_不_， 记得向读者解释如何创建一个文件夹来保持代码组织。
-  _示例_: `mkdir 示例 && cd 示例`
-- 如果您使用 `npm init` 来初始化项目目录，解释提示或使用 `-y` 标记。
-- 如果您使用 `npm install` ，请使用 `-save` 标记。
+- Web3 projects will typically include several existing code libraries. Be sure to account for this when writing your tutorial. Where possible, provide a GitHub repository as a starting point to make it easier for learners to get started.
+- If you are _not_ using a GitHub repo to contain the code used in your tutorial, remember to explain to readers how to create a folder to keep the code organized.
+  _For example_: `mkdir example && cd example`
+- If you use `npm init` to initialize a project directory, explain the prompts or use the `-y` flag.
+- If you use `npm install` use the `-save` flag.
