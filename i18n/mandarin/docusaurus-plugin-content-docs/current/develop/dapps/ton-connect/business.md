@@ -1,46 +1,46 @@
-# TON Connect 企业版
+# TON Connect for Business
 
-TON Connect 旨在通过提供吸引流量和增加用户留存的强大功能，为企业定制化服务。
+TON Connect 可以通过提供能够吸引流量和增加用户保留的强大功能为企业定制的。
 
-## 产品特性
+## 产品特征
 
-- 安全私密的认证，可控的个人数据公开
-- 在单个用户会话内的 TON 上进行任意事务签名
-- 应用程序与用户钱包之间的即时连通性
+- 受控个人数据披露的安全和私密身份验证
+- 在单个用户会话内在 TON 上签名的任意交易
+- 应用程序和用户钱包之间的即时连接
 - 钱包内直接自动可用的应用程序
 
-## 采用 TON Connect
+## Adopting TON Connect
 
 ### 基本步骤
 
-为了让开发者将 TON Connect 集成到他们的应用中，使用了专门的 TON Connect SDK。这个过程相当简单，可以在需要时访问正确的文档进行操作。 The process is quite simple and can be performed by accessing the correct documentation when needed.
+为了让开发人员将TON Connect 整合到他们的应用程序中，使用了专门的TON Connect SDK。 这一过程相当简单，可以在需要时查阅正确的文件。
 
-TON Connect 允许用户通过二维码或通用连接链接将他们的应用与众多钱包连接。应用程序还可以使用内置浏览器扩展在钱包内打开，因此了解添加到TON Connect中的附加功能至关重要。 Apps can also be opened within a wallet using a built-in browser extension and it is critical to keep up to date with additional features that are added to TON Connect moving forward.
+TON Connect 允许用户通过二维码或通用连接链接将其应用程序与众多钱包连接。 应用也可以在钱包中使用内置的浏览器扩展打开，关键是要随时更新添加到 TON Connect的其他功能。
 
-### TON Connect 的开发者集成协助
+### 为 TON Connect 开发者集成帮助
 
-1. 描述您的应用的现有用户流程
-2. 确定所需的操作（例如，事务授权，消息签名）
-3. 向我们的团队描述您的技术栈
+1. 描述您应用程序的现有用户流
+2. 识别所需操作(例如交易授权、 消息签名)
+3. 将你的技术堆栈描述给我们的团队
 
-如果您想了解更多关于 TON Connect 及其各种服务和功能，欢迎通过 [developer](https://t.me/tonrostislav) 与 TON Connect 业务团队联系，讨论您想要的解决方案。
+如果您有兴趣了解更多关于 TON Connect 及其各种服务和能力的信息， 请随时联系TON Connect Business [developer](https://t)。 /tonrostiblav，讨论您想要的解决方案。
 
-### 常见的实现案例
+### 共同执行案件
 
-通过使用 [TON Connect SDK](https://github.com/ton-connect/sdk)，详细的集成说明让开发者能够：
+通过使用 [TON Connect SDK](https://github.com/ton-connect/sdk) ，详细说明集成TON Connect 允许开发者：
 
-- 将他们的应用与各种 TON 钱包类型连接
-- 通过相应钱包的地址进行后端登录
-- 发送请求事务和在钱包内签名（接受请求）
+- 将他们的应用程序与carious TON钱包类型连接
+- 后端登录到相应的钱包地址
+- 正在发送请求交易和钱包签名(接受请求)
 
-为了更好地了解这个解决方案的可能性，请查看我们在 Github 上可用的示例应用：[https://github.com/ton-connect/](https://github.com/ton-connect/demo-dapp)
+为了更好地了解这个解决方案可以做些什么，请参阅我们在 GitHub 上的演示应用程序：[https://github.com/ton-connect/](https://github.com/ton-connect/demo-dapp)
 
-### 目前支持的技术栈：
+### 当前支持的技术堆栈：
 
-- 所有 web 应用 —— 无服务器的和后端的
-- React-Native 移动应用
-- 即将推出：Swift、Java、Kotlin 的移动应用 SDK
+- 所有 web 应用程序 — 无服务器和后端
+- React-本机移动应用
+- 即将到来：SDK 在 Swift, Java, Kotlin 中的移动应用程序
 
-TON Connect 是一个开放协议，可用于使用任何编程语言或开发环境开发 dapps。
+TON Connect 是一个开放的协议，可以用来开发任何编程语言或开发环境的dapp。
 
-对于 JavaScript (JS) 应用，TON 开发者社区创建了一个 JavaScript SDK，使开发者能够在几分钟内无缝集成 TON Connect。将来，将提供设计用于其他编程语言的 SDK。 In the future, SDKs designed to operate with additional programming languages will be available.
+对于JavaScript (JS) 应用，TON开发者社区创建了一个 JavaScript SDK，允许开发者在几分钟内无缝地整合TON 连接。 今后将提供设计用其他编程语言操作的SDK。
