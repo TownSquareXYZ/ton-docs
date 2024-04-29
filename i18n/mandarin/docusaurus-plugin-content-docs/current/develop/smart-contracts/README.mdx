@@ -1,125 +1,125 @@
 import Button from '@site/src/components/button'
 
-# Introduction
+# 简介
 
-Smart contract creation, development, and deployment on TON Blockchain leverages the [FunC programming language](/develop/smart-contracts/#func-language) and [TON Virtual Machine (TVM)](/develop/smart-contracts/#ton-virtual-machine).
+在TON区块链上创建、开发和部署智能合约，需要使用[FunC编程语言](/develop/smart-contracts/#func-language)和[TON虚拟机（TVM）](/develop/smart-contracts/#ton-virtual-machine)。
 
-## Quick Start: Your First Smart Contract
+## 快速开始：您的第一个智能合约
 
-Write and deploy your first smart contract with the _Blueprint_ framework.
+使用_Blueprint_框架编写并部署您的第一个智能合约。
 
-Blueprint is a development environment for writing, testing, and deploying smart contracts.
-To create a new demo project use the following command:
+Blueprint是一个用于编写、测试和部署智能合约的开发环境。
+要创建一个新的演示项目，请使用以下命令：
 
 ```bash
 npm create ton@latest
 ```
 
 <Button href="/develop/smart-contracts/sdk/javascript" colorType="primary" sizeType={'sm'}>
-  Read more
+  阅读更多
 </Button>
-<Button href="https://stepik.org/course/176754/" colorType={'secondary'} sizeType={'sm'}>TON Blockchain Course</Button>
-<Button href="https://tonspeedrun.com/" colorType={'secondary'} sizeType={'sm'}>TON Speed Run Tutorials</Button>
+<Button href="https://stepik.org/course/176754/" colorType={'secondary'} sizeType={'sm'}>TON区块链课程</Button>
+<Button href="https://tonspeedrun.com/" colorType={'secondary'} sizeType={'sm'}>TON速度竞赛教程</Button>
 
-## Getting Started
+## 开始
 
-### Fun and Easy Tutorials
+### 有趣且简单的教程
 
-Kickstart your journey with our beginner-friendly guide:
+使用我们适合初学者的指南开始您的旅程：
 
-- [TON Hello World: Step-by-step guide for writing your first smart contract](https://ton-community.github.io/tutorials/02-contract/)
-- [TON Speed Run tutorials](https://tonspeedrun.com/)
-  - [🚩 Challenge 1: Simple NFT Deploy](https://github.com/romanovichim/TONQuest1)
-  - [🚩 Challenge 2: Chatbot Contract](https://github.com/romanovichim/TONQuest2)
-  - [🚩 Challenge 3: Jetton Vending Machine](https://github.com/romanovichim/TONQuest3)
-  - [🚩 Challenge 4: Lottery/Raffle](https://github.com/romanovichim/TONQuest4)
-  - [🚩 Challenge 5: Create UI to interact with the contract in 5 minutes](https://github.com/romanovichim/TONQuest5)
-  - [🚩 Challenge 6: Analyzing NFT sales on the Getgems marketplace](https://github.com/romanovichim/TONQuest6)
+- [TON Hello World：逐步指导编写您的第一个智能合约](https://ton-community.github.io/tutorials/02-contract/)
+- [TON速度竞赛教程](https://tonspeedrun.com/)
+  - [🚩 挑战1：简单NFT部署](https://github.com/romanovichim/TONQuest1)
+  - [🚩 挑战2：聊天机器人合约](https://github.com/romanovichim/TONQuest2)
+  - [🚩 挑战3：Jetton自动售卖机](https://github.com/romanovichim/TONQuest3)
+  - [🚩 挑战4：彩票/抽奖](https://github.com/romanovichim/TONQuest4)
+  - [🚩 挑战5：在5分钟内创建与合约互动的UI](https://github.com/romanovichim/TONQuest5)
+  - [🚩 挑战6：分析Getgems市场上的NFT销售](https://github.com/romanovichim/TONQuest6)
 
-### TON Course
+### TON 课程
 
-We're proud to present the **TON Blockchain Course**, which is a comprehensive guide to the TON Blockchain. The course is designed for developers who want to learn how to create smart contracts and decentralized applications on the TON Blockchain.
+我们自豪地呈现**TON区块链课程**，这是TON区块链的全面指南。该课程适用于想要学习如何在TON区块链上创建智能合约和去中心化应用的开发者。
 
-It consists of **9 modules** and covers the basics of the TON Blockchain, smart contract development lifecycle, the FunC programming, and the TON Virtual Machine (TVM).
+它包括**9个模块**，涵盖了TON区块链的基础知识、智能合约开发生命周期、FunC编程和TON虚拟机（TVM）。
 
-<Button href="https://stepik.org/course/176754/" colorType={'primary'} sizeType={'sm'}>Check TON Course</Button>
+<Button href="https://stepik.org/course/176754/" colorType={'primary'} sizeType={'sm'}>查看TON课程</Button>
 
-### Comprehensive Guides
+### 综合指南
 
-For those who prefer detail and nuance, visit:
+对于喜欢详请和细节的人，请访问：
 
-- [How to work with wallet smart contracts](/develop/smart-contracts/tutorials/wallet)
+- [如何使用钱包智能合约工作](/develop/smart-contracts/tutorials/wallet)
 
-## Examples of Smart Contracts
+## 智能合约示例
 
-Explore ready-made smart contract examples and tools provided by the TON community.
+探索由TON社区提供的现成智能合约示例和工具。
 
-:::info little tip
-Feel free to focus on smart contracts written using _FunC_. Focusing on smart contracts written using FunC (_.fc) instead of the lower-level Fift (_.fif) language is often better.
+:::info 小提示
+专注于使用_FunC_编写的智能合约。通常更好的做法是关注使用FunC（_.fc）而不是低层级Fift（_.fif）语言编写的智能合约。
 :::
 
-Standard examples of smart contracts on TON include wallets, electors (which manage validation on TON), and multi-signature wallets, which can be a reference when studying.
+TON上标准的智能合约示例包括钱包、选举（管理TON上的验证）和多签钱包，这些可以在学习时参考。
 
-<Button href="/develop/smart-contracts/examples" colorType={'primary'} sizeType={'sm'}>Open Examples</Button>
+<Button href="/develop/smart-contracts/examples" colorType={'primary'} sizeType={'sm'}>打开示例</Button>
 
-## Smart Contract Best Practices
+## 智能合约最佳实践
 
-TON offers endless possibilities. Learn how to get the most out of them while adhering to recommended guidelines.
+TON提供了无限可能性。来了解如何在遵循推荐指南的同时进行充分利用。
 
-- [Smart contract guidelines](/develop/smart-contracts/guidelines)
+- [智能合约指南](/develop/smart-contracts/guidelines)
 
-## TON Virtual Machine (TVM)
+## TON 虚拟机（TVM）
 
-Discover the engine that runs your smart contracts.
+探索运行您智能合约的引擎。
 
-- [TVM Overview](/learn/tvm-instructions/tvm-overview)
+- [TVM概览](/learn/tvm-instructions/tvm-overview)
 
-## Programming Languages
+## 编程语言
 
 ### 📘 FunC
 
-The tailor-made language for TON smart contracts.
+为TON智能合约量身定制的语言。
 
-<Button href="/develop/func/overview" colorType={'primary'} sizeType={'sm'}>FunC Overview</Button>
+<Button href="/develop/func/overview" colorType={'primary'} sizeType={'sm'}>FunC概览</Button>
 
 ### 📒 Tact
 
-The high-level language for TON smart contracts similar to TypeScript and Rust.
+类似于TypeScript和Rust的TON智能合约高级语言。
 
 :::caution
-Developed by the community. Use with caution.
+由社区开发。谨慎使用。
 :::
 
-<Button href="https://docs.tact-lang.org/" colorType={'primary'} sizeType={'sm'}>Tact Official Site</Button>
+<Button href="https://docs.tact-lang.org/" colorType={'primary'} sizeType={'sm'}>Tact官方网站</Button>
 <Button href="https://tact-by-example.org/"
         colorType="secondary" sizeType={'sm'}>
   Tact Hello World
 </Button>
 
-### 📕 Fift (advanced)
+### 📕 Fift（高级）
 
-:::caution advanced level
-Only for the brave!
+:::caution 高级水平
+只适用于勇敢者！
 :::
 
-<Button href="/develop/fift/overview" colorType={'primary'} sizeType={'sm'}>Fift Overview</Button>
+<Button href="/develop/fift/overview" colorType={'primary'} sizeType={'sm'}>Fift概览</Button>
 
-## Community Tools
+## 社区工具
 
-- [disintar/toncli](/develop/smart-contracts/sdk/toncli) — The toncli is the command line interface used to build, deploy, and test FunC contracts.
-- [MyLocalTON](/participate/run-nodes/local-ton) — MyLocalTON is used to run a private TON Blockchain in your local environment.
-- [tonwhales.com/tools/boc](https://tonwhales.com/tools/boc) — BOC parser
-- [tonwhales.com/tools/introspection-id](https://tonwhales.com/tools/introspection-id) — crc32 generator
-- [@orbs-network/ton-access](https://www.orbs.com/ton-access/) — decentralized API gateway
+- [disintar/toncli](/develop/smart-contracts/sdk/toncli) — toncli是用于构建、部署和测试FunC合约的命令行界面。
+- [MyLocalTON](/participate/run-nodes/local-ton) — MyLocalTON用于在您的本地环境中运行私有TON区块链。
+- [tonwhales.com/tools/boc](https://tonwhales.com/tools/boc) — BOC解析器
+- [tonwhales.com/tools/introspection-id](https://tonwhales.com/tools/introspection-id) — crc32生成器
+- [@orbs-network/ton-access](https://www.orbs.com/ton-access/) — 去中心化API网关
 
-## Further Reading
+## 进一步阅读
 
-Enhance your skillset with these community-driven educational resources.
+通过这些社区驱动的教育资源提高您的技能。
 
-- [TON FunC Learning Path](https://blog.ton.org/func-journey) ([RU version](https://github.com/romanovichim/TonFunClessons_ru))
-- [YouTube Tutorials](https://www.youtube.com/@TONDevStudy) [\[RU version\]](https://www.youtube.com/@WikiMar)
+- [TON FunC学习路径](https://blog.ton.org/func-journey) ([俄文版](https://github.com/romanovichim/TonFunClessons_ru))
+- [YouTube教程](https://www.youtube.com/@TONDevStudy) [\[俄文版\]](https://www.youtube.com/@WikiMar)
 
-## Additional Resources
+## 额外资源
 
-- [What is blockchain? What is a smart contract? What is gas?](https://blog.ton.org/what-is-blockchain)
-- [Understanding Transaction Fees](/develop/smart-contracts/fees#how-to-calculate-fees)
+- [什么是区块链？什么是智能合约？什么是gas？](https://blog.ton.org/what-is-blockchain)
+- [理解交易费用](/develop/smart-contracts/fees#how-to-calculate-fees)
