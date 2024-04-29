@@ -1,4 +1,4 @@
-# TON 元数据解析
+# Metadata Parsing
 
 元数据标准涵盖了 NFT、NFT 集合和 Jettons，在 TON 增强提案 64 [TEP-64](https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md) 中有所描述。
 
