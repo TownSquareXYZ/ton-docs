@@ -1,37 +1,37 @@
-# FunC Cookbook
+# FunC 开发手册
 
-The core reason for creating the FunC Cookbook is to collect all the experience from FunC developers in one place so that future developers will use it!
+创建 FunC 开发手册的核心原因是将所有 FunC 开发者的经验汇集在一个地方，以便未来的开发者们使用！
 
-Compared to the [FunC Documentation](/develop/func/types), this article is more focused on everyday tasks every FunC developer resolve during the development of smart contracts.
+与 FunC 文档相比，本文更侧重于 FunC 开发者在智能合约开发过程中每天都要解决的任务。
 
-## Basics
+## 基础知识
 
-### How to write an if statement
+### 如何编写 if 语句
 
-Let's say we want to check if any event is relevant. To do this, we use the flag variable. Remember that in FunC `true` is `-1` and `false` is `0`.
+假设我们想检查某个事件是否相关。为此，我们使用标志变量。记住在 FunC 中 `true` 是 `-1` 而 `false` 是 `0`。
 
 ```func
 int flag = 0; ;; false
 
 if (flag) { 
-    ;; do something
+    ;; 做一些事情
 }
 else {
-    ;; reject the transaction
+    ;; 拒绝交易
 }
 ```
 
-> 💡 Noted
+> 💡 注意
 >
-> We do not need the operator `==`, because the value `0` is `false`, so any other value will be `true`.
+> 我们不需要使用 `==` 操作符，因为 `0` 的值是 `false`，所以任何其他值都将是 `true`。
 
-> 💡 Useful links
+> 💡 有用的链接
 >
-> ["If statement" in docs](/develop/func/statements#if-statements)
+> [文档中的“If statement”](/develop/func/statements#if-statements)
 
-### How to write a repeat loop
+### 如何编写 repeat 循环
 
-As an example, we can take exponentiation
+以指数运算为例
 
 ```func
 int number = 2;
@@ -44,207 +44,207 @@ repeat(degree - 1) {
 }
 ```
 
-> 💡 Useful links
+> 💡 有用的链接
 >
-> ["Repeat loop" in docs](/develop/func/statements#repeat-loop)
+> [文档中的“Repeat loop”](/develop/func/statements#repeat-loop)
 
-### How to write a while loop
+### 如何编写 while 循环
 
-While is useful when we do not know how often to perform a particular action. For example, take a `cell`, which is known to store up to four references to other cells.
+当我们不知道要执行特定操作多少次时，while 循环很有用。例如，取一个 `cell`，我们知道它可以存储最多四个对其他 cell 的引用。
 
 ```func
-cell inner_cell = begin_cell() ;; create a new empty builder
-        .store_uint(123, 16) ;; store uint with value 123 and length 16 bits
-        .end_cell(); ;; convert builder to a cell
+cell inner_cell = begin_cell() ;; 创建一个新的空构建器
+        .store_uint(123, 16) ;; 存储值为 123 且长度为 16 位的 uint
+        .end_cell(); ;; 将构建器转换为 cell
 
 cell message = begin_cell()
-        .store_ref(inner_cell) ;; store cell as reference
+        .store_ref(inner_cell) ;; 将 cell 作为引用存储
         .store_ref(inner_cell)
         .end_cell();
 
-slice msg = message.begin_parse(); ;; convert cell to slice
-while (msg.slice_refs_empty?() != -1) { ;; we should remind that -1 is true
-    cell inner_cell = msg~load_ref(); ;; load cell from slice msg
-    ;; do something
+slice msg = message.begin_parse(); ;; 将 cell 转换为 slice
+while (msg.slice_refs_empty?() != -1) { ;; 我们应该记住 -1 是 true
+    cell inner_cell = msg~load_ref(); ;; 从 slice msg 中加载 cell
+    ;; 做一些事情
 }
 ```
 
-> 💡 Useful links
+> 💡 有用的链接
 >
-> ["While loop" in docs](/develop/func/statements#while-loop)
+> [文档中的“While loop”](/develop/func/statements#while-loop)
 >
-> ["Cell" in docs](/learn/overviews/cells)
+> [文档中的“Cell”](/learn/overviews/cells)
 >
-> ["slice_refs_empty?()" in docs](/develop/func/stdlib#slice_refs_empty)
+> [文档中的“slice_refs_empty?()”](/develop/func/stdlib#slice_refs_empty)
 >
-> ["store_ref()" in docs](/develop/func/stdlib#store_ref)
+> [文档中的“store_ref()”](/develop/func/stdlib#store_ref)
 >
-> ["begin_cell()" in docs](/develop/func/stdlib#begin_cell)
+> [文档中的“begin_cell()”](/develop/func/stdlib#begin_cell)
 >
-> ["end_cell()" in docs](/develop/func/stdlib#end_cell)
+> [文档中的“end_cell()”](/develop/func/stdlib#end_cell)
 >
-> ["begin_parse()" in docs](/develop/func/stdlib#begin_parse)
+> [文档中的“begin_parse()”](/develop/func/stdlib#begin_parse)
 
-### How to write a do until loop
+### 如何编写 do until 循环
 
-When we need the cycle to run at least once, we use `do until`.
+当我们需要循环至少运行一次时，我们使用 `do until`。
 
 ```func
 int flag = 0;
 
 do {
-    ;; do something even flag is false (0) 
-} until (flag == -1); ;; -1 is true
+    ;; 即使 flag 是 false (0) 也做一些事情
+} until (flag == -1); ;; -1 是 true
 ```
 
-> 💡 Useful links
+> 💡 有用的链接
 >
-> ["Until loop" in docs](/develop/func/statements#until-loop)
+> [文档中的“Until loop”](/develop/func/statements#until-loop)
 
-### How to determine if slice is empty
+### 如何确定 slice 是否为空
 
-Before working with `slice`, it is necessary to check whether it has any data to process it correctly. We can use `slice_empty?()` to do this, but we have to consider that it will return `-1` (`true`) if there is at least one `bit` of data or one `ref`.
+在处理 `slice` 之前，需要检查它是否有数据以便正确处理。我们可以使用 `slice_empty?()` 来做到这一点，但我们必须考虑到，如果有至少一个 `bit` 的数据或一个 `ref`，它将返回 `-1`（`true`）。
 
 ```func
-;; creating empty slice
+;; 创建空 slice
 slice empty_slice = "";
-;; `slice_empty?()` returns `true`, because slice dosen't have any `bits` and `refs`
+;; `slice_empty?()` 返回 `true`，因为 slice 没有任何 `bits` 和 `refs`
 empty_slice.slice_empty?();
 
-;; creating slice which contains bits only
+;; 创建仅包含 bits 的 slice
 slice slice_with_bits_only = "Hello, world!";
-;; `slice_empty?()` returns `false`, because slice have any `bits`
+;; `slice_empty?()` 返回 `false`，因为 slice 有 `bits`
 slice_with_bits_only.slice_empty?();
 
-;; creating slice which contains refs only
+;; 创建仅包含 refs 的 slice
 slice slice_with_refs_only = begin_cell()
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_empty?()` returns `false`, because slice have any `refs`
+;; `slice_empty?()` 返回 `false`，因为 slice 有 `refs`
 slice_with_refs_only.slice_empty?();
 
-;; creating slice which contains bits and refs
+;; 创建包含 bits 和 refs 的 slice
 slice slice_with_bits_and_refs = begin_cell()
     .store_slice("Hello, world!")
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_empty?()` returns `false`, because slice have any `bits` and `refs`
+;; `slice_empty?()` 返回 `false`，因为 slice 有 `bits` 和 `refs`
 slice_with_bits_and_refs.slice_empty?();
 ```
 
-> 💡 Useful links
+> 💡 有用的链接
 >
-> ["slice_empty?()" in docs](/develop/func/stdlib#slice_empty)
+> [文档中的“slice_empty?()”](/develop/func/stdlib#slice_empty)
 >
-> ["store_slice()" in docs](/develop/func/stdlib#store_slice)
+> [文档中的“store_slice()”](/develop/func/stdlib#store_slice)
 >
-> ["store_ref()" in docs](/develop/func/stdlib#store_ref)
+> [文档中的“store_ref()”](/develop/func/stdlib#store_ref)
 >
-> ["begin_cell()" in docs](/develop/func/stdlib#begin_cell)
+> [文档中的“begin_cell()”](/develop/func/stdlib#begin_cell)
 >
-> ["end_cell()" in docs](/develop/func/stdlib#end_cell)
+> [文档中的“end_cell()”](/develop/func/stdlib#end_cell)
 >
-> ["begin_parse()" in docs](/develop/func/stdlib#begin_parse)
+> [文档中的“begin_parse()”](/develop/func/stdlib#begin_parse)
 
-### How to determine if slice is empty (dosen't have any bits, but may have refs)
+### 如何确定 slice 是否为空（不含任何 bits，但可能包含 refs）
 
-If we need to check only the `bits` and it does not matter if there are any `refs` in `slice`, then we should use `slice_data_empty?()`.
+如果我们只需要检查 `bits`，不关心 `slice` 中是否有任何 `refs`，那么我们应该使用 `slice_data_empty?()`。
 
 ```func
-;; creating empty slice
+;; 创建空 slice
 slice empty_slice = "";
-;; `slice_data_empty?()` returns `true`, because slice dosen't have any `bits`
+;; `slice_data_empty?()` 返回 `true`，因为 slice 没有任何 `bits`
 empty_slice.slice_data_empty?();
 
-;; creating slice which contains bits only
+;; 创建仅包含 bits 的 slice
 slice slice_with_bits_only = "Hello, world!";
-;; `slice_data_empty?()` returns `false`, because slice have any `bits`
+;; `slice_data_empty?()` 返回 `false`，因为 slice 有 `bits`
 slice_with_bits_only.slice_data_empty?();
 
-;; creating slice which contains refs only
+;; 创建仅包含 refs 的 slice
 slice slice_with_refs_only = begin_cell()
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_data_empty?()` returns `true`, because slice dosen't have any `bits`
+;; `slice_data_empty?()` 返回 `true`，因为 slice 没有 `bits`
 slice_with_refs_only.slice_data_empty?();
 
-;; creating slice which contains bits and refs
+;; 创建包含 bits 和 refs 的 slice
 slice slice_with_bits_and_refs = begin_cell()
     .store_slice("Hello, world!")
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_data_empty?()` returns `false`, because slice have any `bits`
+;; `slice_data_empty?()` 返回 `false`，因为 slice 有 `bits`
 slice_with_bits_and_refs.slice_data_empty?();
 ```
 
-> 💡 Useful links
+> 💡 有用的链接
 >
-> ["slice_data_empty?()" in docs](/develop/func/stdlib#slice_data_empty)
+> [文档中的“slice_data_empty?()”](/develop/func/stdlib#slice_data_empty)
 >
-> ["store_slice()" in docs](/develop/func/stdlib#store_slice)
+> [文档中的“store_slice()”](/develop/func/stdlib#store_slice)
 >
-> ["store_ref()" in docs](/develop/func/stdlib#store_ref)
+> [文档中的“store_ref()”](/develop/func/stdlib#store_ref)
 >
-> ["begin_cell()" in docs](/develop/func/stdlib#begin_cell)
+> [文档中的“begin_cell()”](/develop/func/stdlib#begin_cell)
 >
-> ["end_cell()" in docs](/develop/func/stdlib#end_cell)
+> [文档中的“end_cell()”](/develop/func/stdlib#end_cell)
 >
-> ["begin_parse()" in docs](/develop/func/stdlib#begin_parse)
+> [文档中的“begin_parse()”](/develop/func/stdlib#begin_parse)
 
-### How to determine if slice is empty (dosen't have any refs, but may have bits)
+### 如何确定 slice 是否为空（没有任何 refs，但可能有 bits）
 
-In case we are only interested in `refs`, we should check their presence using `slice_refs_empty?()`.
+如果我们只对 `refs` 感兴趣，我们应该使用 `slice_refs_empty?()` 来检查它们的存在。
 
 ```func
-;; creating empty slice
+;; 创建空 slice
 slice empty_slice = "";
-;; `slice_refs_empty?()` returns `true`, because slice dosen't have any `refs`
+;; `slice_refs_empty?()` 返回 `true`，因为 slice 没有任何 `refs`
 empty_slice.slice_refs_empty?();
 
-;; creating slice which contains bits only
+;; 创建只包含 bits 的 slice
 slice slice_with_bits_only = "Hello, world!";
-;; `slice_refs_empty?()` returns `true`, because slice dosen't have any `refs`
+;; `slice_refs_empty?()` 返回 `true`，因为 slice 没有任何 `refs`
 slice_with_bits_only.slice_refs_empty?();
 
-;; creating slice which contains refs only
+;; 创建只包含 refs 的 slice
 slice slice_with_refs_only = begin_cell()
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_refs_empty?()` returns `false`, because slice have any `refs`
+;; `slice_refs_empty?()` 返回 `false`，因为 slice 有 `refs`
 slice_with_refs_only.slice_refs_empty?();
 
-;; creating slice which contains bits and refs
+;; 创建包含 bits 和 refs 的 slice
 slice slice_with_bits_and_refs = begin_cell()
     .store_slice("Hello, world!")
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_refs_empty?()` returns `false`, because slice have any `refs`
+;; `slice_refs_empty?()` 返回 `false`，因为 slice 有 `refs`
 slice_with_bits_and_refs.slice_refs_empty?();
 ```
 
-> 💡 Useful links
+> 💡 有用的链接
 >
-> ["slice_refs_empty?()" in docs](/develop/func/stdlib#slice_refs_empty)
+> [文档中的“slice_refs_empty?()”](/develop/func/stdlib#slice_refs_empty)
 >
-> ["store_slice()" in docs](/develop/func/stdlib#store_slice)
+> [文档中的“store_slice()”](/develop/func/stdlib#store_slice)
 >
-> ["store_ref()" in docs](/develop/func/stdlib#store_ref)
+> [文档中的“store_ref()”](/develop/func/stdlib#store_ref)
 >
-> ["begin_cell()" in docs](/develop/func/stdlib#begin_cell)
+> [文档中的“begin_cell()”](/develop/func/stdlib#begin_cell)
 >
-> ["end_cell()" in docs](/develop/func/stdlib#end_cell)
+> [文档中的“end_cell()”](/develop/func/stdlib#end_cell)
 >
-> ["begin_parse()" in docs](/develop/func/stdlib#begin_parse)
+> [文档中的“begin_parse()”](/develop/func/stdlib#begin_parse)
 
-### How to determine if cell is empty
+### 如何确定 cell 是否为空
 
-To check if there is any data in a `cell`, we should first convert it to `slice`. If we are only interested in having `bits`, we should use `slice_data_empty?()`, if only `refs` - `slice_refs_empty?()`. In case we want to check the presence of any data regardless of whether it is a `bit` or `ref`, we need to use `slice_empty?()`.
+要检查 `cell` 中是否有任何数据，我们应首先将其转换为 `slice`。如果我们只对 `bits` 感兴趣，应使用 `slice_data_empty?()`；如果只对 `refs` 感兴趣，则使用 `slice_refs_empty?()`。如果我们想检查是否有任何数据，无论是 `bit` 还是 `ref`，我们需要使用 `slice_empty?()`。
 
 ```func
 cell cell_with_bits_and_refs = begin_cell()
@@ -252,54 +252,54 @@ cell cell_with_bits_and_refs = begin_cell()
     .store_ref(null())
     .end_cell();
 
-;; Change `cell` type to slice with `begin_parse()`
+;; 将 `cell` 类型更改为 slice，使用 `begin_parse()`
 slice cs = cell_with_bits_and_refs.begin_parse();
 
-;; determine if slice is empty
+;; 确定 slice 是否为空
 if (cs.slice_empty?()) {
-    ;; cell is empty
+    ;; cell 为空
 }
 else {
-    ;; cell is not empty
+    ;; cell 不为空
 }
 ```
 
-> 💡 Useful links
+> 💡 有用的链接
 >
-> ["slice_empty?()" in docs](/develop/func/stdlib#slice_empty)
+> [文档中的“slice_empty?()”](/develop/func/stdlib#slice_empty)
 >
-> ["begin_cell()" in docs](/develop/func/stdlib#begin_cell)
+> [文档中的“begin_cell()”](/develop/func/stdlib#begin_cell)
 >
-> ["store_uint()" in docs](/develop/func/stdlib#store_uint)
+> [文档中的“store_uint()”](/develop/func/stdlib#store_uint)
 >
-> ["end_cell()" in docs](/develop/func/stdlib#end_cell)
+> [文档中的“end_cell()”](/develop/func/stdlib#end_cell)
 >
-> ["begin_parse()" in docs](/develop/func/stdlib#begin_parse)
+> [文档中的“begin_parse()”](/develop/func/stdlib#begin_parse)
 
-### How to determine if dict is empty
+### 如何确定 dict 是否为空
 
-There is a method of `dict_empty?()` to check the date presence in dict. This method is the equivalent of `cell_null?()` because usually a `null`-cell is an empty dictionary.
+有一个 `dict_empty?()` 方法可以检查 dict 中是否有数据。这个方法相当于 `cell_null?()`，因为通常一个空的 cell 就是一个空字典。
 
 ```func
 cell d = new_dict();
 d~udict_set(256, 0, "hello");
 d~udict_set(256, 1, "world");
 
-if (d.dict_empty?()) { ;; Determine if dict is empty
-    ;; dict is empty
+if (d.dict_empty?()) { ;; 确定 dict 是否为空
+    ;; dict 为空
 }
 else {
-    ;; dict is not empty
+    ;; dict 不为空
 }
 ```
 
-> 💡 Useful links
+> 💡 有用的链接
 >
-> ["dict_empty?()" in docs](/develop/func/stdlib#dict_empty)
+> [文档中的“dict_empty?()”](/develop/func/stdlib#dict_empty)
 >
-> ["new_dict()" in docs](/develop/func/stdlib/#new_dict) creating an empty dict
+> [文档中的“new_dict()”](/develop/func/stdlib/#new_dict) 创建空字典
 >
-> ["dict_set()" in docs](/develop/func/stdlib/#dict_set) adding some elements in dict d with function, so it is not empty
+> [文档中的“dict_set()”](/develop/
 
 ### How to determine if tuple is empty
 
@@ -327,9 +327,9 @@ When working with `tuples`, it is important always to know if any values are ins
 >
 > We are declaring tlen assembly function. You can read more [here](/develop/func/functions#assembler-function-body-definition) and see [list of all assembler commands](/learn/tvm-instructions/instructions).
 
-> 💡 Useful links
+> 💡 注意
 >
-> ["empty_tuple?()" in docs](/develop/func/stdlib#empty_tuple)
+> 我们声明了 tlen 汇编函数。你可以在[这里](/develop/func/functions#assembler-function-body-definition)阅读更多，并查看[所有汇编指令列表](/learn/tvm-instructions/instructions)。
 >
 > ["tpush()" in docs](/develop/func/stdlib/#tpush)
 >
@@ -377,9 +377,9 @@ else {
 >
 > We can determine that state of contract is empty by determining that [cell is empty](/develop/func/cookbook#how-to-determine-if-cell-is-empty).
 
-> 💡 Useful links
+> 💡 注意
 >
-> ["get_data()" in docs](/develop/func/stdlib#get_data)
+> 我们可以通过确定 [cell 是否为空](/develop/func/cookbook#how-to-determine-if-cell-is-empty) 来确定合约的状态是否为空。
 >
 > ["begin_parse()" in docs](/develop/func/stdlib/#begin_parse)
 >
@@ -413,13 +413,13 @@ send_raw_message(msg, 3); ;; mode 3 - pay fees separately and ignore errors
 >
 > In this example, we use literal `a` to get address. You can find more about string literals in [docs](/develop/func/literals_identifiers#string-literals)
 
-> 💡 Noted
+> 💡 注意
 >
-> You can find more in [docs](/develop/smart-contracts/messages). Also, you can jump in [layout](/develop/smart-contracts/messages#message-layout) with this link.
+> 在这个例子中，我们使用字面量 `a` 获取地址。你可以在[文档](/develop/func/literals_identifiers#string-literals)中找到更多关于字符串字面量的信息。
 
-> 💡 Useful links
+> 💡 注意
 >
-> ["begin_cell()" in docs](/develop/func/stdlib#begin_cell)
+> 你可以在[文档](/develop/smart-contracts/messages)中找到更多信息。也可以通过这个链接跳转到[布局](/develop/smart-contracts/messages#message-layout)。
 >
 > ["store_uint()" in docs](/develop/func/stdlib#store_uint)
 >
@@ -435,7 +435,7 @@ send_raw_message(msg, 3); ;; mode 3 - pay fees separately and ignore errors
 
 In the body of a message that follows flags and other technical data, we can send `int`, `slice`, and `cell`. In the case of the latter, it is necessary to set the bit to `1` before `store_ref()` to indicate that the `cell` will go on.
 
-We can also send the body of the message inside the same `cell` as header, if we are sure that we have enough space. In this case, we need to set the bit to `0`.
+在跟着标志位和其他技术数据的消息体中，我们可以发送 `int`、`slice` 和 `cell`。在后者的情况下，在 `store_ref()` 之前必须将位设置为 `1`，以表明 `cell` 将继续传输。
 
 ```func
 ;; We use literal `a` to get valid address inside slice from string containing address 
@@ -463,17 +463,17 @@ send_raw_message(msg, 3); ;; mode 3 - pay fees separately and ignore errors
 >
 > In this example, we use literal `a` to get address. You can find more about string literals in [docs](/develop/func/literals_identifiers#string-literals)
 
-> 💡 Noted
+> 💡 注意
 >
-> In this example, we used mode 3 to take the incoming tons and send exactly as much as specified (amount) while paying commission from the contract balance and ignoring the errors. Mode 64 is needed to return all the tons received, subtracting the commission, and mode 128 will send the entire balance.
+> 在这个例子中，我们使用字面量 `a` 获取地址。你可以在[文档](/develop/func/literals_identifiers#string-literals)中找到更多关于字符串字面量的信息。
 
-> 💡 Noted
+> 💡 注意
 >
-> We are [building a message](/develop/func/cookbook#how-to-build-an-internal-message-cell) but adding message body separetly.
+> 在这个例子中，我们使用node 3 接收进来的 tons 并发送确切的指定金额（amount），同时从合约余额中支付佣金并忽略错误。mode 64 用于返回所有接收到的 tons，扣除佣金，mode 128 将发送整个余额。
 
-> 💡 Useful links
+> 💡 注意
 >
-> ["begin_cell()" in docs](/develop/func/stdlib#begin_cell)
+> 我们正在[构建消息](/develop/func/cookbook#how-to-build-an-internal-message-cell)，但单独添加消息体。
 >
 > ["store_uint()" in docs](/develop/func/stdlib#store_uint)
 >
@@ -512,13 +512,13 @@ send_raw_message(msg, 3); ;; mode 3 - pay fees separately and ignore errors
 >
 > In this example, we use literal `a` to get address. You can find more about string literals in [docs](/develop/func/literals_identifiers#string-literals)
 
-> 💡 Noted
+> 💡 注意
 >
-> In this example, we used mode 3 to take the incoming tons and send exactly as much as specified (amount) while paying commission from the contract balance and ignoring the errors. Mode 64 is needed to return all the tons received, subtracting the commission, and mode 128 will send the entire balance.
+> 在这个例子中，我们使用字面量 `a` 获取地址。你可以在[文档](/develop/func/literals_identifiers#string-literals)中找到更多关于字符串字面量的信息。
 
-> 💡 Noted
+> 💡 注意
 >
-> We are [building a message](/develop/func/cookbook#how-to-build-an-internal-message-cell) but adding message as a slice.
+> 在这个例子中，我们使用 mode 3 接收进来的 tons 并发送确切的指定金额（amount），同时从合约余额中支付佣金并忽略错误。mode 64 用于返回所有接收到的 tons，扣除佣金，mode 128 将发送整个余额。
 
 ### How to iterate tuples (in both directions)
 
@@ -558,7 +558,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 
 When using any features we actually use pre-prepared for us methods inside `stdlib.fc`. But in fact, we have many more opportunities available to us, and we need to learn to write them ourselves.
 
-For example, we have the method of `tpush`, which adds an element to `tuple`, but without `tpop`. In this case, we should do this:
+当使用任何功能时，实际上我们使用的是为我们预先准备好的 `stdlib.fc` 中的方法。但事实上，我们有更多的机会可以使用，我们需要学会自己编写它们。
 
 ```func
 ;; ~ means it is modifying method
@@ -867,7 +867,7 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
 }
 ```
 
-#### 💡 Useful links
+#### 判断cell是否相等
 
 - ["slice_hash()" in docs](/develop/func/stdlib/#slice_hash)
 - ["SDEQ" in docs](/learn/tvm-instructions/instructions#62-other-comparison)
@@ -1016,7 +1016,7 @@ Creates an internal address for the corresponding MsgAddressInt TLB.
 
 ### Generate external address
 
-We use the TL-B scheme from [block.tlb](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/block/block.tlb#L101C1-L101C12) to understand how we need to create an address in this format.
+由于我们需要确定地址占用的位数，因此还需要[声明一个使用 `UBITSIZE` 操作码的 asm 函数](#how-to-write-own-functions-using-asm-keyword)，该函数将返回存储数字所需的最小位数。
 
 ```func
 (int) ubitsize (int a) asm "UBITSIZE";
@@ -1042,14 +1042,10 @@ Since we need to determine the number of bits occupied by the address, it is als
 
 ### How to store and load dictionary in local storage
 
-The logic for loading the dictionary
+而存储字典的逻辑如下所示：
 
 ```func
-slice local_storage = get_data().begin_parse();
-cell dictionary_cell = new_dict();
-if (~ slice_empty?(local_storage)) {
-    dictionary_cell = local_storage~load_dict();
-}
+set_data(begin_cell().store_dict(dictionary_cell).end_cell());
 ```
 
 While the logic for storing the dictionary is like the following example:
@@ -1228,43 +1224,7 @@ Modifying methods allow data to be modified within the same variable. This can b
 >
 > ["Modifying methods" in docs](/develop/func/statements#modifying-methods)
 
-### How to raise number to the power of n
-
-```func
-;; Unoptimized variant
-int pow (int a, int n) {
-    int i = 0;
-    int value = a;
-    while (i < n - 1) {
-        a *= value;
-        i += 1;
-    }
-    return a;
-}
-
-;; Optimized variant
-(int) binpow (int n, int e) {
-    if (e == 0) {
-        return 1;
-    }
-    if (e == 1) {
-        return n;
-    }
-    int p = binpow(n, e / 2);
-    p *= p;
-    if ((e % 2) == 1) {
-        p *= n;
-    }
-    return p;
-}
-
-() main () {
-    int num = binpow(2, 3);
-    ~dump(num); ;; 8
-}
-```
-
-### How to convert string to int
+### 如何将字符串转换为 int
 
 ```func
 slice string_number = "26052021";
@@ -1272,13 +1232,32 @@ int number = 0;
 
 while (~ string_number.slice_empty?()) {
     int char = string_number~load_uint(8);
-    number = (number * 10) + (char - 48); ;; we use ASCII table
+    number = (number * 10) + (char - 48); ;; 我们使用 ASCII 表
 }
 
 ~dump(number);
 ```
 
-### How to convert int to string
+### 如何将 int 转换为 string
+
+```func
+int n = 261119911;
+builder string = begin_cell();
+tuple chars = null();
+do {
+    int r = n~divmod(10);
+    chars = cons(r + 48, chars);
+} until (n == 0);
+do {
+    int char = chars~list_next();
+    string~store_uint(char, 8);
+} until (null?(chars));
+
+slice result = string.end_cell().begin_parse();
+~dump(result);
+```
+
+### 如何遍历字典
 
 ```func
 int n = 261119911;
@@ -1328,7 +1307,7 @@ while (flag) {
 >
 > ["dict_set()" in docs](/develop/func/stdlib/#dict_set)
 
-### How to delete value from dictionaries
+### 如何递归遍历cell树
 
 ```func
 cell names = new_dict();
@@ -1387,17 +1366,17 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 }
 ```
 
-> 💡 Useful links
+> [文档中的“null()”](/develop/func/stdlib/#null)
 >
-> ["Lisp-style lists" in docs](/develop/func/stdlib/#lisp-style-lists)
+> [文档中的“slice_refs()”](/develop/func/stdlib/#slice_refs)
 >
 > ["null()" in docs](/develop/func/stdlib/#null)
 >
 > ["slice_refs()" in docs](/develop/func/stdlib/#slice_refs)
 
-### How to iterate through lisp-style list
+### 如何遍历 Lisp 类型列表
 
-The data type tuple can hold up to 255 values. If this is not enough, then we should use a lisp-style list. We can put a tuple inside a tuple, thus bypassing the limit.
+数据类型 tuple 最多可以容纳 255 个值。如果这还不够，我们应该使用 Lisp 类型的列表。我们可以将一个 tuple 放入另一个 tuple 中，从而绕过限制。
 
 ```func
 forall X -> int is_null (X x) asm "ISNULL";
@@ -1405,29 +1384,29 @@ forall X -> (tuple, ()) push_back (tuple tail, X head) asm "CONS";
 forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 
 () main () {
-    ;; some example list
+    ;; 一些示例列表
     tuple l = null();
     l~push_back(1);
     l~push_back(2);
     l~push_back(3);
 
-    ;; iterating through elements
-    ;; note that this iteration is in reversed order
+    ;; 遍历元素
+    ;; 注意这种迭代是倒序的
     while (~ l.is_null()) {
         var x = l~pop_back();
 
-        ;; do something with x
+        ;; 对 x 做一些操作
     }
 }
 ```
 
-> 💡 Useful links
+> 💡 有用的链接
 >
-> ["Lisp-style lists" in docs](/develop/func/stdlib/#lisp-style-lists)
+> [文档中的“Lisp风格列表”](/develop/func/stdlib/#lisp-style-lists)
 >
-> ["null()" in docs](/develop/func/stdlib/#null)
+> [文档中的“null()”](/develop/func/stdlib/#null)
 
-### How to send a deploy message (with stateInit only, with stateInit and body)
+### 如何发送部署消息（仅使用 stateInit 或使用 stateInit 和 body）
 
 ```func
 () deploy_with_stateinit(cell message_header, cell state_init) impure {
@@ -1438,7 +1417,7 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
     .store_ref(state_init)
     .end_cell();
 
-  ;; mode 64 - carry the remaining value in the new message
+  ;; mode 64 - 在新消息中携带剩余值
   send_raw_message(msg, 64); 
 }
 
@@ -1451,12 +1430,12 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
     .store_ref(body)
     .end_cell();
 
-  ;; mode 64 - carry the remaining value in the new message
+  ;; mode 64 - 在新消息中携带剩余值
   send_raw_message(msg, 64); 
 }
 ```
 
-### How to build a stateInit cell
+### 如何构建 stateInit cell
 
 ```func
 () build_stateinit(cell init_code, cell init_data) {
@@ -1472,7 +1451,7 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 }
 ```
 
-### How to calculate a contract address (using stateInit)
+### 如何计算合约地址（使用 stateInit）
 
 ```func
 () calc_address(cell state_init) {
