@@ -1,63 +1,63 @@
-# Using toncli
+# 使用toncli
 
-:::tip starter tip
-If you didn't use toncli before, try [QUICK START GUIDE](https://github.com/disintar/toncli/blob/master/docs/quick_start_guide.md).
+:::tip 初学者提示
+如果您之前没有使用过toncli，请尝试[快速入门指南](https://github.com/disintar/toncli/blob/master/docs/quick_start_guide.md)。
 :::
 
-## Testing using toncli
+## 使用toncli进行测试
 
-`toncli` uses FunC to test smart contracts. Also, the latest version supports Docker for quick environment setup.
+`toncli`使用FunC来测试智能合约。此外，最新版本支持Docker，用于快速环境设置。
 
-This tutorial will help you test the functions of our smart contract to make sure that the project is working correctly.
+本教程将帮助您测试智能合约的功能，以确保项目正常工作。
 
-The best tutorial describing testing using toncli is:
+描述使用toncli进行测试的最佳教程是：
 
-- [How does the FunC test work?](https://github.com/disintar/toncli/blob/master/docs/advanced/func_tests_new.md)
-- [How to debug transactions with toncli?](https://github.com/disintar/toncli/blob/master/docs/advanced/transaction_debug.md)
+- [FunC测试如何工作？](https://github.com/disintar/toncli/blob/master/docs/advanced/func_tests_new.md)
+- [如何用toncli调试交易？](https://github.com/disintar/toncli/blob/master/docs/advanced/transaction_debug.md)
 
-## FunC test structure under toncli
+## 在toncli下的FunC测试结构
 
-To test our smart contract, we will have to write 2 functions. One of which takes values, contains the desired result, gives an error if the function under test does not work correctly.
+为了测试我们的智能合约，我们需要编写2个函数。其中一个接受值，包含期望的结果，并在被测试的函数不正确工作时给出错误。
 
-### Let's create a file with tests
+### 让我们创建一个包含测试的文件
 
-Create in the `tests` folder, the file `example.func` in which we will write our tests.
+在`tests`文件夹中创建名为`example.func`的文件，在其中编写我们的测试。
 
-### Data function
+### 数据函数
 
-As a rule, the testing function does not accept arguments, but must return them.
+通常，测试函数不接受参数，但必须返回它们。
 
-- **function selector** - id of the called function in the tested contract;
-- **tuple** - (stack) values ​​that we will pass to the function that performs tests;
-- **c4 cell** - "permanent data" in the control register c4;
-- **c7 tuple** - "temporary data" in the control register c7;
-- **gas limit integer** - gas limit (to understand the concept of gas, I advise you to first read about it in Ethereum);
+- **函数选择器** - 测试合约中被调用函数的id；
+- **元组** - （栈）我们将传递给执行测试的函数的值；
+- **c4 cell** - 控制寄存器c4中的"永久数据"；
+- **c7元组** - 控制寄存器c7中的"临时数据"；
+- \*\* gas 限制整数\*\* -  gas 限制（要理解 gas 的概念，我建议您首先阅读以太坊中的相关内容）；
 
-:::info About Gas
+:::info 关于 gas
 
-And you can read in detail [here](https://ton-blockchain.github.io/docs/#/smart-contracts/fees). Well, in full detail here in [Appendix A](https://ton-blockchain.github.io/docs/tvm.pdf).
+您可以详细阅读[这里](https://ton-blockchain.github.io/docs/#/smart-contracts/fees)。完整细节在[附录A](https://ton-blockchain.github.io/docs/tvm.pdf)。
 
-More about registers c4 and c7 [here](https://ton-blockchain.github.io/docs/tvm.pdf) in 1.3.1
+关于寄存器c4和c7的更多信息[这里](https://ton-blockchain.github.io/docs/tvm.pdf)在1.3.1
 :::
 
-## Let's start writing tests for our smart contract
+## 让我们开始为我们的智能合约编写测试
 
-### Introduction
+### 介绍
 
-In the new tests, testing occurs through two functions that allow you to call smart contract methods:
+在新测试中，测试是通过两个函数进行的，这些函数允许调用智能合约方法：
 
-- `invoke_method`, which assumes no exception will be thrown
-- `invoke_method_expect_fail`, which assumes an exception will be thrown
+- `invoke_method`，假设不会抛出异常
+- `invoke_method_expect_fail`，假设会抛出异常
 
-These are the functions inside the testing function, which can return any number of values, all of them will be displayed when the tests are run in the report.
+这些是测试函数内的函数，可以返回任意数量的值，所有这些值都将在运行测试时显示在报告中。
 
-:::info Important!
-It is worth noting that each test function name must begin with `_test`.
+:::info 重要！
+值得注意的是，每个测试函数名称必须以`_test`开头。
 :::
 
-### Creating a test function
+### 创建测试函数
 
-Let's call our test function `__test_example()`, it will return the amount of gas consumed, so it will be `int`.
+让我们称我们的测试函数为`__test_example()`，它将返回消耗的 gas 量，因此它是`int`。
 
 ```js
 int __test_example() {
@@ -65,9 +65,9 @@ int __test_example() {
 }
 ```
 
-### Register update c4
+### 更新寄存器c4
 
-Since we will need to frequently update the `c4` register due to a large number of tests, so we will create a helper function that will write `c4` to zero
+由于我们将进行大量测试，需要频繁更新`c4`寄存器，因此我们将创建一个辅助函数，它将将`c4`写为零
 
 ```js
 () set_default_initial_data() impure {
@@ -75,16 +75,16 @@ Since we will need to frequently update the `c4` register due to a large number 
 }
 ```
 
-- `begin_cell()` - will create a Builder for the future cell
-- `store_uint()` - writes the value of total
-- `end_cell()`- create Cell
-- `set_data()` - writes the cell to register c4
+- `begin_cell()` - 将为未来的 cell创建一个构造器
+- `store_uint()` - 写入总量的值
+- `end_cell()`- 创建cell
+- `set_data()` - 将cell写入寄存器c4
 
-`impure` is a keyword that indicates that the function changes the smart contract data.
+`impure`是一个关键词，表示该函数更改了智能合约数据。
 
-We got a function that we will use in the body of our testing function
+我们得
 
-**Result:**
+到一个将在测试函数主体中使用的函数
 
 ```js
 int __test_example() {
@@ -97,9 +97,9 @@ int __test_example() {
 
 It is worth noting that in the new version of the tests, we have the ability to call several smart contract methods in the testing function.
 
-Inside our test, we will call the `recv_internal()` method and the Get method, so we will increment the value in c4 with the message and immediately check that the value has changed to the one sent.
+值得注意的是，在新版本的测试中，我们有能力在测试函数中调用几个智能合约方法。
 
-To call the `recv_internal()` method, we need to create a cell with a message.
+在我们的测试中，我们将调用`recv_internal()`方法和Get方法，所以我们将通过消息增加c4中的值，并立即检查该值是否已更改为发送的值。
 
 ```js
 int __test_example() {
@@ -110,7 +110,7 @@ int __test_example() {
 
 After this step, we are going to use the `invoke_method` method.
 
-This method takes two arguments:
+此后，我们将使用`invoke_method`方法。
 
 - method name
 - arguments to test as a `tuple`
@@ -129,7 +129,7 @@ var (int gas_used1, _) = invoke_method(recv_internal, [message.begin_parse()]);
 
 For the record, let's store the amount of gas used in int `gas_used1`.
 
-In the second call, the arguments will be the Get method `get_total()` and an empty tuple.
+为了记录，让我们将使用的 gas 量存储在`int gas_used1`中。
 
 ```js
 var (int gas_used2, stack) = invoke_method(get_total, []);
@@ -137,7 +137,7 @@ var (int gas_used2, stack) = invoke_method(get_total, []);
 
 For the report, we also store the amount of gas used in `int gas_used2`, plus the values ​​that the method returns, to check later that everything worked correctly.
 
-We get:
+为了报告，我们还将使用的 gas 量存储在`int gas_used2`中，以及方法返回的值，以便稍后检查一切是否正确。
 
 ```js
 int __test_example() {
@@ -152,7 +152,7 @@ int __test_example() {
 
 Now, finally, the most important step. We have to check if our smart contract is working properly.
 
-That is, if it returns the **correct result**, we return `success` or `failure` and the gas used.
+现在，最后，最重要的步骤。我们必须检查我们的智能合约是否正常工作。
 
 ```js
 [int total] = stack; 
