@@ -1,21 +1,21 @@
-# Compile and Build smart contracts on TON
+# 在 TON 上编译和构建智能合约
 
-Here is a list of libraries and repos to build your smart contract.
+以下是构建智能合约的库和库列表。
 
-**TLDR:**
+**简而言之:**
 
-- In most cases, it's enough to use Blueprint SDK.
-- If you need more low-level approach, you can use ton-compiler or func-js.
+- 在大多数情况下，使用Blueprint SDK就足够了。
+- 如果您需要更低级别的方法，可以使用ton-compiler或func-js。
 
 ## Blueprint
 
-### Overview
+### 概览
 
-A development environment for TON blockchain for writing, testing, and deploying smart contracts. Read more in [Blueprint git repository](https://github.com/ton-community/blueprint).
+TON区块链的开发环境，用于编写、测试和部署智能合约。在[Blueprint git库](https://github.com/ton-community/blueprint)中了解更多信息。
 
-### Installation
+### 安装
 
-Run the following in terminal to create a new project and follow the on-screen instructions:
+在终端运行以下命令以创建一个新项目，并按照屏幕上的指示操作：
 
 ```bash
 npm create ton@latest
@@ -23,145 +23,147 @@ npm create ton@latest
 
 &nbsp;
 
-### Features
+### 特点
 
-- Streamlined workflow for building, testing and deploying smart contracts
-- Dead simple deployment to mainnet/testnet using your favorite wallet (eg. Tonkeeper)
-- Blazing fast testing of multiple smart contracts in an isolated blockchain running in-process
+- 构建、测试和部署智能合约的简化工作流程
+- 使用您最喜欢的钱包（例如Tonkeeper）轻松部署到主网/测试网
+- 在一个独立的区块链中快速测试多个智能合约，该区块链在进程中运行
 
-### Tech stack
+### 技术栈
 
-1. Compiling FunC with https://github.com/ton-community/func-js (no CLI)
-2. Testing smart contracts with https://github.com/ton-community/sandbox
-3. Deploying smart contracts with [TON Connect 2](https://github.com/ton-connect), [Tonhub wallet](https://tonhub.com/) or a `ton://` deeplink
+1. 使用https://github.com/ton-community/func-js编译FunC（无CLI）
+2. 使用https://github.com/ton-community/sandbox测试智能合约
+3. 使用[TON Connect 2](https://github.com/ton-connect)、[Tonhub wallet](https://tonhub.com/)或`ton://`深链接部署智能合约
 
-### Requirements
+### 要求
 
-- [Node.js](https://nodejs.org) with a recent version like v18, verify version with `node -v`
-- IDE with TypeScript and FunC support like [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)
+- [Node.js](https://nodejs.org)的最新版本，如v18，使用`node -v`验证版本
+- 支持TypeScript和FunC的IDE，如[Visual Studio Code](https://code.visualstudio.com/)，配备[FunC插件](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)
 
-### How to use?
+### 如何使用？
 
-- [Watch DoraHacks presentation with demo of working with blueprint](https://www.youtube.com/watch?v=5ROXVM-Fojo).
-- Read well detailed explanation in [Blueprint repo](https://github.com/ton-community/blueprint#create-a-new-project).
+- [观看DoraHacks演示，了解使用blueprint的演示](https://www.youtube.com/watch?v=5ROXVM-Fojo)。
+- 在[Blueprint库](https://github.com/ton-community/blueprint#create-a-new-project)中阅读详细的说明。
 
 ## ton-compiler
 
-### Overview
+### 概览
 
-Packaged FunC compiler for TON smart contracts:
+打包的FunC编译器，用于TON智能合约：
 
-- GitHub: [ton-community/ton-compiler](https://github.com/ton-community/ton-compiler)
-- NPM: [ton-compiler](https://www.npmjs.com/package/ton-compiler)
+- GitHub：[ton-community/ton-compiler](https://github.com/ton-community/ton-compiler)
+- NPM：[ton-compiler](https://www.npmjs.com/package/ton-compiler)
 
-### Installation
+### 安装
 
 ```bash npm2yarn
 npm install ton-compiler
 ```
 
-### Features
+### 特点
 
-- Multiple FunC compiler versions
-- Doesn't need to install and compile TON
-- Programmatic and CLI interfaces
-- Ready to use in unit-testing
+- 多个FunC编译器版本
+- 无需安装和编译TON
+- 程序化和CLI接口
+- 适用于cell测试
 
-### How to use
+### 如何使用
 
-This packages adds `ton-compiler` binary to a project.
+这个包在项目中添加了`ton-compiler`二进制文件。
 
-FunC compilation is a multi-stage process. One is compiling Func to Fift code that is then compiled to a binary representation. Fift compiler already has Asm.fif bundled.
+FunC编译是一个多阶段过程。其中之一是将Func编译为Fift代码，然后将其编译为二进制表示。Fift编译器已经内置了Asm.fif。
 
-FunC stdlib is bundled but could be disabled at runtime.
+FunC标准库已被捆绑，但可以在运行时禁用。
 
-#### Console Use
+#### 控制台使用
 
 ```bash
-# Compile to binary form (for contract creation)
+# 编译为二进制形式（用于合约创建）
 ton-compiler --input ./wallet.fc --output ./wallet.cell
 
-# Compile to fift (useful for debuging)
+# 编译为fift（用于调试）
 ton-compiler --input ./wallet.fc --output-fift ./wallet.fif
 
-# Compile to binary form and fift
+# 同时编译为二进制形式和fift
 ton-compiler --input ./wallet.fc --output ./wallet.cell --output-fift ./wallet.fif
 
-# Disable stdlib
+# 禁用标准库
 ton-compiler --no-stdlib --input ./wallet.fc --output ./wallet.cell --output-fift ./wallet.fif
 
-# Pick version
+# 选择版本
 ton-compiler --version "legacy" --input ./wallet.fc --output ./wallet.cell --output-fift ./wallet.fif
 ```
 
-#### Programmatic Use
+#### 程序化使用
 
 ```javascript
 import { compileContract } from "ton-compiler";
-let result = await compileContract({ code: 'source code', stdlib: true, version: 'latest' });
+let result = await compileContract({ code: '
+
+source code', stdlib: true, version: 'latest' });
 if (result.ok) {
-  console.log(result.fift); // Compiled Fift assembler
-  console.log(result.cell); // Compiled cell Buffer
+  console.log(result.fift); // 编译的Fift汇编器
+  console.log(result.cell); // 编译的cell Buffer
 } else {
-  console.warn(result.logs); // Output logs
+  console.warn(result.logs); // 输出日志
 }
 ```
 
 ## func-js
 
-### Overview
+### 概览
 
-_Cross-platform_ bindings for TON FunC compiler.
+_Cross-platform_绑定TON FunC编译器。
 
-It's more low-level than ton-compiler, so use it only if ton-compiler doesn't work for you.
+它比ton-compiler更低级，所以只有在ton-compiler不适用时才使用它。
 
-- GitHub: [ton-community/func-js](https://github.com/ton-community/func-js)
-- NPM: [@ton-community/func-js](https://www.npmjs.com/package/@ton-community/func-js)
+- GitHub：[ton-community/func-js](https://github.com/ton-community/func-js)
+- NPM：[@ton-community/func-js](https://www.npmjs.com/package/@ton-community/func-js)
 
-### Installation
+### 安装
 
 ```bash npm2yarn
 npm install @ton-community/func-js
 ```
 
-### Features
+### 特点
 
-- No need to compile of download FunC binaries
-- Works both in Node.js & **WEB** (WASM support is required)
-- Compiles straight to BOC with code Cell
-- Assembly is returned fot debugging purposes
-- Does not depend on file-system
+- 无需编译或下载FunC二进制文件
+- 在Node.js和**WEB**中都可工作（需要WASM支持）
+- 直接编译为带有代码cell的BOC
+- 返回汇编版本用于调试目的
+- 不依赖文件系统
 
-### How to use
+### 如何使用
 
-Internally, this package uses both FunC compiler and Fift interpreter combined to single lib compiled to WASM.
+在内部，这个包使用了FunC编译器和Fift解释器组合成单个编译为WASM的库。
 
-Simple schema:
+简单架构：
 
 ```bash
-(your code) -> WASM(FunC -> Fift -> BOC)
+(您的代码) -> WASM(FunC -> Fift -> BOC)
 ```
 
-Sources to the internal lib could be found [here](https://github.com/ton-blockchain/ton/tree/testnet/crypto/funcfiftlib).
+内部库的源代码可以在[这里](https://github.com/ton-blockchain/ton/tree/testnet/crypto/funcfiftlib)找到。
 
-### Usage example
+### 使用示例
 
 ```javascript
 import {compileFunc, compilerVersion} from '@ton-community/func-js';
 import {Cell} from 'ton';
 
 async function main() {
-    // You can get compiler version 
+    // 您可以获取编译器版本
     let version = await compilerVersion();
     
     let result = await compileFunc({
-        // Entry points of your project
+        // 项目的入口点
         entryPoints: ['main.fc'],
-        // Sources
+        // 源代码
         sources: {
             "stdlib.fc": "<stdlibCode>",
             "main.fc": "<contractCode>",
-            // Rest of the files which are included in main.fc if some
+            // 其他包含在main.fc中的文件
         }
     });
 
@@ -170,32 +172,32 @@ async function main() {
         return;
     }
 
-    // result.codeBoc contains base64 encoded BOC with code cell 
+    // result.codeBoc包含编码的BOC，带有代码cell
     let codeCell = Cell.fromBoc(Buffer.from(result.codeBoc, "base64"))[0];
     
-    // result.fiftCode contains assembly version of your code (for debug purposes)
+    // result.fiftCode包含您代码的汇编版本（用于调试目的）
     console.log(result.fiftCode)
 }
 ```
 
-Note that all FunC source file contents used in your project should be passed to `sources`, including:
+请注意，项目中使用的所有FunC源文件内容都应传递给`sources`，包括：
 
-- entry points
-- stdlib.fc (if you use it)
-- all files included in entry points
+- 入口点
+- stdlib.fc（如果您使用它）
+- 所有包含在入口点中的文件
 
-### Validated by TON Community
+### 经TON社区验证
 
-- [ton-community/ton-compiler](/develop/smart-contracts/sdk/javascript#ton-compiler) — ready-to-use FunC compiler for TON smart contracts.
-- [ton-community/func-js](/develop/smart-contracts/sdk/javascript#func-js) — cross-platform bindings for the TON FunC compiler.
+- [ton-community/ton-compiler](/develop/smart-contracts/sdk/javascript#ton-compiler) — 用于TON智能合约的现成FunC编译器。
+- [ton-community/func-js](/develop/smart-contracts/sdk/javascript#func-js) — TON FunC编译器的跨平台绑定。
 
-### Third-party contributors
+### 第三方贡献者
 
-- [grozzzny/ton-compiler-groz](https://github.com/grozzzny/ton-compiler-groz) — TON FunC smart contract compiler.
-- [Termina1/tonc](https://github.com/Termina1/tonc) — TONC (TON Compiler). Uses WASM, so perfect for Linux.
+- [grozzzny/ton-compiler-groz](https://github.com/grozzzny/ton-compiler-groz) — TON FunC智能合约编译器。
+- [Termina1/tonc](https://github.com/Termina1/tonc) — TONC（TON编译器）。使用WASM，非常适合Linux。
 
-## Other
+## 其他
 
-- [disintar/toncli](https://github.com/disintar/toncli) — one of the most popular approaches. You even can use it with Docker.
-- [tonthemoon/ton](https://github.com/tonthemoon/ton) — _(closed beta)_ one-line TON binaries installer.
-- [delab-team/tlbcrc](https://github.com/delab-team/tlbcrc) — Package & CLI to generate opcodes by TL-B scheme
+- [disintar/toncli](https://github.com/disintar/toncli) — 最受欢迎的方法之一。您甚至可以在Docker中使用它。
+- [tonthemoon/ton](https://github.com/tonthemoon/ton) — _(封闭测试)_一行TON二进制安装程序。
+- [delab-team/tlbcrc](https://github.com/delab-team/tlbcrc) — 包和CLI，根据TL-B方案生成操作码。
