@@ -16,3 +16,5 @@ jobs:
           owner: TownSquareXYZ
           base: localization
           head: main
+          auto_merge: false
+          pr_title: 'Fork Sync: Update from ton-community/ton-docs'
