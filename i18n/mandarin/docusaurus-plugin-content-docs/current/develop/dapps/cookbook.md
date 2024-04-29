@@ -282,10 +282,35 @@ print(address.to_str(is_user_friendly=True, is_bounceable=False, is_url_safe=Tru
 <TabItem value="Tonweb" label="JS (Tonweb)">
 
 ```js
+// 设置liteClient
+val context: CoroutineContext = Dispatchers.Default
+val json = Json { ignoreUnknownKeys = true }
+val config = json.decodeFromString<LiteClientConfigGlobal>(
+    URI("https://ton.org/global-config.json").toURL().readText()
+)
+val liteClient = LiteClient(context, config)
 
-const TonWeb = require("tonweb")
+val WALLET_MNEMONIC = "word1 word2 ...".split(" ")
 
-TonWeb.utils.Address.isValid('...')
+val pk = PrivateKeyEd25519(Mnemonic.toSeed(WALLET_MNEMONIC))
+val walletAddress = WalletV3R2Contract.address(pk, 0)
+println(walletAddress.toString(userFriendly = true, bounceable = false))
+
+val wallet = WalletV3R2Contract(liteClient, walletAddress)
+runBlocking {
+    wallet.transfer(pk, WalletTransfer {
+        destination = AddrStd("EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N")
+        bounceable = true
+        coins = Coins(100000000) // 1 ton 的 nanotons
+        messageData = org.ton.contract.wallet.MessageData.raw(
+            body = buildCell {
+                storeUInt(0, 32)
+                storeBytes("Comment".toByteArray())
+            }
+        )
+        sendMode = 0
+    })
+}
 ```
 
 
@@ -418,38 +443,61 @@ console.log(await jettonMaster.getWalletAddress(userAddress))
 <TabItem value="js-tonweb" label="JS (tonweb)">
 
 ```js
-// 设置liteClient
-val context: CoroutineContext = Dispatchers.Default
-val json = Json { ignoreUnknownKeys = true }
-val config = json.decodeFromString<LiteClientConfigGlobal>(
-    URI("https://ton.org/global-config.json").toURL().readText()
-)
-val liteClient = LiteClient(context, config)
+const TonWeb = require("tonweb");
+const {mnemonicToKeyPair} = require("tonweb-mnemonic");
 
-val USER_ADDR = AddrStd("钱包地址")
-val JETTON_MASTER = AddrStd("Jetton主合约地址") // 例如 EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE
+async function main() {
+    const tonweb = new TonWeb(new TonWeb.HttpProvider(
+        'https://toncenter.com/api/v2/jsonRPC', {
+            apiKey: 'put your api key'
+        })
+    );
+    const destinationAddress = new TonWeb.Address('put destination wallet address');
 
-// 我们需要以切片形式发送常规钱包地址
-val userAddressSlice = CellBuilder.beginCell()
-    .storeUInt(4, 3)
-    .storeInt(USER_ADDR.workchainId, 8)
-    .storeBits(USER_ADDR.address)
-    .endCell()
-    .beginParse()
+    const forwardPayload = new TonWeb.boc.Cell();
+    forwardPayload.bits.writeUint(0, 32); // 0 opcode 意味着我们有一个评论
+    forwardPayload.bits.writeString('Hello, TON!');
 
-val response = runBlocking {
-    liteClient.runSmcMethod(
-        LiteServerAccountId(JETTON_MASTER.workchainId, JETTON_MASTER.address),
-        "get_wallet_address",
-        VmStackValue.of(userAddressSlice)
-    )
+    /*
+        Tonweb 有一个内置的用于与 jettons 互动的类(class)，它有一个创建转账的方法。
+        然而，它有缺点，所以我们手动创建消息体。此外，这种方式让我们更好地理解了
+        存储的内容和它的功能是什么。
+     */
+
+    const jettonTransferBody = new TonWeb.boc.Cell();
+    jettonTransferBody.bits.writeUint(0xf8a7ea5, 32); // jetton 转账的 opcode
+    jettonTransferBody.bits.writeUint(0, 64); // query id
+    jettonTransferBody.bits.writeCoins(new TonWeb.utils.BN('5')); // jetton 数量，数量 * 10^9
+    jettonTransferBody.bits.writeAddress(destinationAddress);
+    jettonTransferBody.bits.writeAddress(destinationAddress); // 响应目的地
+    jettonTransferBody.bits.writeBit(false); // 无自定义有效载荷
+    jettonTransferBody.bits.writeCoins(TonWeb.utils.toNano('0.02')); // 转发金额
+    jettonTransferBody.bits.writeBit(true); // 我们将 forwardPayload 作为引用存储
+    jettonTransferBody.refs.push(forwardPayload);
+
+    const keyPair = await mnemonicToKeyPair('put your mnemonic'.split(' '));
+    const jettonWallet = new TonWeb.token.ft.JettonWallet(tonweb.provider, {
+        address: 'put your jetton wallet address'
+    });
+
+    // 可用钱包类型：simpleR1, simpleR2, simpleR3,
+    // v2R1, v2R2, v3R1, v3R2, v4R1, v4R2
+    const wallet = new tonweb.wallet.all['v4R2'](tonweb.provider, {
+        publicKey: keyPair.publicKey,
+        wc: 0 // 工作链
+    });
+
+    await wallet.methods.transfer({
+        secretKey: keyPair.secretKey,
+        toAddress: jettonWallet.address,
+        amount: tonweb.utils.toNano('0.1'),
+        seqno: await wallet.methods.seqno().call(),
+        payload: jettonTransferBody,
+        sendMode: 3
+    }).send(); // 创建转账并发送
 }
 
-val stack = response.toMutableVmStack()
-val jettonWalletAddress = stack.popSlice().loadTlb(MsgAddressInt) as AddrStd
-println("计算的Jetton钱包:")
-println(jettonWalletAddress.toString(userFriendly = true))
-
+main().finally(() => console.log("Exiting..."));
 ```
 
 
@@ -586,7 +634,8 @@ asyncio.run(main())
 
 如果我们想在 FunC 中处理数组或栈，那么 tuple 是必需的。首先我们需要能够迭代值来处理它们。
 
-以及toncoin到jetton交换的方案：
+接下来，DeDust引入了三个组件，Vault，Pool和Factory。这些组件是合约或合约组，并且负责j交换过程的部分。Factory充当寻找其他组件地址（如vault和pool）的角色，并且还构建其他组件。
+Vault负责接收转账消息，持有资产，只是通知相应的Pool，"用户A想要将100 X换成Y"。
 
 ```
 swap#ea06185d query_id:uint64 amount:Coins _:SwapStep swap_params:^SwapParams = InMsgBody;
@@ -596,7 +645,8 @@ swap#ea06185d query_id:uint64 amount:Coins _:SwapStep swap_params:^SwapParams = 
                     fulfill_payload:(Maybe ^Cell) reject_payload:(Maybe ^Cell) = SwapParams;
 ```
 
-这是向toncoin **vault**转账的方案。
+DeDust提供了一个特殊的SDk来处理合约、组件和API，它是用typescript编写的。
+足够的理论，让我们设置环境以交换一个jetton和TON。
 
 <Tabs groupId="code-examples">
 <TabItem value="js-ton" label="JS (@ton/ton)">
@@ -611,57 +661,32 @@ jetton$0001 workchain_id:int8 address:uint256 = Asset; // 用于jetton
 <TabItem value="Python" label="Python">
 
 ```python
+import { Factory, MAINNET_FACTORY_ADDR } from "@dedust/sdk";
+import { Address, TonClient4 } from "@ton/ton";
 
-from pytoniq_core import Address, Cell, begin_cell
-
-def calculate_jetton_address(
-    owner_address: Address, jetton_master_address: Address, jetton_wallet_code: str
-):
-    # Recreate from jetton-utils.fc calculate_jetton_wallet_address()
-    # https://tonscan.org/jetton/EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs#source
-
-    data_cell = (
-        begin_cell()
-        .store_uint(0, 4)
-        .store_coins(0)
-        .store_address(owner_address)
-        .store_address(jetton_master_address)
-        .end_cell()
-    )
-
-    code_cell = Cell.one_from_boc(jetton_wallet_code)
-
-    state_init = (
-        begin_cell()
-        .store_uint(0, 2)
-        .store_maybe_ref(code_cell)
-        .store_maybe_ref(data_cell)
-        .store_uint(0, 1)
-        .end_cell()
-    )
-    state_init_hex = state_init.hash.hex()
-    jetton_address = Address(f'0:{state_init_hex}')
-
-    return jetton_address
-
+const tonClient = new TonClient4({
+  endpoint: "https://mainnet-v4.tonhubapi.com",
+});
+const factory = tonClient.open(Factory.createFromAddress(MAINNET_FACTORY_ADDR));
+//Factory合约用于定位其他合约。
 ```
 
-Read the entire example [here](/static/example-code-snippets/pythoniq/jetton-offline-address-calc-wrapper.py).
+交换过程有一些步骤，例如，要用Jetton交换一些TON，我们首先需要找到相应的Vault和Pool
+然后确保它们已部署。对于我们的示例TON和SCALE，代码如下：
 
 
 
 
-如果我们想知道 `tuple` 的长度以进行迭代，我们应该使用 `TLEN` 汇编指令编写一个新函数：
+下一步是找到相应的Pool，这里是（TON和SCALE）
 
 ### How to construct a message for a jetton transfer with a comment?
 
-stdlib.fc 中我们已知的一些函数示例：
+现在我们应该确保这些合约存在，因为向一个未激活的合约发送资金可能导致无法找回的损失。
 
 :::warning
 When displayed, token doesn't usually show count of indivisible units user has; rather, amount is divided by `10 ^ decimals`. This value is commonly set to `9`, and this allows us to use `toNano` function. If decimals were different, we would **need to multiply by a different value** (for instance, if decimals are 6, then we would end up transferring thousand times the amount we wanted).
 
-Of course, one can always do calculation in indivisible units.
-:::
+之后，我们可以发送带有TON数量的转账消息
 
 <Tabs groupId="code-examples">
 <TabItem value="js-ton" label="JS (@ton)">
@@ -774,8 +799,7 @@ Jetton transfers need careful consideration for fees and amounts behind outgoing
 
 <img src="/img/interaction-schemes/nft.svg" alt="NFT ecosystem scheme"></img>
 
-待办事项：添加关于生成随机数的文章链接
-:::
+执行获取方法：
 
 :::warning
 Reminder: all methods about NFT below are not bound by TEP-62 to work. Before trying them, please check if your NFT or collection will process those messages in an expected way. Wallet app emulation may prove useful in this case.
@@ -889,9 +913,9 @@ main().finally(() => console.log("Exiting..."));
 
 
 
-### How to change the content in a collection's smart contract?
+### 如何更改集合的智能合约所有者？
 
-To change the content of a smart contract's collection, we need to understand how it is stored. The collection stores all the content in a single cell, inside of which there are two cells: **collection content** and **NFT common content**. The first cell contains the collection's metadata, while the second one contains the base URL for the NFT metadata.
+更改集合的所有者非常简单。要做到这一点，你需要指定 **opcode = 3**，任何 query_id，以及新所有者的地址：
 
 此示例展示如何将Ton币兑换为Jetton。
 
@@ -1038,7 +1062,7 @@ main().finally(() => console.log("Exiting..."));
 
 
 
-为相应的 MsgAddressInt TLB 创建内部地址。
+要更改智能合约集合的内容，我们需要了解它是如何存储的。集合将所有内容存储在一个单一的cell中，其中包含两个cell：**集合内容** 和 **NFT 通用内容**。第一个cell包含集合的元数据，而第二个cell包含NFT元数据的基本URL。
 
 ## Third-party: Decentralized Exchanges (DEX)
 
@@ -1066,7 +1090,7 @@ slice generate_external_address (int address) {
 }
 ```
 
-由于我们需要确定地址占用的位数，因此还需要[声明一个使用 `UBITSIZE` 操作码的 asm 函数](#how-to-write-own-functions-using-asm-keyword)，该函数将返回存储数字所需的最小位数。
+另外，我们需要在消息中包含版权信息，因为使用这个 opcode 时，它们也会改变。需要注意的是，不是一定要在所有地方指定新值。例如，如果只需要更改NFT通用内容，则所有其他值可以按照之前的指定。
 
 更改集合的所有者非常简单。要做到这一点，你需要指定 **opcode = 3**，任何 query_id，以及新所有者的地址：
 
@@ -1121,7 +1145,7 @@ async function main() {
 main().finally(() => console.log("Exiting..."));
 ```
 
-Also for the exchange itself, we need the **pool** address - acquired from get method `get_pool_address`. As arguments - asset slices according to the scheme above. In response, both methods will return a slice of the address of the requested **vault** / **pool**.
+这个示例将帮助你了解如何使用递归来处理这类cell。
 
 This is enough to build the message.
 
@@ -1131,7 +1155,7 @@ This is enough to build the message.
 DEXs use different protocols for their work, we need to familiarize ourselves with key concepts and some vital components and also know the TL-B schema involved in doing our swap process correctly. In this tutorial, we deal with DeDust, one of the famous DEX implemented entirely in TON.
 In DeDust, we have an abstract Asset concept that includes any swappable asset types. Abstraction over asset types simplifies the swap process because the type of asset does not matter, and extra currency or even assets from other chains in this approach will be covered with ease.
 
-Following is the TL-B schema that DeDust introduced for the Asset concept.
+_Sender_ 和 _Body_ 字段可用于确定消息的类型（常规转账、jetton转账、nft转账等等）。
 
 ```tlb
 import { Address, beginCell, internal, storeMessageRelaxed, toNano } from "@ton/core";
