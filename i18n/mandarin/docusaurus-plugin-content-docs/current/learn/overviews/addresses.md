@@ -169,3 +169,7 @@ TON区块链相关的附加二进制数据采用类似的"加固型" base64 用�
 - [使用tonweb转换地址的形式，从/到用户友好或原始形式](https://github.com/toncenter/tonweb/tree/master/src/utils#address-class)
 
 还可以使用[SDKs](/develop/dapps/apis/sdk)进行类似的转换。
+
+### Address Examples
+
+Learn more examples on TON Addresses in the [TON Cookbook](/develop/dapps/cookbook#working-with-contracts-addresses).
