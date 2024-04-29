@@ -2650,7 +2650,9 @@ log.Println("Contract address:", contractAddress.String())    // Output contract
 
  
 
-现在，让我们编程高负载钱包同时发送多条消息。例如，让我们每条消息发送12笔交易，这样gas费用就很小。
+:::caution
+Everything we have detailed above follows the same steps as the contract [deployment via wallet](/develop/smart-contracts/tutorials/wallet#contract-deployment-via-wallet) section. To better understanding, read the entire [GitHub source code](\(https://github.com/aSpite/wallet-tutorial\)).
+:::
 
 ### Sending High-Load Wallet Transactions
 
