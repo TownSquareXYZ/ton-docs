@@ -1,18 +1,15 @@
-# RLDP Protocol
+# RLDP 协议
 
-Implementation:
+实现：
 
 - https://github.com/ton-blockchain/ton/tree/master/rldp
 - https://github.com/ton-blockchain/ton/tree/master/rldp2
 - https://github.com/ton-blockchain/ton/tree/master/rldp-http-proxy
 
-## Overview
+## 概览
 
-A reliable arbitrary-size datagram protocol built upon the ADNL, called RLDP,
-is used instead of a TCP-like protocol. This reliable datagram protocol can
-be employed, for instance, to send RPC queries to remote hosts and receive
-answers from them.
+一个基于ADNL构建的可靠任意大小数据报协议，称为RLDP，被用来代替类似TCP的协议。这种可靠的数据报协议可以被用来，例如，向远程主机发送RPC查询并从它们接收答复。
 
 :::info
-Detailed description with examples can be found in [RLDP](/develop/network/rldp) article of `develop` section.
+详细描述和示例可以在`develop`部分的[RLDP](/develop/network/rldp)文章中找到。
 :::
