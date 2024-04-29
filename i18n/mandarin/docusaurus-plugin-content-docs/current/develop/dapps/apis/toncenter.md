@@ -37,7 +37,7 @@ There are different ways to connect to blockchain:
 
 客户端连接到[ton-http-api](https://github.com/toncenter/ton-http-api)服务器，该服务器使用TonLib将请求代理到liteserver（节点）。
 
-- Public TON Index can be used: tests and development are for free, premium for production - [toncenter.com/api/v3/](https://toncenter.com/api/v3/).
+- Public TON Index can be used: tests and development are for free, [premium](https://t.me/tonapibot) for production - [toncenter.com/api/v3/](https://toncenter.com/api/v3/).
 - Run your own TON Index with [Worker](https://github.com/toncenter/ton-index-worker/tree/36134e7376986c5517ee65e6a1ddd54b1c76cdba) and [TON Index API wrapper](https://github.com/toncenter/ton-indexer).
 
 ### 获取 API 密钥
