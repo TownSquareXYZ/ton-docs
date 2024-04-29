@@ -581,7 +581,7 @@ Most probably it means that liteserver node is syncing too slow, in particular t
 Failed to unpack account state
 ```
 
-This error means that requested account doesn't exist in current state. That means that this account is simultaneously is not deployed AND has zero balance
+**问：** 有时我们对各种请求得到`block is not applied`或`block is not ready`的回应 - 这正常吗？
 
 ### Cannot apply external message to current state : External message was not accepted
 
@@ -589,11 +589,11 @@ This error means that requested account doesn't exist in current state. That mea
 Cannot apply external message to current state : External message was not accepted
 ```
 
-This error means that contract didn't accepted external message. You need to find exitcode in trace. -13 means that account doesn't have enough TON to accept message (or it requires more than gas_credit). In case of wallet contracts exitcode=33 means wrong seqno (probably seqno data you use is outdatd), exitcode=34 means wrong subwallet_id (for old wallets v1/v2 it means wrong signature), exitcode=35 means that either message is expired or signature is wrong.
+**答：** 不。您需要检查mytonctrl中的“Local validator out of sync”值。如果它少于60秒，那么一切正常。
 
 ### What does Error 651 mean?
 
-`[Error : 651 : no nodes]` indicates that your node cannot locate another node within the TON Blockchain.
+您需要稍作延迟重复请求。
 
 Sometimes, this process can take up to 24 hours. However, if you've been receiving this error for several days, that means that your node cannot synchronize via a current network connection.
 
@@ -604,7 +604,7 @@ It should allow incoming connections on one specific port and outgoing connectio
 
 ### Validator console is not settings
 
-**答：** 这是正常的，通常这意味着您试图检索尚未到达您请求的节点的区块。
+请以您安装的用户身份运行`mytonctrl`。
 
 :::tip Solution
 
@@ -614,21 +614,22 @@ mytonctrl
 
 :::
 
-### What does "block is not applied" mean?
+### Status命令未显示本地节点部分
 
-**Q:** Sometimes we get `block is not applied` or `block is not ready` for various requests - is this normal?
+![](\img\docs\full-node\local-validator-status-absent.png)
 
-如果您在使用`-d`标志下载`MyTonCtrl`后遇到`out of sync`等于时间戳的问题，可能是转储没有正确安装（或已经过时）。
+如果节点状态中没有本地节点部分，通常意味着安装过程中出了问题，跳过了创建/分配验证者钱包的步骤。
+还要检查是否指定了验证者钱包。
 
-**Q:** If comparative frequency appears, does it mean there is a problem somewhere?
+直接检查以下内容：
 
 如果同步花费异常长的时间，可能是转储出现了问题。请[联系我们](https://t.me/SwiftAdviser)寻求帮助。
 
-请以您安装的用户身份运行`mytonctrl`。
+如果validatorWalletName为空，则执行以下操作：
 
 You need to repeat the request with a slight delay.
 
-### Out of Sync Issue with -d Flag
+### 在新服务器上转移验证者
 
 If you encounter an issue where the `out of sync` equals the timestamp after downloading `MyTonCtrl` with the `-d` flag, it's possible that the dump wasn't installed correctly (or it's already outdated).
 
