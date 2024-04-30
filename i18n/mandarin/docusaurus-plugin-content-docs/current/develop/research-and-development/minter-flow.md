@@ -1,51 +1,58 @@
-# 额外代币铸造
+# Extra Currency Minting
 
-## 额外代币
-根据 [Ton区块链白皮书 3.1.6](https://ton-blockchain.github.io/docs/tblkch.pdf#page=55)，TON区块链允许其用户定义除Toncoin之外的任意加密货币或代币，前提是满足某些条件。这些额外的加密货币由32位的_currency_ids_标识。定义的额外加密货币列表是区块链配置的一部分，存储在主链中。每个内部消息以及账户余额都包含一个`ExtraCurrencyCollection`特殊字段（附加到消息或保留在余额上的额外代币集合）：
+## Extracurrency
+
+According to [Ton Blockchain Whitepaper 3.1.6](https://ton-blockchain.github.io/docs/tblkch.pdf#page=55), TON Blockchain allows its users to define arbitrary cryptocurrencies or tokens apart from the Toncoin, provided some conditions are met. Such additional cryptocurrencies are identified by 32-bit _currency\*ids*. The list of defined additional cryptocurrencies is a part of the blockchain configuration,
+stored in the masterchain. Each internal message as well as account balance contains a special field for `ExtraCurrencyCollection` (set of extracurrencies attached to a message or kept on balance):
+
 ```tlb
 extra_currencies$_ dict:(HashmapE 32 (VarUInteger 32)) = ExtraCurrencyCollection;
 currencies$_ grams:Grams other:ExtraCurrencyCollection = CurrencyCollection;
 ```
 
-## 额外代币配置
-所有应该被铸造的代币的字典，准确来说是`ExtraCurrencyCollection`，存储在`ConfigParam7`中：
+## Extracurrency config
+
+A dictionary, or to be precise `ExtraCurrencyCollection`, of all currencies that should be minted is stored in `ConfigParam7`:
+
 ```tlb
 _ to_mint:ExtraCurrencyCollection = ConfigParam 7;
 ```
 
-`ConfigParam 6`包含与铸造相关的数据：
+`ConfigParam 6` contains data related to minting:
 
 ```tlb
 _ mint_new_price:Grams mint_add_price:Grams = ConfigParam 6;
 ```
 
-`ConfigParam2`包含_Minter_的地址。
+`ConfigParam2` contains address of *Minter*.
 
+## Low-level minting flow
 
+In each block, the collator compares the old global balance (global balance of all currencies at the end of prev block) with `ConfigParam7`. If any amount for any currency in `ConfigParam7` is less than it is in the global balance - the config is invalid. If any amount of any currency in `ConfigParam7` is higher than it is in the global balance a minting message will be created.
 
-## 低层级铸币流程
-在每个区块中，整合者将旧的全局余额（上一个区块结束时所有代币的全局余额）与`ConfigParam7`进行比较。如果`ConfigParam7`中任何代币的任何金额小于全局余额中的金额 - 配置无效。如果`ConfigParam7`中任何代币的任何金额高于全局余额中的金额，将创建一条铸币消息。
+This minting message has source `-1:0000000000000000000000000000000000000000000000000000000000000000` and *Minter* from `ConfigParam2` as destination and contains excesses of extracurrencies in `ConfigParam7` over old global balance.
 
-这条铸币消息的来源是`-1:0000000000000000000000000000000000000000000000000000000000000000`，并且_Minter_从`ConfigParam2`作为目的地，并包含`ConfigParam7`中比旧全局余额多出来的额外代币。
+The issue here is that the minting message contains extra currencies only and no TON coins. That means that even if *Minter* is set as a fundamental smart contract (presented in `ConfigParam31`), a minting message will cause the aborted transaction: `compute_ph:(tr_phase_compute_skipped reason:cskip_no_gas)`.
 
-这里的问题是铸币消息只包含额外代币，没有TON。这意味着即使_Minter_被设置为基本智能合约（在`ConfigParam31`中呈现），铸币消息也会导致交易中止：`compute_ph:(tr_phase_compute_skipped reason:cskip_no_gas)`。
+## High-level minting flow
 
-## 高层级铸币流程
-_Minter_智能合约在收到创建新额外代币或为现有代币铸造额外代币的请求时应：
-1.  检查`ConfigParam6`中确定的费用是否可以从请求消息中扣除
-2. 
-   1.  对于现有代币：检查铸造授权（只有_所有者_可以铸造新的）
-   2. 对于创建新代币：检查加密货币的id是否未被占用，并存储新代币的所有者
-3. 向配置合约发送消息（此类消息应导致`ExtraCurrencyCollection`中的`ConfigParam7`添加）
-4. 向`0:0000...0000`发送消息（保证在下一个或随后的区块中回弹）并带有extra_currency id
+*Minter* smart contract upon receiving a request for the creation of new extracurrencies or minting additional tokens for existing ones should:
 
-收到来自`0:0000...0000`的消息后
-1. 从回弹消息中读取extra_currency id
-2. 如果minter余额上有对应id的代币，将它们发送给这个代币的所有者，并附上`ok`消息
-3. 否则向代币所有者发送`fail`消息
+1. Check that fee determined in `ConfigParam6` can be deducted from the request message
+2. 1. for existing tokens: check authorization for minting (only the *owner* can mint new ones)
+   2. for the creation of new currencies: check that id of the cryptocurrency is not occupied and store owner of the new currency
+3. send message to config contract (such message should cause the addition to `ExtraCurrencyCollection` in `ConfigParam7`)
+4. send message to `0:0000...0000` (which is guaranteed to bounce in the next or following blocks) with extra_currency id
 
-## 待解决的问题
-1. 向`0:0000...0000`发送消息以延迟请求处理的方法相当粗糙。
-2. 当铸造失败时，应考虑这种情况。目前看来，唯一可能的情况是代币数量为0，或者当前余额加上铸造的金额不适合`(VarUInteger 32)`
-3. 如何燃烧？乍一看，没有办法。
-4. 铸币费用是否应该是禁止性的？换句话说，拥有数百万额外代币是否危险？（大配置下，区块整理过程中由于不受限的字典操作导致潜在的DoS攻击?）
+Upon receiving message from `0:0000...0000`
+
+1. read extra_currency id from the bounce message
+2. if there are tokens with corresponding id on minter balance send them to this currency owner with `ok` message
+3. otherwise send to currency owner `fail` message
+
+## Issues to be resolved
+
+1. Workaround with sending a message to `0:0000...0000` for postponement of request processing is quite dirty.
+2. Cases, when minting failed, should be thought out. For now, it looks like the only possible situation is when a currency amount is 0 or such that the current balance plus a minted amount doesn't fit into `(VarUInteger 32)`
+3. How to burn? At first glance, there are no ways.
+4. Should minting fees be prohibitive? In other words, is it dangerous to have millions of extracurrencies (big config, potential DoS due to unbound number of dict operations on collation?)
