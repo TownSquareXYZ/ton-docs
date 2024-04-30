@@ -1,48 +1,48 @@
-# 运行自己的 TON 代理
+# Running your own TON proxy
 
-本文档旨在简要地介绍TON网站，即通过TON网络访问的网站。TON网站可以方便地作为进入其他TON服务的入口。特别是，从TON网站下载的HTML页面可能包含指向`ton://...` URI的链接，用户点击这些链接后，如果用户设备上安装了TON钱包，就可以执行支付操作。
+The aim of this document is to provide a gentle introduction into TON Sites, which are websites accessed through the TON Network. TON Sites may be used as a convenient entry point for other TON Services. In particular, HTML pages downloaded from TON Sites may contain links to `ton://...` URIs representing payments that can be performed by the user by clicking on the link, provided a TON Wallet is installed on the user's device.
 
-从技术角度看，TON网站非常类似于标准网站，但它们是通过[TON网络](/learn/networking/overview)（互联网内的一个覆盖网络）而不是互联网访问的。更具体地说，它们拥有一个[ADNL](/learn/networking/adnl)地址（而不是更常见的IPv4或IPv6地址），并通过[RLDP](/learn/networking/rldp)协议（这是建立在ADNL之上的高级RPC协议，ADNL是TON网络的主要协议）接受HTTP查询，而不是常规的TCP/IP。所有加密由ADNL处理，所以如果入口代理托管在用户设备上，就没有必要使用HTTPS（即TLS）。
+From the technical perspective, TON Sites are very much like standard websites, but they are accessed through the [TON Network](/learn/networking/overview) (which is an overlay network inside the Internet) instead of the Internet. More specifically, they have an [ADNL](/learn/networking/adnl) Address (instead of a more customary IPv4 or IPv6 address) and they accept HTTP queries via a [RLDP](/learn/networking/rldp) protocol (which is a higher-level RPC protocol built upon ADNL, the main protocol of TON Network) instead of the usual TCP/IP. All encryption is handled by ADNL, so there is no need to use HTTPS (i.e. TLS) in case the entry proxy is hosted locally on the user's device.
 
-为了访问现有的网站和创建新的TON网站，需要特殊的网关来连接“普通”互联网和TON网络。本质上，通过在客户端机器上本地运行的HTTP->RLDP代理访问TON网站，并通过在远程Web服务器上运行的RLDP->HTTP代理来创建它们。
+In order to access existing sites and create new TON, Sites one needs special gateways between the "ordinary" internet and the TON Network. Essentially, TON Sites are accessed with the aid of a HTTP->RLDP proxy running locally on the client's machine and they are created by means of a reverse RLDP->HTTP proxy running on a remote web server.
 
-[了解更多关于TON网站、WWW和代理的信息](https://blog.ton.org/ton-sites)
+[Read more about TON Sites, WWW, and Proxy](https://blog.ton.org/ton-sites)
 
-## 运行入口代理
+## Running an entry proxy
 
-为了访问现有的TON网站，你需要在你的电脑上运行一个RLDP-HTTP代理。
+In order to access existing TON Sites, you need to run a RLDP-HTTP Proxy on your computer.
 
-1. 从[TON自动构建](https://github.com/ton-blockchain/ton/releases/latest)下载**rldp-http-proxy**。
+1. Download **rldp-http-proxy** from [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest).
 
-   或者你可以按照这些[指示](/develop/howto/compile#rldp-http-proxy)自己编译**rldp-http-proxy**。
+   Or you can compile the **rldp-http-proxy** yourself by following these [instructions](/develop/howto/compile#rldp-http-proxy).
 
-2. [下载](/develop/howto/compile#download-global-config)TON全局配置。
+2. [Download](/develop/howto/compile#download-global-config) TON global config.
 
-3. 运行**rldp-http-proxy**
+3. Run **rldp-http-proxy**
 
    ```bash
    rldp-http-proxy/rldp-http-proxy -p 8080 -c 3333 -C global.config.json
    ```
 
-在上面的例子中，`8080`是将在本地主机上监听传入HTTP查询的TCP端口，而`3333`是将用于所有出站和入站RLDP和ADNL活动的UDP端口（即通过TON网络连接到TON网站）。`global.config.json`是TON全局配置的文件名。
+In the above example, `8080` is the TCP port that will be listened to at localhost for incoming HTTP queries, and `3333` is the UDP port that will be used for all outbound and inbound RLDP and ADNL activity (i.e. for connecting to TON Sites via the TON Network). `global.config.json` is the filename of TON global config.
 
-如果一切正确，入口代理将不会终止，而是会继续在终端运行。现在可以用它来访问TON网站。当你不再需要它时，可以通过按`Ctrl-C`或简单地关闭终端窗口来终止它。
+If you have done everything correctly, the entry proxy will not terminate, but it will continue running in the terminal. It can now be used for accessing TON Sites. When you don't need it anymore, you can terminate it by pressing `Ctrl-C`, or simply by closing the terminal window.
 
-你的入口代理将通过HTTP在`localhost`端口`8080`上可用。
+Your entry proxy will be available by HTTP on `localhost` port `8080`.
 
-## 在远程计算机上运行入口代理
+## Running an entry proxy on a remote computer
 
-1. 从[TON自动构建](https://github.com/ton-blockchain/ton/releases/latest)下载**rldp-http-proxy**。
+1. Download **rldp-http-proxy** from [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest).
 
-   或者你可以按照这些[指示](/develop/howto/compile#rldp-http-proxy)自己编译**rldp-http-proxy**。
+   Or you can compile the **rldp-http-proxy** yourself by following these [instructions](/develop/howto/compile#rldp-http-proxy).
 
-2. [下载](/develop/howto/compile#download-global-config)TON全局配置。
+2. [Download](/develop/howto/compile#download-global-config) TON global config.
 
-3. 从[TON自动构建](https://github.com/ton-blockchain/ton/releases/latest)下载**generate-random-id**。
+3. Download **generate-random-id** from [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest).
 
-   或者你可以按照这些[指示](/develop/howto/compile#generate-random-id)自己编译**generate-random-id**。
+   Or you can compile the **generate-random-id** yourself by following these [instructions](/develop/howto/compile#generate-random-id).
 
-4. 为你的入口代理生成一个持久的ANDL地址
+4. Generate a persistent ANDL Address for your entry proxy
 
    ```bash
    mkdir keyring
@@ -50,49 +50,49 @@
    utils/generate-random-id -m adnlid
    ```
 
-   你会看到类似于
+   You will see something like
 
    ```
    45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
    ```
 
-   这是你新生成的持久ADNL地址，以十六进制和用户友好形式显示。相应的私钥保存在当前目录的文件`45061...2DB`中。将密钥移动到keyring目录
+   This is your newly-generated persistent ADNL Address, in hexadecimal and user-friendly form. The corresponding private key is saved into file `45061...2DB` in the current directory. Move key into the keyring directory
 
    ```bash
    mv 45061C1* keyring/
    ```
 
-5. 运行**rldp-http-proxy**
+5. Run **rldp-http-proxy**
 
    ```
    rldp-http-proxy/rldp-http-proxy -p 8080 -a <your_public_ip>:3333 -C global.config.json -A <your_adnl_address>
    ```
 
-   其中`<your_public_ip>`是你的公共IPv4地址，`<your_adnl_address>`是在上一步中生成的ADNL地址。
+   where `<your_public_ip>` is your public IPv4 address and `<your_adnl_address>` is the ADNL Address generated in the previous step.
 
-   示例：
+   Example:
 
    ```
    rldp-http-proxy/rldp-http-proxy -p 8080 -a 777.777.777.777:3333 -C global.config.json -A vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
    ```
 
-   在上面的示例中，`8080`是将在本地主机上监听传入HTTP查询的TCP端口，而`3333`是将用于所有出站和入站RLDP和ADNL活动的UDP端口（即通过TON网络连接到TON网站）。`global.config.json`是TON全局配置的文件名。
+   In the above example, `8080` is the TCP port that will be listened to at localhost for incoming HTTP queries, and `3333` is the UDP port that will be used for all outbound and inbound RLDP and ADNL activity (i.e. for connecting to TON Sites via the TON Network). `global.config.json` is the filename of TON global config.
 
-如果你做得都对，代理不会终止，而是会继续在终端运行。现在可以用它来访问TON网站。当你不再需要它时，可以通过按`Ctrl-C`或简单地关闭终端窗口来终止它。你可以将这个运行为一个unix服务以永久运行。
+If you have done everything correctly, the Proxy will not terminate, but it will continue running in the terminal. It can be used now for accessing TON Sites. When you don't need it anymore, you can terminate it by pressing `Ctrl-C`, or simply by closing the terminal window. You can run this as a unix service to run permanently.
 
-你的入口代理将通过HTTP在`<your_public_ip>`端口`8080`上可用。
+Your entry proxy will be available by HTTP on `<your_public_ip>` port `8080`.
 
-## 访问TON网站
+## Accessing TON Sites
 
-现在假设你在电脑上运行了一个RLDP-HTTP代理的实例，并且正在`localhost:8080`上监听传入的TCP连接，如[上面](#running-entry-proxy)所解释的。
+Now suppose that you have a running instance of the RLDP-HTTP Proxy running on your computer and listening on `localhost:8080` for inbound TCP connections, as explained [above](#running-entry-proxy).
 
-使用诸如`curl`或`wget`之类的程序进行简单测试以确认一切正常运行是可行的。例如，
+A simple test that everything is working properly may be performed using programs such as `curl` or `wget`. For example,
 
 ```
 curl -x 127.0.0.1:8080 http://just-for-test.ton
 ```
 
-尝试使用代理`127.0.0.1:8080`下载(TON)站点`just-for-test.ton`的主页。如果代理正常运行，你将看到类似于
+attempts to download the main page of (TON) Site `just-for-test.ton` using the proxy at `127.0.0.1:8080`. If the proxy is up and running, you'll see something like
 
 ```html
 
@@ -107,17 +107,17 @@ curl -x 127.0.0.1:8080 http://just-for-test.ton
 
 ```
 
-你还可以通过使用假域名`<adnl-addr>.adnl`通过它们的ADNL地址访问TON网站
+You can also access TON Sites by means of their ADNL Addresses by using a fake domain `<adnl-addr>.adnl`
 
 ```bash
 curl -x 127.0.0.1:8080 http://utoljjye6y4ixazesjofidlkrhyiakiwrmes3m5hthlc6ie2h72gllt.adnl/
 ```
 
-目前获取的是同一个TON网页。
+currently fetches the same TON Web page.
 
-或者，你可以在浏览器中将`localhost:8080`设置为HTTP代理。例如，如果你使用Firefox，请访问[设置] -> 通用 -> 网络设置 -> 设置 -> 配置代理访问 -> 手动代理配置，并在“HTTP代理”字段中输入“127.0.0.1”，在“端口”字段中输入“8080”。
+Alternatively, you can set up `localhost:8080` as a HTTP proxy in your browser. For example, if you use Firefox, visit [Setup] -> General -> Network Settings -> Settings -> Configure Proxy Access -> Manual Proxy configuration, and type "127.0.0.1" into the field "HTTP Proxy", and "8080" into the field "Port".
 
-一旦你在浏览器中设置了`localhost:8080`作为HTTP代理，你就可以在浏览器的导航
+Once you have set up `localhost:8080` as the HTTP proxy to be used in your browser, you can simply type the required URI, such as `http://just-for-test.ton` or `http://utoljjye6y4ixazesjofidlkrhyiakiwrmes3m5hthlc6ie2h72gllt.adnl/`, in the navigation bar of your browser, and interact with the TON Site in the same way as with the usual Web Sites.
 
 ## Running TON Site
 
@@ -127,7 +127,7 @@ Hey! Don't want to start from beginner-friendly tutorial [How to run TON Site?](
 
 Most people will need just to access existing TON Sites, not to create new ones. However, if you want to create one, you'll need to run RLDP-HTTP Proxy on your server, along with the usual web server software such as Apache or Nginx.
 
-大多数人只需要访问现有的TON网站，而不是创建新的。然而，如果你想创建一个，你需要在你的服务器上运行RLDP-HTTP代理，以及像Apache或Nginx这样的常规Web服务器软件。
+We suppose that you know already how to set up an ordinary website, and that you have already configured one on your server, are accepting incoming HTTP connections on TCP port `<your-server-ip>:80`, and have defined the required TON Network domain name (e.g. `example.ton`) as the main domain name or an alias for your website in the configuration of your web server.
 
 1. Download **rldp-http-proxy** from [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest).
 
@@ -173,7 +173,7 @@ Most people will need just to access existing TON Sites, not to create new ones.
 
 If you want your TON Site to run permanently, you'll have to use options `-d` and `-l <log-file>`.
 
-如果你想让你的TON网站永久运行，你将不得不使用选项`-d`和`-l <log-file>`。
+Example:
 
 ```bash
 rldp-http-proxy/rldp-http-proxy -a 777.777.777.777:3333 -L '*' -C global.config.json -A vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3 -d -l tonsite.log
@@ -181,13 +181,13 @@ rldp-http-proxy/rldp-http-proxy -a 777.777.777.777:3333 -L '*' -C global.config.
 
 If all works properly, the RLDP-HTTP proxy will accept incoming HTTP queries from the TON Network via RLDP/ADNL running on UDP port 3333 (of course, you can use any other UDP port if you want to) of IPv4 address `<your-server-ip>` (in particular, if you are using a firewall, don't forget to allow `rldp-http-proxy` to receive and send UDP packets from this port), and it will forward these HTTP queries addressed to all hosts (if you want to forward only specific hosts, change `-L '*'` to `-L <your hostname>`) to TCP port `80` at `127.0.0.1` (i.e. to your ordinary Web server).
 
-如果一切正常工作，RLDP-HTTP代理将接受来自TON网络的传入HTTP查询，通过运行在UDP端口3333的IPv4地址`<your-server-ip>`（特别是，如果你使用防火墙，请不要忘记允许`rldp-http-proxy`从该端口接收和发送UDP数据包）的RLDP/ADNL，它将把这些HTTP查询转发到所有主机（如果你只想转发特定主机，请将`-L '*'`更改为`-L <your hostname>`）的`127.0.0.1`TCP端口`80`（即你的常规Web服务器）。
+You can visit TON Site `http://<your-adnl-address>.adnl` (`http://vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3.adnl` in this example) from a browser running on a client machine as explained in the "Accessing TON Sites" Section and check whether your TON Site is actually available to the public.
 
-你可以在客户端机器上的浏览器中访问TON网站`http://<your-adnl-address>.adnl`（在这个示例中是`http://vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3.adnl`），如“访问TON网站”部分所解释的，并检查你的TON网站是否真的对公众开放。
+If you want to, you can [register](/participate/web3/site-management) a TON DNS domain, such as 'example.ton', and create a `site` record for this domain pointing to the persistent ADNL Address of your TON Site. Then the RLDP-HTTP proxies running in client mode would resolve http://example.ton as pointing to your ADNL Address and will access your TON Site.
 
-如果你愿意，你可以[注册](/participate/web3/site-management)一个TON DNS域名，比如'example.ton'，并为这个域名创建一个指向你TON网站的持久ADNL地址的`site`记录。然后，在客户端模式下运行的RLDP-HTTP代理将会解析http://example.ton为指向你的ADNL地址，并访问你的TON网站。
+You can also run a reverse proxy on a separate server and set your webserver as a remote address. In this case use `-R '*'@<YOUR_WEB_SERVER_HTTP_IP>:<YOUR_WEB_SERVER_HTTP_PORT>` instead of `-L '*'`.
 
-你还可以在一个单独的服务器上运行反向代理，并将你的Web服务器设置为远程地址。在这种情况下，请使用`-R '*'@<YOUR_WEB_SERVER_HTTP_IP>:<YOUR_WEB_SERVER_HTTP_PORT>`替代`-L '*'`。
+Example:
 
 ```bash
 rldp-http-proxy/rldp-http-proxy -a 777.777.777.777:3333 -R '*'@333.333.333.333:80 -C global.config.json -A vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3 -d -l tonsite.log
