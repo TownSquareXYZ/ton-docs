@@ -1,28 +1,28 @@
-# 归属合约
+# Vesting Contract
 
-该合约允许您锁定一定数量的Toncoin，并在指定时间内逐渐解锁。
+This contract allows you to lock a certain amount of Toncoin for a specified time and gradually unlock them.
 
-## 归属参数
+## Vesting Parameters
 
-归属参数在部署期间设置且不变。
+Vesting parameters are unchanged and is set during deployment.
 
-`vesting_total_amount` - 以 nanoton 为单位，锁定的Toncoin总量。
+`vesting_total_amount` - in nanotons, the total amount of locked Toncoins.
 
-`vesting_start_time` - unix时间，归属周期的开始点，直到这一刻`vesting_total_amount`被锁定，之后根据其他参数开始解锁。
+`vesting_start_time` - unixtime, the starting point of the vesting period, until this moment the `vesting_total_amount` is locked, after that it starts to unlock according to other parameters.
 
-`vesting_total_duration` - 总归属持续时间，以秒为单位（例如，`31104000`表示一年）。
+`vesting_total_duration` - total vesting duration in seconds (e.g. `31104000` for one year).
 
-`unlock_period` - 解锁周期，以秒为单位（例如，`2592000`表示每月一次）。
+`unlock_period` - unlock period in seconds (e.g. `2592000` for once a month).
 
-`cliff_duration` - 初始悬崖期，以秒为单位（例如，`5184000`表示2个月）。
+`cliff_duration` - starting cliff period in seconds (e.g. `5184000` for 2 months).
 
-`vesting_sender_address` - 您可以随时将Toncoin退回到此地址（即使它们被锁定）；此地址还可以添加到白名单中。
+`vesting_sender_address` - the address to which you can return the Toncoins (even if they are locked) at any time; also this address can append the whitelist.
 
-`owner_address` - 归属发行给其的人，从此地址，他可以发起从归属合约发送Toncoin的请求。
+`owner_address` - the one to whom the vesting was issued, from this address, he can initiate the sending of Toncoins from the vesting contract.
 
-您可以通过`get_vesting_data()` get方法获取这些参数。
+You can get this parameters by `get_vesting_data()` get-method.
 
-参数必须满足以下条件：
+The parameters must satisfy the following conditions:
 
 ```
 vesting_total_duration > 0
@@ -35,122 +35,122 @@ vesting_total_duration mod unlock_period == 0
 cliff_duration mod unlock_period == 0
 ```
 
-尽管智能合约不检查这些条件的符合性，但在合约部署后且在发送Toncoin之前，用户可以通过get方法验证所有参数是否OK。
+Although the smart contract does not check for compliance with these conditions, after the contract is deployed and before sending Toncoins to it, the user can verify that all parameters are OK by get-method.
 
-## 锁定
+## Lock
 
-在`vesting_start_time`之前，所有`vesting_total_amount`都被锁定。
+Before the `vesting_start_time`, all `vesting_total_amount` are locked.
 
-从`vesting_start_time`开始，金额开始按比例解锁。
+Starting from `vesting_start_time` the amount starts to unlock proportionately.
 
-例如，如果`vesting_total_duration`为10个月，`unlock_period`为1个月，且`vesting_total_amount`为500 TON，则每月将解锁500\*(10/100)=50 TON，10个月后将解锁全部500 TON。
+For example if `vesting_total_duration` is 10 months, and `unlock_period` is 1 month, and `vesting_total_amount` is 500 TON then every month will unlock 500\*(10/100)=50 TON, and in 10 months all 500 TON will be unlocked.
 
-如果有悬崖期，在此悬崖期内不解锁任何金额，过了悬崖期后，按上述公式解锁。
+If there is a cliff period, nothing is unlocked during this cliff period, and after it has passed, the amount is unlocked according to the formula above.
 
-例如，如果`cliff_period`为3个月，其他参数与前例相同，则前3个月不会解锁任何金额，3个月后一次性解锁150 TON（然后每个月解锁50 TON）。
+For example if `cliff_period` is 3 months, and the other parameters are the same as in the previous example, then first 3 months nothing will be unlocked and on 3 months 150 TON will be unlocked at once (and then 50 TON every month).
 
-Get方法`get_locked_amount(int at_time)`允许您计算在某个时间点将锁定多少金额。
+Get-method `get_locked_amount(int at_time)` allows you to calculate how much will be locked at a certain point in time.
 
-您只能将锁定的Toncoin发送到白名单地址或`vesting_sender_address`。
+You can only send the locked Toncoins to the whitelist addresses or `vesting_sender_address`.
 
-您可以随时随地发送已解锁的Toncoin。
+You can send the unlocked Toncoins whenever and wherever you like.
 
-## 白名单
+## Whitelist
 
-白名单是一系列地址，即使还有Toncoin被锁定，也可以向其发送Toncoin。
+Whitelist is a list of addresses to which you can send Toncoins, even if coins are still locked.
 
-Get方法`get_whitelist()`以(wc, hash_part)元组列表形式返回所有白名单地址。
+Get-method `get_whitelist()` returns all whitelist addresses as list of (wc, hash_part) tuples.
 
-Get方法`is_whitelisted(slice address)`检查此地址是否在白名单上。
+Get-method `is_whitelisted(slice address)` checks to see if this address is on the whitelist.
 
-`vesting_sender_address`可以随时通过`op::add_whitelist`消息向白名单添加新地址。
+`vesting_sender_address` can append new addresses to whitelist at any time by `op::add_whitelist` message.
 
-无法从白名单中移除地址。
+Unable to remove an address from the whitelist.
 
-此外，始终可以将锁定的代币发送到`vesting_sender_address`（无需单独添加到白名单）。
+Also, locked coins can always be sent to the `vesting_sender_address` (it doesn't need to be added to the whitelist separately).
 
-## 充值
+## Top-up
 
-您可以从任何地址向归属合约发送Toncoin。
+You can send Toncoins to vesting contract from any address.
 
-## 钱包智能合约
+## Wallet smart contract
 
-该合约设计类似于[标准钱包V3智能合约](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/wallet3-code.fc)。
+This contract is designed similar to the [standard wallet V3 smart contract](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/wallet3-code.fc).
 
-在其数据中，它保留`seqno`、`subwallet_id`、`public_key`，并接受相同格式的外部消息。
+In his data, he keeps `seqno`, `subwallet_id`, `public_key` and accepts external messages of the same format.
 
-Get方法`seqno()`、`get_subwallet_id()`和`get_public_key()`可用。
+Get-methods `seqno()`, `get_subwallet_id()` and `get_public_key()` are available.
 
-与标准钱包不同，归属合约一次只允许发送一条消息。
+Unlike a standard wallet, vesting contract allows you to send only one message at a time.
 
-## 发送
+## Send
 
-公钥的所有者可以通过外部消息发起从归属合约发送Toncoin的请求，就像在标准钱包中一样。
+The owner of the public key can initiate the sending of Toncoins from the vesting contract by an external message, just like in standard wallets.
 
-也可以通过从`owner_address`发送的`op::send`内部消息发起Toncoin的发送。
+The Toncoin sending can also be initiated by an `op::send` internal message sent from the `owner_address`.
 
-实际上，公钥和`owner_address`通常由同一用户拥有。
+In practice, both the public key and the `owner_address` are owned by the same user.
 
-## 白名单限制
+## Whitelist restrictions
 
-可以发送到`vesting_sender_address`的消息有以下限制：
+Messages that can be sent to the `vesting_sender_address` have the following restrictions:
 
-- 仅允许`send_mode == 3`；
+- only `send_mode == 3` allowed;
 
-在大多数情况下，地址被添加到白名单中，以允许用户使用被锁定的硬币进行验证或将被锁定的硬币质押到池中。
+In most cases, addresses are added to the whitelist to allow the user to validate using locked coins or to stake locked coins into the pools.
 
-为了避免Toncoin被盗，发送到白名单的消息有以下限制：
+To avoid theft of Toncoins, messages that can be sent to the whitelist have the following restrictions:
 
-- 仅允许`send_mode == 3`；
+- only `send_mode == 3` allowed;
 
-- 仅允许可弹回的消息；
+- only bounceable messages allowed;
 
-- 不允许附加`state_init`；
+- no `state_init` attachment allowed;
 
-如果目的地是系统选举人地址：
+If destination is system elector address:
 
-- 仅允许`op::elector_new_stake`、`op::elector_recover_stake`、`op::vote_for_complaint`、`op::vote_for_proposal`操作；
+- only `op::elector_new_stake`, `op::elector_recover_stake`, `op::vote_for_complaint`, `op::vote_for_proposal` operations allowed;
 
-如果目的地是系统配置地址：
+If destination is system config address:
 
-- 仅允许`op::vote_for_proposal`操作；
+- only `op::vote_for_proposal` operation allowed;
 
-对于其他目的地：
+For other destinations:
 
-- 允许空消息和空文本消息；
-- 允许以"d"、"w"、"D"、"W"开头的文本消息；
-- 允许`op::single_nominator_pool_withdraw`、`op::single_nominator_pool_change_validator`、`op::ton_stakers_deposit`、`op::jetton_burn`、`op::ton_stakers_vote`、`op::vote_for_proposal`、`op::vote_for_complaint`操作；
+- allowed empty messages and empty text messages;
+- allowed text messages starts only with "d", "w", "D", "W";
+- allowed `op::single_nominator_pool_withdraw`, `op::single_nominator_pool_change_validator`, `op::ton_stakers_deposit`, `op::jetton_burn`, `op::ton_stakers_vote`, `op::vote_for_proposal`, `op::vote_for_complaint` operations;
 
-对不在白名单上的地址没有限制。
+There are no restrictions on addresses not included in the whitelist.
 
-发送未锁定的 Toncoin 时不适用任何限制，即使我们发送到白名单`vesting_sender_address`。
+No restrictions apply when sending unlocked Toncoins, even if we send to whitelist or `vesting_sender_address`.
 
-## 项目结构
+## Project structure
 
-- `contracts` - 项目所有智能合约及其依赖的源代码。
-- `wrappers` - 合约的封装类（实现ton-core的`Contract`），包括任何[解]序列化原语和编译函数。
-- `tests` - 合约的测试。
-- `scripts` - 项目使用的脚本，主要是部署脚本。
+- `contracts` - source code of all the smart contracts of the project and their dependencies.
+- `wrappers` - wrapper classes (implementing `Contract` from ton-core) for the contracts, including any [de]serialization primitives and compilation functions.
+- `tests` - tests for the contracts.
+- `scripts` - scripts used by the project, mainly the deployment scripts.
 
-## 如何使用
+## How to use
 
-### 构建
+### Build
 
-`npx blueprint build` 或 `yarn blueprint build`
+`npx blueprint build` or `yarn blueprint build`
 
-### 测试
+### Test
 
-`npx blueprint test` 或 `yarn blueprint test`
+`npx blueprint test` or `yarn blueprint test`
 
-### 部署或运行其他脚本
+### Deploy or run another script
 
-`npx blueprint run` 或 `yarn blueprint run`
+`npx blueprint run` or `yarn blueprint run`
 
-### 添加新合约
+### Add a new contract
 
-`npx blueprint create ContractName` 或 `yarn blueprint create ContractName`
+`npx blueprint create ContractName` or `yarn blueprint create ContractName`
 
-## 参阅
+## See Also
 
-- [单一提名者](/participate/network-maintenance/single-nominator)
-- [归属合约](https://github.com/ton-blockchain/vesting-contract)
+- [Single Nominator](/participate/network-maintenance/single-nominator)
+- [vesting-contract](https://github.com/ton-blockchain/vesting-contract)
