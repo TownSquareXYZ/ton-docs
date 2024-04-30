@@ -1,22 +1,22 @@
 # TON Connect for React
 
-推荐用于React应用程序的SDK是[UI React SDK](/develop/dapps/ton-connect/developers#ton-connect-react)。它是一个React组件，提供了与TON Connect交互的高级方式。
+Recommended SDK for React Apps is a [UI React SDK](/develop/dapps/ton-connect/developers#ton-connect-react). It is a React component that provides a high-level way to interact with TON Connect.
 
-## 实现
+## Implementation
 
-### 1) 安装
+### 1. Installation
 
-要开始将TON Connect集成到您的DApp中，您需要安装`@tonconnect/ui-react`包。您可以使用npm或yarn来实现这一目的：
+To start integrating TON Connect into your DApp, you need to install the `@tonconnect/ui-react` package. You can use npm or yarn for this purpose:
 
 ```bash npm2yarn
 npm i @tonconnect/ui-react
 ```
 
-### 2) TON Connect初始化
+### 2. TON Connect Initiation
 
-安装包之后，您应该为您的应用程序创建一个`manifest.json`文件。有关如何创建manifest.json文件的更多信息，请参阅[此处](/develop/dapps/ton-connect/manifest)。
+After installing the package, you should create a `manifest.json` file for your application. More information on how to create a manifest.json file can be found [here](/develop/dapps/ton-connect/manifest).
 
-创建manifest文件后，将TonConnectUIProvider导入到您的Mini App的根目录，并传入manifest URL：
+After creating the manifest file, import TonConnectUIProvider to the root of your Mini App and pass the manifest URL:
 
 ```tsx
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
@@ -31,9 +31,9 @@ export function App() {
 
 ```
 
-### 3) 连接到钱包
+### 3. Connect to the Wallet
 
-添加`TonConnectButton`。TonConnect按钮是初始化连接的通用UI组件。连接钱包后，它会变成钱包菜单。建议将其放置在应用程序的右上角。
+Add the `TonConnectButton`. The TonConnect Button is a universal UI component for initializing a connection. After the wallet is connected, it transforms into a wallet menu. It is recommended to place it in the top right corner of your app.
 
 ```tsx
 export const Header = () => {
@@ -46,24 +46,25 @@ export const Header = () => {
 };
 ```
 
-您还可以为按钮添加className和style属性。请注意，您不能给TonConnectButton传递子组件：
+You can add className and style props to the button as well. Note that you cannot pass child to the TonConnectButton:
+
 ```js
 <TonConnectButton className="my-button-class" style={{ float: "right" }}/>
 ```
 
-此外，您始终可以使用`useTonConnectUI`hook和[connectWallet](https://github.com/ton-connect/sdk/tree/main/packages/ui#call-connect)方法手动初始化连接。
+Moreover, you always can initiate the connection manually, using `useTonConnectUI` hook and [connectWallet](https://github.com/ton-connect/sdk/tree/main/packages/ui#call-connect) method.
 
-### 4) 重定向
+### 4. Redirects
 
-如果您想在连接钱包后重定向用户至特定页面，您可以使用`useTonConnectUI`hook和[定制您的返回策略](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-the-return-strategy)。
+If you want to redirect user to a specific page after wallet connection, you can use `useTonConnectUI` hook and [customize your return strategy](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-the-return-strategy).
 
 #### Telegram Mini Apps
 
-如果您想在连接钱包后重定向用户至[Telegram Mini App](/develop/dapps/telegram-apps/)，您可以定制`TonConnectUIProvider`元素：
+If you want to redirect user to a [Telegram Mini App](/develop/dapps/telegram-apps/) after wallet connection, you can customize the `TonConnectUIProvider` element:
 
 ```tsx
       <TonConnectUIProvider
-            // ... 其他参数
+            // ... other parameters
           actionsConfiguration={{
               twaReturnUrl: 'https://t.me/<YOUR_APP_NAME>'
           }}
@@ -71,19 +72,19 @@ export const Header = () => {
       </TonConnectUIProvider>
 ```
 
-[在GitHub上查看示例](https://github.com/ton-connect/demo-dapp-with-wallet/blob/master/src/App.tsx)
+[Open example on GitHub](https://github.com/ton-connect/demo-dapp-with-wallet/blob/master/src/App.tsx)
 
-### 5) UI自定义
+### 5. UI customization
 
-要[定制模态窗口的UI](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)，您可以使用`useTonConnectUI`hook和`setOptions`函数。详见[Hooks](#hooks)部分中关于useTonConnectUIhook的更多信息。
+To [customize UI](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation) of the modal you can use `useTonConnectUI` hook and `setOptions` function. See more about useTonConnectUI hook in [Hooks](#hooks) section.
 
 ## Hooks
 
-如果您想在React应用程序中使用一些低级TON Connect UI SDK的特性，您可以使用`@tonconnect/ui-react`包中的hook。
+If you want to use some low-level TON Connect UI SDK features in your React app, you can use hooks from `@tonconnect/ui-react` package.
 
 ### useTonAddress
 
-使用它来获取用户当前的ton钱包地址。传递布尔参数isUserFriendly来选择地址的格式。如果钱包未连接，hook将返回空字符串。
+Use it to get user's current ton wallet address. Pass boolean parameter isUserFriendly to choose format of the address. If wallet is not connected hook will return empty string.
 
 ```tsx
 import { useTonAddress } from '@tonconnect/ui-react';
@@ -105,12 +106,12 @@ export const Address = () => {
 
 ### useTonWallet
 
-使用它来获取用户当前的ton钱包。如果钱包未连接，hook会返回null。
+Use it to get user's current ton wallet. If wallet is not connected hook will return null.
 
-查看所有钱包属性
+See all wallet's properties
 
-[Wallet接口](https://ton-connect.github.io/sdk/interfaces/_tonconnect_sdk.Wallet.html)
-[WalletInfo接口](https://ton-connect.github.io/sdk/types/_tonconnect_sdk.WalletInfo.html)
+[Wallet interface](https://ton-connect.github.io/sdk/interfaces/_tonconnect_sdk.Wallet.html)
+[WalletInfo interface](https://ton-connect.github.io/sdk/types/_tonconnect_sdk.WalletInfo.html)
 
 ```tsx
 import { useTonWallet } from '@tonconnect/ui-react';
@@ -131,12 +132,11 @@ export const Wallet = () => {
 
 ### useTonConnectUI
 
-使用它来获取`TonConnectUI`实例和UI选项更新函数的访问权限。
+Use it to get access to the `TonConnectUI` instance and UI options updating function.
 
-[了解更多关于TonConnectUI实例方法](https://github.com/ton-connect/sdk/tree/main/packages/ui#send-transaction)
+[See more about TonConnectUI instance methods](https://github.com/ton-connect/sdk/tree/main/packages/ui#send-transaction)
 
-[了解更多关于setOptions函数](https://github.com/ton-connect/sdk/tree/main/packages/ui#change-options-if-needed)
-
+[See more about setOptions function](https://github.com/ton-connect/sdk/tree/main/packages/ui#change-options-if-needed)
 
 ```tsx
 import { Locales, useTonConnectUI } from '@tonconnect/ui-react';
@@ -151,7 +151,7 @@ export const Settings = () => {
     return (
         <div>
             <button onClick={() => tonConnectUI.sendTransaction(myTransaction)}>
-                发送交易
+                Send transaction
             </button>
 
             <div>
@@ -167,8 +167,9 @@ export const Settings = () => {
 ```
 
 ### useIsConnectionRestored
-指示连接恢复过程的当前状态。
-您可以使用它检测连接恢复过程是否已完成。
+
+Indicates current status of the connection restoring process.
+You can use it to detect when connection restoring process if finished.
 
 ```tsx
 import { useIsConnectionRestored } from '@tonconnect/ui-react';
@@ -183,13 +184,14 @@ export const EntrypointPage = () => {
     return <MainPage />;
 };
 ```
-## 使用
 
-让我们来看看如何在实践中使用React UI SDK。
+## Usage
 
-### 发送交易
+Let's take a look at how to use the React UI SDK on practice.
 
-向特定地址发送TON币（以nanotons计）：
+### Sending transactions
+
+Send TON coins (in nanotons) to a specific address:
 
 ```js
 import { useTonConnectUI } from '@tonconnect/ui-react';
@@ -217,23 +219,24 @@ export const Settings = () => {
 };
 ```
 
-- 在这里获取更多示例：[准备消息](/develop/dapps/ton-connect/message-builders)
+- Get more examples here: [Preparing Messages](/develop/dapps/ton-connect/message-builders)
 
-### 通过哈希理解交易状态
+### Understanding Transaction Status by Hash
 
-位于支付处理中（使用tonweb）的原理。[了解更多](/develop/dapps/asset-processing/#checking-contracts-transactions)
+The principle located in Payment Processing (using tonweb). [See more](/develop/dapps/asset-processing/#checking-contracts-transactions)
 
-### 后端的可选检查（tonproof）
+### Optional Check (ton_proof) on the Backend
 
 :::tip
-了解如何签名和验证消息：[签名与验证](/develop/dapps/ton-connect/sign)
+Understand how to sign and verify messages: [Signing and Verification](/develop/dapps/ton-connect/sign)
 :::
 
-使用`tonConnectUI.setConnectRequestParameters`函数来传递你的连接请求参数。
+Use `tonConnectUI.setConnectRequestParameters` function to pass your connect request parameters.
 
-该函数接受一个参数：
+This function takes one parameter:
 
-当你在等待来自后端的响应时，设置状态为 ‘loading’。如果用户此刻打开连接钱包modals，他会看到一个加载器。
+Set state to 'loading' while you are waiting for the response from your backend. If user opens connect wallet modal at this moment, he will see a loader.
+
 ```ts
 const [tonConnectUI] = useTonConnectUI();
 
@@ -242,9 +245,10 @@ tonConnectUI.setConnectRequestParameters({
 });
 ```
 
-或
+or
 
-设置状态为 ‘ready’ 并定义 `tonProof` 值。传递的参数将应用于连接请求（二维码和通用链接）。
+Set state to 'ready' and define `tonProof` value. Passed parameter will be applied to the connect request (QR and universal link).
+
 ```ts
 const [tonConnectUI] = useTonConnectUI();
 
@@ -256,32 +260,32 @@ tonConnectUI.setConnectRequestParameters({
 });
 ```
 
-或
+or
 
-如果通过 `state: 'loading'` 启用了加载器（例如，你从后端收到一个错误而不是响应），则移除加载器。连接请求将不包含任何额外参数。
+Remove loader if it was enabled via `state: 'loading'` (e.g. you received an error instead of a response from your backend). Connect request will be created without any additional parameters.
+
 ```ts
 const [tonConnectUI] = useTonConnectUI();
 
 tonConnectUI.setConnectRequestParameters(null);
 ```
 
-如果你的tonProof有效载荷的期限是有限的（例如，你可以每10分钟刷新一次连接请求参数），你可以多次调用`tonConnectUI.setConnectRequestParameters`。
-
+You can call `tonConnectUI.setConnectRequestParameters` multiple times if your tonProof payload has bounded lifetime (e.g. you can refresh connect request parameters every 10 minutes).
 
 ```ts
 const [tonConnectUI] = useTonConnectUI();
 
-// 启用ui加载器
+// enable ui loader
 tonConnectUI.setConnectRequestParameters({ state: 'loading' });
 
-// 从后端获取你的tonProof载荷
+// fetch you tonProofPayload from the backend
 const tonProofPayload: string | null = await fetchTonProofPayloadFromBackend();
 
 if (!tonProofPayload) {
-    // 移除加载器，连接请求将不包含任何额外参数
+    // remove loader, connect request will be without any additional parameters
     tonConnectUI.setConnectRequestParameters(null);
 } else {
-    // 在连接请求中添加tonProof
+    // add tonProof to the connect request
     tonConnectUI.setConnectRequestParameters({
         state: "ready",
         value: { tonProof: tonProofPayload }
@@ -290,7 +294,7 @@ if (!tonProofPayload) {
 
 ```
 
-当钱包连接时，你可以在`wallet`对象中找到`ton_proof`结果：
+You can find `ton_proof` result in the `wallet` object when wallet will be connected:
 
 ```ts
 import {useTonConnectUI} from "@tonconnect/ui-react";
@@ -305,10 +309,10 @@ useEffect(() =>
     }), []);
 ```
 
+### Wallet Disconnection
 
-### 钱包断开
+Call to disconnect the wallet:
 
-断开钱包的调用：
 ```js
 import { useTonConnectUI } from '@tonconnect/ui-react';
 
@@ -317,13 +321,12 @@ const [tonConnectUI] = useTonConnectUI();
 await tonConnectUI.disconnect();
 ```
 
-## API 文档
+## API Documentation
 
-[最新的API文档](https://ton-connect.github.io/sdk/modules/_tonconnect_ui_react.html)
+[Latest API documentation](https://ton-connect.github.io/sdk/modules/_tonconnect_ui_react.html)
 
+## Examples
 
-## 示例
-
-* [TON Hello World 指南](https://ton-community.github.io/tutorials/03-client/) 来创建一个简单的DApp与React UI。
-* [Demo dApp](https://github.com/ton-connect/demo-dapp-with-react-ui) - 使用`@tonconnect/ui-react`的DApp示例。
-* [ton.vote](https://github.com/orbs-network/ton-vote) - 带有TON Connect实现的React网站示例。
+- Step-by-step [TON Hello World guide](https://ton-community.github.io/tutorials/03-client/) to create a simple DAppwith React UI.
+- [Demo dApp](https://github.com/ton-connect/demo-dapp-with-react-ui) - Example of a DAppwith `@tonconnect/ui-react`.
+- [ton.vote](https://github.com/orbs-network/ton-vote) - Example of React website with TON Connect implementation.
