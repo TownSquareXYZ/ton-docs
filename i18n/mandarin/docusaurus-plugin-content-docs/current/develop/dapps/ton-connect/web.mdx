@@ -3,13 +3,13 @@ import TabItem from '@theme/TabItem';
 
 # TON Connect for JS
 
-本指南将帮助您将TON Connect集成到您的Javascript应用程序中，用于用户认证和交易。
+This guide will help you integrate TON Connect into your Javascript application for user authentication and transactions.
 
-如果你的DApp使用React，可以看看[TON Connect UI React SDK](/develop/dapps/ton-connect/react)。
+If you use React for your DApp, take a look at [TON Connect UI React SDK](/develop/dapps/ton-connect/react).
 
-## 实现
+## Implementation
 
-### 1. 安装
+### 1. Installation
 
 <Tabs groupId="Installation">
   <TabItem value="CDN" label="CDN">
@@ -23,7 +23,7 @@ Add script in the HEAD element of your website:
 
 </TabItem>
   <TabItem value="NPM" label="NPM">
-    要开始将TON Connect集成到您的应用中，请安装@tonconnect/ui包：
+    To begin the integration of TON Connect into your app, install the @tonconnect/ui package:
 
 ```bash npm2yarn
 npm i @tonconnect/ui
@@ -32,17 +32,17 @@ npm i @tonconnect/ui
 </TabItem>
 </Tabs>
 
-### 2. TON Connect 初始化
+### 2. TON Connect Initiation
 
-安装包后，您应创建一个`manifest.json`文件给您的应用程序。有关如何创建manifest.json文件的更多信息，请查看[这里](/develop/dapps/ton-connect/manifest)。
+After installing the package, you should create a `manifest.json` file for your application. More information on how to create a manifest.json file can be found [here](/develop/dapps/ton-connect/manifest).
 
-添加一个带有`ton-connect` id的按钮来连接钱包：
+Add a button with `ton-connect` id to connect to the wallet:
 
 ```html
 <div id="ton-connect"></div>
 ```
 
-_在此标签之后_在应用页面的`<body>`部分添加`tonConnectUI`的脚本：
+_After this tag_ add a script for `tonConnectUI` in `<body>` part of application page:
 
 ```html
 <script>
@@ -53,11 +53,11 @@ _在此标签之后_在应用页面的`<body>`部分添加`tonConnectUI`的脚�
 </script>
 ```
 
-### 3. 连接到钱包
+### 3. Connect to the Wallet
 
-"连接"按钮（在`buttonRootId`处添加）会自动处理点击。
+"Connect" button (which is added at `buttonRootId`) automatically handles clicks.
 
-但您也可以编程地打开"connect modal"，例如，在自定义按钮点击后：
+But you can open "connect modal" programmatically, e.g. after click on custom button:
 
 ```html
 <script>
@@ -74,15 +74,15 @@ _在此标签之后_在应用页面的`<body>`部分添加`tonConnectUI`的脚�
 </script>
 ```
 
-### 4. 重定向
+### 4. Redirects
 
-#### 自定义返回策略
+#### Customizing return strategy
 
-要在连接后重定向用户到特定的URL，您可以[自定义返回策略](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-the-return-strategy)。
+To redirect user to a specific URL after connection, you can [customize your return strategy](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-the-return-strategy).
 
-#### Telegram小程序
+#### Telegram Mini Apps
 
-要在钱包连接后重定向用户到[Telegram小程序](/develop/dapps/telegram-apps/)，请使用`twaReturnUrl`选项：
+To redirect user to a [Telegram Mini App](/develop/dapps/telegram-apps/) after wallet connection use `twaReturnUrl` option:
 
 ```tsx
 tonConnectUI.uiOptions = {
@@ -90,26 +90,26 @@ tonConnectUI.uiOptions = {
   };
 ```
 
-[在SDK文档中阅读更多](https://github.com/ton-connect/sdk/tree/main/packages/ui#use-inside-twa-telegram-web-app)
+[Read more in SDK documentation](https://github.com/ton-connect/sdk/tree/main/packages/ui#use-inside-twa-telegram-web-app)
 
-### 5. UI自定义
+### 5. UI customization
 
-TonConnect UI提供了一个用户在使用各种应用时应该熟悉且可识别的界面。然而，应用开发者可以对这个接口进行更改，以保持与应用接口的一致性。
+TonConnect UI provides an interface that should be familiar and recognizable to the user when using various apps. However, the app developer can make changes to this interface to keep it consistent with the app interface.
 
-- [TonConnect UI文档](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)
+- [TonConnect UI documentation](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)
 
-## SDK文档
+## SDK Documentation
 
-- [SDK文档](https://github.com/ton-connect/sdk/blob/main/packages/ui/README.md)
-- [最新API文档](https://ton-connect.github.io/sdk/modules/_tonconnect_ui.html)
+- [SDK documentation](https://github.com/ton-connect/sdk/blob/main/packages/ui/README.md)
+- [Latest API documentation](https://ton-connect.github.io/sdk/modules/_tonconnect_ui.html)
 
-## 用法
+## Usage
 
-让我们看看在应用中使用TON Connect UI的示例。
+Let's take a look at the example of using the TON Connect UI in the application.
 
-### 发送消息
+### Sending messages
 
-这是使用TON Connect UI发送交易的示例：
+Here is an example of sending a transaction using the TON Connect UI:
 
 ```js
 import TonConnectUI from '@tonconnect/ui';
@@ -131,29 +131,29 @@ const transaction = {
 const result = await tonConnectUI.sendTransaction(transaction)
 ```
 
-- 在这里获取更多示例：[准备消息](/develop/dapps/ton-connect/message-builders)
+- Get more examples here: [Preparing Messages](/develop/dapps/ton-connect/message-builders)
 
-### 通过哈希理解交易状态
+### Understanding Transaction Status by Hash
 
-位于支付处理（使用tonweb）中的原则。[查看更多](/develop/dapps/asset-processing/#checking-contracts-transactions)
+The principle located in Payment Processing (using tonweb). [See more](/develop/dapps/asset-processing/#checking-contracts-transactions)
 
-### 签名和验证
+### Signing and Verification
 
-了解如何使用TON Connect签名和验证消息：
+Understand how to sign and verify messages using the TON Connect:
 
-- [签名和验证](/develop/dapps/ton-connect/sign)
-- [GitHub上的TON Connect UI实现](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-connect-request-parameters-ton_proof)
+- [Signing and Verification](/develop/dapps/ton-connect/sign)
+- [TON Connect UI implementation on GitHub](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-connect-request-parameters-ton_proof)
 
-### 钱包断开连接
+### Wallet Disconnection
 
-调用以断开钱包连接：
+Call to disconnect the wallet:
 
 ```js
 await tonConnectUI.disconnect();
 ```
 
-## 参阅
+## See Also
 
-- [UI自定义](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)
+- [UI Customization](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)
 - [\[YouTube\] TON Connect UI React \[RU\]](https://youtu.be/wIMbkJHv0Fs?list=PLyDBPwv9EPsCJ226xS5_dKmXXxWx1CKz_&t=1747)
-- [\[YouTube\] 将TON Connect UI连接到网站 \[RU\]](https://www.youtube.com/watch?v=HUQ1DPfFxG4&list=PLyDBPwv9EPsAIWi8vgic9kiV3KF_wvIcz&index=4)
+- [\[YouTube\] Connect TON Connect UI to Site \[RU\]](https://www.youtube.com/watch?v=HUQ1DPfFxG4&list=PLyDBPwv9EPsAIWi8vgic9kiV3KF_wvIcz&index=4)
