@@ -2,7 +2,7 @@ import Button from '@site/src/components/button'
 
 # TVM Overview
 
-本文提供了TVM如何执行交易的概览。
+All TON Smart Contracts are executed on their own TON Virtual Machine (TVM). TVM is built on the _stack principle_, which makes it efficient and easy to implement.
 
 This document provides a bird's-eye view of how TVM executes transactions.
 
@@ -13,7 +13,7 @@ This document provides a bird's-eye view of how TVM executes transactions.
 
 ## TON Course: TVM
 
-每个交易包含最多 5 个阶段：
+The [TON Blockchain Course](https://stepik.org/course/176754/) is a comprehensive guide to TON Blockchain development.
 
 Module 2 completely covers **TVM**, transactions, scalability and business cases.
 
@@ -23,30 +23,30 @@ Module 2 completely covers **TVM**, transactions, scalability and business cases
 
 When some event happens on the account in one of the TON chains, it causes a **transaction**. The most common event is the "arrival of some message", but generally speaking there could be `tick-tock`, `merge`, `split` and other events.
 
-在任何给定时刻，TVM 状态由 6 个属性完全确定：
+Each transaction consists of up to 5 phases:
 
-1. Stack - （见下文）
-2. Control registers - （见下文）简单地说，这意味着最多可在执行期间直接设置和读取的 16 个变量
-3. Current continuation - 描述当前执行的指令序列的对象
-4. Current codepage - 简单地说，这表示当前正在运行的 TVM 版本
-5. Gas limits - 一组 4 个整数值；当前 gas 限制 g<sub>l</sub>、最大 gas 限制 g<sub>m</sub>、剩余 gas  g<sub>r</sub> 和 gas 信用 g<sub>c</sub>
+1. **Storage phase** - in this phase, storage fees accumulated by the contract due to the occupation of some space in the chain state are calculated. Read more in [Storage Fees](/develop/smart-contracts/fees#storage-fee).
+2. **Credit phase** - in this phase, the balance of the contract with respect to a (possible) incoming message value and collected storage fee are calculated.
+3. **Compute phase** - in this phase, TVM is executing the contract (see below) and the result of the contract execution is an aggregation of `exit_code`, `actions` (serialized list of actions), `gas_details`, `new_storage` and some others.
+4. **Action phase** - if the compute phase was successful, in this phase, `actions` from the compute phase are processed. In particular, actions may include sending messages, updating the smart contract code, updating the libraries, etc. Note that some actions may fail during processing (for instance, if we try to send message with more TON than the contract has), in that case the whole transaction may revert or this action may be skipped (it depends on the mode of the actions, in other words, the contract may send a `send-or-revert` or  `try-send-if-no-ignore` type of message).
+5. **Bounce phase** - if the compute phase failed (it returned `exit_code >= 2`), in this phase, the _bounce message_ is formed for the transactions initiated by an incoming message.
 
-## TVM 是堆栈机
+## Compute phase
 
-TVM 是一个后进先出的堆栈机。总共有 7 种类型的变量可以存储在堆栈中 — 三种非cell类型：
+In this phase, the TVM execution occurs.
 
 ### TVM state
 
-以及四种不同的cell类型：
+At any given moment, the TVM state is fully determined by 6 properties:
 
-- Cell(cell) - TON 区块链用于存储所有数据的基本（可能是嵌套的）不透明结构
-- Slice(切片) - 一种特殊的对象，允许从cell中读取
-- Builder(构建器) - 一种特殊的对象，允许您创建新的cell
-- Continuation(延续对象) - 一种特殊的对象，允许您将cell TVM 指令的源
+- Stack (see below)
+- Control registers - (see below) to put it simply, this means up to 16 variables which may be directly set and read during execution
+- Current continuation - object which describes a currently executed sequence of instructions
+- Current codepage - in simple terms, this means the version of TVM which is currently running
 - Gas limits - a set of 4 integer values; the current gas limit g<sub>l</sub>, the maximal gas limit g<sub>m</sub>, the remaining gas g<sub>r</sub> and the gas credit g<sub>c</sub>
 - Library context - the hashmap of libraries which can be called by TVM 
 
-### 控制寄存器
+### TVM is a stack machine
 
 TVM is a last-input-first-output stack machine. In total, there are 7 types of variables which may be stored in stack — three non-cell types:
 
@@ -54,14 +54,14 @@ TVM is a last-input-first-output stack machine. In total, there are 7 types of v
 - Tuple - ordered collection of up to 255 elements having arbitrary value types, possibly distinct.
 - Null
 
-TVM 在事务执行到达 Compute Phase 时初始化，然后从 _当前 continuation_ 执行命令（操作码），直到没有更多的命令要执行（并且没有用于返回跳转的 continuation）。
+And four distinct flavours of cells:
 
 - Cell - basic (possibly nested) opaque structure used by TON Blockchain for storing all data
 - Slice - a special object which allows you to read from a cell
 - Builder - a special object which allows you to create new cells
 - Continuation - a special object which allows you to use a cell as source of TVM instructions
 
-### TVM 指令
+### Control registers
 
 - `c0` — Contains the next continuation or return continuation (similar to the subroutine return address in conventional designs). This value must be a Continuation.
 - `c1` — Contains the alternative (return) continuation; this value must be a Continuation. 
@@ -71,17 +71,17 @@ TVM 在事务执行到达 Compute Phase 时初始化，然后从 _当前 continu
 - `c5` — Contains the output actions. This value is a Cell.
 - `c7` — Contains the root of temporary data. It is a Tuple.
 
-### TVM 执行的结果
+### Initialization of TVM
 
-除了 `exit_code` 和消耗的 gas 数据之外，TVM 还间接输出以下数据：
+TVM initializes when transaction execution gets to the Computation phase, and then executes commands (opcodes) from _Current continuation_ until there are no more commands to execute (and no continuation for return jumps).
 
 Detailed description of the initialization process can be found here: [TVM Initialization](/learn/tvm-instructions/tvm-initialization.md)
 
 ## TVM instructions
 
-请注意，由于最大cell深度 `<1024` 以及特别是 c4 和 c5 深度 `<=512` 的限制，一次 tx 中的输出动作数量将受到限制 `<=255`。如果合约需要发送的消息超过这个限制，它可以发送带有请求 `continue_sending` 的消息给自己，并在随后的交易中发送所有必要的消息。
+The list of TVM instructions can be found here: [TVM instructions](/learn/tvm-instructions/instructions).
 
-### 参见
+### Result of TVM execution
 
 Besides exit_code and consumed gas data, TVM indirectly outputs the following data:
 
