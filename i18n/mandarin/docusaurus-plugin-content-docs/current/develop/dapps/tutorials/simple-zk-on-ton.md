@@ -1,53 +1,53 @@
-# 在 TON 上构建一个简单的 ZK 项目
+# Building a simple ZK project on TON
 
-## 👋 介绍
+## 👋 Introduction
 
-**零知识**（ZK）证明是一种基本的密码学原语，它允许一方（证明者）向另一方（验证者）证明一个陈述是真实的，而不泄露除了该陈述本身的有效性之外的任何信息。零知识证明是构建隐私保护系统的强大工具，已在多种应用中使用，包括匿名支付、匿名消息系统和无信任桥接。
+**Zero-knowledge** (ZK) proofs are a fundamental cryptographic primitive that allows one party (the prover) to prove to another party (the verifier) that a statement is true without revealing any information beyond the validity of the statement itself. Zero-knowledge proofs are a powerful tool for building privacy-preserving systems and have been used in a variety of applications including anonymous payments, anonymous messaging systems, and trustless bridges.
 
-:::tip TVM 升级 2023.07
-在 2023 年 6 月之前，不能在 TON 上验证加密证明。由于配对算法背后复杂计算的普遍性，有必要通过添加 TVM 操作码来增加 TVM 的功能以执行证明验证。该功能已在 [2023 年 6 月更新](https://docs.ton.org/learn/tvm-instructions/tvm-upgrade#bls12-381)中添加，截至本文撰写时仅在测试网上可用。
+:::tip TVM Upgrade 2023.07
+Prior to June 2023 it wasn't possible to verify cryptographic proofs on TON. Due to the prevalence of complex computation behind the pairing algorithm, it was necessary to increase the functionality of TVM by adding TVM opcodes to conduct proof verification. This functionality was added in the [June 2023 update](https://docs.ton.org/learn/tvm-instructions/tvm-upgrade#bls12-381) and at the time of this writing is only available on testnet.
 :::
 
-## 🦄 本教程将覆盖
+## 🦄 This tutorial will cover
 
-1. 零知识密码学的基础知识，特别是 zk-SNARKs（零知识简洁非互动式知识论证）
-2. 启动受信任设置仪式（使用 Tau 力量）
-3. 编写和编译一个简单的 ZK 电路（使用 Circom 语言）
-4. 生成、部署和测试一个 FunC 合约来验证样本 ZK 证明
+1. The basics of zero-knowledge cryptography and specifically zk-SNARKs (Zero-Knowledge Succinct Non-Interactive Argument of Knowledge)
+2. Initiating a trusted setup ceremony (using the Powers of Tau)
+3. Writing and compiling a simple ZK circuit (using the Circom language)
+4. Generating, deploying, and testing a FunC contract to verify a sample ZK-proof
 
-## 🟥🟦 以颜色为重点的 ZK 证明解释
+## 🟥🟦 Explaining ZK-proofs with a color-focused example
 
-在我们深入了解零知识之前，让我们从一个简单的问题开始。假设你想向一个色盲人证明，可以区分不同颜色是可能的。我们将使用一种互动解决方案来解决这个问题。假设色盲人（验证者）找到两张相同的纸，一张为红色 🟥 一张为蓝色 🟦。
+Before we dig into the details of zero-knowledge, let's start with a simple problem. Suppose you want to prove to a color-blind person that it is possible to distinguish between different colors. We’ll use an interactive solution to solve this problem. Assume the color-blind person (the verifier) finds two identical pieces of paper, with one being red 🟥 and one being blue 🟦.
 
-验证者向你（证明者）展示其中一张纸并要求你记住颜色。然后验证者将那张特定的纸放在背后，保持不变或更换它，并询问你颜色是否有变化。如果你能够分辨出颜色的区别，那么你可以看到颜色（或者你只是幸运地猜对了正确的颜色）。
+The verifier shows one of the pieces of paper to you (the prover) and asks you to remember the color. Then the verifier holds that specific piece of paper behind their back and either keeps it the same or changes it and asks you whether the color has changed or not. If you can tell the difference, then you can see colors (or you were just lucky because you had a 50% chance of guessing the correct color).
 
-现在，如果验证者完成这个过程 10 次，而你每次都能分辨出颜色的区别，那么验证者对正确颜色的使用有 ~99.90234% 的把握（1 - (1/2)^10）。因此，如果验证者完成这个过程 30 次，那么验证者将有 99.99999990686774% 的把握（1 - (1/2)^30）。
+Now if the verifier completes this process 10 times, and you can tell the difference each time, then the verifier is ~99.90234% (1 - (1/2)^10) confident that the correct colors are being used. Therefore, if the verifier completes the process 30 times, then the verifier will be 99.99999990686774% (1 - (1/2)^30) confident.
 
-尽管如此，这是一个互动式解决方案，让 DApp 要求用户发送 30 笔交易来证明特定数据是不高效的。因此，需要一个非互动式解决方案；这就是 Zk-SNARKs 和 Zk-STARKs 的用武之地。
+Nonetheless, this is an interactive solution and it's not efficient to have a DApp that asks users to send 30 transactions to prove specific data. Therefore, a non-interactive solution is needed; this is where Zk-SNARKs and Zk-STARKs come in.
 
-出于本教程的目的，我们只会涵盖 Zk-SNARKs。然而，你可以在 [StarkWare 网站](https://starkware.co/stark/) 上阅读更多关于 Zk-STARKs 如何工作的信息，而关于 Zk-SNARKs 和 Zk-STARKs 之间差异的信息可以在这篇 [Panther Protocol 博客文章](https://blog.pantherprotocol.io/zk-snarks-vs-zk-starks-differences-in-zero-knowledge-technologies/) 上找到。
+For the purposes of this tutorial, we’ll only cover Zk-SNARKs. However, you can read more about how Zk-STARKs work on the [StarkWare website](https://starkware.co/stark/), while info that compares the differences between Zk-SNARKs and Zk-STARKs can be found on this [Panther Protocol blog post](https://blog.pantherprotocol.io/zk-snarks-vs-zk-starks-differences-in-zero-knowledge-technologies/).\*\*
 
-### 🎯 Zk-SNARK: 零知识简洁非互动式知识论证
+### 🎯 Zk-SNARK: Zero-Knowledge Succinct Non-Interactive Argument of Knowledge
 
-Zk-SNARK 是一个非互动式证明系统，其中证明者可以向验证者展示一个证明，以证明一个陈述是真实的。同时，验证者能够在非常短的时间内验证证明。通常，处理 Zk-SNARK 包括三个主要阶段：
+A Zk-SNARK is a non-interactive proof system where the prover can demonstrate to the verifier that a statement is true by simply submitting one proof. And the verifier is able to verify the proof in a very short time. Typically, dealing with a Zk-SNARK consists of three main phases:
 
-- 使用 [多方计算（MPC）](https://en.wikipedia.org/wiki/Secure_multi-party_computation) 协议进行受信任设置，以生成证明和验证密钥（使用 Tau 力量）
-- 使用证明者密钥、公开输入和私密输入（见证）生成证明
-- 验证证明
+- Conducting a trusted setup using a [multi-party computation (MPC)](https://en.wikipedia.org/wiki/Secure_multi-party_computation) protocol to generate proving and verification keys (using Powers of TAU)
+- Generating a proof using a prover key, public input, and secret input (witness)
+- Verifying the proof
 
-让我们设置我们的开发环境并开始编码！
+Let's set up our development environment and start coding!
 
-## ⚙ 开发环境设置
+## ⚙ Development environment setup
 
-我们开始这个过程的步骤如下：
+Let's begin the process by taking the following steps:
 
-1. 使用 [Blueprint](https://github.com/ton-org/blueprint) 创建一个名为 "simple-zk" 的新项目，执行以下命令后，输入你的合约名称（例如 ZkSimple），然后选择第一个选项（使用一个空合约）。
+1. Create a new project called "simple-zk" using [Blueprint](https://github.com/ton-org/blueprint) by executing the following command, after that, enter a name for your contract (e.g. ZkSimple) and then select the 1st option (using an empty contract).
 
 ```bash
 npm create ton@latest simple-zk
 ```
 
-2. 接下来我们会克隆被调整以支持 FunC 合约的 [snarkjs 库](https://github.com/kroist/snarkjs)
+2. Next we’ll clone the [snarkjs repo](https://github.com/kroist/snarkjs) that is adjusted to support FunC contracts
 
 ```bash
 git clone https://github.com/kroist/snarkjs.git
@@ -56,14 +56,14 @@ npm ci
 cd ../simple-zk
 ```
 
-3. 然后我们将安装 ZkSNARKs 所需的库
+3. Then we’ll install the required libraries needed for ZkSNARKs
 
 ```bash
 npm add --save-dev snarkjs ffjavascript
 npm i -g circom
 ```
 
-4. 接下来我们将下面的部分添加到 package.json 中（请注意，我们将使用的一些操作码在主网版本中尚未可用）
+4. Next we’ll add the below section to the package.json (note that some of the opcodes that we’ll use are not available in the mainnet release yet)
 
 ```json
 "overrides": {
@@ -72,28 +72,28 @@ npm i -g circom
 }
 ```
 
-5. 另外，我们需要更改 @ton-community/sandbox 的版本，以便使用[最新的 TVM 更新](https://t.me/thetontech/56)
+5. Additionally, we’ll need to change the version of the @ton-community/sandbox to be able to use the [latest TVM updates](https://t.me/thetontech/56)
 
 ```bash
 npm i --save-dev @ton-community/sandbox@0.12.0-tvmbeta.1
 ```
 
-太好了！现在我们准备好开始在 TON 上编写我们的第一个 ZK 项目了！
+Great! Now we are ready to start writing our first ZK project on TON!
 
-我们当前有两个主要文件夹构成了我们的 ZK 项目：
+We currently have two main folders that make up our ZK project:
 
-- `simple-zk` 文件夹：包含我们的 Blueprint 模板，这将使我们能够编写我们的电路和合约以及测试
-- `snarkjs` 文件夹：包含我们在第 2 步中克隆的 snarkjs 库
+- `simple-zk` folder: contains our Blueprint template which will enable us to write our circuit and contracts and tests
+- `snarkjs` folder: contains the snarkjs repo that we cloned in step 2
 
-## Circom 电路
+## Circom circuit
 
-首先让我们创建一个文件夹 `simple-zk/circuits` 并在其中创建一个文件并添加以下代码：
+First let's create a folder `simple-zk/circuits` and then create a file in it and add the following code to it:
 
 ```circom
 template Multiplier() {
    signal private input a;
    signal private input b;
-   // private input 表示这个输入不是公开的，并且在证明中不会被泄露
+   //private input means that this input is not public and will not be revealed in the proof
 
    signal output c;
 
@@ -103,20 +103,20 @@ template Multiplier() {
 component main = Multiplier();
 ```
 
-上面我们添加了一个简单的乘法器电路。通过使用这个电路，我们可以证明我们知道两个数字相乘的结果是特定的数字（c）而不泄露这些对应的数字（a 和 b）本身。
+Above we added a simple multiplier circuit. By using this circuit we can prove that we know two numbers that when multiplied together result in a specific number (c) without revealing the corresponding numbers (a and b) themselves.
 
-要了解更多关于 circom 语言的信息，请考虑查看[这个网站](https://docs.circom.io/)。
+To read more about the circom language consider having a look at [this website](https://docs.circom.io/).
 
-接下来我们将创建一个文件夹来存放我们的构建文件，并通过执行以下操作将数据移动到那里（在 `simple-zk` 文件夹中）：
+Next we’ll create a folder for our build files and move the data there by conducting the following (while being in the `simple-zk` folder):
 
 ```bash
 mkdir -p ./build/circuits
 cd ./build/circuits
 ```
 
-### 💪 使用 Powers of TAU 创建受信任设置
+### 💪 Creating a trusted setup with Powers of TAU
 
-现在是时候进行受信任设置了。要完成这个过程，我们将使用 [Powers of Tau](https://a16zcrypto.com/posts/article/on-chain-trusted-setup-ceremony/) 方法（可能需要几分钟时间来完成）。让我们开始吧：
+Now it's time to build a trusted setup. To carry out this process, we’ll make use of the [Powers of Tau](https://a16zcrypto.com/posts/article/on-chain-trusted-setup-ceremony/) method (which probably takes a few minutes to complete). Let’s get into it:
 
 ```bash
 echo 'prepare phase1'
@@ -133,39 +133,39 @@ echo 'Verify the final ptau'
 node ../../../snarkjs/build/cli.cjs powersoftau verify pot14_final.ptau
 ```
 
-完成上述过程后，它将在 build/circuits 文件夹中创建 pot14_final.ptau 文件，该文件可用于编写未来相关电路。
+After the process above is completed, it will create the pot14_final.ptau file in the build/circuits folder, which can be used for writing future related circuits.
 
-:::caution 约束大小
-如果编写了具有更多约束的更复杂电路，则需要使用更大参数生成您的 PTAU 设置。
+:::caution Constraint size
+If a more complex circuit is written with more constraints, it is necessary to generate your PTAU setup using a larger parameter.
 :::
 
-你可以删除不必要的文件：
+You can remove the unnecessary files:
 
 ```bash
 rm pot14_0000.ptau pot14_0001.ptau pot14_0002.ptau pot14_beacon.ptau
 ```
 
-### 📜 电路编译
+### 📜 Circuit compilation
 
-现在让我们通过在 `build/circuits` 文件夹下运行以下命令来编译电路：
+Now let's compile the circuit by running the following command from the `build/circuits` folder:
 
 ```bash
 circom ../../circuits/test.circom --r1cs circuit.r1cs --wasm circuit.wasm --prime bls12381 --sym circuit.sym
 ```
 
-现在我们的电路被编译到了 `build/circuits/circuit.sym`、`build/circuits/circuit.r1cs` 和 `build/circuits/circuit.wasm` 文件中。
+Now we have our circuit compiled to the `build/circuits/circuit.sym`, `build/circuits/circuit.r1cs`, and `build/circuits/circuit.wasm` files.
 
-:::info altbn-128 和 bls12-381 曲线
-altbn-128 和 bls12-381 椭圆曲线目前被 snarkjs 支持。[altbn-128](https://eips.ethereum.org/EIPS/eip-197) 曲线仅在 Ethereum 上支持。然而，在 TON 上只支持 bls12-381 曲线。
+:::info altbn-128 and bls12-381 curves
+The altbn-128 and bls12-381 elliptic curves are currently supported by snarkjs. The [altbn-128](https://eips.ethereum.org/EIPS/eip-197) curve is only supported on Ethereum. However, on TON only the bls12-381 curve is supported.
 :::
 
-让我们通过输入以下命令来检查我们电路的约束大小：
+Let's check the constraint size of our circuit by entering the following command:
 
 ```bash
 node ../../../snarkjs/build/cli.cjs r1cs info circuit.r1cs 
 ```
 
-因此，正确的结果应该是：
+Therefore, the correct result should be:
 
 ```bash
 [INFO]  snarkJS: Curve: bls12-381
@@ -177,43 +177,43 @@ node ../../../snarkjs/build/cli.cjs r1cs info circuit.r1cs
 [INFO]  snarkJS: # of Outputs: 1
 ```
 
-现在我们可以通过执行以下操作来生成参考 zkey：
+Now we can generate the reference zkey by executing the following:
 
 ```bash
 node ../../../snarkjs/build/cli.cjs zkey new circuit.r1cs pot14_final.ptau circuit_0000.zkey
 ```
 
-然后我们将以下贡献添加到 zkey 中：
+Then we’ll add the below contribution to the zkey:
 
 ```bash
 echo "some random text" | node ../../../snarkjs/build/cli.cjs zkey contribute circuit_0000.zkey circuit_0001.zkey --name="1st Contributor Name" -v
 ```
 
-接下来，让我们导出最终的 zkey：
+Next, let's export the final zkey:
 
 ```bash
 echo "another random text" | node ../../../snarkjs/build/cli.cjs zkey contribute circuit_0001.zkey circuit_final.zkey
 ```
 
-现在我们的最终 zkey 存在于 `build/circuits/circuit_final.zkey` 文件中。然后通过输入以下内容来验证 zkey：
+Now we have our final zkey present in the `build/circuits/circuit_final.zkey` file. The zkey is then verified by entering the following:
 
 ```bash
 node ../../../snarkjs/build/cli.cjs zkey verify circuit.r1cs pot14_final.ptau circuit_final.zkey
 ```
 
-最后，是时候生成验证密钥了：
+Finally, it's time to generate the verification key:
 
 ```bash
 node ../../../snarkjs/build/cli.cjs zkey export verificationkey circuit_final.zkey verification_key.json
 ```
 
-然后我们将删除不必要的文件：
+Then we’ll remove the unnecessary files:
 
 ```bash
 rm circuit_0000.zkey circuit_0001.zkey
 ```
 
-在完成上述过程后，`build/circuits` 文件夹应如下显示：
+After conducting the above processes, the `build/circuits` folder should be displayed as follows:
 
 ```
 build
@@ -227,19 +227,19 @@ build
 
 ```
 
-### ✅ 导出验证器合约
+### ✅ Exporting the verifier contract
 
-本节的最后一步是生成 FunC 验证器合约，我们将在我们的 ZK 项目中使用它。
+The final step in this section is to generate the FunC verifier contract which we’ll use in our ZK project.
 
 ```bash
 node ../../../snarkjs/build/cli.cjs zkey export funcverifier circuit_final.zkey ../../contracts/verifier.fc
 ```
 
-然后在 `contracts` 文件夹中生成了 `verifier.fc` 文件。
+Then the `verifier.fc` file is generated in the `contracts` folder.
 
-## 🚢 验证器合约部署
+## 🚢 Verifier contract deployment​
 
-让我们逐步回顾 `contracts/verifier.fc` 文件，因为它包含了 ZK-SNARKs 的魔法：
+Let's review the `contracts/verifier.fc` file step-by-step because it contains the magic of ZK-SNARKs:
 
 ```func
 const slice IC0 = "b514a6870a13f33f07bc314cdad5d426c61c50b453316c241852089aada4a73a658d36124c4df0088f2cd8838731b971"s;
@@ -251,7 +251,7 @@ const slice vk_alpha_1 = "a3fa7b5f78f70fbd1874ffc2104f55e658211db8a938445b4a07bd
 const slice vk_beta_2 = "b17e1924160eff0f027c872bc13ad3b60b2f5076585c8bce3e5ea86e3e46e9507f40c4600401bf5e88c7d6cceb05e8800712029d2eff22cbf071a5eadf166f266df75ad032648e8e421550f9e9b6c497b890a1609a349fbef9e61802fa7d9af5"s;
 ```
 
-以上是验证器合约必须使用的常量，以实现证明验证。这些参数可以在 `build/circuits/verification_key.json` 文件中找到。
+Above are the constants that verifier contracts must make use of to implement proof verification. These parameters can be found in the `build/circuits/verification_key.json` file.
 
 ```func
 slice bls_g1_add(slice x, slice y) asm "BLS_G1_ADD";
@@ -263,9 +263,9 @@ slice bls_g1_multiexp(
 int bls_pairing(slice x1, slice y1, slice x2, slice y2, slice x3, slice y3, slice x4, slice y4, int n) asm "BLS_PAIRING";
 ```
 
-以上行是新的 [TVM 操作码](https://docs.ton.org/learn/tvm-instructions/tvm-upgrade-2023-07#bls12-381)（BLS12-381），使得可以在 TON 区块链上进行配对检查。
+The above lines are the new [TVM opcodes](https://docs.ton.org/learn/tvm-instructions/tvm-upgrade-2023-07#bls12-381) (BLS12-381) that allow pairing checks to be conducted on the TON Blockchain.
 
-load_data 和 save_data 函数仅用于加载和保存证明验证结果（仅用于测试目的）。
+The load_data and save_data functions are simply used to load and save the proof verification results (only for test purposes).
 
 ```func
 () load_data() impure {
@@ -286,7 +286,7 @@ load_data 和 save_data 函数仅用于加载和保存证明验证结果（仅�
 }
 ```
 
-接下来，有几个简单的实用函数，用于加载发送到合约的证明数据：
+Next there are several simple util functions that are used to load the proof data sent to the contract:
 
 ```func
 (slice, slice) load_p1(slice body) impure {
@@ -302,7 +302,7 @@ load_data 和 save_data 函数仅用于加载和保存证明验证结果（仅�
 }
 ```
 
-最后一部分是 groth16Verify 函数，该函数需要检查发送到合约的证明的有效性。
+And the last part is the groth16Verify function which is required to check the validity of the proof sent to the contract.
 
 ```func
 () groth16Verify(
@@ -340,18 +340,18 @@ load_data 和 save_data 函数仅用于加载和保存证明验证结果（仅�
 }
 ```
 
-现在需要编辑 `wrappers` 文件夹中的两个文件。需要注意的第一个文件是 `ZkSimple.compile.ts` 文件（如果在第 1 步中为合约设置了其他名称，其名称将不同）。我们将 `verifier.fc` 文件放入必须编译的合约列表中。
+Now it’s necessary to edit the two files in the `wrappers` folder. The first file that needs our attention is the `ZkSimple.compile.ts` file (if another name for the contract was set in step 1, its name will be different). We’ll put the `verifier.fc` file in the list of contracts that must be compiled.
 
 ```ts
 import { CompilerConfig } from '@ton-community/blueprint';
 
 export const compile: CompilerConfig = {
   lang: 'func',
-  targets: ['contracts/verifier.fc'], // <-- 这里我们放置了我们合约的路径
+  targets: ['contracts/verifier.fc'], // <-- here we put the path to our contract
 };
 ```
 
-需要注意的另一个文件是 `ZkSimple.ts`。我们首先需要将 `verify` 操作码添加到 `Opcodes` 枚举中：
+The other file that needs attention is `ZkSimple.ts`. We need to first add the opcode of `verify` to the `Opcodes` enum:
 
 ```ts
 export const Opcodes = {
@@ -359,7 +359,7 @@ export const Opcodes = {
 };
 ```
 
-接下来，需要向 `ZkSimple` 类中添加 `sendVerify` 函数。此函数用于将证明发送到合约并进行测试，如下所示：
+Next, it’s necessary to add the `sendVerify` function to the `ZkSimple` class. This function is used to send the proof to the contract and test it and is presented as follows:
 
 ```ts
 async sendVerify(
@@ -400,7 +400,7 @@ async sendVerify(
 }
 ```
 
-接下来，我们将 `cellFromInputList` 函数添加到 `ZkSimple` 类中。此函数用于从公开输入创建一个cell，它将被发送到合约。
+Next, we’ll add the `cellFromInputList` function to the `ZkSimple` class. This function is used to create a cell from the public inputs which will be sent to the contract.
 
 ```ts
  cellFromInputList(list: bigint[]) : Cell {
@@ -415,7 +415,7 @@ async sendVerify(
 }
 ```
 
-最后，我们将添加到 `ZkSimple` 类中的最后一个函数是 `getRes` 函数。此函数用于接收证明验证结果。
+Finally, the last function we’ll add to the `ZkSimple` class is the `getRes` function. This function is used to receive the proof verification result.
 
 ```ts
  async getRes(provider: ContractProvider) {
@@ -424,15 +424,15 @@ async sendVerify(
 }
 ```
 
-现在我们可以运行所需的测试来部署合约。为了实现这一点，合约应该能够成功通过部署测试。在 `simple-zk` 文件夹的根目录下运行此命令：
+Now we can run the required tests needed to deploy the contract. For this to be possible, the contract should be able to successfully pass the deployment test. Run this command in the root of `simple-zk` folder:
 
 ```bash
 npx blueprint test
 ```
 
-## 🧑‍💻 编写验证器的测试
+## 🧑‍💻 Writing tests for the verifier
 
-让我们打开 `tests` 文件夹中的 `ZkSimple.spec.ts` 文件，并为 `verify` 函数编写一个测试。测试按如下方式进行：
+Let's open the `ZkSimple.spec.ts` file in the `tests` folder and write a test for the `verify` function. The test is conducted as follows:
 
 ```ts
 describe('ZkSimple', () => {
@@ -446,21 +446,21 @@ describe('ZkSimple', () => {
   let zkSimple: SandboxContract<ZkSimple>;
 
   beforeEach(async () => {
-    // 部署合约
+    // deploy contract
   });
 
   it('should deploy', async () => {
-    // 检查在 beforeEach 内完成
-    // blockchain 和 zkSimple 可用
+    // the check is done inside beforeEach
+    // blockchain and zkSimple are ready to use
   });
 
   it('should verify', async () => {
-    // 待办：编写测试
+    // todo write the test
   });
 });
 ```
 
-首先，我们需要导入我们将在测试中使用的几个包：
+First, we’ll need to import several packages that we will use in the test:
 
 ```ts
 import * as snarkjs from "snarkjs";
@@ -469,21 +469,21 @@ import {buildBls12381, utils} from "ffjavascript";
 const {unstringifyBigInts} = utils;
 ```
 
-- 如果运行测试，结果将是一个 TypeScript 错误，因为我们没有模块 'snarkjs' 和 ffjavascript 的声明文件。这可以通过编辑 `simple-zk` 文件夹根目录中的 `tsconfig.json` 文件来解决。我们需要将该文件中的 _**strict**_ 选项更改为 **_false_**
+- If you run the test, the result will be a TypeScript error, because we don't have a declaration file for the module 'snarkjs' & ffjavascript. This can be addressed by editing the `tsconfig.json` file in the root of the `simple-zk` folder. We'll need to change the _**strict**_ option to **_false_** in that file
 -
 
-我们还需要导入将用于生成要发送给合约的证明的 `circuit.wasm` 和 `circuit_final.zkey` 文件。
+We'll also need to import the `circuit.wasm` and `circuit_final.zkey` files which will be used to generate the proof to send to the contract.
 
 ```ts
 const wasmPath = path.join(__dirname, "../build/circuits", "circuit.wasm");
 const zkeyPath = path.join(__dirname, "../build/circuits", "circuit_final.zkey");
 ```
 
-让我们填写 `should verify` 测试。我们首先需要生成证明。
+Let's fill the `should verify` test. We'll need to generate the proof first.
 
 ```ts
 it('should verify', async () => {
-  // 生成证明
+  // proof generation
   let input = {
     "a": "123",
     "b": "456",
@@ -498,11 +498,11 @@ it('should verify', async () => {
   var pi_b = Buffer.from(pi_bS, "hex");
   var pi_c = Buffer.from(pi_cS, "hex");
   
-  // 待办：将证明发送到合约
+  // todo send the proof to the contract
 });
 ```
 
-为了进行下一个步骤，需要定义 `g1Compressed`、`g2Compressed` 和 `toHexString` 函数。它们将用于将密码学证明转换为合约期望的格式。
+To carry out the next step it is necessary to define the `g1Compressed`, `g2Compressed`, and `toHexString` functions. They will be used to convert the cryptographic proof to the format that the contract expects.
 
 ```ts
 function g1Compressed(curve, p1Raw) {
@@ -510,7 +510,7 @@ function g1Compressed(curve, p1Raw) {
 
   let buff = new Uint8Array(48);
   curve.G1.toRprCompressed(buff, 0, p1);
-  // 从 ffjavascript 转换为 blst 格式
+  // convert from ffjavascript to blst format
   if (buff[0] & 0x80) {
     buff[0] |= 32;
   }
@@ -523,7 +523,7 @@ function g2Compressed(curve, p2Raw) {
 
   let buff = new Uint8Array(96);
   curve.G2.toRprCompressed(buff, 0, p2);
-  // 从 ffjavascript 转换为 blst 格式
+  // convert from ffjavascript to blst format
   if (buff[0] & 0x80) {
     buff[0] |= 32;
   }
@@ -538,21 +538,21 @@ function toHexString(byteArray) {
 }
 ```
 
-现在我们可以将密码学证明发送到合约。我们将使用 sendVerify 函数来完成这个操作。`sendVerify` 函数需要 5 个参数：`pi_a`、`pi_b`、`pi_c`、`pubInputs` 和 `value`。
+Now we can send the cryptographic proof to the contract. We'll use the sendVerify function for this. The `sendVerify` function expects 5 parameters: `pi_a`, `pi_b`, `pi_c`, `pubInputs`, and `value`.
 
 ```ts
 it('should verify', async () => {
-  // 生成证明
+  // proof generation
   
   
-  // 将证明发送到合约
+  // send the proof to the contract
   const verifier = await blockchain.treasury('verifier');
   const verifyResult = await zkSimple.sendVerify(verifier.getSender(), {
     pi_a: pi_a,
     pi_b: pi_b,
     pi_c: pi_c,
     pubInputs: publicSignals,
-    value: toNano('0.15'), // 为费用提供 0.15 TON
+    value: toNano('0.15'), // 0.15 TON for fee
   });
   expect(verifyResult.transactions).toHaveTransaction({
     from: verifier.address,
@@ -562,20 +562,20 @@ it('should verify', async () => {
 
   const res = await zkSimple.getRes();
 
-  expect(res).not.toEqual(0); // 检查证明结果
+  expect(res).not.toEqual(0); // check proof result
 
   return;
   
 });
 ```
 
-准备好在 TON 区块链上验证您的第一个证明了吗？开始此过程，请输入以下命令运行 Blueprint 测试：
+Are you ready to verify your first proof on TON blockchain? To start off this process, let's run the Blueprint test by inputting the following:
 
 ```bash
 npx blueprint test
 ```
 
-结果应如下所示：
+The result should be as follows:
 
 ```bash
  PASS  tests/ZkSimple.spec.ts
@@ -590,43 +590,43 @@ Time:        4.335 s, estimated 5 s
 Ran all test suites.
 ```
 
-要查看包含本教程代码的库，请点击[此处](https://github.com/SaberDoTcodeR/zk-ton-doc)找到的链接。
+In order to check the repo that contains the code from this tutorial, click on the following link found [here](https://github.com/SaberDoTcodeR/zk-ton-doc).
 
-## 🏁 结论
+## 🏁 Conclusion
 
-在本教程中，您学习了以下技能：
+In this tutorial you learned the following skills:
 
-- 零知识的复杂性，特别是 ZK-SNARKs
-- 编写和编译 Circom 电路
-- 对多方计算和 Tau 力量的熟悉度增加，这些被用于为电路生成验证密钥
-- 熟悉了Snarkjs 库用于导出电路 FunC 验证器
-- 熟悉了Blueprint用于验证器部署和测试编写
+- The intricacies of zero-knowledge and specifically ZK-SNARKs
+- Writing and compiling Circom circuiting
+- Increased familiarity with MPC and the Powers of TAU, which were used to generate verification keys for a circuit
+- Became familiar with a Snarkjs library to export a FunC verifier for a circuit
+- Became familiar with Blueprint for verifier deployment and test writing
 
-注意：上述示例教我们如何构建一个简单的 ZK 用例。尽管如此，可以在各种行业中实现一系列高度复杂的以 ZK 为中心的用例。这些包括：
+Note: The above examples taught us how to build a simple ZK use case. That said, there are a wide range of highly complex ZK-focused use cases that can be implemented in a wide range of industries. Some of these include:
 
-- 私密投票系统 🗳
-- 私密彩票系统 🎰
-- 私密拍卖系统 🤝
-- 私密交易💸（对于 Toncoin 或 Jettons）
+- private voting systems 🗳
+- private lottery systems 🎰
+- private auction systems 🤝
+- private transactions💸 (for Toncoin or Jettons)
 
-如果您有任何问题或发现错误 - 请随时写信给作者 - [@saber_coder](https://t.me/saber_coder)
+If you have any questions or have noticed an error - feel free to write to the author - [@saber_coder](https://t.me/saber_coder)
 
-如果您有任何问题或在本教程中遇到任何错误，请随时写信给作者：[@saber_coder](https://t.me/saber_coder)
+If you have any questions or encounter any errors in this tutorial, feel free to write to the author: [@saber_coder](https://t.me/saber_coder)
 
-## 📌 参考资料
+## 📌 References
 
-- [TVM 2023 年 6 月升级](https://docs.ton.org/learn/tvm-instructions/tvm-upgrade)
+- [TVM June 2023 Upgrade](https://docs.ton.org/learn/tvm-instructions/tvm-upgrade)
 - [SnarkJs](https://github.com/iden3/snarkjs)
-- [SnarkJs FunC 分支](https://github.com/kroist/snarkjs)
-- [TON 上的样例 ZK](https://github.com/SaberDoTcodeR/ton-zk-verifier)
+- [SnarkJs FunC fork](https://github.com/kroist/snarkjs)
+- [Sample ZK on TON](https://github.com/SaberDoTcodeR/ton-zk-verifier)
 - [Blueprint](https://github.com/ton-org/blueprint)
 
-## 📖 参阅
+## 📖 See Also
 
-- [TON 无信任桥接 EVM 合约](https://github.com/ton-blockchain/ton-trustless-bridge-evm-contracts)
-- [Tonnel Network：TON 上的隐私协议](http://github.com/saberdotcoder/tonnel-network)
-- [TVM 挑战](https://blog.ton.org/tvm-challenge-is-here-with-over-54-000-in-rewards)
+- [TON Trustless bridge EVM contracts](https://github.com/ton-blockchain/ton-trustless-bridge-evm-contracts)
+- [Tonnel Network: Privacy protocol on TON](http://github.com/saberdotcoder/tonnel-network)
+- [TVM Challenge](https://blog.ton.org/tvm-challenge-is-here-with-over-54-000-in-rewards)
 
-## 📬 关于作者
+## 📬 About the author
 
-- Saber的链接: [Telegram](https://t.me/saber_coder), [Github](https://github.com/saberdotcoder) 和 [LinkedIn](https://www.linkedin.com/in/szafarpoor/)
+- Saber on [Telegram](https://t.me/saber_coder) or [GitHub](https://github.com/saberdotcoder) or [LinkedIn](https://www.linkedin.com/in/szafarpoor/)
