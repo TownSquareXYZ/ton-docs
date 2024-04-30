@@ -1,69 +1,69 @@
-# 类型
+# Types
 
 :::info
 
-FunC 文档最初由 [@akifoq](https://github.com/akifoq) 编写。
+FunC documentation was initially written by [@akifoq](https://github.com/akifoq).
 
 :::
 
-FunC 有以下内置类型。
+FunC has the following built-in types.
 
-## 原子类型
+## Atomic types
 
-- `int` 是 257 位有符号整数的类型。默认情况下，启用溢出检查，会导致整数溢出异常。
-- `cell` 是 TVM cell的类型。TON 区块链中的所有持久数据都存储在cell树中。每个cell最多有 1023 位任意数据和最多四个对其他cell的引用。cell在基于堆栈的 TVM 中用作内存。
-- `slice` 是cell切片的类型。cell可以转换成切片，然后可以通过从切片加载数据位和对其他cell的引用来获得cell中的数据。
-- `builder` 是cell构建器的类型。数据位和对其他cell的引用可以存储在构建器中，然后构建器可以最终化为新cell。
-- `tuple` 是 TVM 元组的类型。元组是有序集合，最多包含 255 个组件，这些组件的值类型可能不同。
-- `cont` 是 TVM continuation的类型。Continuations 用于控制 TVM 程序执行的流程。从 FunC 的角度来看，它是相当低层级的对象，尽管从概念上讲相当通用。
+- `int` is the type of 257-bit signed integers. By default, overflow checks are enabled and lead to integer overflow exceptions.
+- `cell` is the type of TVM cells. All persistent data in TON Blockchain is stored in trees of cells. Every cell has up to 1023 bits of arbitrary data and up to four references to other cells. Cells serve as memory in stack-based TVMs.
+- `slice` is the type of cell slices. A cell can be transformed into a slice, and then the data bits and references to other cells from the cell can be obtained by loading them from the slice.
+- `builder` is the type of cell builders. Data bits and references to other cells can be stored in a builder, and then the builder can be finalized to a new cell.
+- `tuple` is the type of TVM tuples. Tuple is an ordered collection of up to 255 components with arbitrary value types that are possibly distinct.
+- `cont` is the type of TVM continuations. Continuations are used for controlling the flow of the TVM program execution. It is rather low-level object from the perspective of FunC, although paradoxically quite general.
 
-请注意，上述任何类型都只占用 TVM 堆栈中的单个条目。
+Note that any of the types above occupy only a single entry in the TVM stack.
 
-### 没有布尔类型
+### Absence of boolean type
 
-在 FunC 中，布尔值被表示为整数；`false` 表示为 `0`，`true` 表示为 `-1`（二进制表示为 257 个一）。逻辑运算作为位运算执行。当检查条件时，每个非零整数都被视为 `true` 值。
+In FunC, booleans are represented as integers; `false` is represented as `0` and `true` is represented as `-1` (257 ones in binary notation). Logical operations are done as bitwise operations. When a condition is checked, every non-zero integer is considered a `true` value.
 
-### Null值
+### Null values
 
-通过 TVM 类型 `Null` 的值 `null`，FunC 表示某些原子类型的值缺失。标准库中的一些原语可能被类型化为返回原子类型，并在某些情况下实际返回 `null`。其他原语可能被类型化为接受原子类型的值，但也可以与 `null` 值一起正常工作。这种行为在原语规范中明确说明。默认情况下，禁止 `null` 值，这会导致运行时异常。
+By the value `null` of TVM type `Null`, FunC represents the absence of a value of some atomic type. Some primitives from the standard library may be typed as ones returning an atomic type and actually return `null`s in some cases. Others may be typed as ones excepting a value of an atomic type but work fine with `null` values too. Such behavior is explicitly stated in the primitive specification. By default, `null` values are prohibited and lead to a run-time exception.
 
-这样，原子类型 `A` 可能被隐式转换为类型 `A^?`，也就是 `Maybe A`（类型检查器对这种转换无感知）。
+In such a way, the atomic type `A` may be implicitly transformed into type `A^?` a.k.a. `Maybe A` (the type checker is agnostic to such a transformation).
 
-## Hole类型
+## Hole type
 
-FunC 支持类型推断。类型 `_` 和 `var` 表示类型“holes”，稍后可以在类型检查期间用某些实际类型填充。例如，`var x = 2;` 是变量 `x` 等于 `2` 的定义。类型检查器可以推断出 `x` 的类型为 `int`，因为 `2` 的类型为 `int`，赋值的左右两边必须类型相等。
+FunC has support for type inference. Types `_` and `var` represent type "holes" which can later be filled with some actual type during type checking. For example, `var x = 2;` is a definition of variable `x` equal to `2`. The type checker can infer that `x` has type `int`, because `2` has type `int`, and the left and right sides of the assignment must have equal types.
 
-## 复合类型
+## Composite types
 
-类型可以组合成更复杂的类型。
+Types can be composed into more complex ones.
 
-### 函数类型
+### Functional type
 
-形式为 `A -> B` 的类型表示具有指定域和陪域的函数。例如，`int -> cell` 是一个函数类型，它接受一个整数参数并返回一个 TVM cell。
+Types of the form `A -> B` represent functions with specified domain and codomain. For example, `int -> cell` is the type of function that takes one integer argument and returns a TVM cell.
 
-在内部，这种类型的值被表示为continuations。
+Internally, values of such types are represented as continuations.
 
-### 张量类型
+### Tensor types
 
-形式为 `(A, B, ...)` 的类型本质上表示有序的值集合，这些值的类型为 `A`、`B`、`...`，它们一起占用多个 TVM 堆栈条目。
+Types of the form `(A, B, ...)` essentially represent ordered collections of values of types `A`, `B`, `...`, which all together occupy more than one TVM stack entry.
 
-例如，如果函数 `foo` 的类型为 `int -> (int, int)`，这意味着该函数接受一个整数并返回一对整数。
+For example, if a function `foo` has type `int -> (int, int)`, it means that the function takes one integer and returns a pair of them.
 
-调用此函数可能看起来像 `(int a, int b) = foo(42);`。在内部，该函数消耗一个堆栈条目并留下两个。
+A call of this function may look like `(int a, int b) = foo(42);`. Internally, the function consumes one stack entry and leaves two of them.
 
-请注意，从低层级角度来看，类型 `(int, (int, int))` 的值 `(2, (3, 9))` 和类型 `(int, int, int)` 的值 `(2, 3, 9)`，在内部以三个堆栈条目 `2`、`3` 和 `9` 的形式表示。对于 FunC 类型检查器，它们是**不同**类型的值。例如，代码 `(int a, int b, int c) = (2, (3, 9));` 将无法编译。
+Note that from a low-level perspective, value `(2, (3, 9))` of type `(int, (int, int))` and value `(2, 3, 9)` of type `(int, int, int)`, are represented in the same way as three stack entries `2`, `3` and `9`. For the FunC type checker they are values of **different** types. For example, code `(int a, int b, int c) = (2, (3, 9));` wouldn't be compiled.
 
-张量类型的特殊情况是**cell类型** `()`。它通常用于表示函数不返回任何值或没有参数。例如，函数 `print_int` 的类型将为 `int -> ()`，而函数 `random` 的类型为 `() -> int`。它有一个唯一的inhabitant `()`，它占用 0 个堆栈条目。
+A special case of the tensor type is the **unit type** `()`. It is usually used to represent the fact that a function doesn't return any value or has no arguments. For example, a function `print_int` would have type `int -> ()` and the function `random` has type `() -> int`. It has a unique inhabitant `()` which occupies 0 stack entries.
 
-类型 `(A)` 被类型检查器视为与 `A` 相同的类型。
+Type of form `(A)` is considered by type checker as the same type as `A`.
 
-### 元组类型
+### Tuples types
 
-形式为 `[A, B, ...]` 的类型表示在编译时已知长度和组件类型的 TVM 元组。例如，`[int, cell]` 是一个元组类型，其长度恰好为 2，其中第一个组件是整数，第二个是cell。`[]` 是空元组的类型（具有唯一的inhabitant——空元组）。请注意，与cell类型 `()` 相反，`[]` 的值占用一个堆栈条目。
+Types of the form `[A, B, ...]` represent TVM tuples with specific lengths and types of components known in compile time. For example, `[int, cell]` is the type of TVM tuple which length is exactly 2, and where the first component is an integer and the second is a cell. `[]` is the type of empty tuples (having the unique inhabitant—the empty tuple). Note that in contrast to the unit type `()`, the value of `[]` occupies one stack entry.
 
-## 带有类型变量的多态
+## Polymorphism with type variables
 
-FunC拥有支持多态函数的 Miller-Rabin 类型系统。例如，以下是一个函数：
+FunC has Miller-Rabin type system with support for polymorphic functions. For example, the following function:
 
 ```func
 forall X -> (X, X) duplicate(X value) {
@@ -71,16 +71,16 @@ forall X -> (X, X) duplicate(X value) {
 }
 ```
 
-是一个多态函数，它接受一个（单堆栈条目）值并返回这个值的两个副本。`duplicate(6)` 将产生值 `6 6`，而 `duplicate([])` 将产生两个空元组 `[] []` 的副本。
+is a polymorphic function which takes a (single stack entry) value and returns two copies of this value. `duplicate(6)` will produce values `6 6`, and `duplicate([])` will produce two copies `[] []` of an empty tuple.
 
-在这个例子中，`X` 是一个类型变量。
+In this example, `X` is a type variable.
 
-有关此主题的更多信息，请参阅[函数](/develop/func/functions#polymorphism-with-forall)部分。
+See more info on this topic in the [functions](/develop/func/functions#polymorphism-with-forall) section.
 
-## 用户定义类型
+## User-defined types
 
-目前，FunC 不支持定义除上述类型构造之外的类型。
+Currently, FunC has no support for defining types except for the type constructions described above.
 
-## 类型宽度
+## Type width
 
-您可能已经注意到，每种类型的值都占用一定数量的堆栈条目。如果所有该类型的值都占用相同数量的条目，则该数字称为**类型宽度(type width)**。目前只能为具有固定且预先知道的类型宽度的类型定义多态函数。
+As you may have noticed, every value of a type occupies some number of stack entries. If it is the same number for all values of the type, this number is called **type width**. Polymorphic functions can currently be defined only for types with fixed and known in advance type width.
