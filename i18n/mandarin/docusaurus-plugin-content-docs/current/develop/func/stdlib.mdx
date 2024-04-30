@@ -3,27 +3,27 @@ toc_min_heading_level: 2
 toc_max_heading_level: 6
 ---
 
-# FunC 标准库
+# FunC standard library
 
 :::info
-本节讨论了 [stdlib.fc](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/stdlib.fc) 库，它包含了在 FunC 中使用的标准函数。
+This section discusses the [stdlib.fc](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/stdlib.fc) library with standard functions used in FunC.
 :::
 
-目前，该库只是最常用的 TVM 命令的汇编器的包装，这些命令不是内置的。库中使用的每个 TVM 命令的描述都可以在 [TVM 文档](/learn/tvm-instructions/tvm-overview)部分找到。本文档也借用了一些描述。
+Currently, the library is just a wrapper for the most common assembler of the TVM commands which are not built-in. Each TVM command description used in the library can be found in the [TVM documentation](/learn/tvm-instructions/tvm-overview) section. Some descriptions were borrowed for this document.
 
-文件中的一些函数被注释掉了。这意味着它们已经成为了优化目的的内置函数。然而，类型签名和语义保持不变。
+Some functions are commented out in the file. It means that they have already become built-ins for optimization purposes. However, the type signature and semantics remain the same.
 
-请注意，stdlib 中没有呈现一些不太常见的命令。总有一天它们也会被添加。
+Note that some less common commands are not presented in the stdlib. Someday they will also be added.
 
-## 元组操作原语
+## Tuple manipulation primitives
 
-名称和类型大多是自解释的。有关多态函数的更多信息，请参见 [多态性与 forall](/develop/func/functions#polymorphism-with-forall)。
+The names and the types are mostly self-explaining. See [polymorhism with forall](/develop/func/functions#polymorphism-with-forall) for more info on the polymorphic functions.
 
-请注意，目前原子类型 `tuple` 的值不能转换为复合元组类型（例如 `[int, cell]`），反之亦然。
+Note that currently values of atomic type `tuple` cannot be cast into composite tuple types (e.g. `[int, cell]`) and vise versa.
 
-### Lisp 类型列表
+### Lisp-style lists
 
-列表可以表示为嵌套的 2 元组。空列表通常表示为 TVM `null` 值（可以通过调用 `null()` 获得）。例如，元组 `(1, (2, (3, null)))` 表示列表 `[1, 2, 3]`。列表的元素可以是不同类型。
+Lists can be represented as nested 2-element tuples. Empty list is conventionally represented as TVM `null` value (it can be obtained by calling `null()`). For example, the tuple `(1, (2, (3, null)))` represents the list `[1, 2, 3]`. Elements of a list can be of different types.
 
 #### cons
 
@@ -31,7 +31,7 @@ toc_max_heading_level: 6
 forall X -> tuple cons(X head, tuple tail) asm "CONS";
 ```
 
-在 Lisp 类型列表的开头添加一个元素。
+Adds an element to the beginning of a lisp-style list.
 
 #### uncons
 
@@ -39,7 +39,7 @@ forall X -> tuple cons(X head, tuple tail) asm "CONS";
 forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 ```
 
-提取 Lisp 类型列表的头和尾。
+Extracts the head and the tail of lisp-style list.
 
 #### list_next
 
@@ -47,7 +47,7 @@ forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
 forall X -> (tuple, X) list_next(tuple list) asm( -> 1 0) "UNCONS";
 ```
 
-提取 Lisp 类型列表的头和尾。可用作 [(非)修改方法](/develop/func/statements#methods-calls)。
+Extracts the head and tail of a lisp-style list. Can be used as a [(non-)modifying method](/develop/func/statements#methods-calls).
 
 ```func
 () foo(tuple xs) {
@@ -63,7 +63,7 @@ forall X -> (tuple, X) list_next(tuple list) asm( -> 1 0) "UNCONS";
 forall X -> X car(tuple list) asm "CAR";
 ```
 
-返回 Lisp 类型列表的头部。
+Returns the head of a lisp-style list.
 
 #### cdr
 
@@ -71,9 +71,9 @@ forall X -> X car(tuple list) asm "CAR";
 tuple cdr(tuple list) asm "CDR";
 ```
 
-返回 Lisp 类型列表的尾部。
+Returns the tail of a lisp-style list.
 
-### 其他元组原语
+### Other tuple primitives
 
 #### empty_tuple
 
@@ -81,7 +81,7 @@ tuple cdr(tuple list) asm "CDR";
 tuple empty_tuple() asm "NIL";
 ```
 
-创建 0 元素元组。
+Creates 0-element tuple.
 
 #### tpush
 
@@ -90,7 +90,7 @@ forall X -> tuple tpush(tuple t, X value) asm "TPUSH";
 forall X -> (tuple, ()) ~tpush(tuple t, X value) asm "TPUSH";
 ```
 
-将值 `x` 追加到 `Tuple t = (x1, ..., xn)`，但只有在结果 `Tuple t' = (x1, ..., xn, x)` 不超过 255 个字符时才有效。否则，会抛出类型检查异常。
+Appends the value `x` to the `Tuple t = (x1, ..., xn)` but only if the resulting `Tuple t' = (x1, ..., xn, x)` is no longer than 255 characters. Otherwise, a type check exception is thrown.
 
 #### single
 
@@ -98,7 +98,7 @@ forall X -> (tuple, ()) ~tpush(tuple t, X value) asm "TPUSH";
 forall X -> [X] single(X x) asm "SINGLE";
 ```
 
-创建单例，即长度为一的元组。
+Creates a singleton, i.e., a tuple of length one.
 
 #### unsingle
 
@@ -106,7 +106,7 @@ forall X -> [X] single(X x) asm "SINGLE";
 forall X -> X unsingle([X] t) asm "UNSINGLE";
 ```
 
-解包单例。
+Unpacks a singleton.
 
 #### pair
 
@@ -114,7 +114,7 @@ forall X -> X unsingle([X] t) asm "UNSINGLE";
 forall X, Y -> [X, Y] pair(X x, Y y) asm "PAIR";
 ```
 
-创建一对。
+Creates a pair.
 
 #### unpair
 
@@ -122,7 +122,7 @@ forall X, Y -> [X, Y] pair(X x, Y y) asm "PAIR";
 forall X, Y -> (X, Y) unpair([X, Y] t) asm "UNPAIR";
 ```
 
-解包一对。
+Unpacks a pair.
 
 #### triple
 
@@ -130,7 +130,7 @@ forall X, Y -> (X, Y) unpair([X, Y] t) asm "UNPAIR";
 forall X, Y, Z -> [X, Y, Z] triple(X x, Y y, Z z) asm "TRIPLE";
 ```
 
-创建三元组。
+Creates a triple.
 
 #### untriple
 
@@ -138,7 +138,7 @@ forall X, Y, Z -> [X, Y, Z] triple(X x, Y y, Z z) asm "TRIPLE";
 forall X, Y, Z -> (X, Y, Z) untriple([X, Y, Z] t) asm "UNTRIPLE";
 ```
 
-解包三元组。
+Unpacks a triple.
 
 #### tuple4
 
@@ -146,7 +146,7 @@ forall X, Y, Z -> (X, Y, Z) untriple([X, Y, Z] t) asm "UNTRIPLE";
 forall X, Y, Z, W -> [X, Y, Z, W] tuple4(X x, Y y, Z z, W w) asm "4 TUPLE";
 ```
 
-创建四元组。
+Creates 4-element tuple.
 
 #### untuple4
 
@@ -154,7 +154,7 @@ forall X, Y, Z, W -> [X, Y, Z, W] tuple4(X x, Y y, Z z, W w) asm "4 TUPLE";
 forall X, Y, Z, W -> (X, Y, Z, W) untuple4([X, Y, Z, W] t) asm "4 UNTUPLE";
 ```
 
-解包四元组。
+Unpacks 4-element tuple.
 
 #### first
 
@@ -162,7 +162,7 @@ forall X, Y, Z, W -> (X, Y, Z, W) untuple4([X, Y, Z, W] t) asm "4 UNTUPLE";
 forall X -> X first(tuple t) asm "FIRST";
 ```
 
-返回元组的第一个元素。
+Returns the first element of a tuple.
 
 #### second
 
@@ -170,7 +170,7 @@ forall X -> X first(tuple t) asm "FIRST";
 forall X -> X second(tuple t) asm "SECOND";
 ```
 
-返回元组的第二个元素。
+Returns the second element of a tuple.
 
 #### third
 
@@ -178,7 +178,7 @@ forall X -> X second(tuple t) asm "SECOND";
 forall X -> X third(tuple t) asm "THIRD";
 ```
 
-返回元组的第三个元素。
+Returns the third element of a tuple.
 
 #### fourth
 
@@ -186,7 +186,7 @@ forall X -> X third(tuple t) asm "THIRD";
 forall X -> X fourth(tuple t) asm "3 INDEX";
 ```
 
-返回元组的第四个元素。
+Returns the fourth element of a tuple.
 
 #### pair_first
 
@@ -194,7 +194,7 @@ forall X -> X fourth(tuple t) asm "3 INDEX";
 forall X, Y -> X pair_first([X, Y] p) asm "FIRST";
 ```
 
-返回一对的第一个元素。
+Returns the first element of a pair.
 
 #### pair_second
 
@@ -202,7 +202,7 @@ forall X, Y -> X pair_first([X, Y] p) asm "FIRST";
 forall X, Y -> Y pair_second([X, Y] p) asm "SECOND";
 ```
 
-返回一对的第二个元素。
+Returns the second element of a pair.
 
 #### triple_first
 
@@ -210,7 +210,7 @@ forall X, Y -> Y pair_second([X, Y] p) asm "SECOND";
 forall X, Y, Z -> X triple_first([X, Y, Z] p) asm "FIRST";
 ```
 
-返回三元组的第一个元素。
+Returns the first element of a triple.
 
 #### triple_second
 
@@ -218,7 +218,7 @@ forall X, Y, Z -> X triple_first([X, Y, Z] p) asm "FIRST";
 forall X, Y, Z -> Y triple_second([X, Y, Z] p) asm "SECOND";
 ```
 
-返回三元组的第二个元素。
+Returns the second element of a triple.
 
 #### triple_third
 
@@ -226,13 +226,13 @@ forall X, Y, Z -> Y triple_second([X, Y, Z] p) asm "SECOND";
 forall X, Y, Z -> Z triple_third([X, Y, Z] p) asm "THIRD";
 ```
 
-返回三元组的第三个元素。
+Returns the third element of a triple.
 
-## 特定领域原语
+## Domain specific primitives
 
-### 从 c7 提取信息
+### Extracting info from c7
 
-关于智能合约调用的一些有用信息可以在 [c7 特殊寄存器](/learn/tvm-instructions/tvm-overview#control-registers)中找到。这些原语用于方便地提取数据。
+Some useful information regarding smart contract invocation can be found in the [c7 special register](/learn/tvm-instructions/tvm-overview#control-registers). These primitives serve for convenient data extraction.
 
 #### now
 
@@ -240,7 +240,7 @@ forall X, Y, Z -> Z triple_third([X, Y, Z] p) asm "THIRD";
 int now() asm "NOW";
 ```
 
-返回当前 Unix 时间作为整数。
+Returns the current Unix time as an Integer
 
 #### my_address
 
@@ -248,7 +248,7 @@ int now() asm "NOW";
 slice my_address() asm "MYADDR";
 ```
 
-以 Slice 形式返回当前智能合约的内部地址，其中包含 `MsgAddressInt`。如果需要，可以进一步使用诸如 `parse_std_addr` 之类的原语进行解析。
+Returns the internal address of the current smart contract as a Slice with `MsgAddressInt`. If necessary, it can be parsed further using primitives such as `parse_std_addr`.
 
 #### get_balance
 
@@ -256,7 +256,7 @@ slice my_address() asm "MYADDR";
 [int, cell] get_balance() asm "BALANCE";
 ```
 
-以 `tuple` 形式返回智能合约的剩余余额，其中包括 `int`（剩余余额，以nanoton计）和 `cell`（一个包含 32 位键的字典，代表“额外代币”的余额）。注意，RAW 原语（如 `send_raw_message`）不会更新此字段。
+Returns the remaining balance of the smart contract as `tuple` consisting of `int` (the remaining balance in nanotoncoins) and `cell` (a dictionary with 32-bit keys representing the balance of “extra currencies”). Note that RAW primitives such as `send_raw_message` do not update this field.
 
 #### cur_lt
 
@@ -264,7 +264,7 @@ slice my_address() asm "MYADDR";
 int cur_lt() asm "LTIME";
 ```
 
-返回当前交易的逻辑时间。
+Returns the logical time of the current transaction.
 
 #### block_lt
 
@@ -272,7 +272,8 @@ int cur_lt() asm "LTIME";
 int block_lt() asm "BLOCKLT";
 ```
 
-返回当前区块的起始逻辑时间。
+Returns the starting logical time of the current
+block.
 
 #### config_param
 
@@ -280,9 +281,9 @@ int block_lt() asm "BLOCKLT";
 cell config_param(int x) asm "CONFIGOPTPARAM";
 ```
 
-以 `cell` 或 `null` 值的形式返回全局配置参数的值，其中整数索引为 `i`。
+Returns the value of the global configuration parameter with integer index `i` as `cell` or `null` value.
 
-### 哈希
+### Hashes
 
 #### cell_hash
 
@@ -290,7 +291,7 @@ cell config_param(int x) asm "CONFIGOPTPARAM";
 int cell_hash(cell c) asm "HASHCU";
 ```
 
-计算`cell c`的 representation hash ，并将其作为一个256位无符号整数`x`返回。用于签名和检查由cell树表示的任意实体的签名。
+Computes the representation hash of `cell c` and returns it as a 256-bit unsigned integer `x`. Useful for signing and checking signatures of arbitrary entities represented by a tree of cells.
 
 #### slice_hash
 
@@ -298,7 +299,7 @@ int cell_hash(cell c) asm "HASHCU";
 int slice_hash(slice s) asm "HASHSU";
 ```
 
-计算`slice s`的哈希，并将其作为一个256位无符号整数`x`返回。结果与创建一个只包含`s`的数据和引用的普通cell，并通过`cell_hash`计算其哈希的情况相同。
+Computes the hash of `slice s` and returns it as a 256-bit unsigned integer `x`. The result is the same as if an ordinary cell containing only data and references from `s` had been created and its hash computed by `cell_hash`.
 
 #### string_hash
 
@@ -306,9 +307,9 @@ int slice_hash(slice s) asm "HASHSU";
 int string_hash(slice s) asm "SHA256U";
 ```
 
-计算`slice s`数据位的sha256。如果`s`的位长度不能被八整除，则抛出一个cell下溢异常。哈希值作为一个256位无符号整数`x`返回。
+Computes sha256 of the data bits of `slice s`. If the bit length of `s` is not divisible by eight, it throws a cell underflow exception. The hash value is returned as a 256-bit unsigned integer `x`.
 
-### 签名检查
+### Signature checks
 
 #### check_signature
 
@@ -316,7 +317,7 @@ int string_hash(slice s) asm "SHA256U";
 int check_signature(int hash, slice signature, int public_key) asm "CHKSIGNU";
 ```
 
-使用`public_key`（也表示为一个256位无符号整数）检查`hash`（通常作为某些数据的哈希计算得出的256位无符号整数）的Ed25519 `signature`。签名必须包含至少512个数据位；只使用前512位。如果签名有效，结果为`-1`；否则，为`0`。请注意，`CHKSIGNU`创建一个包含哈希的256位切片，并调用`CHKSIGNS`。也就是说，如果`hash`是作为某些数据的哈希计算的，这些数据会被_两次_哈希，第二次哈希发生在`CHKSIGNS`内部。
+Checks the Ed25519 `signature` of `hash` (a 256-bit unsigned integer, usually computed as the hash of some data) using `public_key` (also represented by a 256-bit unsigned integer). The signature must contain at least 512 data bits; only the first 512 bits are used. If the signature is valid, the result is `-1`; otherwise, it is `0`. Note that `CHKSIGNU` creates a 256-bit slice with the hash and calls `CHKSIGNS`. That is, if `hash` is computed as the hash of some data, this data is hashed _twice_, the second hashing occurring inside `CHKSIGNS`.
 
 #### check_data_signature
 
@@ -324,11 +325,11 @@ int check_signature(int hash, slice signature, int public_key) asm "CHKSIGNU";
 int check_data_signature(slice data, slice signature, int public_key) asm "CHKSIGNS";
 ```
 
-检查`signature`是否是使用`public_key`的`slice data`数据部分的有效Ed25519签名，类似于`check_signature`。如果`data`的位长度不能被八整除，则抛出一个cell下溢异常。Ed25519签名的验证是标准的，使用sha256将`data`简化为实际签名的256位数字。
+Checks whether `signature` is a valid Ed25519 signature of the data portion of `slice data` using `public_key`, similarly to `check_signature`. If the bit length of `data` is not divisible by eight, it throws a cell underflow exception. The verification of Ed25519 signatures is a standard one, with sha256 used to reduce `data` to the 256-bit number that is actually signed.
 
-### 计算boc大小
+### Computation of boc size
 
-下面的原语可能对于计算用户提供数据的存储费用有用。
+The primitives below may be useful for computing storage fees for user-provided data.
 
 #### compute_data_size?
 
@@ -336,7 +337,7 @@ int check_data_signature(slice data, slice signature, int public_key) asm "CHKSI
 (int, int, int, int) compute_data_size?(cell c, int max_cells) asm "CDATASIZEQ NULLSWAPIFNOT2 NULLSWAPIFNOT";
 ```
 
-返回`(x, y, z, -1)`或`(null, null, null, 0)`。递归地计算以`cell c`为根的DAG中不同cell的数量`x`、数据位`y`和cell引用`z`，有效地返回此DAG使用的总存储量，同时考虑到相等cell的识别。`x`、`y`和`z`的值通过对此DAG进行深度优先遍历来计算，并使用访问过的cell哈希的哈希表来防止已访问cell的重复访问。访问的cell总数`x`不能超过非负的`max_cells`；否则，在访问第`(max_cells + 1)`个cell之前，计算将被中止，并返回零标志以指示失败。如果`c`为`null`，则返回`x = y = z = 0`。
+Returns `(x, y, z, -1)` or `(null, null, null, 0)`. Recursively computes the count of distinct cells `x`, data bits `y`, and cell references `z` in the DAG rooted at `cell c`, effectively returning the total storage used by this DAG taking into account the identification of equal cells. The values of `x`, `y`, and `z` are computed by a depth-first traversal of this DAG with a hash table of visited cell hashes used to prevent visits of already-visited cells. The total count of visited cells `x` cannot exceed non-negative `max_cells`; otherwise, the computation is aborted before visiting the `(max_cells + 1)`-st cell and a zero flag is returned to indicate failure. If `c` is `null`, it returns `x = y = z = 0`.
 
 #### slice_compute_data_size?
 
@@ -344,8 +345,7 @@ int check_data_signature(slice data, slice signature, int public_key) asm "CHKSI
 (int, int, int, int) slice_compute_data_size?(slice s, int max_cells) asm "SDATASIZEQ NULLSWAPIFNOT2 NULLSWAPIFNOT";
 ```
 
-类似于`compute_data_size?`，但接受的是`slice s`而不是`cell`。返回的`x`值不考
-虑包含切片`s`本身的cell；然而，`s`的数据位和cell引用在`y`和`z`中要被考虑。
+Similar to `compute_data_size?` but accepting `slice s` instead of `cell`. The returned value of `x` does not take into account the cell that contains the slice `s` itself; however, the data bits and the cell references of `s` are accounted for in `y` and `z`.
 
 #### compute_data_size
 
@@ -353,7 +353,7 @@ int check_data_signature(slice data, slice signature, int public_key) asm "CHKSI
 (int, int, int) compute_data_size(cell c, int max_cells) impure asm "CDATASIZE";
 ```
 
-`compute_data_size?`的非静默版本，失败时抛出cell溢出异常（8）。
+A non-quiet version of `compute_data_size?` that throws a cell overflow exception (8) on failure.
 
 #### slice_compute_data_size
 
@@ -361,9 +361,9 @@ int check_data_signature(slice data, slice signature, int public_key) asm "CHKSI
 (int, int, int) slice_compute_data_size(slice s, int max_cells) impure asm "SDATASIZE";
 ```
 
-`slice_compute_data_size?`的非静默版本，失败时抛出cell溢出异常（8）。
+A non-quiet version of `slice_compute_data_size?` that throws a cell overflow exception (8) on failure.
 
-### 持久存储保存和加载
+### Persistent storage save and load
 
 #### get_data
 
@@ -371,7 +371,7 @@ int check_data_signature(slice data, slice signature, int public_key) asm "CHKSI
 cell get_data() asm "c4 PUSH";
 ```
 
-返回持久化合约存储cell。稍后可以使用切片和构建器原语对其进行解析或修改。
+Returns the persistent contract storage cell. It can be parsed or modified with slice and builder primitives later.
 
 #### set_data
 
@@ -379,9 +379,9 @@ cell get_data() asm "c4 PUSH";
 () set_data(cell c) impure asm "c4 POP";
 ```
 
-将cell`c`设置为持久化合约数据。您可以使用这个原语更新持久化合约存储。
+Sets cell `c` as persistent contract data. You can update the persistent contract storage with this primitive.
 
-### Continuation 原语
+### Continuation primitives
 
 #### get_c3
 
@@ -389,7 +389,7 @@ cell get_data() asm "c4 PUSH";
 cont get_c3() impure asm "c3 PUSH";
 ```
 
-通常`c3`有一个由合约的整个代码初始化的continuation。它用于函数调用。原语返回`c3`的当前值。
+Usually `c3` has a continuation initialized by the whole code of the contract. It is used for function calls. The primitive returns the current value of `c3`.
 
 #### set_c3
 
@@ -397,7 +397,7 @@ cont get_c3() impure asm "c3 PUSH";
 () set_c3(cont c) impure asm "c3 POP";
 ```
 
-更新`c3`的当前值。通常，它用于实时更新智能合约代码。请注意，在执行此原语之后，当前代码（以及递归函数调用堆栈）不会改变，但任何其他函数调用将使用新代码中的函数。
+Updates the current value of `c3`. Usually, it is used for updating smart contract code in runtime. Note that after execution of this primitive, the current code (and the stack of recursive function calls) won't change, but any other function call will use a function from the new code.
 
 #### bless
 
@@ -405,9 +405,9 @@ cont get_c3() impure asm "c3 PUSH";
 cont bless(slice s) impure asm "BLESS";
 ```
 
-将`slice s`转换为一个简单的普通 continuation `c`，其中`c.code = s`，堆栈和保存列表为空。
+Transforms `slice s` into a simple ordinary continuation `c` with `c.code = s`, and an empty stack, and savelist.
 
-### 与 gas 相关的原语
+### Gas related primitives
 
 #### accept_message
 
@@ -415,9 +415,9 @@ cont bless(slice s) impure asm "BLESS";
 () accept_message() impure asm "ACCEPT";
 ```
 
-将当前 gas 限制`gl`设置为其允许的最大值`gm`，并将 gas 信用`gc`重置为零，同时减少`gr`的值`gc`。换句话说，当前智能合约同意购买一些 gas 以完成当前交易。这个动作是处理不携带价值（因此不含 gas ）的外部消息所必需的。
+Sets the current gas limit `gl` to its maximum allowed value `gm` and resets the gas credit `gc` to zero, decreasing the value of `gr` by `gc` in the process. In other words, the current smart contract agrees to buy some gas to finish the current transaction. This action is required to process external messages that carry no value (hence no gas).
 
-有关更多详细信息，请查看[accept_message effects](/develop/smart-contracts/guidelines/accept)
+For more details check [accept_message effects](/develop/smart-contracts/guidelines/accept)
 
 #### set_gas_limit
 
@@ -425,9 +425,9 @@ cont bless(slice s) impure asm "BLESS";
 () set_gas_limit(int limit) impure asm "SETGASLIMIT";
 ```
 
-将当前 gas 限制`gl`设置为`limit`和`gm`的最小值，并将 gas 信用`gc`重置为零。此时，如果消耗的 gas 量（包括当前指令）超过`gl`的结果值，则在设置新 gas 限制之前会抛出（未处理的） gas 不足异常。请注意，带有`limit ≥ 2^63 − 1`参数的`set_gas_limit`等同于`accept_message`。
+Sets the current gas limit `gl` to the minimum of `limit` and `gm`, and resets the gas credit `gc` to zero. At that point, if the amount of consumed gas (including the present instruction) exceeds the resulting value of `gl`, an (unhandled) out of gas exception is thrown before setting new gas limits. Notice that `set_gas_limit` with an argument `limit ≥ 2^63 − 1` is equivalent to `accept_message`.
 
-有关更多详细信息，请查看[accept_message effects](/develop/smart-contracts/guidelines/accept)
+For more details check [accept_message effects](/develop/smart-contracts/guidelines/accept)
 
 #### commit
 
@@ -435,7 +435,7 @@ cont bless(slice s) impure asm "BLESS";
 () commit() impure asm "COMMIT";
 ```
 
-提交寄存器`c4`（“持久数据”）和`c5`（“动作”）的当前状态，以便即使稍后抛出异常，当前执行也被视为“成功”，并保存这些值。
+Commits the current state of registers `c4` (“persistent data”) and `c5` (“actions”) so that the current execution is considered “successful” with the saved values even if an exception is thrown later.
 
 #### buy_gas
 
@@ -444,12 +444,12 @@ cont bless(slice s) impure asm "BLESS";
 ```
 
 :::caution
-`BUYGAS`操作码目前尚未实现
+`BUYGAS` opcode is currently not implemented
 :::
 
-计算可以用`gram`nanoton币购买的gas 量，并以与`set_gas_limit`相同的方式相应地设置`gl`。
+Computes the amount of gas that can be bought for `gram` nanotoncoins and sets `gl` accordingly in the same way as `set_gas_limit`.
 
-### 动作原语
+### Actions primitives
 
 #### raw_reserve
 
@@ -457,7 +457,7 @@ cont bless(slice s) impure asm "BLESS";
 () raw_reserve(int amount, int mode) impure asm "RAWRESERVE";
 ```
 
-创建一个输出动作，该动作将准确地预留`amount` nanoton 币（如果`mode = 0`），最多`amount` nanoton 币（如果`mode = 2`），或除`amount` nanoton 币以外的所有 nanoton 币（如果`mode = 1`或`mode = 3`）从账户的剩余余额中。它大致等同于创建一个携带`amount` nanoton 币（或`b − amount` nanoton 币，其中`b`是剩余余额）的出站消息发送给自己，这样随后的输出动作就不会花费超过剩余部分的金额。`mode`中的+2位意味着外部动作在无法预留指定金额时不会失败；相反，将预留所有剩余余额。`mode`中的+8位意味着`amount <- -amount`在进行任何进一步的动作之前。`mode`中的+4位意味着在进行任何其他检查和动作之前，`amount`会增加当前账户的原始余额（在 Compute Phase 之前），包括所有额外代币。目前，`amount`必须是非负整数，`mode`必须在`0..15`范围内。
+Creates an output action which would reserve exactly `amount` nanotoncoins (if `mode = 0`), at most `amount` nanotoncoins (if `mode = 2`), or all but `amount` nanotoncoins (if `mode = 1` or `mode = 3`) from the remaining balance of the account. It is roughly equivalent to creating an outbound message carrying `amount` nanotoncoins (or `b − amount` nanotoncoins, where `b` is the remaining balance) to oneself, so that the subsequent output actions would not be able to spend more money than the remainder. Bit +2 in `mode` means that the external action does not fail if the specified amount cannot be reserved; instead, all the remaining balance is reserved. Bit +8 in `mode` means `amount <- -amount` before performing any further actions. Bit +4 in `mode` means that `amount` is increased by the original balance of the current account (before the compute phase), including all extra currencies before performing any other checks and actions. Currently, `amount` must be a non-negative integer, and `mode` must be in the range `0..15`.
 
 #### raw_reserve_extra
 
@@ -465,7 +465,7 @@ cont bless(slice s) impure asm "BLESS";
 () raw_reserve_extra(int amount, cell extra_amount, int mode) impure asm "RAWRESERVEX";
 ```
 
-类似于`raw_reserve`，但还接受一个由`cell`或`null`表示的额外代币字典`extra_amount`。这样，除了Toncoin以外的其他代币也可以被预留。
+Similar to `raw_reserve` but also accepts a dictionary `extra_amount` (represented by `cell` or `null`) with extra currencies. In this way, currencies other than Toncoin can be reserved.
 
 #### send_raw_message
 
@@ -473,24 +473,24 @@ cont bless(slice s) impure asm "BLESS";
 () send_raw_message(cell msg, int mode) impure asm "SENDRAWMSG";
 ```
 
-发送包含在`msg`中的原始消息，它应该包含一个正确序列化的消息对象X，唯一的例外是源地址可以有一个虚拟值`addr_none`（自动替换为当前智能合约地址），以及`ihr_fee`、`fwd_fee`、`created_lt`和`created_at`字段可以有任意值（在当前交易的 Action Phase 期间用正确的值重写）。整数参数`mode`包含标志。
+Sends a raw message contained in `msg`, which should contain a correctly serialized object Message X, with the only exception that the source address is allowed to have a dummy value `addr_none` (to be automatically replaced with the current smart contract address), and `ihr_fee`, `fwd_fee`, `created_lt` and `created_at` fields can have arbitrary values (to be rewritten with correct values during the action phase of the current transaction). The integer parameter `mode` contains the flags.
 
-目前有3种消息Modes和3种消息Flags。您可以将单一Mode与多个（也许没有）标志组合以获得所需的`mode`。组合只是意味着获取它们值的总和。下面给出了Modes和Flags的描述表格。
+There are currently 3 Modes and 3 Flags for messages. You can combine a single mode with several (maybe none) flags to get a required `mode`. Combination simply means getting sum of their values. A table with descriptions of Modes and Flags is given below.
 
-| Mode  | 描述                             |
-| :---- | :----------------------------- |
-| `0`   | 普通消息                           |
-| `64`  | 除了最初在新消息中指示的值之外，还携带入站消息的所有剩余价值 |
-| `128` | 携带当前智能合约的所有剩余余额，而不是最初在消息中指示的值  |
+| Mode  | Description                                                                                                            |
+| :---- | :--------------------------------------------------------------------------------------------------------------------- |
+| `0`   | Ordinary message                                                                                                       |
+| `64`  | Carry all the remaining value of the inbound message in addition to the value initially indicated in the new message   |
+| `128` | Carry all the remaining balance of the current smart contract instead of the value originally indicated in the message |
 
-| Flag  | 描述                                               |
-| :---- | :----------------------------------------------- |
-| `+1`  | 单独支付消息价值之外的转移费用                                  |
-| `+2`  | 忽略在 Action Phase 处理此消息时出现的任何错误                   |
-| `+16` | 在动作失败的情况下 - 弹回交易。如果使用`+2`，则无效。                   |
-| `+32` | 如果当前账户的最终余额为零，则必须销毁该账户（通常与模式128一起使用）             |
+| Flag  | Description                                                                                                      |
+| :---- | :--------------------------------------------------------------------------------------------------------------- |
+| `+1`  | Pay transfer fees separately from the message value                                                              |
+| `+2`  | Ignore any errors arising while processing this message during the action phase                                  |
+| `+16` | In the case of action fail - bounce transaction. No effect if `+2` is used.                                      |
+| `+32` | Current account must be destroyed if its resulting balance is zero (often used with Mode 128) |
 
-例如，如果您想发送常规消息并单独支付转账费用，请使用Mode`0`和Flag`+1`以获得`mode = 1`。如果
+For example, if you want to send a regular message and pay transfer fees separately, use the Mode `0` and Flag `+1` to get `mode = 1`. If you want to send the whole contract balance and destroy it immidiately, use the Mode `128` and Flag `+32` to get `mode = 160`.
 
 #### set_code
 
@@ -646,9 +646,9 @@ Dumps the stack (at most the top 255 values) and shows the total stack depth.
 
 It is said that a primitive _loads_ some data if it returns the data and the remainder of the slice (so it can also be used as a [modifying method](/develop/func/statements#modifying-methods)).
 
-据说，如果原语返回数据及其余部分的切片，则称其为_加载_数据（因此也可用作[修改方法](/develop/func/statements#modifying-methods)）。
+It is said that a primitive _preloads_ some data if it returns only the data (it can be used as a [non-modifying method](/develop/func/statements#non-modifying-methods)).
 
-据说，如果原语仅返回数据，则称其为_预加载_数据（可用作[非修改方法](/develop/func/statements#non-modifying-methods)）。
+Unless otherwise stated, loading and preloading primitives read data from a prefix of the slice.
 
 #### begin_parse
 
@@ -798,7 +798,7 @@ Loads a dictionary as `load_dict` but returns only the remainder of the slice.
 
 ### Slice size primitives
 
-#### 切片大小原语
+#### slice_refs
 
 ```func
 int slice_refs(slice s) asm "SREFS";
@@ -858,7 +858,7 @@ Returns the depth of slice `s`. If `s` has no references, then returns `0`; othe
 
 It is said that a primitive _stores_ a value `x` into a builder `b` if it returns a modified version of the builder `b'` with the value `x` stored at the end of it. It can be used as a [non-modifying method](/develop/func/statements#non-modifying-methods).
 
-据说，如果原语将值 `x` 存储到构建器 `b` 中，则返回构建器 `b'` 的修改版本，并在其末尾存储值 `x`。这可以用作[非修改方法](/develop/func/statements#non-modifying-methods)。
+All of the primitives listed below verify whether there is enough space in the `builder`first, and then the range of the value being serialized.
 
 #### begin_cell
 
@@ -922,7 +922,7 @@ builder store_coins(builder b, int x) asm "STGRAMS";
 
 Stores (serializes) an integer `x` in the range `0..2^120 − 1` into builder `b`. The serialization of `x` consists of a 4-bit unsigned big-endian integer `l`, which is the smallest integer `l ≥ 0`, such that `x < 2^8l`, followed by an `8l`-bit unsigned big-endian representation of `x`. If `x` does not belong to the supported range, a range check exception is thrown.
 
-将范围 `0..2^120 − 1` 内的整数 `x` 存储（序列化）到构建器 `b` 中。`x` 的序列化包含一个4位无符号大端整数 `l`，它是最小的整数 `l ≥ 0`，使得 `x < 2^8l`，后跟 `8l` 位无符号大端表示的 `x`。如果 `x` 不属于支持范围，则抛出范围检查异常。
+It is the most common way of storing Toncoins.
 
 #### store_dict
 
@@ -942,7 +942,7 @@ Equivalent to `store_dict`.
 
 ### Builder size primitives
 
-#### 构建器大小原语
+#### builder_refs
 
 ```func
 int builder_refs(builder b) asm "BREFS";
@@ -968,7 +968,7 @@ Returns the depth of builder `b`. If no cell references are stored in `b`, then 
 
 ## Cell primitives
 
-#### Cell原语
+#### cell_depth
 
 ```func
 int cell_depth(cell c) asm "CDEPTH";
@@ -1005,11 +1005,11 @@ In FunC dictionaries are also represented by the `cell` type with the implicit a
 
 A dictionary primitive may interpret the keys of the dictionary either as unsigned `l`-bit integers, as signed `l`-bit integers, or as `l`-bit slices. The primitives listed below differ by the prefix before the word `dict` in their names. `i` stands for signed integer keys, `u` stands for unsigned integer keys, and an empty prefix stands for slice keys.
 
-字典原语可能将字典的键解释为无符号 `l` 位整数、有符号 `l` 位整数或 `l` 位切片。下面列出的原语名称中的前缀不同。`i` 表示有符号整数键，`u` 表示无符号整数键，空前缀表示切片键。
+For example, `udict_set` is a set-by-key function for dictionaries with unsigned integer keys; `idict_set` is the corresponding function for dictionaries with signed integer keys; `dict_set` is the function for dictionaries with slice keys.
 
-例如，`udict_set` 是带有无符号整数键的字典的按键设置函数；`idict_set` 是带有有符号整数键的字典的相应函数；`dict_set` 是带有切片键的字典的函数。
+An empty prefix is used in the titles.
 
-标题中使用了空前缀。
+Also, some of the primitives have their counterparts prefixed with `~`. It makes it possible to use them as [modifying methods](/develop/func/statements#modifying-methods).
 
 ### Dictionary's values
 
@@ -1160,7 +1160,7 @@ Similar to `dict_replace?` but accepts a builder.
 
 Computes the minimum key `k` in dictionary `dict`, removes it, and returns `(dict', k, x, -1)`, where `dict'` is the modified version of `dict` and `x` is the value associated with `k`. If the dict is empty, returns `(dict, null, null, 0)`.
 
-计算字典 `dict` 中的最小键 `k`，将其移除，并返回 `(dict', k, x, -1)`，其中 `dict'` 是修改后的 `dict`，`x` 是与 `k` 关联的值。如果字典为空，则返回 `(dict, null, null, 0)`。
+Note that the key returned by `idict_delete_get_min` may differ from the key returned by `dict_delete_get_min` and `udict_delete_get_min`.
 
 #### dict_delete_get_max
 
@@ -1294,7 +1294,7 @@ Similar to `dict_delete?`.
 
 ## Special primitives
 
-#### 特殊原语
+#### null
 
 ```func
 forall X -> X null() asm "PUSHNULL";
@@ -1312,7 +1312,7 @@ Mark a variable as used, such that the code which produced it won't be deleted e
 
 ## Other primitives
 
-#### 其他原语
+#### min
 
 ```func
 int min(int x, int y) asm "MIN";
