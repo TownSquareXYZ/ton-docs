@@ -1,16 +1,16 @@
-# 发送消息
+# Sending Messages
 
-TON Connect 2.0 不仅仅提供了在 dApp 中认证用户的强大选项：它还可以通过已连接的钱包发送外部消息！
+TON Connect 2.0 has more powerful options than just authenticating users in the dApp: it's possible to send outgoing messages via connected wallets!
 
-您将了解到：
+You will understand:
 
-- 如何从 DApp 发送消息到区块链
-- 如何在一次交易中发送多条消息
-- 如何使用 TON Connect 部署合约
+- how to send messages from the DAppto the blockchain
+- how to send multiple messages in one transaction
+- how to deploy a contract using TON Connect
 
-## 演示页面
+## Playground page
 
-我们将使用 JavaScript 的低级 [TON Connect SDK](https://github.com/ton-connect/sdk/tree/main/packages/sdk) 。我们将在钱包已连接的页面上的浏览器控制台上做实验。以下是示例页面：
+We will use the low level [TON Connect SDK](https://github.com/ton-connect/sdk/tree/main/packages/sdk) for JavaScript. We'll experiment in the browser console on a page where the wallet is already connected. Here is the sample page:
 
 ```html
 <!DOCTYPE html>
@@ -33,22 +33,22 @@ TON Connect 2.0 不仅仅提供了在 dApp 中认证用户的强大选项：它�
 </html>
 ```
 
-随意将其复制粘贴到您的浏览器控制台并运行。
+Feel free to copy-paste it into your browser console and run it.
 
-## 发送多条消息
+## Sending multiple messages
 
-### 1. 了解任务
+### 1. Understanding a task
 
-我们将在一次交易中发送两条独立的消息：一条发送到您自己的地址，携带 0.2 TON，另一条发送到其他钱包地址，携带 0.1 TON。
+We will send two separate messages in one transaction: one to your own address, carrying 0.2 TON, and one to the other wallet address carrying 0.1 TON.
 
-顺便说一下，一次交易中发送的消息有限制：
+By the way, there is a limit of messages sent in one transaction:
 
-- 标准 ([v3](/participate/wallets/contracts#wallet-v3)/[v4](/participate/wallets/contracts#wallet-v4)) 钱包：4 条传出消息；
-- 高负载钱包：255 条传出消息（接近区块链限制）。
+- standard ([v3](/participate/wallets/contracts#wallet-v3)/[v4](/participate/wallets/contracts#wallet-v4)) wallets: 4 outgoing messages;
+- highload wallets: 255 outgoing messages (close to blockchain limitations).
 
-### 2. 发送消息
+### 2. Sending the messages
 
-运行以下代码：
+Run the following code:
 
 ```js
 console.log(await connector.sendTransaction({
@@ -66,13 +66,13 @@ console.log(await connector.sendTransaction({
 }));
 ```
 
-您会注意到这个命令没有在控制台打印任何东西，像返回无内容的函数一样，`null` 或 `undefined`。这意味着 `connector.sendTransaction` 不会立即退出。
+You'll notice that this command does not print anything into the console, `null` or `undefined`, as functions returning nothing do. This means that `connector.sendTransaction` does not exit immediately.
 
-打开您的钱包应用，您会看到原因。有一个请求，显示您要发送的内容以及coin将会去向哪里。请接受它。
+Open your wallet application, and you'll see why. There is a request, showing what you are sending and where coins would go. Please, accept it.
 
-### 3. 获取结果
+### 3. Getting the result
 
-函数将退出，并且区块链的输出将被打印：
+The function will exit, and the output from the blockchain will be printed:
 
 ```json
 {
@@ -80,22 +80,17 @@ console.log(await connector.sendTransaction({
 }
 ```
 
-BOC 是 [Bag of Cells](/learn/overviews/cells)，这是 TON 中存储数据的方式。现在我们可以解码它。
+BOC is [Bag of Cells](/learn/overviews/cells), the way of how is data stored in TON. Now we can decode it.
 
-在您选择的工具中解码这个 BOC，您将得到以下cell树：
+Decode this BOC in the tool of your choice, and you'll get the following tree of cells:
 
 ```bash
-x{88016543D9EAA8BC0ED9A6D5CA2DD4FD7BE655D401195457095F30CD7D964111...
-  $10       ext_in_msg_info
-  $00       src:MsgAddressExt (null address)
-  "EQ..."a  dest:MsgAddressInt (your wallet)
-  0         import_fee:Grams
-  $0        (no state_init)
-  $0        (body starts in this cell)
-  ...
+x{88016543D9EAA8BC0ED9A6D5CA2DD4FD7BE655D401195457095F30CD7D9641112B5A02501DD1A83C401673E97A8D7DD57FE38A29A7F41C27AB7CF0714FCC3231D134DE6C0B9B72CA6055DD2275AE3CB2B1C023AC30C500857F884F960724843CFF70094D4D18BB1F72F5600000024800181C_}
+ x{42005950F67AAA2F03B669B5728B753F5EF9957500465515C257CC335F6590444AD6A00989680000000000000000000000000000}
+ x{42005950F67AAA2F03B669B5728B753F5EF9957500465515C257CC335F6590444AD69CC4B40000000000000000000000000000}
 ```
 
-返回发送交易的 BOC 的目的是跟踪它。
+This is serialized external message, and two references are outgoing messages representations.
 
 ```bash
 x{88016543D9EAA8BC0ED9A6D5CA2DD4FD7BE655D401195457095F30CD7D964111...
@@ -114,7 +109,7 @@ The purpose of returning BOC of the sent transaction is to track it.
 
 ### Serialization of cells
 
-构建消息后，您可以将其序列化为 BOC。
+Before we proceed, let's talk about the format of messages we are going to send.
 
 - **payload** (string base64, optional): raw one-cell BoC encoded in Base64.
   - we will use it to store text comment on transfer
@@ -145,20 +140,25 @@ console.log(payload);
 
 ### Smart contract deployment
 
-现在，是时候发送我们的交易了！
+And we'll deploy an instance of super simple [chatbot Doge](https://github.com/LaDoger/doge.fc), mentioned as one of [smart contract examples](/develop/smart-contracts/#smart-contract-examples). First of all, we load its code and store something unique in data, so that we receive our very own instance that has not been deployed by someone other. Then we combine code and data into stateInit.
 
 ```js
-console.log(await connector.sendTransaction({
-  validUntil: Math.floor(new Date() / 1000) + 360,
-  messages: [
-    {
-      address: "0:1c7c35ed634e8fa796e02bbbe8a2605df0e2ab59d7ccb24ca42b1d5205c735ca",
-      amount: "69000000",
-      payload: "te6ccsEBAQEAHQAAADYAAAAAVE9OIENvbm5lY3QgMiB0dXRvcmlhbCFdy+mw",
-      stateInit: "te6ccsEBBAEAUwAABRJJAgE0AQMBFP8A9KQT9LzyyAsCAGrTMAGCCGlJILmRMODQ0wMx+kAwi0ZG9nZYcCCAGMjLBVAEzxaARfoCE8tqEssfAc8WyXP7AAAQAAABhltsPJ+MirEd"
-    }
-  ]
-}));
+let code = TonWeb.boc.Cell.oneFromBoc(TonWeb.utils.base64ToBytes('te6cckEBAgEARAABFP8A9KQT9LzyyAsBAGrTMAGCCGlJILmRMODQ0wMx+kAwi0ZG9nZYcCCAGMjLBVAEzxaARfoCE8tqEssfAc8WyXP7AN4uuM8='));
+let data = new TonWeb.boc.Cell();
+data.bits.writeUint(Math.floor(new Date()), 64);
+
+let state_init = new TonWeb.boc.Cell();
+state_init.bits.writeUint(6, 5);
+state_init.refs.push(code);
+state_init.refs.push(data);
+
+let state_init_boc = TonWeb.utils.bytesToBase64(await state_init.toBoc());
+console.log(state_init_boc);
+//  te6ccsEBBAEAUwAABRJJAgE0AQMBFP8A9KQT9LzyyAsCAGrTMAGCCGlJILmRMODQ0wMx+kAwi0ZG9nZYcCCAGMjLBVAEzxaARfoCE8tqEssfAc8WyXP7AAAQAAABhltsPJ+MirEd
+
+let doge_address = '0:' + TonWeb.utils.bytesToHex(await state_init.hash());
+console.log(doge_address);
+//  0:1c7c35ed634e8fa796e02bbbe8a2605df0e2ab59d7ccb24ca42b1d5205c735ca
 ```
 
 And, it's time to send our transaction!
@@ -181,7 +181,7 @@ console.log(await connector.sendTransaction({
 Get more examples in [Preparing Messages](/develop/dapps/ton-connect/message-builders) page for Transfer NFT and Jettons.
 :::
 
-处理请求拒绝相当简单，但当您正在开发某个项目时，最好提前知道会发生什么。
+After confirmation, we may see our transaction complete at [tonscan.org](https://tonscan.org/tx/pCA8LzWlCRTBc33E2y-MYC7rhUiXkhODIobrZVVGORg=).
 
 ## What happens if the user rejects a transaction request?
 
