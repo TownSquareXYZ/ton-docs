@@ -1,54 +1,54 @@
-# TON存储常见问题解答
+# TON Storage FAQ
 
-## 如何将TON域名分配给TON存储的文件包
+## How to assign a TON domain to a TON Storage bag of files
 
-1. [上传](/participate/ton-storage/storage-daemon#creating-a-bag-of-files)文件包到网络并获取Bag ID。
+1. [Upload](/participate/ton-storage/storage-daemon#creating-a-bag-of-files) the bag of files to the network and get the Bag ID
 
-2. 在您的电脑上打开Google Chrome浏览器。
+2. Open the Google Chrome browser on your computer.
 
-3. 为Google Chrome安装[TON扩展](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd)。
-   您也可以使用[MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc)。
+3. Install [TON extension](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) for Google Chrome.
+   You can also use [MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc).
 
-4. 打开扩展，点击“导入钱包”，使用恢复短语导入拥有该域名的钱包。
+4. Open the extension, click "Import wallet" and import the wallet that owns the domain, using the recovery phrase.
 
-5. 现在在https://dns.ton.org打开您的域名并点击“编辑”。
+5. Now open your domain at https://dns.ton.org and click "Edit".
 
-6. 将您的Bag ID复制到“存储”字段并点击“保存”。
+6. Copy your Bag ID into the "Storage" field and click "Save".
 
-## 如何在TON存储中托管静态TON网站
+## How to host static TON site in TON Storage
 
-1. [创建](/participate/ton-storage/storage-daemon#creating-a-bag-of-files)一个文件夹的包，其中包含网站文件，将其上传到网络并获取Bag ID。文件夹必须包含`index.html`文件。
+1. [Create](/participate/ton-storage/storage-daemon#creating-a-bag-of-files) the Bag from folder with website files, upload it to the network and get the Bag ID. The folder must contain `index.html` file.
 
-2. 在您的电脑上打开Google Chrome浏览器。
+2. Open the Google Chrome browser on your computer.
 
-3. 为Google Chrome安装[TON扩展](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd)。
-   您也可以使用[MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc)。
+3. Install [TON extension](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) for Google Chrome.
+   You can also use [MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc).
 
-4. 打开扩展，点击“导入钱包”，使用恢复短语导入拥有该域名的钱包。
+4. Open the extension, click "Import wallet" and import the wallet that owns the domain, using the recovery phrase.
 
-5. 现在在https://dns.ton.org打开您的域名并点击“编辑”。
+5. Now open your domain at https://dns.ton.org and click "Edit".
 
-6. 将您的Bag ID复制到“网站”字段，选中“在TON存储中托管”复选框并点击“保存”。
+6. Copy your Bag ID into the "Site" field, select "Host in TON Storage" checkbox and click "Save".
 
-## 如何将TON NFT内容迁移到TON存储
+## How to migrate TON NFT content to TON Storage
 
-如果您为您的收藏使用了[标准NFT智能合约](https://github.com/ton-blockchain/token-contract/blob/main/nft/nft-collection-editable.fc)，您需要从收藏所有者的钱包向收藏智能合约发送[消息](https://github.com/ton-blockchain/token-contract/blob/2d411595a4f25fba43997a2e140a203c140c728a/nft/nft-collection-editable.fc#L132)，带有新的URL前缀。
+If you used a [standard NFT smart contract](https://github.com/ton-blockchain/token-contract/blob/main/nft/nft-collection-editable.fc) for your collection, you need to send a [message](https://github.com/ton-blockchain/token-contract/blob/2d411595a4f25fba43997a2e140a203c140c728a/nft/nft-collection-editable.fc#L132) to the collection smart contract from the collection owner's wallet with a new URL prefix.
 
-例如，如果URL前缀曾经是`https://mysite/my_collection/`，新前缀将是`tonstorage://my_bag_id/`。
+As an example, if the url prefix used to be `https://mysite/my_collection/`, the new prefix will be `tonstorage://my_bag_id/`.
 
-## 如何将TON域名分配给TON存储的文件包（低层级）
+## How to assign a TON domain to a TON Storage bag (Low Level)
 
-您需要将以下值分配给TON域的sha256("storage") DNS记录：
+You need to assign the following value to the sha256("storage") DNS Record of your TON domain:
 
 ```
 dns_storage_address#7473 bag_id:uint256 = DNSRecord;
 ```
 
-## 如何在TON存储中托管静态TON网站（低层级）
+## How to host static TON site in TON Storage (Low Level)
 
-[创建](/participate/ton-storage/storage-daemon#creating-a-bag-of-files)一个文件夹的包，其中包含网站文件，将其上传到网络并获取Bag ID。文件夹必须包含`index.html`文件。
+[Create](/participate/ton-storage/storage-daemon#creating-a-bag-of-files) the Bag from folder with website files, upload it to the network and get the Bag ID. The folder must contain `index.html` file.
 
-您需要将以下值分配给TON域的sha256("site") DNS记录：
+You need to assign the following value to the sha256("site") DNS Record of your TON domain:
 
 ```
 dns_storage_address#7473 bag_id:uint256 = DNSRecord;
