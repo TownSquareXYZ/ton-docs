@@ -1,43 +1,43 @@
-# Telegram 机器人检查 NFT 所有权
+# Telegram Bot to check ownership of NFT
 
-## 👋 介绍
+## 👋 Introduction
 
-本文旨在提供关于验证令牌所有权的指导，随着 NFT 的流行程度持续飙升，越来越多的人寻找有效的方法来实现这一点。
+This article aims to provide guidance on verifying token ownership as the popularity of NFTs continues to soar, with a growing number of individuals searching for effective methods to accomplish this.
 
-## 📝 获取机器人的令牌
+## 📝 Obtaining a token for the bot
 
-1. 在 Telegram 上访问 [BotFather](https://t.me/BotFather)。
+1. Visit [BotFather](https://t.me/BotFather) on Telegram.
 
-2. 按照指示创建一个新的机器人。
+2. Follow the instructions to create a new bot.
 
-3. 创建后，BotFather 将为您提供一个独特的令牌。这个令牌至关重要，因为它允许您的机器人与 Telegram API 通信。
+3. Once created, BotFather will provide you with a unique token. This token is crucial as it allows your bot to communicate with the Telegram API.
 
-## 🧠 机器人功能描述
+## 🧠 Description of the bot's functionality
 
-### 功能
+### Functionality
 
-我们的 Telegram 机器人将执行一个引人入胜的示例任务，验证用户是否拥有来自 TON Footsteps 集合的 NFT 项目。关键部分将包括：
+Our Telegram bot will perform the fascinating example task of verifying if a user owns an NFT item from the TON Footsteps collection. The key components will be:
 
-- aiogram 库：用于与 Telegram 客户端交互。
-- TON Connect：连接用户的钱包。
-- Redis 数据库：处理与 TON Connect 相关的数据。
+- aiogram library: For interfacing with the Telegram client.
+- TON Connect: To connect with the user's wallet.
+- Redis database: To handle data relevant to TON Connect.
 
-### 🗂️ 项目结构
+### 🗂️ Project structure
 
-- 主文件：包含机器人的主要逻辑。
-- 辅助文件：
-  - 键盘：Telegram 机器人键盘对象。
-  - 数据库准备：促进 TON Connect。
+- Main file: Containing the primary logic of the bot.
+- Helper files:
+  - Keyboards: Telegram bot keyboard objects.
+  - Database Preparation: Facilitating TON Connect.
 
-### 🛠️ 安装库
+### 🛠️ Install the libraries
 
-执行以下命令通过 `pip` 安装所有必要的库：
+Execute the following command to install all the necessary libraries through `pip`:
 
 ```bash
 pip install aiogram redis qrcode tonsdk pytonconnect requests
 ```
 
-然后将它们导入主文件：
+And then, import them to the main file:
 
 ```python
 import asyncio
@@ -53,189 +53,189 @@ from tonsdk.utils import Address
 from pytonconnect import TonConnect
 ```
 
-### 🗄️ Redis 数据库设置
+### 🗄️ Redis database setup
 
-此外，为了设置和启动 Redis 数据库，我建议您了解有关其安装和启动的信息，可以在[这里](https://redis.io/docs/getting-started/installation/)找到
+Additionally, for setting up and launching the Redis database, I recommend acquainting yourself with the information regarding its installation and initiation, which can be found [here](https://redis.io/docs/getting-started/installation/)
 
-## 🎨 编写机器人
+## 🎨 Writing the bot
 
-### 🎹 设计键盘
+### 🎹 Designing the keyboards
 
-首先，让我们创建一个包含所有必要键盘配置的文件，我们将其命名为 `keyboards.py`
+To begin with, let's create a file containing all the necessary keyboard configurations, and we'll name it `keyboards.py`
 
 ```python
-# 为 Telegram 机器人创建自定义键盘按钮和回复标记。
+# Creating custom keyboard buttons and reply markup for the Telegram bot.
 
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-# 为“检查 footstep NFT”操作创建一个 KeyboardButton。
+# Creating a KeyboardButton for the "Check for footstep NFT" action.
 CheckButton = KeyboardButton('Check for footstep NFT')
 
-# 使用 CheckButton 为“检查”操作创建一个 ReplyKeyboardMarkup。
-# 'resize_keyboard' 参数设置为 True，允许在 Telegram 应用中调整键盘大小。
+# Creating a ReplyKeyboardMarkup for the "Check" action using the CheckButton.
+# The 'resize_keyboard' parameter is set to True, allowing the keyboard to be resized in the Telegram app.
 Checkkb = ReplyKeyboardMarkup(resize_keyboard=True).add(CheckButton)
 
-# 为“Tonkeeper”和“Tonhub”操作创建额外的按钮。
+# Creating additional buttons for the "Tonkeeper" and "Tonhub" actions.
 TonkeeperButton = KeyboardButton('Tonkeeper')
 TonhubButton = KeyboardButton('Tonhub')
 
-# 使用 TonkeeperButton 和 TonhubButton 为“钱包”操作创建一个 ReplyKeyboardMarkup。
-# 'resize_keyboard' 参数设置为 True，以允许在 Telegram 应用中调整键盘大小。
+# Creating a ReplyKeyboardMarkup for the "Wallet" action using the TonkeeperButton and TonhubButton.
+# The 'resize_keyboard' parameter is set to True to allow the keyboard to be resized in the Telegram app.
 Walletkb = ReplyKeyboardMarkup(resize_keyboard=True).add(TonkeeperButton).add(TonhubButton)
 ```
 
-然后将此文件的导入添加到 `main.py` 中。
+And let's add the import of this file to the `main.py`.
 
 ```python
 import keyboards as kb
 ```
 
-### 🧩 数据库准备
+### 🧩 Database preparation
 
-现在，我们需要准备我们的数据库以与 `pytonconnect` 接口。
-为此，我们将创建一个名为 `database.py` 的新文件
+Now, we need to prepare our database to interface with `pytonconnect`.
+To do this, we will create a new file named `database.py`
 
 ```python
-# 导入 Redis 库以与 Redis 数据库交互
+# Importing the Redis library to interact with the Redis database
 import redis
-# 从 pytonconnect 导入 IStorage 接口
+# Importing the IStorage interface from pytonconnect
 from pytonconnect.storage import IStorage
 
-# 创建与在 localhost 的端口 6379 上运行的 Redis 数据库的连接
+# Creating a connection to the Redis database running on localhost at port 6379
 r = redis.Redis(host='localhost', port=6379, decode_responses=True)
 
-# 定义一个实现了 pytonconnect 中 IStorage 接口的 Storage 类
+# Defining a class Storage that implements the IStorage interface from pytonconnect
 class Storage(IStorage):
     def __init__(self, id):
-        # 构造方法初始化每个存储实例的唯一标识符
+        # Constructor method initializing the unique identifier for each storage instance
         self.id = id
 
-    # 异步方法在 Redis 中设置键值对，键名附加唯一 ID
+    # Asynchronous method to set a key-value pair in Redis, with the key being appended with the unique ID
     async def set_item(self, key: str, value: str):
         r.set(key + self.id, value)
 
-    # 异步方法从 Redis 中检索给定键的值，键名附加唯一 ID
-    # 如果键不存在，返回默认值
+    # Asynchronous method to retrieve the value for a given key from Redis, with the key being appended with the unique ID
+    # If the key does not exist, returns the default value
     async def get_item(self, key: str, default_value: str = None):
         if r.exists(key + self.id):
             return r.get(key + self.id)
         else:
             return default_value
 
-    # 异步方法从 Redis 中删除给定键的键值对，键名附加唯一 ID
+    # Asynchronous method to remove the key-value pair for a given key from Redis, with the key being appended with the unique ID
     async def remove_item(self, key: str):
         r.delete(key + self.id)
 ```
 
-还将其导入我们的主要机器人文件
+And also import it into our main file with the bot
 
 ```python
 import database
 ```
 
-### 🌟 编写启动处理程序
+### 🌟 Writing the startup handler
 
 ```python
-# 定义一个用于私人聊天中的 '/start' 命令的命令处理程序
+# Define a command handler for the '/start' command for private chats
 @dp.message_handler(commands=['start'], chat_type=types.ChatType.PRIVATE)
 async def start_command(message: types.Message):
-    # 向用户发送问候消息，解释机器人的功能
-    await message.answer("Hi👋, 我是一个用于检查 NFT 所有权的示例机器人", reply_markup=kb.Checkkb)
-    # 进一步解释机器人如何帮助检查 NFT 集合
-    await message.answer("在我的帮助下，你可以检查你是否拥有来自 TON Footsteps 集合的 NFT")
+    # Send a greeting message to the user, explaining the bot's functionality
+    await message.answer("Hi👋, I am an example of a bot for checking the ownership of the NFT", reply_markup=kb.Checkkb)
+    # Further explain how the bot can help with NFT collection checking
+    await message.answer("With my help, you can check if you have an NFT from the TON Footsteps collection")
 ```
 
-### 🕵️ 检查 NFT 存在的功能
+### 🕵️ Function for checking the presence of NFT
 
 ```python
-# 一个消息处理函数，用于检查用户是否拥有 footstep NFT 并据此作出响应。
+# A message handler function to check if the user has a footstep NFT and respond accordingly.
 
 @dp.message_handler(text='Check for footstep NFT', chat_type=types.ChatType.PRIVATE)
 async def connect_wallet_tonkeeper(message: types.Message):
-    # 检查数据库中是否有给定 Telegram ID 的用户的钱包地址。
-    # 如果地址不可用，提示用户连接他们的钱包 (Tonkeeper 或 Tonhub)。
+    # Checking if the user's wallet address is present in the database for the given Telegram ID.
+    # If the address is not available, prompt the user to connect their wallet (Tonkeeper or Tonhub).
     if cur.execute(f"SELECT address FROM Users WHERE id_tg == {message.from_user.id}").fetchall()[0][0] is None:
-        await message.answer(text="要检查 NFT 的存在，请连接你的钱包 (Tonkeeper 或 Tonhub)", reply_markup=kb.Walletkb)
+        await message.answer(text="To check for the presence of NFT, connect your wallet (Tonkeeper or Tonhub)", reply_markup=kb.Walletkb)
     else:
-        # 如果用户的钱包地址可用，继续检查 footstep NFT 的存在。
+        # If the user's wallet address is available, proceed to check for the presence of the footstep NFT.
         address = cur.execute(f"SELECT address FROM Users WHERE id_tg == {message.from_user.id}").fetchall()[0][0]
 
-        # 形成查询用户在 TON Footsteps 集合中的 NFT 的 TON API 的 URL。
+        # Forming the URL to query the TON API for the user's NFTs from the TON Footsteps collection.
         url = f'https://tonapi.io/v2/accounts/{address}/nfts?collection=EQCV8xVdWOV23xqOyC1wAv-D_H02f7gAjPzOlNN6Nv1ksVdL&limit=1000&offset=0&indirect_ownership=false'
 
         try:
-            # 向 TON API 发送 GET 请求并解析 JSON 响应以提取 NFT 项。
+            # Sending a GET request to the TON API and parsing the JSON response to extract NFT items.
             response = requests.get(url).json()['nft_items']
         except:
-            # 如果 API 请求出错，通知用户。
-            await message.answer(text="出了些问题...")
+            # If there's an error with the API request, notify the user.
+            await message.answer(text="Something went wrong...")
             return
 
-        # 根据 TON API 的响应，告知用户 NFT 存在与否。
+        # Based on the response from the TON API, informing the user about the NFT presence or absence.
         if response:
-            await message.answer(text="你拥有来自 TON Footsteps 集合的 NFT")
+            await message.answer(text="You have an NFT from the TON Footsteps collection")
         else:
-            await message.answer(text="很遗憾，你没有来自 TON Footsteps 集合的 NFT")
+            await message.answer(text="Unfortunately, you don't have NFT from the TON Footsteps collection")
 ```
 
-为了检查用户是否拥有必要的 NFT 集合，我们将使用 [TONAPI](https://tonapi.io/)。请求将如下所示：
+In order to check whether the NFT user has the necessary collection, we will use the [TONAPI](https://tonapi.io/). The request will look like this:
 
 ```bash
 https://tonapi.io/v2/accounts/<ADDRESS>/nfts?collection=<NFT_COLLECTION>&limit=1000&offset=0&indirect_ownership=false
 ```
 
-其中：
+Where:
 
-- `ADDRESS` - 这是我们想要检查所需 NFT 的用户的钱包地址。
-- `NFT_COLLECTION` - 这是所需 NFT 集合的地址。
+- `ADDRESS` - This is the wallet address of the user we want to check for the required NFT.
+- `NFT_COLLECTION` - This is the address of the required NFT collection.
 
-API 请求将返回用户从指定集合中的所有 NFT。
+The API request will return all the user's NFTs from the specified collection.
 
-### 🏡 通过 TON Connect 获取用户地址的功能
+### 🏡 Function for getting the user's address via TON Connect
 
 ```python
-# 定义一个用于在私人聊天中连接到钱包 (Tonkeeper 或 Tonhub) 的消息处理程序
+# Define a message handler for connection to wallets (Tonkeeper or Tonhub) in private chats
 @dp.message_handler(text=['Tonkeeper', 'Tonhub'], chat_type=types.ChatType.PRIVATE)
 async def connect_wallet_tonkeeper(message: types.Message):
-    # 根据用户的 ID 创建存储实例
+    # Create a storage instance based on the user's ID
     storage = database.Storage(str(message.from_user.id))
 
-    # 使用给定的清单 URL 和存储初始化连接
+    # Initialize a connection using the given manifest URL and storage
     connector = TonConnect(manifest_url='https://raw.githubusercontent.com/AndreyBurnosov/Checking_for_nft_availability/main/pytonconnect-manifest.json', storage=storage)
-    # 尝试恢复现有连接（如果有）
+    # Attempt to restore the existing connection, if any
     is_connected = await connector.restore_connection()
 
-    # 如果已经连接，通知用户并退出函数
+    # If already connected, inform the user and exit the function
     if is_connected:
-        await message.answer('你的钱包已连接。')
+        await message.answer('Your wallet is already connected.')
         return
 
-    # 定义不同钱包的连接选项
-    conncetion = {'Tonkeeper': 0, 'Tonhub': 2}
+    # Define the connection options for different wallet
+    connection = {'Tonkeeper': 0, 'Tonhub': 2}
 
-    # 获取可用钱包列表
+    # Retrieve the available wallets
     wallets_list = connector.get_wallets()
 
-    # 为选定的钱包生成连接 URL
+    # Generate a connection URL for the selected wallet
     generated_url_tonkeeper = await connector.connect(wallets_list[connection[message.text]])
 
-    # 创建一个内联键盘标记，带有一个按钮，用于打开连接 URL
+    # Create an inline keyboard markup with a button to open the connection URL
     urlkb = InlineKeyboardMarkup(row_width=1)
-    urlButton = InlineKeyboardButton(text=f'打开 {message.text}', url=generated_url_tonkeeper)
+    urlButton = InlineKeyboardButton(text=f'Open {message.text}', url=generated_url_tonkeeper)
     urlkb.add(urlButton)
 
-    # 为连接 URL 生成二维码并将其保存为图像
+    # Generate a QR code for the connection URL and save it as an image
     img = qrcode.make(generated_url_tonkeeper)
     path = f'image{random.randint(0, 100000)}.png'
     img.save(path)
     photo = InputFile(path)
 
-    # 使用内联键盘标记发送 QR 码图像给用户
+    # Send the QR code image to the user with the inline keyboard markup
     msg = await bot.send_photo(chat_id=message.chat.id, photo=photo, reply_markup=urlkb)
-    # 从本地文件系统中删除保存的图像
+    # Remove the saved image from the local file system
     os.remove(path)
 
-    # 在循环中检查连接是否成功，最多 300 次迭代（300 秒）
+    # Check for a successful connection in a loop, with a maximum of 300 iterations (300 seconds)
     for i in range(300):
         await asyncio.sleep(1)
         if connector.connected:
@@ -243,65 +243,65 @@ async def connect_wallet_tonkeeper(message: types.Message):
                 address = Address(connector.account.address).to_string(True, True, True)
             break
 
-    # 删除之前发送的 QR 码消息
+    # Delete the previously sent QR code message
     await msg.delete()
 
-    # 确认钱包已成功连接给用户
-    await message.answer('你的钱包已成功连接。', reply_markup=kb.Checkkb)
+    # Confirm to the user that the wallet has been successfully connected
+    await message.answer('Your wallet has been successfully connected.', reply_markup=kb.Checkkb)
 ```
 
-#### 📄 创建 TON Connect 清单
+#### 📄 Creating the manifest for TON Connect
 
-为了正确使用 TON Connect，我们还需要创建一个名为 `pytonconnect-manifest.json` 的文件，按照此模板：
+In order to properly use the TON Connect we also need to create a file named `pytonconnect-manifest.json`, following this template:
 
 ```json
 {
-  "url": "<app-url>", // 必填
-  "name": "<app-name>", // 必填
-  "iconUrl": "<app-icon-url>", // 必填
-  "termsOfUseUrl": "<terms-of-use-url>", // 可选
-  "privacyPolicyUrl": "<privacy-policy-url>" // 可选
+  "url": "<app-url>", // required
+  "name": "<app-name>", // required
+  "iconUrl": "<app-icon-url>", // required
+  "termsOfUseUrl": "<terms-of-use-url>", // optional
+  "privacyPolicyUrl": "<privacy-policy-url>" // optional
 }
 ```
 
-对于这个机器人，使用默认图标和任何想要的名称就足够了：
+For this bot, it'll be enough to simply use some default icon and any desired name:
 
 ```json
 {
   "url": "",
-  "name": "示例机器人",
+  "name": "Example bot",
   "iconUrl": "https://raw.githubusercontent.com/XaBbl4/pytonconnect/main/pytonconnect.png"
 }
 ```
 
-你可以在[其库中](https://github.com/XaBbl4/pytonconnect)了解更多关于 `pytonconnect` 库的信息
+You can learn more about the `pytonconnect` library [in its repository](https://github.com/XaBbl4/pytonconnect)
 
-### 🚀 启动机器人
+### 🚀 Launching the bot
 
-将以下代码添加到 `main.py` 的末尾，我们就准备好测试我们的机器人了！
+Add the folliwing code to the end of `main.py` and we'll be ready to test our bot!
 
 ```python
-# Telegram 机器人应用的主入口点。
+# The main entry point of the Telegram bot application.
 
 if __name__ == '__main__':
-    # 使用 executor 从 Telegram Bot API 开始轮询更新。
-    # `dp`（调度器）对象处理消息处理和其他事件处理。
-    # `skip_updates=True` 参数告诉执行器在启动时跳过挂起的更新。
+    # Start polling for updates from the Telegram Bot API using the executor.
+    # The `dp` (Dispatcher) object handles message handling and other event processing.
+    # The `skip_updates=True` parameter tells the executor to skip pending updates when starting.
     executor.start_polling(dp, skip_updates=True)
 ```
 
-现在只需在终端中运行这个命令：
+Now simply run this command in your terminal:
 
 ```bash
 python3 main.py
 ```
 
-之后，在 Telegram 中打开与您的机器人的对话尝试使用它。如果您正确地遵循了这个指南，机器人应该能够按预期工作！
+After that, open the dialogue with your bot in Telegram and try to use it. If you followed this guide correctly, the bot should work as expected!
 
-## [🎁 最终代码和资源](https://github.com/AndreyBurnosov/Checking_for_nft_availability)
+## [🎁 Final code and resources](https://github.com/AndreyBurnosov/Checking_for_nft_availability)
 
-## 📌 参考
+## 📌 References
 
 - [TON API](https://tonapi.io/)
-- [TON Connect2.0 的 Python 库](https://github.com/XaBbl4/pytonconnect)
-- 本教程由 [Andrew Burnosov](https://github.com/AndreyBurnosov) 开发 (TG: [@AndreyBurnosov](https://t.me/AndreyBurnosov))
+- [Python library for TON Connect2.0](https://github.com/XaBbl4/pytonconnect)
+- The tutorial was developed by [Andrew Burnosov](https://github.com/AndreyBurnosov) (TG: [@AndrewBurnosov](https://t.me/AndreyBurnosov))
