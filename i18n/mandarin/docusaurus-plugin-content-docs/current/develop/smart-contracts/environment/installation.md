@@ -2,43 +2,43 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import Button from '@site/src/components/button'
 
-# 预编译二进制文件
+# Precompiled binaries
 
-:::caution 重要
-您不再需要手动安装Blueprint SDK的二进制文件。
+:::caution important
+You no longer need to manually install binaries with Blueprint SDK.
 :::
 
-Blueprint SDK已提供所有开发和测试所需的二进制文件。
+All binaries for development and testing are provided with the Blueprint SDK.
 
 \<Button href="/develop/smart-contracts/sdk/javascript"
 colorType="primary" sizeType={'sm'}>
-迁移到Blueprint SDK </Button>
+Migrate to Blueprint SDK </Button>
 
-## 预编译二进制文件
+## Precompiled binaries
 
-如果您不使用Blueprint SDK进行智能合约开发，您可以使用适用于您的操作系统和工具选择的预编译二进制文件。
+If you don't use Blueprint SDK for smart contracts development, you can use precompiled binaries for your operating system and tool of choice.
 
-### 先决条件
+### Prerequisites
 
-对于在本地开发TON智能合约 _无需Javascript_，您需要在您的设备上准备`func`、`fift`和`lite client`的二进制文件。
+For the local development of TON smart contracts _without Javascript_, you need to prepare binaries of `func`, `fift`, and `lite client` on your device.
 
-您可以从下表中下载并设置它们，或阅读TON Society的这篇文章：
+You can download and set them up below, or read this article from TON Society:
 
-- [设置TON开发环境](https://blog.ton.org/setting-up-a-ton-development-environment)
+- [Setting up TON Development Environment](https://blog.ton.org/setting-up-a-ton-development-environment)
 
-### 1. 下载
+### 1. Download
 
-从下表中下载二进制文件。请确保选择适合您操作系统的正确版本，并安装任何附加依赖项：
+Download the binaries from the table below.  Make sure to select the correct version for your operating system and to install any additional dependencies:
 
-| 操作系统                               | TON二进制文件                                                                                  | fift                                                                                   | func                                                                                   | lite-client                                                                                   | 附加依赖项                                                                                                   |
-| ---------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| MacOS x86-64                       | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/ton-mac-x86-64.zip)   | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/fift-mac-x86-64)   | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/func-mac-x86-64)   | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/lite-client-mac-x86-64)   |                                                                                                         |
-| MacOS arm64                        | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/ton-mac-arm64.zip)    |                                                                                        |                                                                                        |                                                                                               | `brew install openssl ninja libmicrohttpd pkg-config`                                                   |
-| Windows x86-64                     | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/ton-win-x86-64.zip)   | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/fift.exe)          | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/func.exe)          | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/lite-client.exe)          | 安装 [OpenSSL 1.1.1](/ton-binaries/windows/Win64OpenSSL_Light-1_1_1q.msi) |
-| Linux  x86_64 | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/ton-linux-x86_64.zip) | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/fift-linux-x86_64) | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/func-linux-x86_64) | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/lite-client-linux-x86_64) |                                                                                                         |
-| Linux  arm64                       | [下载](https://github.com/ton-blockchain/ton/releases/latest/download/ton-linux-arm64.zip)  |                                                                                        |                                                                                        |                                                                                               | `sudo apt install libatomic1 libssl-dev`                                                                |
+| OS                                 | TON binaries                                                                                    | fift                                                                                         | func                                                                                         | lite-client                                                                                         | Additional dependencies                                                                                      |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| MacOS x86-64                       | [download](https://github.com/ton-blockchain/ton/releases/latest/download/ton-mac-x86-64.zip)   | [download](https://github.com/ton-blockchain/ton/releases/latest/download/fift-mac-x86-64)   | [download](https://github.com/ton-blockchain/ton/releases/latest/download/func-mac-x86-64)   | [download](https://github.com/ton-blockchain/ton/releases/latest/download/lite-client-mac-x86-64)   |                                                                                                              |
+| MacOS arm64                        | [download](https://github.com/ton-blockchain/ton/releases/latest/download/ton-mac-arm64.zip)    |                                                                                              |                                                                                              |                                                                                                     | `brew install openssl ninja libmicrohttpd pkg-config`                                                        |
+| Windows x86-64                     | [download](https://github.com/ton-blockchain/ton/releases/latest/download/ton-win-x86-64.zip)   | [download](https://github.com/ton-blockchain/ton/releases/latest/download/fift.exe)          | [download](https://github.com/ton-blockchain/ton/releases/latest/download/func.exe)          | [download](https://github.com/ton-blockchain/ton/releases/latest/download/lite-client.exe)          | Install [OpenSSL 1.1.1](/ton-binaries/windows/Win64OpenSSL_Light-1_1_1q.msi) |
+| Linux  x86_64 | [download](https://github.com/ton-blockchain/ton/releases/latest/download/ton-linux-x86_64.zip) | [download](https://github.com/ton-blockchain/ton/releases/latest/download/fift-linux-x86_64) | [download](https://github.com/ton-blockchain/ton/releases/latest/download/func-linux-x86_64) | [download](https://github.com/ton-blockchain/ton/releases/latest/download/lite-client-linux-x86_64) |                                                                                                              |
+| Linux  arm64                       | [download](https://github.com/ton-blockchain/ton/releases/latest/download/ton-linux-arm64.zip)  |                                                                                              |                                                                                              |                                                                                                     | `sudo apt install libatomic1 libssl-dev`                                                                     |
 
-### 2. 设置您的二进制文件
+### 2. Setup your binaries
 
 export const Highlight = ({children, color}) => (
 \<span
@@ -54,11 +54,11 @@ padding: '0.2rem',
 <Tabs groupId="operating-systems">
   <TabItem value="win" label="Windows">
 
-1. 下载后，您需要`创建`一个新文件夹。例如：**`C:/Users/%USERNAME%/ton/bin`**，并将安装的文件移动到那里。
+1. After downloading, you need to `create` a new folder. For example: **`C:/Users/%USERNAME%/ton/bin`** and move the installed files there.
 
-2. 要打开Windows环境变量，请按键盘上的<Highlight color="#1877F2">Win + R</Highlight>按钮，键入`sysdm.cpl`，然后按Enter键。
+2. To open the Windows environment variables, press the <Highlight color="#1877F2">Win + R</Highlight> buttons on the keyboard, type `sysdm.cpl`, and press Enter.
 
-3. 在“_高级_”选项卡上
+3. On the "_Advanced_" tab, click the <Highlight color="#1877F2">"Environment Variables..."</Highlight> button.
 
 4. In the _"User variables"_ section, select the "_Path_" variable and click <Highlight color="#1877F2">"Edit"</Highlight> (this is usually required).
 
@@ -69,13 +69,13 @@ padding: '0.2rem',
 C:\Users\%USERNAME%\ton\bin\
 ```
 
-6. 在_“用户变量”_部分，选择“_Path_”变量，然后点击<Highlight color="#1877F2">“编辑”</Highlight>（通常需要）。
+6. To check whether everything was installed correctly, run in terminal (_cmd.exe_):
 
 ```bash
-C:\Users\%USERNAME%\ton\bin\
+fift -V -and func -V -and lite-client -V
 ```
 
-7. 要检查是否一切安装正确，请在终端运行（_cmd.exe_）：
+7. If you plan to use fift, you need `FIFTPATH` environment variable with the necessary imports:
 
    1. Download [fiftlib.zip](/ton-binaries/windows/fiftlib.zip)
    2. Open the zip in some directory on your machine (like **`C:/Users/%USERNAME%/ton/lib/fiftlib`**)
@@ -103,7 +103,7 @@ cp fiftlib/* /usr/local/lib/fiftlib
 Remember to set the [environment variable](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix) `FIFTPATH` to point to this directory.
 :::
 
-
+</TabItem>
 <TabItem value="mac" label="Linux / MacOS">
 
 1. After downloading, make sure the downloaded binaries are executable by changing their permissions.
@@ -114,15 +114,7 @@ chmod +x fift
 chmod +x lite-client
 ```
 
-2. 下载后，请确保通过更改权限使下载的二进制文件可执行。
-
-```bash
-chmod +x func
-chmod +x fift
-chmod +x lite-client
-```
-
-3. 将这些二进制文件添加到您的路径中（或复制到`/usr/local/bin`），以便您可以在任何地方访问它们也是很有用的。
+2. It's also useful to add these binaries to your path (or copy them to `/usr/local/bin`) so you can access them from anywhere.
 
 ```bash
 cp ./func /usr/local/bin/func
@@ -130,18 +122,26 @@ cp ./fift /usr/local/bin/fift
 cp ./lite-client /usr/local/bin/lite-client
 ```
 
-4. 要检查是否一切安装正确，请在终端运行。
+3. To check that everything was installed correctly, run in terminal.
+
+```bash
+fift -V && func -V && lite-client -V
+```
+
+4. If you plan to `use fift`, also download [fiftlib.zip](/ton-binaries/windows/fiftlib.zip), open the zip in some directory on your device (like `/usr/local/lib/fiftlib`), and set the environment variable `FIFTPATH` to point to this directory.
 
 ```
-fift -V && func -V && lite-client -V
+unzip fiftlib.zip
+mkdir -p /usr/local/lib/fiftlib
+cp fiftlib/* /usr/local/lib/fiftlib
 ```
 
 :::info Hey, you're almost finished :)
 Remember to set the [environment variable](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix) `FIFTPATH` to point to this directory.
 :::
 
-  
-
+  </TabItem>
+</Tabs>
 
 ## Build from source
 
@@ -159,7 +159,7 @@ cd ~/ton && git submodule update --init
 mkdir ~/ton/build && cd ~/ton/build && cmake .. -DCMAKE_BUILD_TYPE=Release && make -j 4
 ```
 
-## Linux（Ubuntu / Debian）
+## Other sources for binaries
 
 The core team provides automatic builds for several operating systems as [GitHub Actions](https://github.com/ton-blockchain/ton/releases/latest).
 
