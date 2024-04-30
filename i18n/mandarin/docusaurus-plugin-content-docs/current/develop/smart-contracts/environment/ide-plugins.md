@@ -1,31 +1,31 @@
-# IDE 插件
+# IDE plugins
 
-## IntelliJ IDEs 插件
+## IntelliJ IDEs Plugin
 
 ![](/img/docs/ton-jetbrains-plugin.png)
 
 :::info
-此插件可与任何 JetBrains 产品一起使用。
-（IntelliJ IDEA、WebStorm、PyCharm、CLion 等）
+This plugin can be used with any JetBrains product.
+(IntelliJ IDEA, WebStorm, PyCharm, CLion, etc.)
 :::
 
-有几种安装插件的方法：
+There are several ways to install a plugin:
 
-- 在 IDE 插件部分直接搜索带有 "**TON**" 关键词的插件
-- [Marketplace 链接](https://plugins.jetbrains.com/plugin/23382-ton)
-- [GitHub 代码库](https://github.com/ton-blockchain/intellij-ton)
+- Find plugin directly in the IDE plugins section with "**TON**" keywords
+- [Marketplace link](https://plugins.jetbrains.com/plugin/23382-ton)
+- [GitHub repository](https://github.com/ton-blockchain/intellij-ton)
 
-## VS Code 插件
+## VS Code plugin
 
-Visual Studio Code 是开发者的免费且受欢迎的 IDE。
+Visual Studio Code is a free and popular IDE for developers.
 
-- [Marketplace 链接](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)
-- [GitHub 代码库](https://github.com/ton-foundation/vscode-func)
+- [Marketplace link](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)
+- [GitHub repository](https://github.com/ton-foundation/vscode-func)
 
-## FunC Sublime Text 插件
+## FunC Sublime Text plugin
 
-- [GitHub 代码库](https://github.com/savva425/func_plugin_sublimetext3)
+- [GitHub repository](https://github.com/savva425/func_plugin_sublimetext3)
 
 ## Neovim
 
-要在 Neovim 中启用语法高亮，请按照 [nvim-treesitter 快速入门指南](https://github.com/nvim-treesitter/nvim-treesitter#quickstart) 中的安装说明进行操作。
+To enable syntax highlighting in Neovim, follow the installation instructions in the [nvim-treesitter quickstart guide](https://github.com/nvim-treesitter/nvim-treesitter#quickstart).
