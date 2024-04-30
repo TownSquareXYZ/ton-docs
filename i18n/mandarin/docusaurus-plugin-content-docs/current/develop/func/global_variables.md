@@ -1,8 +1,8 @@
-# 全局变量
+# Global variables
 
-FunC 程序本质上是函数声明/定义和全局变量声明的列表。本节涵盖了第二个主题。
+The FunC program is essentially a list of function declarations/definitions and global variable declarations. This section covers the second topic.
 
-可以使用 `global` 关键字，后跟变量类型和变量名来声明全局变量。例如，
+A global variable can be declared with the `global` keyword followed by the variable type and the variable name. For example,
 
 ```func
 global ((int, int) -> int) op;
@@ -17,11 +17,11 @@ int main() {
 }
 ```
 
-是一个简单的程序，它将加法运算符 `_+_` 写入全局函数变量 `op`，并检查三个样本整数的加法关联性；2、3和9。。
+is a simple program that writes to a global functional variable `op` the addition operator `_+_` and checks the associativity of addition on three sample integers; 2, 3, and 9.
 
-在内部，全局变量存储在 TVM 的 c7 控制寄存器中。
+Internally, global variables are stored in the c7 control register of TVM.
 
-可以省略全局变量的类型。如果省略，将根据变量的使用推断类型。例如，我们可以重写程序如下：
+The type of a global variable can be omitted. If so, it will be inferred from the usage of the variable. For example, we can rewrite the program as:
 
 ```func
 global op;
@@ -36,7 +36,7 @@ int main() {
 }
 ```
 
-可以在同一个 `global` 关键字后声明多个变量。以下代码等效：
+It is possible to declare several variables after the same `global` keyword. The following codes are equivalent:
 
 ```func
 global int A;
@@ -48,7 +48,7 @@ global C;
 global int A, cell B, C;
 ```
 
-不允许声明与已声明的全局变量同名的局部变量。例如，此代码将无法编译：
+It is not allowed to declare a local variable with the same name as an already-declared global variable. For example, this code wouldn't compile:
 
 ```func
 global cell C;
@@ -59,7 +59,7 @@ int main() {
 }
 ```
 
-请注意，以下代码是正确的：
+Note that the following code is correct:
 
 ```func
 global int C;
@@ -70,4 +70,4 @@ int main() {
 }
 ```
 
-但这里的 `int C = 3;` 等同于 `C = 3;`，即这是对全局变量 `C` 的赋值，而不是局部变量 `C` 的声明（您可以在[声明](/develop/func/statements#variable-declaration)中找到此效果的解释）。
+but here `int C = 3;` is equivalent to `C = 3;`, i.e., that is an assignment to global variable `C`, not a declaration of local variable `C` (you can find an explanation of this effect in [statements](/develop/func/statements#variable-declaration)).
