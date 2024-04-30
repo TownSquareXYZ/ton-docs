@@ -1,43 +1,49 @@
 ---
-description: 在本教程结束时，你将编写一个美观的机器人，能够直接用TON接受你的产品的支付。
+description: At the end of the tutorial, you will write a beautiful bot that will be able to accept payments for your product directly in TON.
 ---
 
-# 出售饺子的机器人
+# Bot for sales of dumplings
 
-在本文中，我们将创建一个简单的Telegram机器人，用于接收TON支付。
+In this article, we'll create a simple Telegram bot for accepting payments in TON.
 
-## 🦄 外观
+## 🦄 What it looks like
 
-在教程结束时，你将编写一个美观的机器人，能够直接用TON接受你的产品的支付。
+At the end of the tutorial, you will write a beautiful bot that will be able to accept payments for your product directly in TON.
 
-机器人将如下所示：
+The bot will look like this:
 
 ![bot preview](/img/tutorials/js-bot-preview.jpg)
 
-## 📖 你将学到什么
-你将学会如何：
- - 使用grammY在NodeJS中创建一个Telegram机器人
- - 使用公共TON Center API
+## 📖 What you'll learn
 
-> 我们为什么使用grammY？
-因为grammY是一个现代化、年轻的、高级框架，适用于在JS/TS/Deno上快速舒适地开发telegram机器人，此外，grammY拥有优秀的[文档](https://grammy.dev)和一个能够始终帮助你的活跃社群。
+You'll learn how to:
 
+* Create a Telegram bot in NodeJS using grammY
+* Work with public TON Center API
 
-## ✍️ 开始之前你需要
-如果还没有安装[NodeJS](https://nodejs.org/en/download/)，请先安装。
+> Why do we use grammY?
+> Because grammY is a modern, young, high-level framework for comfortable & fast development of telegram bots on JS/TS/Deno, in addition to this grammY has great [documentation](https://grammy.dev) and an active community that can always help you.
 
-你还需要以下库：
- - grammy
- - ton
- - dotenv
+## ✍️ What you need to get started
 
-你可以在终端中用一条命令安装它们。
+Install [NodeJS](https://nodejs.org/en/download/) if you haven't yet.
+
+Also you need these libraries:
+
+* grammy
+* ton
+* dotenv
+
+You can install them with one command in the terminal.
+
 ```bash npm2yarn
 npm install ton dotenv grammy @grammyjs/conversations
 ```
 
-## 🚀 开始吧！
-我们项目的结构将如下所示：
+## 🚀 Let's get started!
+
+The structure of our project will look like this:
+
 ```
 src
     ├── bot
@@ -48,17 +54,19 @@ src
     ├── app.js
 .env
 ```
-* `bot/start.js` & `bot/payment.js` - 用于telegram机器人的处理程序文件
-* `src/ton.js` - 与TON相关的业务逻辑文件
-* `app.js` - 用于初始化并启动机器人的文件
 
+* `bot/start.js` & `bot/payment.js` - files with handlers for telegram bot
+* `src/ton.js` - file with business logic related to TON
+* `app.js` - file for initializing and launching the bot
 
-现在让我们开始编写代码吧！
+Now let's begin writing code!
 
-## 配置
-我们从`.env`开始。我们只需要在其中设置一些参数。
+## Config
+
+Let's start with `.env`. We just need to set a few parameters in it.
 
 **.env**
+
 ```
 BOT_TOKEN=
 TONCENTER_TOKEN=
@@ -66,41 +74,45 @@ NETWORK=
 OWNER_WALLET= 
 ```
 
-这里你需要填写前四行的值：
- - `BOT_TOKEN`是你的Telegram机器人令牌，可以在[创建机器人](https://t.me/BotFather)后获得。
- - `OWNER_WALLET`是你的项目钱包地址，将接受所有支付。你可以简单地创建一个新的TON钱包并复制其地址。
- - `API_KEY`是你从 TON Center 获得的API密钥，分别针对主网和测试网，可以通过[@tonapibot](https://t.me/tonapibot)/[@tontestnetapibot](https://t.me/tontestnetapibot)获得。
- - `NETWORK`是关于你的机器人将运行在哪个网络上 - 测试网或主网
+Here you need to fill in the values in the first four lines:
 
-配置文件就这些了，我们可以继续前进！
+* `BOT_TOKEN` is your Telegram Bot token which you can get after [creating a bot](https://t.me/BotFather).
+* `OWNER_WALLET` is your project's wallet address which will accept all payments. You can just create a new TON wallet and copy its address.
+* `API_KEY` is your API key from TON Center which you can get from [@tonapibot](https://t.me/tonapibot)/[@tontestnetapibot](https://t.me/tontestnetapibot) for the mainnet and testnet, respectively.
+* `NETWORK` is about on what network your bot will run - testnet or mainnet
+
+That's all for the config file, so we can move forward!
 
 ## TON Center API
-在`src/services/ton.js`文件中，我们将声明一些函数，用于验证交易的存在并生成快速跳转到钱包应用进行支付的链接。
 
-### 获取最新的钱包交易
+In the `src/services/ton.py` file we'll declare a functions to verify the existence of a transaction and generate links for a quick transition to the wallet application for payment
 
-我们的任务是从特定钱包中检查我们需要的交易是否存在。
+### Getting the latest wallet transactions
 
-我们将这样解决它：
-1. 我们将接收到发往我们钱包的最后一批交易。为什么是我们的？在这种情况下，我们不必担心用户的钱包地址是什么，我们不必确认它是他的钱包，我们也不必将这个钱包存储在任何地方。
-2. 排序并只保留入账交易
-3. 我们将检查所有交易，每次都会校验注释和金额是否与我们拥有的数据相等
-4. 庆祝我们的问题解决🎉
+Our task is to check the availability of the transaction we need from a certain wallet.
 
-#### 获取最新交易
+We will solve it like this:
 
-如果我们使用TON Center API，那么我们可以参考他们的[文档](https://toncenter.com/api/v2/)，找到一个理想解决我们问题的方法 - [getTransactions](https://toncenter.com/api/v2/#/accounts/get_transactions_getTransactions_get)
+1. We will receive the last transactions that were received to our wallet. Why ours? In this case, we do not have to worry about what the user's wallet address is, we do not have to confirm that it is his wallet, we do not have to store this wallet anywhere.
+2. Sort and leave only incoming transactions
+3. Let's go through all the transactions, and each time we will check whether the comment and the amount are equal to the data that we have
+4. celebrating the solution of our problem🎉
 
-我们只需要一个参数就能获取交易 - 接受支付的钱包地址，但我们也会使用limit参数来限制交易发放到100条。
+#### Getting the latest transactions
 
-让我们尝试调用`EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N`地址的测试请求（顺带一提，这是TON基金会的地址）
+If we use the TON Center API, then we can refer to their [documentation](https://toncenter.com/api/v2/) and find a method that ideally solves our problem - [getTransactions](https://toncenter.com/api/v2/#/accounts/get_transactions_getTransactions_get)
+
+One parameter is enough for us to get transactions - the wallet address for accepting payments, but we will also use the limit parameter in order to limit the issuance of transactions to 100 pieces.
+
+Let's try to call a test request for the `EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N` address (by the way, this is the TON Foundation address)
+
 ```bash
 curl -X 'GET' \
   'https://toncenter.com/api/v2/getTransactions?address=EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N&limit=100' \
   -H 'accept: application/json'
 ```
-很好，现在我们手头有了一份交易列表在["result"]中，现在让我们仔细看看1笔交易
 
+Great, now we have a list of transactions on hand in ["result"], now let's take a closer look at 1 transaction
 
 ```json
 {
@@ -134,25 +146,27 @@ curl -X 'GET' \
     }
 ```
 
-从这个json文件中，我们可以了解一些对我们有用的信息：
+From this json file, we can understand some information that can be usefull for us:
 
-- 这是一笔入账交易，因为"out_msgs"字段为空
-- 我们还可以获取交易的评论、发送者和交易金额
+* This is an incoming transaction, since the "out_msgs" field is empty
+* We can also get a comment of the transaction, its sender and the transaction amount
 
-现在我们准备好创建一个交易检查器了
+Now we're ready to create a transaction checker
 
-### 使用 TON
+### Work with TON
 
-让我们先导入所需的TON库
+Let's start by importing the necessary library TON
+
 ```js
 import { HttpApi, fromNano, toNano } from "ton";
 ```
 
-让我们考虑如何检查用户是否发送了我们需要的交易。
+Let's think about how to check if the user has sent the transaction we need.
 
-一切都异常简单。我们只需排序我们钱包的入账交易，然后遍历最后100笔交易，如果找到一笔符合相同注释和金额的交易，那么我们就找到了我们需要的交易！
+Everything is elementary simple. We can just sort only incoming transactions to our wallet, and then go through the last 100 transactions, and if a transaction is found that has the same comment and amount, then we have found the transaction we need!
 
-首先，让我们初始化http客户端，以方便使用TON
+Let's start with initializing the http client, for convenient work with TON
+
 ```js
 export async function verifyTransactionExistance(toWallet, amount, comment) {
   const endpoint =
@@ -165,34 +179,38 @@ export async function verifyTransactionExistance(toWallet, amount, comment) {
     { apiKey: process.env.TONCENTER_TOKEN }
   );
 ```
-这里我们根据配置中选择的网络简单地生成endpoint url。然后我们初始化http客户端。
 
-所以，现在我们可以从所有者的钱包中获取最后100笔交易
+Here we simply generate the endpoint url based on which network is selected in the config. And after that we initialize the http client.
+
+So, now we can get the last 100 transactions from the owner's wallet
+
 ```js
 const transactions = await httpClient.getTransactions(toWallet, {
     limit: 100,
   });
 ```
 
-并过滤，仅保留入账交易（如果交易的out_msgs为空，我们保留它）
+and filter, leaving only incoming transactions (if the out_msgs of transaction is empty, we leave it)
+
 ```js
 let incomingTransactions = transactions.filter(
     (tx) => Object.keys(tx.out_msgs).length === 0
   );
 ```
 
-现在我们只需遍历所有交易，只要comment和交易值匹配，我们就返回true。
+Now we just have to go through all the transactions, and provided that the comment and the transaction value match, we return true
+
 ```js
   for (let i = 0; i < incomingTransactions.length; i++) {
     let tx = incomingTransactions[i];
-    // 如果交易中没有comment，则跳过
+    // Skip the transaction if there is no comment in it
     if (!tx.in_msg.msg_data.text) {
       continue;
     }
 
-    // 将交易值从nano转换
+    // Convert transaction value from nano
     let txValue = fromNano(tx.in_msg.value);
-    // 获取交易comment
+    // Get transaction comment
     let txComment = tx.in_msg.message
 
     if (txComment === comment && txValue === value.toString()) {
@@ -202,9 +220,12 @@ let incomingTransactions = transactions.filter(
 
   return false;
 ```
-注意，值默认是以nanotons为单位，所以我们需要将其除以10亿，或者我们可以直接使用TON库中的`fromNano`方法。`verifyTransactionExistance`函数就是这些了！
 
-现在我们可以创建生成快速跳转到钱包应用进行支付的链接的函数了。
+Note that value is in nanotons by default, so we need to divide it by 1 billion or we can just use `fromNano` method from the TON library.
+And that's all for the `verifyTransactionExistance` function!
+
+Now we can create function to generate link for a quick transition to the wallet application for payment
+
 ```js
 export function generatePaymentLink(toWallet, amount, comment, app) {
   if (app === "tonhub") {
@@ -217,13 +238,15 @@ export function generatePaymentLink(toWallet, amount, comment, app) {
   )}&text=${comment}`;
 }
 ```
-我们所需的只是将交易参数代入URL中。不要忘记将交易值转换为nano。
 
-## Telegram 机器人
+All we need is just to substitute the transaction parameters in the URL. Without forgetting to transfer the value of the transaction to nano.
 
-### 初始化
+## Telegram bot
 
-打开`app.js`文件并导入我们需要的所有处理程序和模块。
+### Initialization
+
+Open the `app.js` file and import all the handlers and modules we need.
+
 ```js
 import dotenv from "dotenv";
 import { Bot, session } from "grammy";
@@ -236,60 +259,67 @@ import {
 import handleStart from "./bot/handlers/start.js";
 ```
 
-让我们设置dotenv模块，以便舒适地使用我们在.env文件中设置的环境变量。
+Let's set up dotenv module to comfy work with environment variables that we set at .env file
+
 ```js
 dotenv.config();
 ```
 
-之后我们创建一个将运行我们项目的函数。为了防止出现任何错误时我们的机器人停止，我们添加了这段代码。
+After that we create a function that will run our project. In order for our bot not to stop if any errors appear, we add this code
+
 ```js
 async function runApp() {
   console.log("Starting app...");
 
-  // 处理所有错误的处理程序，为了防止机器人停止
+  // Handler of all errors, in order to prevent the bot from stopping
   process.on("uncaughtException", function (exception) {
     console.log(exception);
   });
 ```
 
-现在初始化机器人和必要的插件。
+Now initialize the bot and the necessary plugins
+
 ```js
-  // 初始化机器人
+  // Initialize the bot
   const bot = new Bot(process.env.BOT_TOKEN);
 
-  // 设置我们会话的初始数据
+  // Set the initial data of our session
   bot.use(session({ initial: () => ({ amount: 0, comment: "" }) }));
-  // 安装会话插件
+  // Install the conversation plugin
   bot.use(conversations());
 
   bot.use(createConversation(startPaymentProcess));
 ```
-这里我们使用了教程开始时我们创建的配置中的`BOT_TOKEN`。
 
-我们初始化了机器人，但它还是空的。我们必须添加一些用于与用户互动的功能。
+Here we use `BOT_TOKEN` from our config that we made at the beginning of the tutorial.
+
+We initialized the bot but it's still empty. We must add some functions for interaction with the user.
+
 ```js
-  // 注册所有的处理程序
+  // Register all handelrs
   bot.command("start", handleStart);
   bot.callbackQuery("buy", async (ctx) => {
     await ctx.conversation.enter("startPaymentProcess");
   });
   bot.callbackQuery("check_transaction", checkTransaction);
 ```
-对于命令/start，将执行handleStart函数。如果用户点击callback_data等于"buy"的按钮，我们将启动我们刚刚注册的"对话"。当我们点击callback_data等于"check_transaction"的按钮时，将执行checkTransaction函数。
 
-我们所剩的就是启动我们的机器人并输出有关成功启动的日志。
+Reacting to the command/start, the handleStart function will be executed. If the user clicks on the button with callback_data equal to "buy", we will start our "conversation", which we registered just above. And when we click on the button with callback_data equal to "check_transaction", we will execute the checkTransaction function.
+
+And all that remains for us is to launch our bot and output a log about a successful launch
+
 ```js
-  // 启动机器人
+  // Start bot
   await bot.init();
   bot.start();
-  console.info(`机器人@${bot.botInfo.username}正在运行`);
+  console.info(`Bot @${bot.botInfo.username} is up and running`);
 ```
 
-### 消息处理
+### Message handlers
 
-#### /start 命令
+#### /start Command
 
-我们从处理`/start`命令开始。当用户首次启动机器人或重新启动它时，将调用此函数。
+Let's begin with the `/start` command handler. This function will be called when the user launches the bot for the first time, restarts it
 
 ```js
 import { InlineKeyboard } from "grammy";
@@ -307,13 +337,15 @@ Welcome to the best Dumplings Shop in the world <tg-spoiler>and concurrently an 
   );
 }
 ```
-这里我们首先从grammy模块导入InlineKeyboard。之后，在处理程序中我们创建了内联键盘，提供购买饺子的选项和文章链接（这里有点递归😁）。.row()代表将下一个按钮转移到新行。
-之后，我们带着创建的键盘发送欢迎消息，文本中（重要的是，我在我的消息中使用HTML标记来装饰它）
-欢迎消息可以是任何你想要的内容。
 
-#### 支付过程
+Here we first import the InlineKeyboard from the grammy module. After that, we create an inline keyboard in the handler with an offer to buy dumplings and a link to this article (a bit of recursion here😁).
+.row() stands for the transfer of the next button to a new line.
+After that, we send a welcome message with the text (important, I use html markup in my message to decorate it) along with the created keyboard
+The welcome message can be anything you want.
 
-像往常一样，我们将从必要的导入开始我们的文件。
+#### Payment process
+
+As always, we will start our file with the necessary imports
 
 ```js
 import { InlineKeyboard } from "grammy";
@@ -324,14 +356,16 @@ import {
 } from "../../services/ton.js";
 ```
 
-之后，我们将创建一个startPaymentProcess处理程序，我们已经在app.js中注册了它以在按下某个按钮时执行。
+After that, we will create a startPaymentProcess handler, which we have already registered in the app.js for execution when a certain button is pressed
 
-在Telegram中，当你点击内联按钮时，会出现一个旋转的手表，为了移除它，我们响应回调。
+In the telegram when you click on the inline button a spinning watch appears in order to remove them, we respond to the callback
+
 ```js
   await ctx.answerCallbackQuery();
 ```
 
-之后，我们需要向用户发送一张饺子图片，询问他想要购买的饺子数量。并等待他输入这个数字。
+After that, we need to send the user a picture of dumplings, ask him to send the number of dumplings that he wants to buy. And we are waiting for him to enter this number
+
 ```js
   await ctx.replyWithPhoto(
     "https://telegra.ph/file/bad2fd69547432e16356f.jpg",
@@ -341,24 +375,28 @@ import {
     }
   );
 
-  // 等待用户输入数字
+  // Wait until the user enters the number
   const count = await conversation.form.number();
 ```
-现在我们计算订单的总金额并生成一个随机字符串，我们将用该字符串来评论交易，并添加饺子后缀。
+
+Now we calculate the total amount of the order and generate a random string, which we will use to comment on the transaction and add the dumplings postfix
+
 ```js
-  // 获取总成本：将份数数量乘以1份的价格
+  // Get the total cost: multiply the number of portions by the price of the 1 portion
   const amount = count * 3;
-  // 生成随机评论
-  const comment = Math.random().toString(36).substring(2, 8) + "饺子";
+  // Generate random comment
+  const comment = Math.random().toString(36).substring(2, 8) + "dumplings";
 ```
 
-我们将结果数据保存到会话中，以便我们可以在下一个处理程序中获取这些数据。
+And we save the resulting data to the session so that we can get this data in the next handler.
+
 ```js
   conversation.session.amount = amount;
   conversation.session.comment = comment;
 ```
 
-我们生成快速支付的链接并创建一个内联键盘。
+We generate links to go to a quick payment and create an inline keyboard
+
 ```js
 const tonhubPaymentLink = generatePaymentLink(
     process.env.OWNER_WALLET,
@@ -380,7 +418,9 @@ const tonhubPaymentLink = generatePaymentLink(
     .row()
     .text(`I sent ${amount} TON`, "check_transaction");
 ```
-我们发送带有键盘的消息，在其中我们请求用户将交易发送到我们的钱包地址并附上随机生成的评论。
+
+And we send our message with the keyboard, where we ask the user to send a transaction to our wallet address with a randomly generated comment
+
 ```js
   await ctx.reply(
     `
@@ -394,7 +434,8 @@ P.S. You can conveniently make a transfer by clicking on the appropriate button 
 }
 ```
 
-现在我们所需要做的就是创建一个检查交易是否存在的处理程序。
+Now all we have to do is create a handler to check for the presence of a transaction
+
 ```js
 export async function checkTransaction(ctx) {
   await ctx.answerCallbackQuery({
@@ -414,7 +455,7 @@ export async function checkTransaction(ctx) {
       reply_markup: menu,
     });
 
-    // 重置会话数据
+    // Reset the session data
     ctx.session.amount = 0;
     ctx.session.comment = "";
   } else {
@@ -422,21 +463,21 @@ export async function checkTransaction(ctx) {
   }
 }
 ```
-这里我们所做的就是检查交易是否存在，如果存在，我们就告诉用户这个消息并重置会话中的数据。
 
+All we are doing here is just checking for a transaction, and provided that it exists, we tell the user about it and reset the data in the session
 
-### 启动机器人
+### Bot start
 
-要启动，请使用这个命令：
+To start use this command:
 
 ```bash npm2yarn
 npm run app
 ```
 
-如果你的机器人不能正确工作，与[此库](https://github.com/coalus/DumplingShopBot)的代码进行对比。如果无法解决，请随时写信给我。我的Telegram账号见下方。
+If your bot doesn't work correctly, compare your code with code [from this repository](https://github.com/coalus/DumplingShopBot). If it didn't help, feel free to write me in telegram. You can find my telegram account below
 
-## 参考资料
+## References
 
- - 作为[ton-footsteps/58](https://github.com/ton-society/ton-footsteps/issues/58)的一部分
- - 作者 Coalus（[Telegram @coalus](https://t.me/coalus), [Coalus on GitHub](https://github.com/coalus)）
- - [机器人源码](https://github.com/coalus/DumplingShopBot)
+* Made for TON as part of [ton-footsteps/58](https://github.com/ton-society/ton-footsteps/issues/58)
+* By Coalus ([Telegram @coalus](https://t.me/coalus), [Coalus on GitHub](https://github.com/coalus))
+* [Bot Sources](https://github.com/coalus/DumplingShopBot)
