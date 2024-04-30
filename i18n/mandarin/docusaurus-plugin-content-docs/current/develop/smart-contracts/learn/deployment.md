@@ -1,10 +1,10 @@
-# 部署
+# Deployment
 
-在TON区块链上部署智能合约的步骤：
+Steps to deploy a smart contract on TON blockchain:
 
-1. 将func编译为fift。
-2. 将字节码包装为BoC。
-3. 执行消息地址目的地（新合约的地址）。
-4. 为此地址充值余额。
-5. 将BoC发送到目的地地址。
-6. 在浏览器中检查成功情况。
+1. Compile func to fift.
+2. Wrap the bytecode to BoC.
+3. Execute the message address destination(address of the new contract)
+4. Top up balance for this address.
+5. Send BoC to destination address
+6. Check success in the explorer
