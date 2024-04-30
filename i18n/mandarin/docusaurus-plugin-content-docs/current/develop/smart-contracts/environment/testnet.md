@@ -1,27 +1,27 @@
-# 了解测试网络
+# Understanding Testnet
 
-在开发和测试过程中使用 TON 测试网络。
+Use the TON test network for development and testing purpose.
 
-:::info 
-测试网络中的代币没有价值，测试网络可以被重置。
+:::info
+Coins in test network have no value, the test network can be reset.
 :::
 
-* 测试网络全局配置: https://ton.org/testnet-global.config.json
-* 您可以在 [@test_giver_ton_bot](https://t.me/testgiver_ton_bot) 获取免费的测试代币
-* 在这个 Telegram 频道中查看测试网络的状态: [@testnetstatus](https://t.me/testnetstatus)
+* Testnet global config: https://ton.org/testnet-global.config.json
+* You can get free test coins in the [@test_giver_ton_bot](https://t.me/testgiver_ton_bot)
+* Check the testnet status in this Telegram channel: [@testnetstatus](https://t.me/testnetstatus)
 
-## 服务
+## Services
 
-为了方便起见，几乎整个主网的基础设施（钱包、API、桥接等）都已在测试网络中重建。
+For convenience, almost the entire infrastructure of the mainnet (wallets, API, bridges, etc.) has been recreated in the test network.
 
-* 浏览器: https://testnet.tonscan.org
-* Web 钱包: https://wallet.ton.org?testnet=true
-* 浏览器扩展: 使用 [mainnet browser extension](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) 并 [进行此操作](https://github.com/toncenter/ton-wallet#switch-between-mainnettestnet-in-extension)。
-* 测试网 TON Center API: https://testnet.toncenter.com
-* 测试网 HTTP API: https://testnet.tonapi.io/
-* 测试网桥接: https://ton.org/bridge?testnet=true
+* Explorer: https://testnet.tonscan.org
+* Web wallet: https://wallet.ton.org?testnet=true
+* Browser extension: use [mainnet browser extension](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) and [do this](https://github.com/toncenter/ton-wallet#switch-between-mainnettestnet-in-extension).
+* Testnet TON Center API: https://testnet.toncenter.com
+* Testnet HTTP API: https://testnet.tonapi.io/
+* Testnet bridge: https://ton.org/bridge?testnet=true
 
-## 一些第三方工具
+## Some third parties
 
-* 要切换到 [Tonkeeper's testnet](https://tonkeeper.com/)，在设置中点击版本 5 次。
-* 测试网 CryptoBot: https://t.me/CryptoTestnetBot
+* To switch to [Tonkeeper's testnet](https://tonkeeper.com/), tap the version 5 times in the settings.
+* Testnet CryptoBot: https://t.me/CryptoTestnetBot
