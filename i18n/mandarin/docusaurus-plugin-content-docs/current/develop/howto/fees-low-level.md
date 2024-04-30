@@ -1,16 +1,17 @@
-# 低层级费用概述
+# Low-level fees overview
 
 :::caution
-本节描述了与TON进行低层级交互的说明和手册。
+This section describes instructions and manuals for interacting with TON at a low level.
 :::
 
-本文档提供了TON上交易费用的一般概念，特别是对FunC代码的计算费用。还有一个[TVM白皮书中的详细规范](https://ton.org/tvm.pdf)。
+This document provides a general idea of transaction fees on TON and particularly computation fees for the FunC code. There is also a [detailed specification in the TVM whitepaper](https://ton.org/tvm.pdf).
 
-## 交易及其阶段
+## Transactions and phases
 
-如[TVM概述](/learn/tvm-instructions/tvm-overview)中所述，交易执行包括几个阶段(phase)。在这些阶段期间，可能会扣除相应的费用。
+As was described in the [TVM overview](/learn/tvm-instructions/tvm-overview), transaction execution consists of a few phases. During those phases, the corresponding fees may be deducted.
 
-通常：
+Generally:
+
 ```cpp
 transaction_fee = storage_fees
                 + in_fwd_fees
@@ -18,49 +19,57 @@ transaction_fee = storage_fees
                 + action_fees 
                 + out_fwd_fees
 ```
-其中：
-   * `storage_fees`—与合约在链状态中占用空间相关的费用
-   * `in_fwd_fees`—将传入消息导入区块链的费用（仅适用于之前未在链上的消息，即`external`消息。对于合约到合约的普通消息，此费用不适用）
-   * `computation_fees`—与执行TVM指令相关的费用
-   * `action_fees`—与处理action列表（发送消息、设置库等）相关的费用
-   * `out_fwd_fees`—与将出站消息导入区块链相关的费用
 
-## 计算费用
+where:
+
+* `storage_fees`—fees corresponding to occupation of some space in chain state by contract
+* `in_fwd_fees`—fees for importing to blockchain incoming message (it is only relevant for messages which were not previously on-chain, that is, `external` messages. For ordinary messages from contract to contract this fee is not applicable)
+* `computation_fees`—fees corresponding to execution of TVM instructions
+* `action_fees`—fees related to processing of action list (sending messages, setting libraries etc.)
+* `out_fwd_fees`—fees related to importing to blockchain of outcoming message
+
+## Computation fees
 
 ### Gas
-所有计算成本都以gas单位标明。gas单位的价格由链配置（主链的Config 20和基本链的Config 21）决定，只能通过验证者的共识更改。请注意，与其他系统不同，用户不能设置自己的gas价格，也没有费用市场。
 
-基本链当前的设置如下：1个gas单位的成本是1000 nanotons。
+All computation costs are nominated in gas units. The price of gas units is determined by this chain config (Config 20 for masterchain and Config 21 for basechain) and may be changed only by consensus of the validator. Note that unlike in other systems, the user cannot set his own gas price, and there is no fee market.
 
-## TVM 指令成本
-在最低层级（TVM指令执行），大多数原语的gas价格等于_基本gas价格_，计算为`P_b := 10 + b + 5r`，其中`b`是指令长度（以位为单位），`r`是包含在指令中的cell引用数。
+Current settings in basechain are as follows: 1 unit of gas costs 1000 nanotons.
 
-除了这些基本费用外，还有以下费用：
+## TVM instructions cost
 
-| 指令                       | GAS价格   | 描述                                                                                                                                                                                   | 
-|---------------------------|------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 创建cell                  | **500**    | 将构建器转换为cell的操作。                                                                                                                                                    |
-| 首次解析cell              | **100**    | 在当前交易期间首次将cell转换为切片的操作。                                                                                                            | 
-| 重复解析cell              | **25**     | 在同一交易期间已解析过的cell转换为切片的操作。                                                                                                |
-| 抛出异常                    | **50**     |                                                                                                                                                                                       | 
-| 与元组操作                  | **1**      | 此价格将乘以元组元素的数量。                                                                                                                                                       | 
-| 隐式跳转                    | **10**     | 当当前continuation cell中的所有指令执行时会进行支付。然而，如果该continuation cell中存在引用，并且执行流跳转到了第一个引用。                                                            | 
-| 隐式回跳                  | **5**      | 当当前continuation中的所有指令执行完毕，并且执行流回跳到刚刚完成的continuation被调用的那个continuation时，将会进行支付。                                                                                                             |                                                                                      
-| 移动堆栈元素                | **1**      | 在continuations之间移动堆栈元素的价格。每个元素都将收取相应的gas价格。然而，前32个元素的移动是免费的。                                                                                         |                                                                                       
+On the lowest level (TVM instruction execution) the gas price for most primitives
+equals the *basic gas price*, computed as `P_b := 10 + b + 5r`,
+where `b` is the instruction length in bits and `r` is the
+number of cell references included in the instruction.
 
+Apart from those basic fees, the following fees appear:
 
-## FunC 构造的 gas 费用
+| Instruction             | GAS  price | Description                                                                                                                                                                                                                   |
+| ----------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Creation of cell        | **500**    | Operation of transforming builder to cell.                                                                                                                                                                    |
+| Parsing cell firstly    | **100**    | Operation of transforming cells into slices first time during current transaction.                                                                                                                            |
+| Parsing cell repeatedly | **25**     | Operation of transforming cells into slices, which already has parsed during same transaction.                                                                                                                |
+| Throwing exception      | **50**     |                                                                                                                                                                                                                               |
+| Operation with tuple    | **1**      | This price will multiply by the quantity of tuple's elements.                                                                                                                                                 |
+| Implicit Jump           | **10**     | It is paid when all instructions in the current continuation cell are executed. However, there are references in that continuation cell, and the execution flow jumps to the first reference. |
+| Implicit Back Jump      | **5**      | It is paid when all instructions in the current continuation are executed and execution flow jumps back to the continuation from which the just finished continuation was called.                             |
+| Moving stack elements   | **1**      | Price for moving stack elements between continuations. It will charge correspond gas price for every element. However, the first 32 elements moving is free.                  |
 
-FunC中使用的几乎所有函数都在[stdlib.func](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/stdlib.fc)中定义，它将FunC函数映射到Fift汇编指令。反过来，Fift汇编指令在[asm.fif](https://github.com/ton-blockchain/ton/blob/master/crypto/fift/lib/Asm.fif)中映射到位序列指令。因此，如果你想了解指令调用的确切成本，你需要在`stdlib.func`中找到`asm`表示，然后在`asm.fif`中找到位序列并计算指令长度（以位为单位）。
+## FunC constructions gas fees
 
-然而，通常，与位长度相关的费用与cell解析和创建以及跳转和执行指令数量的费用相比是次要的。
+Almost all functions used in FunC are defined in [stdlib.func](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/stdlib.fc) which maps FunC functions to Fift assembler instructions. In turn, Fift assembler instructions are mapped to bit-sequence instructions in [asm.fif](https://github.com/ton-blockchain/ton/blob/master/crypto/fift/lib/Asm.fif). So if you want to understand how much exactly the instruction call will cost you, you need to find `asm` representation in `stdlib.func`, then find bit-sequence in `asm.fif` and calculate instruction length in bits.
 
-因此，如果你试图优化你的代码，首先从架构优化开始，减少cell解析/创建操作的数量，然后减少跳转的数量。
+However, generally, fees related to bit-lengths are minor in comparison with fees related to cell parsing and creation, as well as jumps and just number of executed instructions.
 
-### 与 cell 进行的操作
-一个关于如何通过适当的cell工作显著降低gas成本的示例。
+So, if you try to optimize your code start with architecture optimization, the decreasing number of cell parsing/creation operations, and then with the decreasing number of jumps.
 
-假设你想在出站消息中添加一些编码的有效负载。直接实现将如下：
+### Operations with cells
+
+Just an example of how proper cell work may substantially decrease gas costs.
+
+Let's imagine that you want to add some encoded payload to the outgoing message. Straightforward implementation will be as follows:
+
 ```cpp
 slice payload_encoding(int a, int b, int c) {
   return
@@ -85,10 +94,10 @@ slice payload_encoding(int a, int b, int c) {
 }
 ```
 
-这段代码的问题是什么？`payload_encoding`为了生成切片位字符串，首先通过`end_cell()`创建一个cell（+500 gas单位）。然后解析它`begin_parse()`（+100 gas单位）。通过改变一些常用类型，可以不使用这些不必要的操作来重写相同的代码：
+What is the problem with this code? `payload_encoding` to generate a slice bit-string, first create a cell via `end_cell()` (+500 gas units). Then parse it `begin_parse()` (+100 gas units). The same code can be written without those unnecessary operations by changing some commonly used types:
 
 ```cpp
-;; 我们为stdlib中不存在的函数添加asm，该函数将一个构建器存储到另一个构建器中
+;; we add asm for function which stores one builder to the another, which is absent from stdlib
 builder store_builder(builder to, builder what) asm(what to) "STB";
 
 builder payload_encoding(int a, int b, int c) {
@@ -104,44 +113,53 @@ builder payload_encoding(int a, int b, int c) {
     .store_uint(0x18, 6)
     .store_slice(destination)
     .store_coins(0)
-    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; 默认消息头（见发送消息页面）
-    .store_uint(0x33bbff77, 32) ;; 操作码（见智能合约指南）
-    .store_uint(cur_lt(), 64)  ;; query_id（见智能合约指南）
+    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; default message headers (see sending messages page)
+    .store_uint(0x33bbff77, 32) ;; op-code (see smart-contract guidelines)
+    .store_uint(cur_lt(), 64)  ;; query_id (see smart-contract guidelines)
     .store_builder(payload)
   .end_cell();
   send_raw_message(msg, 64);
 }
 ```
-通过以另一种形式（构建器而不是切片）传递位字符串，我们通过非常轻微的代码更改显著降低了计算成本。
 
-### Inline和inline_refs
-默认情况下，当你有一个FunC函数时，它会获得自己的`id`，存储在id->function字典的单独叶子中，当你在程序的某个地方调用它时，会在字典中搜索函数并随后跳转。如果函数从代码中的许多地方调用，这种行为是合理的，因为跳转允许减少代码大小（通过一次存储函数体）。然而，如果该函数只在一个或两个地方使用，通常更便宜的做法是将该函数声明为`inline`或`inline_ref`。`inline`修饰符将函数体直接放入父函数的代码中，而`inline_ref`将函数代码放入引用中（跳转到引用仍然比搜索和跳转到字典条目便宜得多）。
+By passing bit-string in the another form (builder instead of slice) we substantially decrease computation cost by very slight change in code.
 
-### 字典
-TON中的字典是作为cell的树（更准确地说是DAG）被引入的。这意味着如果你搜索、读取或写入字典，你需要解析树的相应分支的所有cell。这意味着
-   * a) 字典操作的成本不是固定的（因为分支中节点的大小和数量取决于给定的字典和键）
-   * b) 优化字典使用是明智的，使用特殊指令如`replace`而不是`delete`和`add`
-   * c) 开发者应该注意迭代操作（如next和prev）以及`min_key`/`max_key`操作，以避免不必要地遍历整个字典
+### Inline and inline_refs
 
-### 堆栈操作
-注意FunC在底层操作堆栈条目。这意味着代码：
+By default, when you have a FunC function, it gets its own `id`, stored in a separate leaf of id->function dictionary, and when you call it somewhere in the program, a search of the function in dictionary and subsequent jump occur. Such behavior is justified if your function is called from many places in the code and thus jumps allow to decrease the code size (by storing a function body once). However, if the function is only used once or twice, it is often much cheaper to declare this function as `inline` or `inline_ref`. `inline` modificator places the body of the function right into the code of the parent function, while `inline_ref` places the function code into the reference (jumping to the reference is still much cheaper than searching and jumping to the dictionary entry).
+
+### Dictionaries
+
+Dictionaries on TON are introduced as trees (DAGs to be precise) of cells. That means that if you search, read, or write to the dictionary, you need to parse all cells of the corresponding branch of the tree. That means that
+
+* a) dicts operations are not fixed in gas costs (since the size and number of nodes in the branch depend on the given dictionary and key)
+* b) it is expedient to optimize dict usage by using special instructions like `replace` instead of `delete` and `add`
+* c) developer should be aware of iteration operations (like next and prev) as well `min_key`/`max_key` operations to avoid unnecessary iteration through the whole dict
+
+### Stack operations
+
+Note that FunC manipulates stack entries under the hood. That means that the code:
+
 ```cpp
 (int a, int b, int c) = some_f();
 return (c, b, a);
 ```
-将被翻译成几个指令，这些指令改变堆栈上元素的顺序。
 
-当堆栈条目数量大（10+），并且它们以不同的顺序被积极使用时，堆栈操作费用可能变得不可忽视。
+will be translated into a few instructions which changes the order of elements on the stack.
 
-## 费用计算公式
+When the number of stack entries is substantial (10+), and they are actively used in different orders, stack operations fees may become non-negligible.
+
+## Fee's calculation Formulas
 
 ### storage_fees
+
 ```cpp
 storage_fees = ceil(
                     (account.bits * bit_price
                     + account.cells * cell_price)
                * period / 2 ^ 16)
 ```
+
 ### in_fwd_fees, out_fwd_fees
 
 ```cpp
@@ -152,25 +170,27 @@ msg_fwd_fees = (lump_price
              
 ihr_fwd_fees = ceil((msg_fwd_fees * ihr_price_factor) / 2^16)
 ```
-// 消息的根cell中的位不包括在msg.bits中（lump_price支付它们）
+
+// bits in the root cell of a message are not included in msg.bits (lump_price pays for them)
 
 ### action_fees
+
 ```cpp
 action_fees = sum(out_ext_msg_fwd_fee) + sum(int_msg_mine_fee)
 ```
 
-### 配置文件
+### Config file
 
-所有费用都以一定量的gas提名，并且可能会更改。配置文件表示当前费用成本。
+All fees are nominated for a certain gas amount and may be changed. The config file represents the current fee cost.
 
-* storage_fees = [p18](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam18)
-* in_fwd_fees = [p24](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam24), [p25](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam25)
-* computation_fees = [p20](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam20), [p21](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam21)
-* action_fees = [p24](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam24), [p25](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam25)
-* out_fwd_fees = [p24](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam24), [p25](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam25)
+* storage_fees = [p18](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam18)
+* in_fwd_fees = [p24](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam24), [p25](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam25)
+* computation_fees = [p20](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam20), [p21](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam21)
+* action_fees = [p24](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam24), [p25](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam25)
+* out_fwd_fees = [p24](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam24), [p25](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05#configparam25)
 
 :::info
-[直接链接到主网配置文件](https://explorer.toncoin.org/config?workchain=-1&shard=8000000000000000&seqno=22185244&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05)
+[A direct link to the mainnet config file](https://explorer.toncoin.org/config?workchain=-1\&shard=8000000000000000\&seqno=22185244\&roothash=165D55B3CFFC4043BFC43F81C1A3F2C41B69B33D6615D46FBFD2036256756382\&filehash=69C43394D872B02C334B75F59464B2848CD4E23031C03CA7F3B1F98E8A13EE05)
 :::
 
-*2022年7月24日，基于@thedailyton [文章](https://telegra.ph/Fees-calculation-on-the-TON-Blockchain-07-24) *
+*Based on @thedailyton [article](https://telegra.ph/Fees-calculation-on-the-TON-Blockchain-07-24) from 24.07*
