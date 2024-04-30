@@ -1,14 +1,14 @@
-# 交易布局
+# Transaction layout
 
 :::info
-为了最大限度地理解这个页面，强烈建议您熟悉[TL-B 语言](/develop/data-formats/cell-boc)。
+To maximize your comprehension of this page, familiarizing yourself with the [TL-B language](/develop/data-formats/cell-boc) is highly recommended.
 :::
 
-TON 区块链运作依赖于三个关键部分：账户、消息和交易。本页面描述了交易的结构和布局。
+The TON Blockchain operates using three key parts: accounts, messages, and transactions. This page describes the structure and layout of transactions.
 
-交易是一种操作，处理与特定账户相关的进出消息，改变其状态，并可能为验证者生成费用。
+A transaction is an operation that processes inbound and outbound messages related to a specific account, altering its state and potentially generating fees for validators.
 
-## 交易
+## Transaction
 
 ```tlb
 transaction$0111 account_addr:bits256 lt:uint64
@@ -20,21 +20,21 @@ transaction$0111 account_addr:bits256 lt:uint64
     description:^TransactionDescr = Transaction;
 ```
 
-| 字段                | 类型                                                                     | 必需 | 描述                                                                                                                                                |
-| ----------------- | ---------------------------------------------------------------------- | -- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `account_addr`    | bits256                                                                | 是  | 执行交易的地址的哈希部分。[更多关于地址](https://docs.ton.org/learn/overviews/addresses#address-of-smart-contract)                                                   |
-| `lt`              | uint64                                                                 | 是  | 代表 _逻辑时间_。[更多关于逻辑时间](https://docs.ton.org/develop/smart-contracts/guidelines/message-delivery-guarantees#what-is-a-logical-time)                  |
-| `prev_trans_hash` | bits256                                                                | 是  | 该账户上一个交易的哈希。                                                                                                                                      |
-| `prev_trans_lt`   | uint64                                                                 | 是  | 该账户上一个交易的 `lt`。                                                                                                                                   |
-| `now`             | uint32                                                                 | 是  | 执行此交易时设置的 `now` 值。它是以秒为单位的Unix时间戳。                                                                                                                |
-| `outmsg_cnt`      | uint15                                                                 | 是  | 执行此交易时创建的输出消息数量。                                                                                                                                  |
-| `orig_status`     | [AccountStatus](#accountstatus)                                        | 是  | 执行交易前该账户的状态。                                                                                                                                      |
-| `end_status`      | [AccountStatus](#accountstatus)                                        | 是  | 执行交易后该账户的状态。                                                                                                                                      |
-| `in_msg`          | (Message Any)                                       | 否  | 触发执行交易的输入消息。存储在一个引用中。                                                                                                                             |
-| `out_msgs`        | HashmapE 15 ^(Message Any)                          | 是  | 包含执行此交易时创建的输出消息列表的字典。                                                                                                                             |
-| `total_fees`      | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 是  | 执行此交易时收集的总费用。它包括_Toncoin_值和可能的一些[额外代币](https://docs.ton.org/develop/dapps/defi/coins#extra-currencies)。 |
-| `state_update`    | [HASH_UPDATE](#hash_update) Account               | 是  | `HASH_UPDATE` 结构。存储在一个引用中。                                                                                                                        |
-| `description`     | [TransactionDescr](#transactiondescr-types)                            | 是  | 交易执行过程的详细描述。存储在一个引用中。                                                                                                                             |
+| Field             | Type                                                                   | Required | Description                                                                                                                                                                                                                                           |
+| ----------------- | ---------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `account_addr`    | bits256                                                                | Yes      | The hash part of the address on which the transaction was executed. [More about addresses](https://docs.ton.org/learn/overviews/addresses#address-of-smart-contract)                                                                  |
+| `lt`              | uint64                                                                 | Yes      | Represents _Logical time_. [More about logical time](https://docs.ton.org/develop/smart-contracts/guidelines/message-delivery-guarantees#what-is-a-logical-time)                                                                      |
+| `prev_trans_hash` | bits256                                                                | Yes      | The hash of the previous transaction on this account.                                                                                                                                                                                 |
+| `prev_trans_lt`   | uint64                                                                 | Yes      | The `lt` of the previous transaction on this account.                                                                                                                                                                                 |
+| `now`             | uint32                                                                 | Yes      | The `now` value that was set when executing this transaction. It's a Unix timestamp in seconds.                                                                                                                       |
+| `outmsg_cnt`      | uint15                                                                 | Yes      | The number of outgoing messages created while executing this transaction.                                                                                                                                                             |
+| `orig_status`     | [AccountStatus](#accountstatus)                                        | Yes      | The status of this account before the transaction was executed.                                                                                                                                                                       |
+| `end_status`      | [AccountStatus](#accountstatus)                                        | Yes      | The status of this account after executing the transaction.                                                                                                                                                                           |
+| `in_msg`          | (Message Any)                                       | No       | The incoming message that triggered the execution of the transaction. Stored in a reference.                                                                                                                          |
+| `out_msgs`        | HashmapE 15 ^(Message Any)                          | Yes      | The dictionary that contains the list of outgoing messages that were created while executing this transaction.                                                                                                                        |
+| `total_fees`      | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | Yes      | The total amount of fees that were collected while executing this transaction. It consists of a _Toncoin_ value and possibly some [Extra-currencies](https://docs.ton.org/develop/dapps/defi/coins#extra-currencies). |
+| `state_update`    | [HASH_UPDATE](#hash_update) Account               | Yes      | The `HASH_UPDATE` structure. Stored in a reference.                                                                                                                                                                   |
+| `description`     | [TransactionDescr](#transactiondescr-types)                            | Yes      | A detailed description of the transaction execution process. Stored in a reference.                                                                                                                                   |
 
 ## AccountStatus
 
@@ -45,10 +45,10 @@ acc_state_active$10 = AccountStatus;
 acc_state_nonexist$11 = AccountStatus;
 ```
 
-- `[00]`：账户未初始化
-- `[01]`：账户被冻结
-- `[10]`：账户活跃
-- `[11]`：账户不存在
+- `[00]`: Account is not initialized
+- `[01]`: Account is frozen
+- `[10]`: Account is active
+- `[11]`: Account does not exist
 
 ## HASH_UPDATE
 
@@ -137,7 +137,7 @@ This type of transaction is currently not in use. Information about this process
 
 Split transactions are initiated on large smart contracts that need to be divided under high load. The contract should support this transaction type and manage the splitting process to balance the load.
 
-在需要因高负载而拆分的大型智能合约上启动拆分交易。合约应支持此类型的交易并管理拆分过程以平衡负载。
+Split Prepare transactions are initiated when a smart contract needs to be split. The smart contract should generate the state for a new instance of itself to be deployed.
 
 ```tlb
 trans_split_prepare$0100 split_info:SplitMergeInfo
@@ -184,7 +184,7 @@ This type of transaction is currently not in use. Information about this process
 
 Merge transactions are initiated on large smart contracts that need to recombine after being split due to high load. The contract should support this transaction type and manage the merging process to balance the load.
 
-在需要因高负载而重新组合的大型智能合约上启动合并交易。合约应支持此类型的交易并管理合并过程以平衡负载。
+Merge Prepare transactions are initiated when two smart contracts need to be merged. The smart contract should generate a message for another instance of itself to facilitate the merge.
 
 ```tlb
 trans_merge_prepare$0110 split_info:SplitMergeInfo
