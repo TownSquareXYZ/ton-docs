@@ -1,4 +1,4 @@
-# TON HTTP API
+# TON HTTP-based APIs
 
 :::tip
 
@@ -11,17 +11,17 @@ There are different ways to connect to blockchain:
 
 :::
 
-## 优点和缺点
+## Pros & Cons
 
-- ✅ 习惯性且适合快速入门，这对于每个想要尝试TON的新手来说是完美的。
+- ✅ Habitual and suitable for a quick start, this is perfect for every newcomer looking to play with TON.
 
-- ✅ 面向Web。非常适合与TON交易、智能合约进行Web交互。
+- ✅ Web-oriented. Perfect to load data of TON smart contracts from Web, also allows to send messages there.
 
-- ❌ 简化。无法接收需要索引TON API的信息。
+- ❌ Simplified. It's not possible to receive information where you need an indexed TON API.
 
-- ❌ HTTP中间件。您不能完全信任服务器响应，因为它们不包含_Merkle证明_来验证您的数据是真实的。
+- ❌ HTTP-Middleware. You can't fully trust server responses, unless server augments blockchain data with [Merkle proofs](/develop/data-formats/proofs) to allow validation that it is genuine.
 
-## Toncenter API
+## RPC Nodes
 
 - [GetBlock Nodes](https://getblock.io/nodes/ton/) — connect and test your dApps using GetBlocks Nodes
 - [TON Access](https://www.orbs.com/ton-access/) - HTTP API for The Open Network (TON).
@@ -33,20 +33,20 @@ There are different ways to connect to blockchain:
 
 ## Indexer
 
-### Toncenter HTTP API
+### Toncenter TON Index
 
-客户端连接到[ton-http-api](https://github.com/toncenter/ton-http-api)服务器，该服务器使用TonLib将请求代理到liteserver（节点）。
+Indexers allow to list jetton wallets, NFTs, transactions by certain filters, not only retrieve specific ones.
 
 - Public TON Index can be used: tests and development are for free, [premium](https://t.me/tonapibot) for production - [toncenter.com/api/v3/](https://toncenter.com/api/v3/).
 - Run your own TON Index with [Worker](https://github.com/toncenter/ton-index-worker/tree/36134e7376986c5517ee65e6a1ddd54b1c76cdba) and [TON Index API wrapper](https://github.com/toncenter/ton-indexer).
 
-### 获取 API 密钥
+### GraphQL Nodes
 
-要使用公共TonCenter API，您需要一个API密钥：
+GraphQL nodes act as indexers as well.
 
-- 获取Mainnet和Testnet的API密钥：[@tonapibot](https://t.me/tonapibot)
+- [tvmlabs.io](https://ton-testnet.tvmlabs.dev/graphql) (for TON, testnet only at the moment of writing) - has wide variety of transaction/block data, ways to filter it, etc.
 - [dton.io](https://dton.io/graphql) - as well as providing contracts data augmented with parsed "is jetton", "is NFT" flags, allows emulating transactions and receiving execution traces.
 
-## 参阅
+## Other APIs
 
-- [TON ADNL API](/develop/dapps/apis/adnl)
+- [TonAPI](https://docs.tonconsole.com/tonapi/api-v2) - API that is designed to provide users with a streamlined experience, not worrying about low-level details of smart contracts.
