@@ -1,32 +1,41 @@
-# TVM 升级 2023.07
+# TVM Upgrade 2023.07
 
 :::tip
-此升级于 2023 年 12 月在主网上启动，详细信息请参考 [run](https://t.me/tonblockchain/223)。
+This upgrade launched [run](https://t.me/tonblockchain/223) on the Mainnet from December 2023.
 :::
 
 # c7
 
-**c7** 是存储有关合约执行所需的本地 context 信息的寄存器
-（如时间、lt、网络配置等）。
+**c7** is the register in which local context information needed for contract execution
+(such as time, lt, network configs, etc) is stored.
 
-**c7** 元组从 10 扩展到 14 个元素：
+**c7** tuple extended from 10 to 14 elements:
 
-- **10**: 存储智能合约本身的 `cell`。
-- **11**: `[integer, maybe_dict]`：传入消息的 TON 值，额外代币。
-- **12**: `integer`，存储阶段收取的费用。
-- **13**: `tuple` 包含有关先前区块的信息。
+- **10**: `cell` with code of the smart contract itself.
+- **11**: `[integer, maybe_dict]`: TON value of the incoming message, extracurrency.
+- **12**: `integer`, fees collected in the storage phase.
+- **13**: `tuple` with information about previous blocks.
 
-**10** 当前智能合约的代码仅以可执行继续的形式在 TVM 级别呈现，无法转换为cell。这段代码通常用于授权相同类型的 neighbor 合约，例如 Jetton 钱包授权 Jetton 钱包。目前我们需要显式地代码cell存储在存储器中，这使得存储和 init_wrapper 变得更加麻烦。
-使用 **10** 作为代码对于 tvm 的 Everscale 更新兼容。
+**10** Currently code of the smart contract is presented on TVM level only as executable continuation
+and can not be transformed to cell. This code is often used to authorize a neighbour contract
+of the same kind, for instance jetton-wallet authorizes jetton-wallet. For now we need
+to explicitly store code cell in storage which make storage and init_wrapper more cumbersome than it could be.
+Using **10** for code is compatible to Everscale update of tvm.
 
-**11** 当前，传入消息的值在 TVM 初始化后以堆栈形式呈现，因此如果在执行过程中需要，
-则需要将其存储到全局变量或通过本地变量传递（在 funC 级别看起来像所有函数中的额外 `msg_value` 参数）。通过将其放在 **11** 元素中，我们将重复合约余额的行为：它既出现在堆栈中，也出现在 c7 中。
+**11** Currently value of the incoming message is presented on stack after TVM initiation, so if needed during execution,
+one either need to store it to global variable or pass through local variables
+(at funC level it looks like additional `msg_value` argument in all functions).
+By putting it to **11** element we will repeat behavior of contract balance: it is presented both on stack and in c7.
 
-**12** 目前计算存储费用的唯一方法是在先前的交易中存储余额，以某种方式计算 prev 交易中的 gas 用量，然后与当前余额减去消息值进行比较。与此同时，经常希望考虑存储费用。
+**12** Currently the only way to calculate storage fees is to store balance in the previous transaction,
+somehow calculate gas usage in prev transaction and then compare to current balance minus message value.
+Meanwhile, is often desired to account storage fees.
 
-**13** 目前没有办法检索先前区块的数据。TON 的一个关键特性是每个结构都是 Merkle 证明友好的cell（树），此外，TVM 也是cell和 Merkle 证明友好的。通过在 TVM context中包含区块信息，将能够实现许多不信任的情景：合约 A 可以检查合约 B 上的交易（无需 B 的合作），可以恢复中断的消息链（当恢复合约获取并检查某些事务发生但被还原的证明时），还需要了解主链区块哈希以在链上进行某些验证 fisherman 函数功能。
+**13** Currently there is no way to retrieve data on previous blocks. One of the kill features of TON is that every structure
+is a Merkle-proof friendly bag (tree) of cells, moreover TVM is cell and merkle-proof friendly as well.
+That way, if we include information on the blocks to TVM context it will be possible to make many trustless scenarios: contract A may check transactions on contract B (without B's cooperation), it is possible to recover broken chains of messages (when recover-contract gets and cheks proofs that some transaction occured but reverted), knowing masterchain block hashes is also required to make some validation fisherman functions onchain.
 
-区块 id 的表示如下：
+Block ids are presented in the following format:
 
 ```
 [ wc:Integer shard:Integer seqno:Integer root_hash:Integer file_hash:Integer ] = BlockId;
@@ -34,42 +43,44 @@
   prev_key_block:BlockId ] : PrevBlocksInfo
 ```
 
-包括主链的最后 16 个区块的 id（如果主链 seqno 小于 16，则为少于 16 个），以及最后的关键区块。包含有关分片区块的数据可能会导致一些数据可用性问题（由于合并/拆分事件），这并非必需（因为可以使用主链区块来证明任何事件/数据），因此我们决定不包含。
+Ids of the last 16 blocks of masterchain are included  (or less if masterchain seqno is less than 16), as well as the last key block.
+Inclusion of data on shardblocks may cause some data availability issues (due to merge/split events),
+it is not necessarily required (since any event/data can by proven using masterchain blocks) and thus we decided not to include it.
 
-# 新的操作码
+# New opcodes
 
-在选择新操作码的 gas 成本时的经验法则是它不应少于正常成本（从操作码长度计算）且不应超过每个 gas 单位 20 ns。
+Rule of thumb when choosing gas cost on new opcodes is that it should not be less than normal (calculated from opcode length) and should take no more than 20 ns per gas unit.
 
-## 用于处理新 c7 值的操作码
+## Opcodes to work with new c7 values
 
-每个操作码消耗 26 gas，除了 `PREVMCBLOCKS` 和 `PREVKEYBLOCK`（34 gas）。
+26 gas for each, except for `PREVMCBLOCKS` and `PREVKEYBLOCK` (34 gas).
 
-| xxxxxxxxxxxxxxxxxxxxxx<br/>Fift 语法 | xxxxxxxxx<br/>堆栈 | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>描述                                |
-| :--------------------------------- | :--------------- | :-------------------------------------------------------------------------- |
-| `MYCODE`                           | _`- c`_          | 从 c7 检索智能合约的代码                                                              |
-| `INCOMINGVALUE`                    | _`- t`_          | 从 c7 检索传入消息的值                                                               |
-| `STORAGEFEES`                      | _`- i`_          | 从 c7 检索存储阶段费用的值                                                             |
-| `PREVBLOCKSINFOTUPLE`              | _`- t`_          | 从 c7 中检索 PrevBlocksInfo: `[last_mc_blocks, prev_key_block]` |
-| `PREVMCBLOCKS`                     | _`- t`_          | 仅检索 `last_mc_blocks`                                                        |
-| `PREVKEYBLOCK`                     | _`- t`_          | 仅检索 `prev_key_block`                                                        |
-| `GLOBALID`                         | _`- i`_          | 从网络配置的第 19 项检索 `global_id`                                                  |
+| xxxxxxxxxxxxxxxxxxxxxx<br/>Fift syntax | xxxxxxxxx<br/>Stack | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>Description                               |
+| :------------------------------------- | :------------------ | :---------------------------------------------------------------------------------- |
+| `MYCODE`                               | _`- c`_             | Retrieves code of smart-contract from c7                                            |
+| `INCOMINGVALUE`                        | _`- t`_             | Retrieves value of incoming message from c7                                         |
+| `STORAGEFEES`                          | _`- i`_             | Retrieves value of storage phase fees from c7                                       |
+| `PREVBLOCKSINFOTUPLE`                  | _`- t`_             | Retrives PrevBlocksInfo: `[last_mc_blocks, prev_key_block]` from c7 |
+| `PREVMCBLOCKS`                         | _`- t`_             | Retrieves only `last_mc_blocks`                                                     |
+| `PREVKEYBLOCK`                         | _`- t`_             | Retrieves only `prev_key_block`                                                     |
+| `GLOBALID`                             | _`- i`_             | Retrieves `global_id` from 19 network config                                        |
 
 ## Gas
 
-| xxxxxxxxxxxxxx<br/>Fift 语法 | xxxxxxxx<br/>堆栈 | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>描述 |
-| :------------------------- | :-------------- | :-------------------------------------------- |
-| `GASCONSUMED`              | _`- g_c`_       | 返回到目前为止 VM 消耗的 gas（包括此指令）。<br/>_26 gas_       |
+| xxxxxxxxxxxxxx<br/>Fift syntax | xxxxxxxx<br/>Stack | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>Description                                                          |
+| :----------------------------- | :----------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `GASCONSUMED`                  | _`- g_c`_          | Returns gas consumed by VM so far (including this instruction).<br/>_26 gas_ |
 
-## 算术
+## Arithmetics
 
-添加了 [除法操作码](https://docs.ton.org/learn/tvm-instructions/instructions#52-division)（`A9mscdf`）的新变体：
-`d=0` 从堆栈中获取一个额外的整数，并将其添加到除法/右移之前的中间值。这些操作返回商和余数（与 `d=3` 类似）。
+New variants of [the division opcode](https://docs.ton.org/learn/tvm-instructions/instructions#52-division) (`A9mscdf`) are added:
+`d=0` takes one additional integer from stack and adds it to the intermediate value before division/rshift. These operations return both the quotient and the remainder (just like `d=3`).
 
-还提供了静默变体（例如 `QMULADDDIVMOD` 或 `QUIET MULADDDIVMOD`）。
+Quiet variants are also available (e.g. `QMULADDDIVMOD` or `QUIET MULADDDIVMOD`).
 
-如果返回值
+If return values don't fit into 257-bit integers or the divider is zero, non-quiet operation throws an integer overflow exception. Quiet operations return `NaN` instead of the value that doesn't fit (two `NaN`s if the divider is zero).
 
-不适应 257 位整数或除数为零，非静默操作会引发整数溢出异常。静默操作返回 `NaN` 而不是不适应的值（如果除数为零则返回两个 `NaN`）。
+Gas cost is equal to 10 plus opcode length: 26 for most opcodes, +8 for `LSHIFT#`/`RSHIFT#`, +8 for quiet.
 
 | xxxxxxxxxxxxxxxxxxxxxx<br/>Fift syntax | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>Stack |
 | :------------------------------------- | :------------------------------------------------------- |
@@ -113,7 +124,7 @@ For some mass stack operations, such as `ROLLREV` (where computation time linear
 
 Currently only two hash operations are available in TVM: calculation of representation hash of cell/slice, and sha256 of data, but only up to 127 bytes (only that much data fits into one cell).
 
-目前 TVM 中只有两个哈希操作：计算cell/切片的 representation hash ，以及对数据进行 sha256，但只支持最多 127 字节（只有这么多数据适应一个cell）。
+`HASHEXT[A][R]_(HASH)` family of operations is added:
 
 | xxxxxxxxxxxxxxxxxxx<br/>Fift syntax | xxxxxxxxxxxxxxxxxxxxxx<br/>Stack | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>Description                                                                   |
 | :---------------------------------- | :------------------------------- | :----------------------------------------------------------------------------------------------------------------------- |
@@ -124,13 +135,14 @@ Currently only two hash operations are available in TVM: calculation of represen
 
 Only the bits from root cells of `s_i` are used.
 
-仅使用 `s_i` 的根cell的位。
+Each chunk `s_i` may contain non-integer number of bytes. However, the sum of bits of all chunks should be divisible by 8.
+Note that TON uses most-significant bit ordering, so when two slices with non-integer number of bytes are concatenated, bits from the first slice become most-significant bits.
 
-每个块 `s_i` 可能包含非整数数量的字节。但所有块的位的和应该是 8 的倍数。注意 TON 使用最高位优先顺序，因此当连接两个具有非整数字节的切片时，第一个切片的位变为最高位。
+Gas consumption depends on the number of hashed bytes and the chosen algorithm. Additional 1 gas unit is consumed per chunk.
 
-gas 消耗取决于哈希字节数和所选算法。每个块额外消耗 1 gas 单位。
+If `[A]` is not enabled, the result of hashing will be returned as an unsigned integer if fits 256 bits or tuple of ints otherwise.
 
-如果未启用 `[A]`，则哈希的结果将作为无符号整数返回，如果适应 256 位，否则返回整数的元组。
+The following algorithms are available:
 
 - `SHA256` - openssl implementation, 1/33 gas per byte, hash is 256 bits.
 - `SHA512` - openssl implementation, 1/16 gas per byte, hash is 512 bits.
@@ -172,9 +184,11 @@ Extended docs are [here](https://ristretto.group/). In short, Curve25519 was dev
 
 Ristretto operations allow calculating curve operations on Curve25519 (the reverse is not true), thus we can consider that we add both Ristretto and Curve25519 curve operation in one step.
 
-更详细的文档在[这里](https://ristretto.group/)。简而言之，Curve25519 是为了性能而开发的，但由于对称性而表现出多重表示的问题，使得群元素具有多个表示。简单的协议，如Schnorr签名或Diffie-Hellman，在协议级别应用一些技巧以减轻一些问题，但破坏了密钥推导和密钥遮蔽方案。而这些技巧在更复杂的协议，如Bulletproofs上无法扩展。Ristretto是对Curve25519的算术抽象，使得每个群元素对应于唯一的点，这是大多数密码协议的要求。Ristretto实质上是Curve25519的压缩/解压缩协议，提供所需的算术抽象。因此，可以认为我们在一步中添加了Ristretto和Curve25519曲线操作。
+[libsodium](https://github.com/jedisct1/libsodium/) implementation is used.
 
-[libsodium 实现](https://github.com/jedisct1/libsodium/)。
+All ristretto-255 points are represented in TVM as 256-bit unsigned integers.
+Non-quiet operations throw `range_chk` if arguments are not valid encoded points.
+Zero point is represented as integer `0`.
 
 | xxxxxxxxxxxxx<br/>Fift syntax | xxxxxxxxxxxxxxxxx<br/>Stack | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>Description                                                                                          |
 | :---------------------------- | :-------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -195,7 +209,7 @@ Ristretto operations allow calculating curve operations on Curve25519 (the rever
 
 Operations on a pairing friendly BLS12-381 curve. [BLST](https://github.com/supranational/blst) implementation is used. Also, ops for BLS signature scheme which is based on this curve.
 
-在配对友好的 BLS12-381 曲线上进行操作。使用[BLST](https://github.com/supranational/blst)实现。此外，还有基于该曲线的 BLS 签名方案的操作。
+BLS values are represented in TVM in the following way:
 
 - G1-points and public keys: 48-byte slice.
 - G2-points and signatures: 96-byte slice.
@@ -247,7 +261,7 @@ These are arithmetic operations on group elements.
 
 `INGROUP`, `ISZERO` don't throw exception on invalid points (except for cell underflow exceptions), they return false instead.
 
-`INGROUP`，`ISZERO`在无效的点上（除了cell下溢异常）不会引发异常，而是返回false。
+Other arithmetic operations throw exception on invalid curve points. Note that they don't check whether given curve points belong to group G1/G2. Use `INGROUP` instruction to check this.
 
 ## RUNVM
 
