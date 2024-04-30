@@ -1,104 +1,100 @@
 import ThemedImage from '@theme/ThemedImage';
-import ConceptImage from '@site/src/components/conceptImage';
-import Player from '@site/src/components/player';
+import ConceptImage from '@site/src/components/conceptImage'
+import Player from '@site/src/components/player'
 
-# TON 入门指南
+# Get Started with TON
 
+Set up your first application on TON Blockchain from scratch and discover its speed, reliability and essential concepts of asynchronous way of thinking.
 
-从零开始在 TON Blockchain 上设置您的第一个应用程序，并了解其速度、可靠性和异步思维的基本概念。
-
-:::tip 适合新手的指南
-如果您是编程完全新手，这个指南是您的最佳选择。
+:::tip newcomer-friendly guide
+If you are completely new with programming, this guide is the best choice for you.
 :::
 
-这个学习路径包含 __5 个模块__，大约需要 __45 分钟__。
+This learning path contains **5 modules** and should take you around **45 minutes**.
 
+## 🛳 What you will learn
 
-## 🛳 您将学到什么
+In this tutorial, you'll learn how to easily make blockchain transactions using JavaScript. You could learn to do it without this tutorial, but this approach is convenient and user-friendly.
 
-在本教程中，您将学习如何使用 JavaScript 轻松进行区块链交易。您可能可以在没有这个教程的情况下学会，但这种方法更为方便和用户友好。
+1. You will make your own TON Wallet with Tonkeeper
+2. You will use a Testnet faucet to topup your wallet for testing
+3. You will understand essential concepts of TON smart contracts (Addresses, Cells)
+4. You will learn how to interact with TON using TypeScript SDK and API provider
+5. You will compile your first transaction using NFT Miner console application
 
-1. 您将使用 Tonkeeper 制作自己的 TON 钱包
-2. 您将使用 Testnet 水龙头为您的钱包充值以进行测试
-3. 您将了解 TON 智能合约的基本概念（地址、cell）
-4. 您将学会如何使用 TypeScript SDK 和 API 提供程序与 TON 进行交互
-5. 您将使用 NFT Miner 控制台应用程序编译您的第一笔交易
+ _You're going to mine an NFT rocket achievement!!!_
 
-
- _您将挖掘 NFT 火箭成就!!!_
-
-作为 TON 上的第一批矿工，您将通过工作证明的智能合约，最终为您的 TON 钱包挖掘一个秘密奖励。快来看看：
+As the first miners on TON, you will go through the Proof-of-Work smart contract and finally mine a secret reward for your TON wallet. Check it out:
 
 <div style={{width: '100%', maxWidth:'250pt',  textAlign: 'center', margin: '0 auto' }}>
   <video width={'300'} style={{width: '100%', maxWidth:'250pt',  borderRadius: '10pt', margin: '15pt auto' }} muted={true} autoPlay={true} loop={true}>
     <source src="/files/onboarding-nft.mp4" type="video/mp4" />
-    您的浏览器不支持 video 标签。
+    Your browser does not support the video tag.
   </video>
 </div>
 
-我们今天的目标是挖掘一个 NFT！这个成就将与您*永远*同在。
+Our goal for today is to mine an NFT! This achievement will stay with you _forever_.
 
-最终，您甚至可以在主网上挖掘这个 NFT 成就。(_只需 0.05 TON！_)
+Finally, you are able to mine this NFT achievement even in mainnet. (_it costs only 0,05 TON!_)
 
-### 视频教程
+### Video tutorial
 
-查看这个由 TON 开发者社区成员创建的精彩视频教程！借助这个有用的指南，您可以轻松完成教程：
+Check out this awesome video tutorial created by a member of TON developer community! With this helpful guide, you can complete the tutorial with ease:
 
 <Player url="https://youtu.be/wEEQLwQy30Q" />
 
-### 在 TON Blockchain 上挖矿
+### Mining on TON Blockchain
 
-今天，我们将教我们有志向的建设者如何在 TON Blockchain 上挖矿。这一经验将使你们所有人都能够理解挖矿的重要性，以及为什么比特币挖矿帮助改变了这个行业。
+Today, we are going to teach our prospective builders how to mine on TON Blockchain. This experience will allow all of you to understand the significance of mining and why Bitcoin mining helped revolutionize the industry.
 
-尽管定义了最初的挖矿流程的 PoW Giver 智能合约框架在启动时完成，帮助奠定了 TON 的工作证明（PoW）代币分发机制的基础，但最后一个 TON 在 2022 年 6 月被挖出，达到了 TON 的工作证明（PoW）代币分发机制的顶点。也就是说，随着我们最近过渡到权益证明（PoS），在 TON 上进行质押的时代就将开始。
+Though the PoW Giver smart contract framework that defined the initial mining process that helped lay the foundation for TON was completed at launch, the last TON was mined in June of 2022 to culminate TON’s Proof of Work (PoW) token distribution mechanism. That said, with our recent transition to Proof of Stake (PoS), the era of staking on TON has just begun.
 
-* [深入了解我们的经济模型和在 TON 上的挖矿](https://ton.org/mining)
+- [Dive deeper into our economic model and mining on TON](https://ton.org/mining)
 
-
-现在，让我们专注于成为 **TVM 开发者** 的第一步，学习如何在 TON 上挖掘一个 NFT！下面是我们要创建的示例。
+Now, let’s focus on the first steps to becoming a **TVM Developer** and learn how to mine an NFT on TON! Provided below is an example of what we're aiming to create.
 
 <div style={{ width: '100%', textAlign: 'center', margin: '0 auto' }}>
   <video style={{ width: '100%', borderRadius: '10pt', margin: '15pt auto', maxWidth: '90%' }} muted={true} autoPlay={true}
          loop={true}>
     <source src="/files/onboarding.mp4" type="video/mp4" />
-    您的浏览器不支持 video 标签。
+    Your browser does not support the video tag.
   </video>
 </div>
 
-如果我们集中注意力，大约半小时内就能创建成为一个矿工。
+It’s possible to create a miner in about half an hour if we keep focused on the task at hand.
 
-## 🦄 开始
+## 🦄 Getting started
 
-要开始，所有开发者都将使用以下组件：
+To get started, all developers will make use of the following components:
 
-* __钱包__：您需要一个非托管钱包，以在测试网模式下存储 NFT。
-* __代码库__：我们将使用专为您设计的现成模板。
-* __开发环境__：开发者需要确定他们是想使用本地还是云环境进行挖矿。
+- **Wallet**: You need a non-custodial wallet to store an NFT in testnet mode.
+- **Repository**:  We’ll use a ready-made template designed specifically for you.
+- **Developer Environment**:  Developers will need to determine whether they want to mine using a local or cloud environment.
 
-### 下载并创建钱包
+### Download and Create a Wallet
 
-首先，您需要一个非托管钱包，用于接收和存储您的 TON；在这个指南中，我们使用 Tonkeeper。您需要在钱包内启用 Testnet 模式，以便能够接收 Testnet Toncoins。稍后将使用这些代币发送最终的铸币交易到智能合约。
+To start off, you’ll need a non-custodial wallet that will allow you to receive and store your TON; for this purpose in this guide we are using Tonkeeper. You’ll need to enable Testnet mode within the wallet to be able to receive Testnet Toncoins. These tokens will be used later on to send a final minting transaction to the smart contract.
 
 :::info
-使用非托管钱包，用户拥有并独自持有其私钥。
+With a non-custodial wallet, the user owns the wallet and holds its private key by themselves.
 :::
 
-要下载并创建 TON 钱包，请按照以下简单步骤操作：
+To download and create a TON wallet follow these simple steps:
 
-1. 在您的智能手机上安装 Tonkeeper 应用。可以在[这里](https://Tonkeeper.com/)下载。
-2. 接下来，您需要在 Tonkeeper 内[启用测试模式](/participate/wallets/apps#Tonkeeper-test-environment)。
+1. Install the Tonkeeper app on your smartphone. It can be downloaded [here](https://Tonkeeper.com/).
+2. Next, you’ll need to [enable test mode](/participate/wallets/apps#Tonkeeper-test-environment) within Tonkeeper.
 
-简单！现在我们开始开发。
+Easy! Let's go to the development now.
 
-### 项目设置
+### Project setup
 
-为了使您的工作更轻松，跳过例行的低级工作，我们将使用一个样板。
+To make your life easier and skip routine low-level stuff, we will use a boilerplate.
 
 :::tip
-注意，您需要[登录](https://github.com/login)到 GitHub 进行后续工作。
+Note, you'll need to [sign in](https://github.com/login) to GitHub for further work.
 :::
 
-请使用 [ton-onboarding-challenge](https://github.com/ton-community/ton-onboarding-challenge) 模板创建您的项目，点击“Use this template”按钮并选择“Create a new repository”选项，如下图所示：
+Please, use the [ton-onboarding-challenge](https://github.com/ton-community/ton-onboarding-challenge) template to create your project by clicking on the “Use this template” button and selecting the “Create a new repository” tab as shown below:
 
 <br></br>
 <ThemedImage
@@ -110,14 +106,14 @@ import Player from '@site/src/components/player';
 />
 <br></br>
 
-完成此步骤后，您将获得一个高性能的存储库，可用作您挖矿的核心。恭喜！ ✨
+After completing this step, you’ll have access to a highly performant repository that can be used as your miner's core. Congratulations! ✨
 
-### 开发环境
+### Development Environments
 
-下一步是选择最适合您需求、经验水平和整体技能的开发环境。如您所见，可以通过使用云端或本地环境来完成此过程。在云端开发通常被认为更简单、更容易入门。以下是两种方法的步骤。
+The next step is to choose which developer environment is best suited to your needs, experience level, and overall skill-set. As you can see, it is possible to carry out this process by using either a cloud-based or local environment. Developing on the cloud is often considered simpler and easier to get started. Below, we’ll outline the steps required for both approaches.
 
 :::tip
-确保您已在 GitHub 个人资料中打开了从前一步模板生成的代码库。
+Make sure you have opened the repository in your GitHub profile that was generated from the template in the previous step.
 :::
 
 <br></br>
@@ -130,15 +126,15 @@ import Player from '@site/src/components/player';
 />
 <br></br>
 
-#### 本地和云端开发环境
+#### Local and Cloud Development Environments
 
-* 对于不熟悉 JavaScript 的用户，使用 JavaScript IDE 可能会有挑战，特别是如果您的计算机和工具系统未以此为目的进行配置。
+- For users who are not familiar with JavaScript, it can be challenging to use a JavaScript IDE, especially if your computer and tooling systems are not configured for this purpose.
 
-* 但是，如果您熟悉 NodeJS 和 Git，并且知道如何使用 `npm`，使用**本地环境**可能更适合您。
+- However, if you're familiar with NodeJS and Git and know how to work with `npm`, it may be more comfortable for you to use a **local environment**.
 
 #### Cloud Codespaces
 
-如果选择云开发环境，首先选择 _Code_ 选项卡，然后在 GitHub 代码库内点击 _Create codespace on master_ 按钮，如下图所示：
+If you choose the cloud development environment it's easy to get started by first selecting the _Code_ tab and then by clicking on the _Create codespace on master_ button within the GitHub repository like shown below:
 
 <br></br>
 <ThemedImage
@@ -150,26 +146,25 @@ import Player from '@site/src/components/player';
 />
 <br></br>
 
-完成此步骤后，GitHub 将创建一个特殊的云工作空间，允许您访问 VSCode 在线 IDE（Visual Code 在线集成开发环境）。
+After completing this step, GitHub will create a special cloud workspace that allows you to access the VSCode Online IDE (Visual Code Online Integrated Development Environment).
 
-一旦授予访问权限（codespace 通常在约 30 秒内启动），您将拥有一切开始所需的内容，无需安装 Git、Node.js 或其他开发工具。
+Once access is granted (the codespace typically starts in about 30 seconds), you'll have everything required to begin without the need to install Git, Node.js, or other developer tools.
 
-#### 本地开发环境
+#### Local Development Environments
 
-要设置本地开发环境，您需要访问这三个基本工具：
+To set up a local development environment, you'll require access to these three essential tools:
 
-- **Git**：Git 是每个开发人员需要使用的基本工具，可在 [此处](https://git-scm.com/downloads) 下载。
-- **NodeJS**：Node.js 是通常用于 TON 上应用程序开发的 JavaScript 和 TypeScript 运行环境，可在 [此处](https://nodejs.org/en/download/) 下载。
-- **JavaScript IDE**：JavaScript IDE 通常用于本地开发环境中的开发。例如 Visual Studio Code（[VSCode](https://code.visualstudio.com/download)）。
+- **Git**: Git is an essential tool that every developer needs to work with repositories. It can be downloaded [here](https://git-scm.com/downloads).
+- **NodeJS**: Node.js is the JavaScript and TypeScript runtime environment typically used for application development on TON. It can be downloaded [here](https://nodejs.org/en/download/).
+- **JavaScript IDE**. JavaScript IDE’s are typically used for development within local development environments. An example of this case is Visual Studio Code ([VSCode](https://code.visualstudio.com/download)).
 
-要开始，您需要克隆 GitHub 代码库模板，并在集成开发环境（IDE）中打开正确的代码库。
+To get started, you’ll need to clone your GitHub repository boilerplate and open the correct repository in your Integrated Development Environment (IDE).
 
+#### Running Scripts
 
-#### 运行脚本
+In this guide, you'll need to run TypeScript scripts. All commands, such as running scripts or installing modules, are executed through the command line, which is located in the IDE's Terminal workspace. This workspace is typically found at the bottom of the IDE.
 
-在本指南中，您需要运行 TypeScript 脚本。所有命令，如运行脚本或安装模块，都通过位于 IDE 的终端工作区的命令行执行。该工作区通常位于 IDE 底部。
-
-例如，在 Cloud Codespaces 中，您应该打开终端工作区：
+For example, in the Cloud Codespaces, you should open the Terminal workspace (if it is not already open):
 
 <br></br>
 <ThemedImage
@@ -181,7 +176,7 @@ import Player from '@site/src/components/player';
 />
 <br></br><br></br>
 
-在此窗口中输入命令，然后按 _Enter_ 执行：
+Enter commands in this window and execute them with _Enter_:
 
 <br></br>
 <ThemedImage
@@ -193,29 +188,28 @@ import Player from '@site/src/components/player';
 />
 <br></br><br></br>
 
-终端也可以作为一个独立的应用程序使用。请根据您的 IDE 和操作系统选择适当的版本。
+The Terminal is also available as a separate application. Please choose the appropriate version based on your IDE and OS.
 
-太好了！完成这些步骤后，您就可以深入了解 TON 区块链的奥秘了。👀
+Great! After these steps you're ready to get deeper into TON Blockchain secrets. 👀
 
-## 🎯 连接到 TON
+## 🎯 Connect to TON
 
-连接到 TON 区块链需要什么？
+Okay, what do you need to connect to TON Blockchain?
 
-* __智能合约地址__ 作为目的地。我们的目标是从 _工作证明智能合约_ 中挖掘一个 NFT，因此我们需要一个地址以获取当前挖矿复杂性。
-* __API 提供商__ 用于向 TON 区块链发出请求。TON 有多个[API 类型](/develop/dapps/apis/) 用于不同目的。我们将使用 [toncenter.com](https://toncenter.com/) API 的测试网版本。
-* __JavaScript SDK__：需要一个 JavaScript SDK（SDK 是软件开发工具包）来解析正在使用的智能合约地址并准备创建 API 请求。为了更好地理解 TON 地址以及为什么需要解析它来执行此过程，请查看这个[资源](/learn/overviews/addresses)。我们将使用 [ton.js](https://github.com/ton-core/ton) 执行此过程。
+- **Smart contract address** as a point of destination. Our goal is to mine an NFT from the _proof-of-work smart contract_, so we need an address to get current mining complexity.
+- **API provider** to make requests to TON Blockchain. TON has multiple [API types](/develop/dapps/apis/) for different purposes. We will use the testnet version of [toncenter.com](https://toncenter.com/) API.
+- **JavaScript SDK**: A JavaScript SDK (recall that an SDK is a Software Development Kit) is needed to parse the smart contract address being used and prepare it to create an API request. To better understand TON addresses and why they need to be parsed to carry out this process, please see this [resource](/learn/overviews/addresses) to understand why should we parse it. To carry out this procedure, we'll use [ton.js](https://github.com/ton-core/ton).
 
-在下一部分中，我们将描述用户如何使用 TONCenter API 和 ton.js 发送初始请求以从 PoW 智能合约接收数据。
+In the next section we’ll describe how users send their initial requests to TON Blockchain using the TONCenter API and ton.js to receive data from the PoW smart contract.
 
-### 智能合约地址
+### Smart Contract Addresses
 
-为了让矿工正常工作，我们需要添加两种不同的智能合约地址类型。它们包括：
+For the miner to work correctly, we need to add two different smart contract address types. These include:
 
-1. __钱包地址__: 必须提供钱包地址，因为这对于矿工接收他们的挖矿奖励是必要的（在这种情况下，我们必须使用[Tonkeeper测试网模式](/participate/wallets/apps#Tonkeeper-test-environment)）。
-2. __集合地址__: 集合地址是必需的，作为智能合约以正确挖掘NFT（要执行此过程，请复制[Getgems网站](https://testnet.getgems.io/collection/EQDk8N7xM5D669LC2YACrseBJtDyFqwtSPCNhRWXU7kjEptX)下的TON onboarding challenge集合名称）。
+1. **Wallet address**: A wallet address is required,  because it is necessary for the miner to receive their mining reward (in this case, we must use the [Tonkeeper Testnet mode](/participate/wallets/apps#Tonkeeper-test-environment)).
+2. **Collection address**: A collection address is required to act as a smart contract to correctly mine an NFT (to carry out this process copy the NFT collection address, under the TON unboarding challenge collection name from the [Getgems website](https://testnet.getgems.io/collection/EQDk8N7xM5D669LC2YACrseBJtDyFqwtSPCNhRWXU7kjEptX)).
 
-接下来，我们将在您的挖矿程序中打开 `index.ts` 文件，并创建一个由初始常量组成的主要函数，如下所示：
-
+Next, we’ll open the `index.ts` file in your miner and create a main function composed of initial constants as follows:
 
 ```ts title="ton-onboarding-challenge/index.ts"
 import {Address} from "ton"
@@ -230,26 +224,26 @@ async function main () {
 main()
 ```
 
-#### 使用异步 main() 函数
+#### Using the async main() Function
 
-在创建 TON NFT Miner 的过程中，将向公共API执行几个请求，以将响应中继到正确的代码字符串，以换取所需的指令。通过利用 Async/await 函数，可以大大提高代码的简洁性。
+Later in the process of creating a TON NFT Miner, several requests will be executed to the public API to relay responses to the correct string of code in exchange for the desired instructions. By leveraging the Async/await function, code simplicity is improved dramatically.
 
-#### 地址解析
+#### Address Parsing
 
-在 TON 上，智能合约地址采用不同形式，使用多种标志位类型。在这个特定的背景中，我们将使用“用户友好地址形式”。话虽如此，如果您想了解更多有关不同智能合约地址类型的信息，请随时查看我们文档中的这个附加 [资源](https://ton.org/docs/learn/overviews/addresses)。
+On TON, smart contract addresses come in different forms that employ the use of numerous flag types. In this context specifically, we’ll make use of the _user-friendly address form_. That said, if you are curious to learn more about the different smart contract address types, feel free to check out this additional [resource](https://ton.org/docs/learn/overviews/addresses) in our documentation.
 
-为了让矿工正常工作，我们需要添加两种不同的智能合约地址类型。它们包括：
+For the miner to work correctly, we need to add two different smart contract address types. These include:
 
-`ton.js` SDK 中的 `Address.parse()` 命令允许开发者创建一个地址对象，简化地址从一种形式到另一种形式的转换过程。
+The `Address.parse()` command found in the `ton.js` SDK allows the developer to create an address object to convert addresses from one form to another in a simplified manner.
 
-### 连接到 API 提供商
+### Connect to an API Provider
 
-在这一步中，我们将使用脚本中的特定命令通过 TONCenter（托管在 toncenter.com 上）API 提供商连接到 TON。
+In this step, we'll connect with TON via TONCenter (which is hosted on toncenter.com) API provider using specific commands in the script.
 
-了解其工作原理的最简单方法是使用 @orbs-network/ton-access。
+The simplest way to learn how it works is by using @orbs-network/ton-access.
 
 :::tip
-请记住，如果您正在使用 `import` 添加新模块，可能需要通过在 [终端](/develop/get-started-with-ton#running-scripts) 中执行 `npm i @orbs-network/ton-access` 命令来安装它们。
+Remember, if you are adding new modules with `import`, that you may need to install them by executing the command `npm i @orbs-network/ton-access` in the [terminal](/develop/get-started-with-ton#running-scripts).
 :::
 
 <br></br>
@@ -262,36 +256,35 @@ main()
 />
 <br></br>
 
-
-我们在 `index.ts` 脚本中使用 _TonClient_ 和 `@orbs-network/ton-access` 中的 _getHttpEndpoint_ 添加 `client` 和 `endpoint`：
+We are adding `client` and `endpoint` in the `index.ts` script using _TonClient_ and _getHttpEndpoint_ from `@orbs-network/ton-access`:
 
 ```ts title="ton-onboarding-challenge/index.ts"
 import {Address, TonClient} from "ton"
 import {getHttpEndpoint} from "@orbs-network/ton-access";
 
-  // ... 先前的代码
+  // ... previous code
 
-  // 获取在测试网中的去中心化 RPC 端点
+  // get the decentralized RPC endpoint in Testnet
   const endpoint = await getHttpEndpoint({
     network: "testnet",
   });
 
-  // 初始化 ton 库
+  // initialize ton library
   const client = new TonClient({ endpoint });
 
 ```
 
-:::info 在生产环境中的操作
-建议使用 RPC 节点提供程序，或者为此运行自己的 ton-http-api 。详细信息请阅读 [TonCenter API 页面](/develop/dapps/apis/toncenter)。
+:::info what to do in production?
+It's better to use an RPC node provider, or to run your own ton-http-api instance for that. Read more at the [TonCenter API page](/develop/dapps/apis/toncenter).
 :::
 
-### 从 TON 区块链接收挖矿数据
+### Receiving Mining Data From TON Blockchain
 
-最后，该过程的下一步是从 TON 区块链检索特定的挖矿数据。
+Finally, the next step in the process is to retrieve specific mining data from TON Blockchain.
 
-通过查阅 [README 文件](https://github.com/ton-community/ton-onboarding-challenge#mining-process-advanced)来完成ton-onboarding-challenge，可以通过运行 `get_mining_data` 方法获取最新的 TON 挖矿数据。一旦启动，结果将如下所示：
+By consulting the [README file](https://github.com/ton-community/ton-onboarding-challenge#mining-process-advanced) needed to complete the ton-onboarding-challenge, the latest TON mining data is obtained by running the `get_mining_data` method. Once initiated, the result will be as follows:
 
-我们应该收到一个具有以下字段的数组：
+As a result we should receive an array with these fields:
 
 ```bash
 (
@@ -304,33 +297,30 @@ import {getHttpEndpoint} from "@orbs-network/ton-access";
 )
 ```
 
-#### 在 TON 上运行智能合约的 Get 方法
+#### Running Smart Contract Get Methods on TON
 
-通过使用 `ton.js`，可以运行 `callGetMethod(SMART_CONTRACT_ADDRESS, METHOD)` 函数。
-运行以下代码将导致如下控制台输出：
-
+Using `ton.js` it is possible to run the callGetMethod (SMART_CONTRACT_ADDRESS, METHOD) function.
+Running this code will result in the following console output:
 
 ```ts title="ton-onboarding-challenge/index.ts"
-  // ... 先前的代码
+  // ... previous code
 
   const miningData = await client.callGetMethod(collection, 'get_mining_data')
 
   console.log(miningData)
 ```
 
-
-
-此外，要运行脚本，需要在终端中输入以下命令[（在此处）](/develop/get-started-with-ton#running-scripts)：
+Furthermore, to run the script, it is necessary to enter the following command [in the terminal](/develop/get-started-with-ton#running-scripts):
 
 ```bash
 npm run start
 ```
 
 :::tip
-为避免意外问题，请确保您已完成所有先前的步骤，包括输入合约地址。
+To avoid unexpected issues, make sure you have finalized all previous steps, including inputting contract addresses.
 :::
 
-好了！只要上述过程执行正确，就能成功连接到 API，并在控制台中显示所需数据。正确的控制台输出应该如下：
+Good! As long as the above processes were executed correctly, successful connection to the API will be achieved and the necessary data will be displayed in the console. The correct console output should be initiated as follows:
 
 ```bash
 {
@@ -349,32 +339,31 @@ npm run start
 }
 ```
 
-上述显示了执行过程中使用的Gas量，以及十六进制格式的数字（_num_）值之和。目前，这些数据并不太关键，因为有必要将十六进制输出数据转换为更易于使用的形式。
+Above it displays the gas amount used to execute the process, as well as the sum of numerical (_num_) values in hex format. At this time, this data is not too critical because it is necessary to convert the hex output data into something that can be used more easily.
 
-我们需要将十六进制输出转换为一些 _有用的_ 东西。
+We need to convert the hex output to something _useful_.
 
-:::info TON 上的 GAS 参数：
-__警告__: 尽管这些信息非常复杂且在本教程中 __不是必需的__，但如果您对理解 TON 复杂的技术方面感兴趣，可以使用以下资源：
-1. 要更好地理解 TON 虚拟机（TVM）的运作方式以及 _TON 如何处理交易_，请查看[TVM 概述](/learn/tvm-instructions/tvm-overview)。
-2. 其次，如果您对了解 TON 上的交易和Gas费用的工作方式更感兴趣，请深入研究我们文档中的[此部分](/develop/smart-contracts/fees)。
-3. 最后，为了更好地了解执行 TVM 指令所需的确切的Gas值，请查看我们文档中的[此部分](/learn/tvm-instructions/instructions#gas-prices)。
-:::
+:::info GAS PARAMETERS ON TON:
 
-现在，让我们回到教程！
+1. To obtain a better understanding of how TON Virtual Machine (TVM) operates and _how does TON process transactions_, check out [TVM overview section](/learn/tvm-instructions/tvm-overview).
+2. Secondly, if you are interested in learning more about how transaction and gas fees work on TON, consider diving into [this section](/develop/smart-contracts/fees) of our documentation.
+3. Finally, to get a better understanding of the exact gas values needed to carry out TVM instructions see [this section](/learn/tvm-instructions/instructions#gas-prices) of our documentation.
+   :::
 
-#### 以用户友好的格式显示数字化挖矿的数据
+Now, let's return to the tutorial!
 
-在上面的部分中，我们讨论了用于接收挖矿数据所需的Gas量和十六进制格式的数字（_num_）值，我们注意到代码字符串中的十六进制数必须转换为更易于理解和使用的格式。
+#### Numerical Mining Data in a User-Friendly Format
 
-当检查给定的输出时，很明显，十六进制数的大小可能相当大。由于这里列出的特定[JavaScript限制]（https：//stackoverflow.com/a/307200），不可能创建一个变量并使用它们。
+In the section above where we discuss gas amounts and numerical (_num_) values in hex format needed to receive mining data, we note that the hex numbers present within the strings of code must be converted into a more easily understandable and usable format.
 
-我们需要一种方法来进行翻译，这就是 `bn.js`（JavaScript 中的大数字实现）库发挥作用的地方。Bn.js 是开发人员用来处理大于最大 JavaScript 整数值的大数字的库。让我们使用这个例子来更好地了解此过程所需的 _挖矿数据_：
+As it is clear when examining the given output, hex numbers can be quite substantial in size. It's not possible to make a variable and make use of them, because of specific [JavaScript limitations](https://stackoverflow.com/a/307200) that are outlined here.
 
+We need a way to translate this, that’s where the `bn.js` (the big number implementation in JavaScript) library comes in. Bn.js is a library developers use to work with large numbers that are larger than the maximum JavaScript integer values. Let’s use this example to get a better idea of the _Mining Data_ required for this process:
 
 ```ts title="ton-onboarding-challenge/index.ts"
 import {BN} from 'bn.js'
 
-  // ... 先前的代码
+  // ... previous code
 
   const parseStackNum = (sn: any) => new BN(sn[1].substring(2), 'hex');
 
@@ -393,15 +382,15 @@ import {BN} from 'bn.js'
   console.log('max_cpl', max_cpl.toString());
 ```
 
-如上所示，_miningData_ 的不同组件使用了一个基于堆栈的数组，其中包含了不同参数的十六进制数字（将在下面的部分介绍）。为了获得想要的值，我们添加了 `parseStackNum` 函数，以从十六进制数创建一个 BN（Big Number）对象。
+As shown above, the different components of _miningData_ use a stack-based array with hex numbers for different parameters (which will be introduced in the section below). To achieve the desired value outcome, we added the parseStackNum function to create a BN (Big Number) object from a hex number.
 
-完成此过程后，有必要在控制台中打印值。在这种情况下，一些值被打印为 BN 对象，这将使该过程更加用户友好。尝试通过运行以下命令再次运行脚本：
+After this process is complete, it is necessary to print values within the console. In this case, some values are printed as BN objects, which will make the process more user-friendly. Try to run the script again by running the command:
 
 ```bash
 npm run start
 ```
 
-以下是一个示例输出：
+Here is an example output:
 
 ```bash
 complexity <BN: 2880000000000000000000000000000000000000000000000000000000000>
@@ -412,74 +401,75 @@ min_cpl 171
 max_cpl 252
 ```
 
-让我们介绍一下Mining Data命令，该命令用于在将挖掘数据编程到TON Blockchain时转换不同的数据参数。其中包括：
+Let's cover the Mining Data command that is used to translate different data parameters when programming mining data into TON Blockchain. These include:
 
-* `complexity` 对于矿工来说是最重要的数字。这代表值的工作量证明复杂性。如果最终哈希小于复杂性，那么你就成功了。
-* `last_success` 是一个 [Unix 时间戳](https://www.unixtimestamp.com/) 的日期和时间表示，用于跟踪 TON 上最后一次挖矿交易。每当 `last_success` 指标更改时，需要再次运行挖矿程序，因为在此过程中 `seed` 也会更改。
-* `seed` 表示由智能合约生成的唯一值，用于计算所需的哈希值。要更好地理解这个过程以及seed如何更改以及为什么更改的原因，请使用ctx_seed关键字（Ctrl+F，带关键字“ctx_seed”）查看项目文件夹。
-* `target_delta`、`min_cpl` 和 `max_cpl` 在我们的教程中不会被使用。但是你可以在项目集合的源文件中阅读更多关于它们如何在智能合约中用于计算工作量证明复杂性的信息。
+- `complexity` is the most important number for miners. It's a Proof-of-Work complexity for the values. You're successful _if the final hash is less than complexity_.
+- `last_success` is a [unix timestamp](https://www.unixtimestamp.com/) date and time representation that keeps track of the last mining transaction on TON. Each time the last_success metric changes, it's necessary to run the miner again because the seed also changes during this process.
+- `seed` denotes a unique value generated by a smart contract to calculate the desired hash. To better understand this process and learn more about how the seed changes and why, have a look at the project files folder by using the ctx_seed keyword(Ctrl+F with keyword "ctx_seed").
+- `target_delta`, `min_cpl` and `max_cpl` won't be used in our tutorial. But you can always read more about how they are used in smart contracts to calculate proof-of-work complexity in the source files of the collection in your project.
 
-现在，我们理解了上述不同的参数，我们将在下一章中使用这些值（`complexity`、`last_success`、`seed`）在我们的 NFT 挖矿中。
+Now that we understand the different parameters discussed above, we have the values(`complexity`, `last_success`, `seed`) which we will use in our NFT Miner in the next chapter.
 
-## 🛠 准备一个 NFT Miner
+## 🛠 Prepare a NFT Miner
 
-嘿，你做得很好！
+Hey, you're doing a great job!
 
-在连接到TON并从区块链检索创建NFT Miner所需的必要挖矿数据后，让我们专注于实现我们目标的下一步。
+After connecting to TON and retrieving the necessary mining data from the blockchain to create an NFT Miner, let’s focus on the next steps in this process to achieve our goal.
 
-在本章中，您将 _准备一个挖矿消息_ 并 _计算消息的哈希_。之后，您将 _寻找一个小于(`<`)智能合约给出的复杂度_ 的哈希。
+In this chapter you will _prepare a mining message_ and _calculate a hash_ of the message. After that, you will _find a hash that's less(`<`) than the complexity_ we got from the smart contract.
 
-这就是Miner所做的！简单，不是吗？
+That is what a miner is! Simple, isn't it?
 
-### 准备挖矿消息
+### Preparing Mining Messages
 
-首先，我们必须通过确保正确的参数来准备一个挖矿消息，以确保此过程的有效性和数据完整性。
+First, we must prepare a mining message by ensuring the correct parameters to ensure the validity and data integrity of this process.
 
-幸运的是，[README文件](https://github.com/ton-community/ton-onboarding-challenge#mining-process-advanced)允许我们检索给出正确指导来实现此目标。正如您所看到的，上面的README文件包括一个表格，其中包含某些字段和cell类型（标题为“Layout of Proof of Work Cell”），来帮助实现我们期望的结果。
+Thankfully, the [README file](https://github.com/ton-community/ton-onboarding-challenge#mining-process-advanced) allows us to retrieve the correct guidelines needed to achieve this goal. As you can see, the above README file comprises a table with certain fields and Cell types (titled “Layout of Proof of Work Cell’) to help achieve our desired result.
 
-:::info 什么是cell？
-cell是TON上的数据存储结构，用于多种目的，包括提高网络可扩展性和智能合约交易速度。我们不会在这里详细讨论，但如果您对cell的复杂性及其工作方式感兴趣，可以考虑深入了解[我们文档的这一部分](/learn/overviews/cells)。
+:::info WHAT ARE CELLS?
+Cells are data storage structures on TON that fulfill numerous purposes, including increasing network scalable and smart contract transaction speeds. We won’t get into specifics here, but if you’re interested in understanding the complexity of cells and how they work, consider diving into [this](/learn/overviews/cells) section of our documentation.
 :::
 
-幸运的是，本教程中使用的所有数据结构已经用TypeScript编写。请使用 _NftGiver.data.ts_ 中的 `MineMessageParams` 对象来构建一个 _Queries_ 交易：
+Fortunately, all the data structures used in this tutorial are already written in TypeScript. Use the `MineMessageParams` object from _NftGiver.data.ts_ to build a transaction with _Queries_:
 
 ```ts title="ton-onboarding-challenge/index.ts"
   import {unixNow} from "./src/lib/utils";
   import {MineMessageParams, Queries} from "./src/giver/NftGiver.data";
 
-  // ... 之前的代码
+  // ... previous code
 
   const mineParams : MineMessageParams = {
-    expire: unixNow() + 300, // 5分钟足以进行交易
-    mintTo: wallet, // 你的钱包
-    data1: new BN(0), // 用于矿工中递增的临时变量
-    seed // 从get_mining_data获得的唯一seed
+    expire: unixNow() + 300, // 5 min is enough to make a transaction
+    mintTo: wallet, // your wallet
+    data1: new BN(0), // temp variable to increment in the miner
+    seed // unique seed from get_mining_data
   };
 
-  let msg = Queries.mine(mineParams); // 交易构建器
+  let msg = Queries.mine(mineParams); // transaction builder
 ```
 
-可能您会有疑问：[表格](https://github.com/ton-community/ton-onboarding-challenge#mining-process-advanced)中的 _op_ 和 _data2_ 在哪里？
-* 在表中，data1的数值必须等于data2的数值。为了省略填写data2值，交易构建器执行了一个低级别过程（参见Queries.mine()源代码）。
-* 由于 `op` 分类始终是常量，它已经在交易构建器 _Queries_ 和 _OperationCodes_ 中实现。您可以通过查看 `mine()` 方法的源代码来找到op代码。
+Probably, you have a question: where are the _op_ and _data2_ from the [table](https://github.com/ton-community/ton-onboarding-challenge#mining-process-advanced)?
+
+- In the table, the numerical value of data1 must be equal to that of data2. In order to omit filling the data2 value, the transaction builder performs a low-level process (see Queries.mine() sources).
+- Because the `op` classification is always constant, it is already implemented in transaction builder _Queries_ and in _OperationCodes_. You can find the op code by going to the source code of `mine()` method.
 
 :::tip
-虽然查看源代码（`./src/giver/NftGiver.data`）可能很有趣，但不是必须的。
+Though it may be interesting to check out the source code (`./src/giver/NftGiver.data`), it is not necessary.
 :::
 
-### 创建 TON NFT Miners
+### Creating TON NFT Miners
 
-现在我们已经完成了为我们的TON Miner准备消息的过程，让我们开始实际创建Miner的初始过程。首先，让我们考虑这行代码：
+Now that we have completed the process to prepare messages for our TON miner, let’s jump into the initial process to actually create a miner. First, let’s consider this line of code:
 
 ```ts
 let msg = Queries.mine(mineParams);
 ```
 
-上面我们编译了一个 `msg` 值。挖矿的想法是找到一个哈希 `msg.hash()`，它将小于最后接收到的 _get_mining_data()_ 中的 `complexity`。我们可以根据需要多次递增 `data1`。
+Above we compiled a `msg` value. The idea of mining is to find a hash `msg.hash()` that will be less than `complexity` from the last received _get_mining_data()_. We can increment `data1` as many times as we need.
 
-Miner可能将无限期地运行，只要 `msg.hash()` 大于 `complexity`（消息哈希大于工作证明挖矿复杂度）。
+The pure miner will continue to run indefinitely, as long as `msg.hash()` is bigger than `complexity` (message hash is larger than PoW mining complexity).
 
-这是一个与TypeScript中的BigNumbers相关的代码运行示例：
+Here is an example of the code running as it relates to BigNumbers in TypeScript:
 
 ```ts title="ton-onboarding-challenge/index.ts"
   let msg = Queries.mine(mineParams);
@@ -490,23 +480,24 @@ Miner可能将无限期地运行，只要 `msg.hash()` 大于 `complexity`（消
     msg = Queries.mine(mineParams)
   }
 
-  console.log('耶，你找到了什么！')
+  console.log('Yoo-hoo, you found something!')
 ```
 
-关于Big Number（_BN_）函数的一些重要的要考虑的点：
-* 我们从 `msg.hash()` 创建一个 _大端_ BN对象，属性为 `'be'`。
-* `gt()`: 表示 _大于变量_ 用于比较 _BigNumbers_。
-* `iaddn(1)`: 表示递增值。
+A few important considerations regarding Big Number (_BN_) functions:
 
-虽然完成上述步骤后Miner将正常工作，但它的视觉上看起来不够好（尝试 `npm run start`）。因此，我们必须解决这个问题。让我们开始吧。
+- We create a _big-endian_ BN object from the `msg.hash()` with `'be'` attribute.
+- `gt()`: denotes _greater than a variable_ for comparing _BigNumbers_.
+- `iaddn(1)`: denotes an incremented value.
 
-#### 改善 TON Miner 的外观 ✨
+Though the miner will work properly after the completion of the above steps, it will have a visually unappealing appearance (try `npm run start`). Therefore, we must address this issue. Let’s jump in.
 
-我们现在想让Miner看起来性感！我们该怎么做？
+#### Improving TON Miner Appearance ✨
 
-跟着我，我的朋友，跟着我。
+We want to make the miner look sexy now! How do we do it?
 
-为了实现我们的目标，我们将添加以下命令：
+Just follow me, my friend, follow me.
+
+To achieve our goal, we’ll add these commands:
 
 ```ts title="ton-onboarding-challenge/index.ts"
   let msg = Queries.mine(mineParams);
@@ -515,9 +506,9 @@ Miner可能将无限期地运行，只要 `msg.hash()` 大于 `complexity`（消
   while (new BN(msg.hash(), 'be').gt(complexity)) {
     progress += 1
     console.clear()
-    console.log(`挖矿开始：请等待30-60秒以挖掘您的NFT！`)
+    console.log(`Mining started: please, wait for 30-60 seconds to mine your NFT!`)
     console.log(' ')
-    console.log(`⛏ 已挖掘 ${progress} 个哈希！最新的：`, new BN(msg.hash(), 'be').toString())
+    console.log(`⛏ Mined ${progress} hashes! Last: `, new BN(msg.hash(), 'be').toString())
 
     mineParams.expire = unixNow() + 300
     mineParams.data1.iaddn(1)
@@ -525,14 +516,14 @@ Miner可能将无限期地运行，只要 `msg.hash()` 大于 `complexity`（消
   }
 
   console.log(' ')
-  console.log('💎 任务完成：找到小于pow_complexity的msg_hash了！');
+  console.log('💎 Mission completed: msg_hash less than pow_complexity found!');
   console.log(' ')
   console.log('msg_hash: ', new BN(msg.hash(), 'be').toString())
   console.log('pow_complexity: ', complexity.toString())
   console.log('msg_hash < pow_complexity: ', new BN(msg.hash(), 'be').lt(complexity))
 ```
 
-来看看！让我们执行命令：
+Just check it out! Let’s execute the command:
 
 ```bash
 npm run start
@@ -548,179 +539,173 @@ npm run start
 />
 <br></br>
 
-_很酷，不是吗？_ 😏
+_Cool, isn't it?_ 😏
 
-正确执行这些命令后，我们将拥有一个外观更易读的NFT Miner。在下一部分，我们将专注于将钱包连接到Miner，以创建一个可以接受和发送TON区块链交易的支付通道。
+After these commands are executed correctly, we’ll have a visually appealing NFT miner. In the next section, we’ll focus on connecting a wallet to the miner to create a payment channel that can accept and receive transactions from TON Blockchain.
 
+## 🎨 Prepare a Transaction
 
-## 🎨 准备一个交易
+Next, we’ll outline the steps to compile a message and send it to the blockchain with your [Tonkeeper wallet](https://Tonkeeper.com/).
+The upcoming steps will guide you in completing the process of **mining an NFT** on TON.
 
-接下来，我们将概述编译消息并使用您的[Tonkeeper钱包](https://Tonkeeper.com/)将其发送到区块链的步骤。
-接下来的步骤将指导您完成在TON上__挖掘NFT__的过程。
+### Creating a Payment Link
 
+In order to ensure that the NFT mining process is carried out correctly, and that the user can store their NFT properly, we must create a payment link that is able to simultaneously interact with TON Blockchain and the Tonkeeper wallet.
 
-### 创建支付链接
-
-为了确保NFT挖掘过程正确进行，并且用户可以正确存储他们的NFT，我们必须创建一个能够同时与TON区块链和Tonkeeper钱包互动的支付链接。
-
-为了实现这个目标，我们将使用`ton://transfer/<address>`格式来启动创建支付URL（支付链接），该格式可以使用不同的参数进行自定义。这将非常有效，因为我们想创建一个消息，并使用我们的Tonkeeper钱包将其发送到智能合约：
+To achieve this goal, we’ll initiate the creation of a payment URL (a payment link) using the `ton://transfer/<address>` format that can be customized using different parameters. This will work perfectly because we want to create a message, and send it to the smart contract using our Tonkeeper wallet:
 
 ```ts title="ton-onboarding-challenge/index.ts"
 import {toNano} from "ton"
 
-// ... 之前的代码
+// ... previous code
 
   console.log(' ');
-  console.log("💣 警告！一旦您找到哈希，您应该迅速发送交易。");
-  console.log("如果其他人在您之前发送交易，seed会改变，您将不得不重新找到哈希！");
+  console.log("💣 WARNING! As soon as you find the hash, you should quickly send the transaction.");
+  console.log("If someone else sends a transaction before you, the seed changes, and you'll have to find the hash again!");
   console.log(' ');
 
-  // flags只在用户友好的地址形式中有效
+  // flags work only in user-friendly address form
   const collectionAddr = collection.toFriendly({
     urlSafe: true,
     bounceable: true,
   })
-  // 我们必须将TON转换为nanoTON
+  // we must convert TON to nanoTON
   const amountToSend = toNano('0.05').toString()
- // 这里的BOC表示cell包
+ // BOC means Bag Of Cells here
   const preparedBodyCell = msg.toBoc().toString('base64url')
 
-  // 最终构建支付URL的方法
+  // final method to build a payment URL
   const tonDeepLink = (address: string, amount: string, body: string) => {
     return `ton://transfer/${address}?amount=${amount}&bin=${body}`;
   };
 
   const link = tonDeepLink(collectionAddr, amountToSend, preparedBodyCell);
 
-  console.log('🚀 领取NFT的链接：')
+  console.log('🚀 Link to receive an NFT:')
   console.log(link);
 ```
 
-让我们运行上述脚本来启动新创建的支付链接。现在是时候让运行在您PC上的支付链接与智能手机兼容了。让我们开始吧。
+Let’s run the above script to launch the newly created payment link. Now it’s time to make the payment link running on your PC smartphone compatible. Let’s get started.
 
-### 创建智能手机兼容的支付链接
+### Creating A Smartphone Compatible Payment Link
 
-作为解决方案，世界上最聪明的头脑专门为终端使用创建了一个二维码生成器。使用这个工具，您可以简单地从您的Tonkeeper钱包扫描支付链接来发送交易。
+As a solution, the most brilliant minds in the world created a QR code generator specifically for use in terminal. With this tool, you can simply scan the payment link from your Tonkeeper wallet to send a transaction.
 
 ```bash
 npm install qrcode-terminal
 ```
 
-最后，我们需要将支付链接（`link`）编码为二维码，并在控制台中打印出来。这可以通过以下步骤完成：
-
+Finally, we’ll need to encode the payment link(`link`) into the QR code and print it in the console. This is completed by following the steps below:
 
 ```ts title="ton-onboarding-challenge/index.ts"
   const qrcode = require('qrcode-terminal');
 
   qrcode.generate(link, {small: true}, function (qrcode : any) {
-    console.log('🚀 用Tonkeeper挖掘NFT的链接（在测试网模式下使用）：')
+    console.log('🚀 Link to mine your NFT (use Tonkeeper in testnet mode):')
     console.log(qrcode);
-    console.log('* 如果二维码仍然太大，请在终端运行脚本。（或者缩小字体）')
+    console.log('* If QR is still too big, please run script from the terminal. (or make the font smaller)')
   });
 ```
 
-你能感受到空中的_体验_吗？那就是您在成为TVM开发人员的路上。
+Do you sense the _experience_ in the air? That's you, on your way to becoming a TVM developer.
 
-现在我们已经成功地编码了二维码生成器和支付链接，我们需要获得一些Testnet Toncoins来发送我们的第一笔交易。这是通过使用TON区块链上的[TON代币水龙头](https://coinmarketcap.com/alexandria/glossary/faucet)（一个分享Testnet Toncoins的Telegram Bot）来完成的，这样我们就拥有了一些可以发送到我们创建的Tonkeeper钱包的代币。
+Now that we have successfully encoded the QR code generator and payment link, we'll need to acquire some Testnet Toncoins to send our first transaction. This is accomplished by making use of a TON [token faucet](https://coinmarketcap.com/alexandria/glossary/faucet) (a Telegram Bot that shares Testnet Toncoins) on TON Blockchain, so we are in possession of some tokens that can be sent to the Tonkeeper wallet we created.
 
-## ⛏ 使用钱包挖掘 NFT
+## ⛏  Mine an NFT With a Wallet
 
-在TON上挖掘NFT有两种主要方式：
+There are two main ways to mine an NFT on TON:
 
-* [简单的：测试网NFT挖掘](/develop/get-started-with-ton#simple-mine-in-testnet)
-* [真正的：主网NFT挖掘](/develop/get-started-with-ton#genuine-mine-in-mainnet)
+- [Simple: NFT Testnet Mining](/develop/get-started-with-ton#simple-mine-in-testnet)
+- [Genuine: NFT Mainnet Mining](/develop/get-started-with-ton#genuine-mine-in-mainnet)
 
-### 简单的：测试网 NFT 挖掘
+### Simple: NFT Testnet Mining
 
-以下是启动您的第一个测试网交易以挖掘NFT所需的步骤：
+Below are the steps needed to initiate your first Testnet transaction to mine your NFT:
 
-1. 在您的Tonkeeper钱包中激活[测试网模式](/participate/wallets/apps#Tonkeeper-test-environment)
-2. 将我们的测试网钱包地址从Tonkeeper输入到`index.ts`中的`wallet`变量
-3. 将[Testnet上的NFT集合地址](https://testnet.getgems.io/collection/EQDk8N7xM5D669LC2YACrseBJtDyFqwtSPCNhRWXU7kjEptX)输入到`index.ts`中的`collection`变量
+1. Activate [Testnet mode within your Tonkeeper wallet](/participate/wallets/apps#Tonkeeper-test-environment)
+2. Input our testnet wallet address from Tonkeeper into `wallet` variable in the `index.ts`
+3. Input address of the [NFT collection from Testnet](https://testnet.getgems.io/collection/EQDk8N7xM5D669LC2YACrseBJtDyFqwtSPCNhRWXU7kjEptX) into `collection` variable in the `index.ts`
 
-#### 通过代币水龙头充值钱包余额
+#### Top Up Wallet Balance via the Token Faucet
 
-为了进行下一步，我们需要获取一些TON测试网代币。这可以通过使用[测试网水龙头](https://t.me/testgiver_ton_bot)来实现。
+To proceed to the next step, we need to acquire some TON testnet tokens. This can be achieved by making use of the testnet [faucet found here](https://t.me/testgiver_ton_bot).
 
-#### 挖掘测试网 NFT Rocket
+#### Mine A Testnet NFT Rocket
 
-为了在测试网上成功挖掘NFT Rocket，必须遵循以下步骤：
+In order to successfully mine an NFT rocket on Testnet, it is necessary to follow these steps:
 
-1. _打开_ 您的手机上的Tonkeeper钱包（应该持有了一些新接收的TON测试网代币）。
-2. _选择_ 钱包中的扫描模式来扫描二维码。
-3. _运行_ 您的Miner以获取正确的哈希（这个过程需要30至60秒）。
-4. _扫描_ Miner生成的二维码。
+1. _Open_ Open the Tonkeeper wallet on your phone (it should hold some newly received TON Testnet tokens).
+2. _Select_ scan mode in the wallet to scan the QR code.
+3. _Run_ your miner to acquire the correct hash (this process takes between 30 and 60 seconds).
+4. _Scan_ the generated QR code from the miner.
 
-:::tip 最后的提示
-因为可能有其他开发者正在尝试进行相同的过程来挖掘他们自己的NFT，您可能需要尝试几次才能成功（因为另一个用户可能在您之前挖掘到下一个可用的NFT）。
+:::tip final tip
+Because there may be other developers carrying out the same process in an attempt to mine their own NFT, you may have to try the process a couple times to be successful (as another user could mine the next NFT available right before you).
 :::
 
-在开始这个过程后不久，您将成功挖掘到您在TON上的第一个NFT（它应该出现在您的Tonkeeper钱包中）。
+Soon after initiating this process, you will have successfully mined your very first NFT on TON (it should appear in your Tonkeeper wallet).
 
 ![](/img/tutorials/onboarding/8.svg)
 
-欢迎上岸，__真正的TVM开发者__！你做到了。🛳
+Welcome aboard, **a true TVM Developer**! You did it. 🛳
 
-### 真正的：主网 NFT 挖掘
+### Genuine: NFT Mainnet Mining
 
-嘿！对于那些希望在TON主网上挖掘NFT的人来说，应该遵循以下指示：
+Hey! For those who wish to mine an NFT on TON Mainnet, these instructions should be followed:
 
-1. 您已在Tonkeeper中激活了_主网_模式（应该至少持有0.1 TON）。
-2. 将我们的_主网_钱包地址从Tonkeeper输入到`index.ts`中的`wallet`变量
-3. 将[主网上的NFT集合地址](https://getgems.io/collection/EQDk8N7xM5D669LC2YACrseBJtDyFqwtSPCNhRWXU7kjEptX)输入到`index.ts`中的`collection`变量
-4. 更改__端点__为_主网_，启用orbs-access，在_getHttpEndpoint_中排除测试网参数：
+1. You have activated _mainnet_ mode in your Tonkeeper (it should hold at least 0.1 TON).
+2. Input our _mainnet_ wallet address from Tonkeeper into `wallet` variable in the `index.ts`
+3. Input address of the [NFT collection from the Mainnet](https://getgems.io/collection/EQDk8N7xM5D669LC2YACrseBJtDyFqwtSPCNhRWXU7kjEptX) into `collection` variable in the `index.ts`
+4. Replace **endpoint** to the _Mainnet_, for orbs-access it enables with excluding testnet argument in _getHttpEndpoint_:
 
 ```ts title="ton-onboarding-challenge/index.ts"
-// 获取主网中的去中心化RPC端点
+// get the decentralized RPC endpoint in Mainnet
 const endpoint = await getHttpEndpoint();
 ```
 
-#### 挖掘主网 NFT Rocket
+#### Mine A Mainnet NFT Rocket
 
-就像我们在测试网NFT火箭挖掘过程中概述的那样，为了在主网上成功挖掘NFT火箭，必须遵循以下步骤：
+Like we outlined in the testnet NFT rocket mining process, in order to successfully mine an NFT rocket on mainnet, it is necessary to follow these steps:
 
-1. _打开_ 您的手机上的Tonkeeper钱包（记住，应该持有一些TON代币）。
-2. _选择_ 钱包中的扫描模式来扫描二维码。
-3. _运行_ 您的Miner以获取正确的哈希（这个过程需要30至60秒）。
-4. _扫描_ Miner生成的二维码。
+1. _Open_ the Tonkeeper wallet on your phone (remember, it should hold some TON tokens).
+2. _Select_ scan mode in the wallet to scan the QR code.
+3. _Run_ your miner to acquire the correct hash (this process takes between 30 and 60 seconds).
+4. _Scan_ the generated QR code from the miner.
 
-:::tip 最后的提示
-因为可能有其他开发者正在尝试进行相同的过程来挖掘他们自己的NFT，您可能需要尝试几次才能成功（因为另一个用户可能在您之前挖掘到下一个可用的NFT）。
+:::tip final tip
+Because there may be other developers carrying out the same process in an attempt to mine their own NFT, you may have to try the process a couple times to be successful (as another user could mine the next NFT available right before you).
 :::
 
-一段时间后，您将__挖掘到您的NFT__，成为TON区块链上的TVM开发者。完成了，请查看您在Tonkeeper中的NFT。
+After some time, you will have **mined your NFT** and become a TVM Developer in TON Blockchain. The ritual is complete. Look at your NFT in Tonkeeper.
 
 <div style={{ width: '100%', textAlign: 'center', margin: '0 auto' }}>
   <video width={'300'} style={{ width: '100%', borderRadius: '10pt', margin: '15pt auto' }} muted={true} autoPlay={true} loop={true}>
     <source src="/files/onboarding-nft.mp4" type="video/mp4" />
-    您的浏览器不支持视频标签。
+    Your browser does not support the video tag.
   </video>
 </div>
 
-欢迎上岸，__TVM开发者__！你做到了。🛳
+Welcome aboard, **a TVM Developer**! You did it. 🛳
 
+## 🧙 What's next?
 
-## 🧙 接下来
+_First, take a rest! You did a big task! You are a TVM developer now. But it's only the beginning of the long way._
 
-_首先，休息一下！你完成了一项大任务！你现在是一名TVM开发者了。但这只是漫长道路的开始。_
+## See Also
 
-## 参阅
+After finishing the TON Onboarding Challenge where we successfully mined an NFT, consider taking a look at some of these materials that detail different portions of TON's Ecosystem:
 
-在完成TON入门挑战并成功挖掘NFT后，考虑看看这些详细介绍TON生态系统不同部分的材料：
+- [What is blockchain? What is a smart contract? What is gas?](https://blog.ton.org/what-is-blockchain)
+- [TON Hello World: Step-by-step guide for writing your first smart contract](https://ton-community.github.io/tutorials/02-contract/)
+- [Develop Smart Contracts: Introduction](/develop/smart-contracts/)
+- [\[YouTube\] Ton Dev Study - FunC & Blueprint](https://www.youtube.com/playlist?list=PLyDBPwv9EPsDjIMAF3XqNI2XGNwdcB3sg)
+- [How to work with wallet smart contracts](/develop/smart-contracts/tutorials/wallet)
+- [FunC Journey: Part 1](https://blog.ton.org/func-journey)
+- [Bot for sales of dumplings](/develop/dapps/tutorials/accept-payments-in-a-telegram-bot-js)
+- [Mint Your first Jetton](/develop/dapps/tutorials/jetton-minter)
+- [Step by step NFT collection minting](/develop/dapps/tutorials/collection-minting)
+- [How to run TON Site](/develop/dapps/tutorials/how-to-run-ton-site)
 
-
-* [什么是区块链？什么是智能合约？什么是gas？](https://blog.ton.org/what-is-blockchain)
-* [TON Hello World：逐步指导编写您的第一个智能合约](https://ton-community.github.io/tutorials/02-contract/)
-* [开发智能合约：简介](/develop/smart-contracts/)
-* [[YouTube] Ton Dev 研究 - FunC和Blueprint](https://www.youtube.com/playlist?list=PLyDBPwv9EPsDjIMAF3XqNI2XGNwdcB3sg)
-* [如何使用钱包智能合约](/develop/smart-contracts/tutorials/wallet)
-* [FunC之旅：第1部分](https://blog.ton.org/func-journey)
-* [饺子销售机器人](/develop/dapps/tutorials/accept-payments-in-a-telegram-bot-js)
-* [铸造您的第一个Jetton](/develop/dapps/tutorials/jetton-minter)
-* [逐步铸造NFT集合](/develop/dapps/tutorials/collection-minting)
-* [如何运行TON网站](/develop/dapps/tutorials/how-to-run-ton-site)
-
-
-:::info 有反馈吗？
-你是这里的第一批探险者之一。如果你发现任何错误或感到困惑，请将反馈发送至[@SwiftAdviser](https://t.me/SwiftAdviser)。我会尽快修复！:)
+:::info have some feedback?
+You are one of the first explorers here. If you find any mistakes or feel stacked, please send feedback to [@SwiftAdviser](https://t.me/SwiftAdviser). I will fix it ASAP! :)
 :::
