@@ -1,12 +1,11 @@
 import ThemedImage from '@theme/ThemedImage';
 
-# 签名与验证
+# Verifying signed in users on backend
 
 This page describes a way for backend to ensure that the user truly owns the declared address.
 Please note that the user verification is not required for all DApps.
 
-请注意，并非所有DApps都需要 ton_proof 验证。
-这对于后端的授权是必要的，以确保用户确实拥有声明的地址，因此可以推断出用户有权访问其在后端的数据。
+It is useful if you want to verify a user to provide them with their personal information from the back end.
 
 ## How does it work?
 
@@ -56,14 +55,14 @@ type TonProofItemReplySuccess = {
 5. Assemble a message according to the [message scheme](/develop/dapps/ton-connect/sign#concept-explanation).
 6. Retrieve `public_key` either from API (a) or via back-end logic (b)
 
-- 从用户处检索 `TonProofItemReply`。
+- 6a:
   - Retrieve `{public_key, address}` from the `walletStateInit` with [TON API](https://docs.tonconsole.com/tonapi/api-v2#:~:text=/v2/-,tonconnect,-/stateinit) method `POST /v2/tonconnect/stateinit`.
   - Check that the `address` extracted from `walletStateInit` corresponds to wallet `address` declared by user.
-- 验证接收到的域是否对应于应用程序的域。
+- 6b:
   - Obtain the wallet `public_key` via the wallet contract [get method](https://github.com/ton-blockchain/wallet-contract/blob/main/func/wallet-v4-code.fc#L174).
   - If the contract is not active, or if it lacks the get_method found in older wallet versions (v1-v3), then obtaining the key in this manner will be impossible. Instead, you will need to parse the walletStateInit provided by the frontend. Ensure that TonAddressItemReply.walletStateInit.hash() is equal to TonAddressItemReply.address.hash(), indicating a BoC hash.
 
-7. 6a:
+7. Verify that the `signature` from the frontend actually signs the assembled message and corresponds to the `public_key` of the address.
 
 ## React Example
 
@@ -185,17 +184,17 @@ where:
 
 <!---->
 
-- `Address` 是钱包地址编码为一系列：
-- `workchain`：32位有符号整数大端；
+- `Length` is 32-bit value of utf-8 encoded app domain name length in bytes
+- `EncodedDomainName` id `Length`-byte  utf-8 encoded app domain name
 
 <!---->
 
-- `长度` 是utf-8编码的应用域名长度的32位值（以字节为单位）
-- `编码的域名` 是长度字节的utf-8编码的应用域名
+- `Timestamp` 64-bit unix epoch time of the signing operation
+- `Payload` is a variable-length binary string.
 
 Note: payload is variable-length untrusted data. We put it last to avoid using unnecessary length prefixes.
 
-注意：有效载荷是可变长度的不受信任数据。为避免使用不必要的长度前缀，我们将其放在消息的最后。
+The signature must be verified by public key:
 
 1. First, try to obtain public key via `get_public_key` get-method on smart contract deployed at `Address`.
 
