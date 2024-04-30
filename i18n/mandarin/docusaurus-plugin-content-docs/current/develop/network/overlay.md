@@ -1,25 +1,30 @@
-# 覆盖子网络
+# Overlay subnetworks
 
-TON的架构构建方式使得许多链可以同时且独立地存在于其中 - 它们可以是私有的或公共的。
-节点能够选择它们存储和处理的分片和链。
-同时，由于其通用性，通信协议保持不变。像DHT、RLDP和Overlays这样的协议使这成为可能。
-我们已经熟悉前两者，在本节中我们将了解Overlay是什么。
+The architecture of TON is built in such a way that a lot of chains can exist simultaneously and independently in it - they can be both private or public.
+Nodes have the ability to choose which shards and chains they store and process.
+At the same time, the communication protocol remains unchanged due to its universality. Protocols such as DHT, RLDP and Overlays allow this to be achieved.
+We are already familiar with the first two, in this section we will learn what Overlay is.
 
-Overlay负责将单个网络划分为额外的子网络。Overlay既可以是公共的，任何人都可以连接，也可以是私有的，需要额外的凭证才能进入，这些凭证只为少数人所知。
+Overlays are responsible for dividing a single network into additional subnetworks. Overlays can be both public, to which anyone can connect, and private, where additional credentials is needed for entry, known only to a certain amount of people.
 
-TON中的所有链，包括主链，都使用它们自己的overlay进行通信。要加入它，你需要找到已经在其中的节点，并开始与它们交换数据。对于公共overlay，你可以使用DHT找到节点。
+All chains in TON, including the masterchain, communicate using their own overlay.
+To join it, you need to find the nodes that are already in it, and start exchanging data with them.
+For the public overlays you can find nodes using DHT.
 
-## 与overlay节点的互动
+## Interaction with overlay nodes
 
-我们已经在关于DHT的文章中分析了一个查找overlay节点的例子，在[搜索存储区块链状态的节点](/develop/network/dht#search-for-nodes-that-store-the-state-of-the-blockchain)一节中。在这一节中，我们将专注于与它们的互动。
+We have already analyzed an example with finding overlay nodes in an article about DHT,
+in the section [Search for nodes that store the state of the blockchain](/develop/network/dht#search-for-nodes-that-store-the-state-of-the-blockchain).
+In this section, we will focus on interacting with them.
 
-当查询DHT时，我们将获得overlay节点的地址，从中我们可以使用[overlay.getRandomPeers](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L237)查询找出这个overlay的其他节点的地址。一旦我们连接了足够数量的节点，我们就可以从它们那里接收所有区块信息和其他链事件，以及向它们发送我们的交易以供处理。
+When querying the DHT, we will get the addresses of the overlay nodes, from which we can find out the addresses of other nodes of this overlay using [overlay.getRandomPeers](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L237) query.
+Once we connect to a sufficient number of nodes, we can receive all blocks information and other chain events from them, as well as send our transactions to them for processing.
 
-### 寻找更多邻居节点(neighbors)
+### Find more neighbors
 
-让我们看一个在overlay中获取节点的例子。
+Let's look at an example of getting nodes in an overlay.
 
-为此，向任何已知的overlay节点发送`overlay.getRandomPeers`请求，序列化TL模式：
+To do this, send a request `overlay.getRandomPeers` to any known node of the overlay, serialize the TL schema:
 
 ```tlb
 overlay.node id:PublicKey overlay:int256 version:int signature:bytes = overlay.Node;
@@ -28,31 +33,32 @@ overlay.nodes nodes:(vector overlay.node) = overlay.Nodes;
 overlay.getRandomPeers peers:overlay.nodes = overlay.Nodes;
 ```
 
-`peers` - 应包含我们已知的节点，这样我们就不会再次得到它们，但由于我们还不知道任何节点，`peers.nodes`将是一个空数组。
+`peers` - should contain the peers we know, so we don't get them back, but since we don't know any yet, `peers.nodes` will be an empty array.
 
-如果我们不只是想获取一些信息，而是想参与overlay并获取广播，我们还应该在`peers`中添加我们节点的信息，从中我们发出请求。当对方获取到我们的信息 - 他们将开始使用ADNL或RLDP向我们发送广播。
+In case if we want to not just get some information, but participate in overlay and get broadcasts, we should also add in `peers` information about our node, from which we're doing request.
+When peers will get info about us - they will start to send us broadcasts using ADNL or RLDP.
 
-overlay内的每个请求都必须以TL模式为前缀：
+Each request inside the overlay must be prefixed with the TL schema:
 
 ```tlb
 overlay.query overlay:int256 = True;
 ```
 
-`overlay`应该是overlay的id - `tonNode.ShardPublicOverlayId`模式键的id - 与我们用于搜索DHT时使用的相同。
+The `overlay` should be the id of the overlay - the id of the `tonNode.ShardPublicOverlayId` schema key - the same one we used to search the DHT.
 
-我们需要通过简单地连接2个序列化的字节数组来连接2个序列化的模式，`overlay.query`将首先出现，其次是`overlay.getRandomPeers`。
+We need to concat 2 serialized schemas by simply concatenating 2 serialized byte arrays, `overlay.query` will come first, `overlay.getRandomPeers` second.
 
-我们将结果数组包裹在`adnl.message.query`模式中并通过ADNL发送。作为回应，我们等待`overlay.nodes` - 这将是我们可以连接的overlay节点的列表，并且如果需要，重复向新的节点发送相同的请求，直到我们获得足够的连接。
+We wrap the resulting array in the `adnl.message.query` schema and send it via ADNL. In response, we are waiting for `overlay.nodes` - this will be a list of overlay nodes to which we can connect and, if necessary, repeat the same request to new of them until we get enough connections.
 
-### 功能请求
+### Functional requests
 
-一旦建立了连接，我们可以使用[请求](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L413) `tonNode.*`访问overlay节点。
+Once the connection is established, we can access the overlay nodes using [requests](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L413) `tonNode.*`.
 
-这类请求使用RLDP协议
+For requests of this kind, the RLDP protocol is used. And it's important not to forget the `overlay.query` prefix - it must be used for every query in the overlay.
 
-。重要的是不要忘记`overlay.query`前缀 - 它必须用于overlay中的每个查询。
+There is nothing unusual about the requests themselves, they are very similar to what we [did in the article about ADNL TCP](/develop/network/adnl-tcp#getmasterchaininfo).
 
-请求本身并没有什么不寻常的，它们与我们在[关于ADNL TCP的文章](/develop/network/adnl-tcp#getmasterchaininfo)中所做的非常相似。
+For example, the `downloadBlockFull` request uses the already familiar schema of block id:
 
 ```tlb
 tonNode.downloadBlockFull block:tonNode.blockIdExt = tonNode.DataFull;
@@ -68,7 +74,7 @@ tonNode.dataFullEmpty = tonNode.DataFull;
 
 If present, the `block` field will contain data in TL-B format.
 
-如果存在，`block`字段将包含TL-B格式的数据。
+Thus, we can receive information directly from the nodes.
 
 ## References
 
