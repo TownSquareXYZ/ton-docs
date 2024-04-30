@@ -1,41 +1,41 @@
-# 使用TypeScript
+# Using TypeScript
 
-## 蓝图
+## Blueprint
 
-测试工具包（通常是沙盒）已包含在名为Blueprint的TypeScript SDK中。
+Testing toolkit (usually, sandbox) already included to TypeScript SDK named Blueprint.
 
-- [了解更多关于Blueprint](develop/smart-contracts/sdk/javascript)
+* [Read more about Blueprint](develop/smart-contracts/sdk/javascript)
 
-使用以下命令一行运行测试：
+Run tests in one line using:
 
 ```bash npm2yarn
 npm test
 ```
 
-## 低级库
+## Low-level libraries
 
-### 沙盒
+### sandbox
 
-这个包允许您模拟任意TON智能合约，向它们发送消息并运行get方法，就像它们部署在真实网络上一样。
+This package allows you to emulate arbitrary TON smart contracts, send messages to them and run get methods on them as if they were deployed on a real network.
 
-这个包与ton-contract-executor的关键区别在于，后者只模拟合约的 Compute Phase  - 它不了解任何其他阶段，因此不了解费用和余额（在某种意义上，它不知道合约的余额是否足以处理它产生的所有输出消息）。
+The key difference of this package from ton-contract-executor is the fact that the latter only emulates the compute phase of the contract - it does not know about any other phases and thus does not know anything about fees and balances (in a sense that it does not know whether a contract's balance will be enough to process all the out messages that it produces).
 
-另一方面，这个包模拟了合约的所有阶段，因此，模拟更接近于在真实网络中发生的情况。
+On the other hand, this package emulates all the phases of a contract, and as a result, the emulation is much closer to what would happen in a real network.
 
-- https://github.com/ton-community/sandbox
+* https://github.com/ton-community/sandbox
 
 ### ton-contract-executor
 
-:::info 已弃用
-这个库已被弃用。TON社区不再开发它。
+:::info deprecated
+This library is deprecated. TON Community not developing it anymore.
 :::
 
-这个库允许您在本地运行TON虚拟机并执行合约。这使您能够在将它们发布到网络之前编写、调试和完全测试您的合约。
+This library allows you to run TON Virtual Machine locally and execute contract. That allows you to write & debug & fully test your contracts before launching them to the network.
 
-- https://github.com/ton-community/ton-contract-executor
+* https://github.com/ton-community/ton-contract-executor
 
-## 教程
+## Tutorials
 
-首先阅读这篇文章，以了解TON上所有测试方法：
+Read this article first to understand all approaches to testing on TON:
 
-* [TON Hello World第4部分：测试您的第一个智能合约的逐步指南](https://ton-community.github.io/tutorials/04-testing/)
+* [TON Hello World part 4: Step by step guide for testing your first smart contract](https://ton-community.github.io/tutorials/04-testing/)
