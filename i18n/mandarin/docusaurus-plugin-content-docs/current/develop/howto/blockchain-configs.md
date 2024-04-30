@@ -1,189 +1,192 @@
-# 配置参数
+# Config Parameters
 
 :::info
-通过 [tonviewer](https://tonviewer.com/config) 读取实时值
+Read live values via [tonviewer](https://tonviewer.com/config)
 :::
 
-## 👋 介绍
+## 👋 Introduction
 
-在这个页面上，你可以找到在TON区块链中使用的配置参数的描述。TON有一个复杂的配置，包含许多技术参数：一些被区块链本身使用，一些被生态系统使用。然而，只有少数人理解这些参数的含义。这篇文章是为了提供给用户一种简单的方式来理解这些参数及其目的。
+On this page, you can find a description of the configuration parameters used in the TON Blockchain.
+TON has a complex configuration with many technical parameters: some are used by the blockchain itself, some by the ecosystem. However, only a few people understand what these parameters mean. This article is necessary to provide users with a simple way to understand the parameters and their purpose.
 
-## 💡 必要条件
+## 💡 Prerequisites
 
-本材料旨在与参数列表一起阅读。你可以在 [当前配置](https://explorer.toncoin.org/config) 中查看参数值，并且它们是如何被写入 [cells](/learn/overviews/cells) 的，在 [TL-B](/develop/data-formats/tl-b-language) 格式的 [block.tlb](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb) 文件中有描述。
+This material is intended to be read alongside the parameter list.
+You can view the parameter values in the [current configuration](https://explorer.toncoin.org/config), and the way they are written into [cells](/learn/overviews/cells) is described in the [block.tlb](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb) file in [TL-B](/develop/data-formats/tl-b-language) format.
 
 :::info
-TON区块链参数末尾的二进制编码是其配置的序列化二进制表示，使得配置的存储或传输更为高效。序列化的确切细节取决于TON区块链使用的特定编码方案。
+The binary encoding at the end of the TON Blockchain parameter is a serialized binary representation of its configuration, enabling efficient storage or transmission of the configuration. The precise details of serialization depend on the specific encoding scheme used by the TON Blockchain.
 :::
 
-## 🚀 开始吧！
+## 🚀 Let's get started!
 
-所有参数都有序排列，你不会迷路。为方便起见，请使用右侧边栏进行快速导航。
+All parameters are in order, and you won't get lost. For your convenience, use the right sidebar for quick navigation.
 
-## 参数 0
+## Param 0
 
-此参数是一个特殊智能合约的地址，该合约存储区块链的配置。配置存储在合约中，以简化其在验证者投票期间的加载和修改。
+This parameter is the address of a special smart contract that stores the blockchain's configuration. The configuration is stored in the contract to simplify its loading and modification during validator voting.
 
 :::info
-在配置参数中，只记录了地址的哈希部分，因为合约始终位于 [masterchain](/learn/overviews/ton-blockchain#masterchain-blockchain-of-blockchains)（工作链 -1）。因此，合约的完整地址将被写为 `-1:<配置参数的值>`。
+In the configuration parameter, only the hash portion of the address is recorded, as the contract always resides in the [masterchain](/learn/overviews/ton-blockchain#masterchain-blockchain-of-blockchains) (workchain -1). Therefore, the full address of the contract will be written as `-1:<value of the configuration parameter>`.
 :::
 
-## 参数 1
+## Param 1
 
-此参数是 [Elector](/develop/smart-contracts/governance#elector) 智能合约的地址，负责任命验证者、分发奖励和对区块链参数的变更进行投票。
+This parameter is the address of the [Elector](/develop/smart-contracts/governance#elector) smart contract, responsible for appointing validators, distributing rewards, and voting on changes to blockchain parameters.
 
-## 参数 2
+## Param 2
 
-此参数代表系统的地址，代表系统铸造新的TON并作为奖励发放给验证区块链的验证者。
+This parameter represents the address of the System, on behalf of which new TONs are minted and sent as rewards for validating the blockchain.
 
 :::info
-如果参数 2 缺失，将使用参数 0 替代（新铸造的TON来自于配置智能合约）。
+If parameter 2 is missing, parameter 0 is used instead (newly minted TONs come from the configuration smart contract).
 :::
 
-## 参数 3
+## Param 3
 
-此参数是交易费收集者的地址。
+This parameter is the address of the transaction fee collector.
 
 :::info
-如果参数 3 缺失（截至撰写时的情况），交易费将发送至Elector智能合约（参数 1）。
+If parameter 3 is missing (as is the case at the time of writing), transaction fees are sent to the Elector smart contract (parameter 1).
 :::
 
-## 参数 4
+## Param 4
 
-此参数是TON网络的根DNS合约地址。
+This parameter is the address of the root DNS contract of the TON network.
 
 :::info
-更多详细信息可以在 [TON DNS & Domains](/participate/web3/dns) 文章中找到，并且在 [这里](https://github.com/ton-blockchain/TEPs/blob/master/text/0081-dns-standard.md) 有更详细的原始描述。该合约不负责销售 .ton 域名。
+More detailed information can be found in the [TON DNS & Domains](/participate/web3/dns) article and in a more detailed original description [here](https://github.com/ton-blockchain/TEPs/blob/master/text/0081-dns-standard.md).
+This contract is not responsible for selling .ton domains.
 :::
 
-## 参数 6
+## Param 6
 
-此参数负责新代币的铸造费用。
+This parameter is responsible for minting fees of new currencies.
 
 :::info
 Currently, minting additional currency is not implemented and does not work. The implementation and launch of the minter are planned.
 
-你可以在 [相关文章](/develop/research-and-development/minter-flow) 中了解更多关于问题和前景。
+You can learn more about the issues and prospects in the [relevant article](/develop/research-and-development/minter-flow).
 :::
 
-## 参数 7
+## Param 7
 
-此参数存储流通中的每种额外代币的数量。数据以 [字典](/develop/data-formats/tl-b-types#hashmap-parsing-example)（二叉树；可能在TON开发过程中这种结构被错误地命名为哈希映射）`extracurrency_id -> amount` 的形式存储，数量以 `VarUint 32` - 从 `0` 到 `2^248` 的整数表示。
+This parameter stores the volume of each of the additional currencies in circulation. Data is stored in the form of a [dictionary](/develop/data-formats/tl-b-types#hashmap-parsing-example) (binary tree; probably during TON's development this structure was mistakenly named hashmap) `extracurrency_id -> amount`, the amount is presented as `VarUint 32` - an integer from `0` to `2^248`.
 
-## 参数 8
+## Param 8
 
-此参数指示网络版本和验证者支持的额外功能。
+This parameter indicates the network version and additional capabilities supported by the validators.
 
 :::info
-验证者是区块链网络中负责创建新块和验证交易的节点。
+Validators are nodes in the blockchain network that are responsible for creating new blocks and verifying transactions.
 :::
 
-- `version`：此字段指定版本。
+- `version`: This field specifies the version.
 
-- `capabilities`：此字段是一组标志，用于指示某些功能或能力的存在或缺失。
+- `capabilities`: This field is a set of flags that are used to indicate the presence or absence of certain features or capabilities.
 
-因此，在更新网络时，验证者将投票改变参数 8。这样，TON网络可以在不停机的情况下进行更新。
+Thus, when updating the network, validators will vote to change parameter 8. This way, the TON network can be updated without downtime.
 
-## 参数 9
+## Param 9
 
-此参数包含一个强制性参数的列表（二叉树）。它确保某些配置参数始终存在，并且在参数 9 变更之前，不能通过提案被删除。
+This parameter contains a list (binary tree) of mandatory parameters. It ensures that certain configuration parameters are always present and cannot be removed by a proposal to change the configuration until parameter 9 changes.
 
-## 参数 10
+## Param 10
 
-此参数代表一份重要TON参数的列表（二叉树），其变更会显著影响网络，因此会举行更多的投票轮次。
+This parameter represents a list (binary tree) of critical TON parameters, the change of which significantly affects the network, so more voting rounds are held.
 
-## 参数 11
+## Param 11
 
-此参数指出更改TON配置的提案在何种条件下被接受。
+This parameter indicates under what conditions proposals to change the TON configuration are accepted.
 
-- `min_tot_rounds` - 提案可应用前的最小轮次数
-- `max_tot_rounds` - 达到此轮次数时提案将自动被拒绝
-- `min_wins` - 所需的胜利次数（3/4的验证者按质押总和计算必须赞成）
-- `max_losses` - 达到此失败次数时提案将自动被拒绝
-- `min_store_sec` 和 `max_store_sec` 确定提案被存储的可能的时间间隔
-- `bit_price` 和 `cell_price` 指出存储提案的一个位或一个cell的价格
+- `min_tot_rounds` - the minimum number of rounds before a proposal can be applied
+- `max_tot_rounds` - the maximum number of rounds, upon reaching which the proposal will automatically be rejected
+- `min_wins` - the required number of wins (3/4 of validators by the sum of the pledge must vote in favor)
+- `max_losses` - the maximum number of losses, upon reaching which the proposal will automatically be rejected
+- `min_store_sec` and `max_store_sec` determine the possible time interval during which the proposal will be stored
+- `bit_price` and `cell_price` indicate the price of storing one bit or one cell of the proposal
 
-## 参数 12
+## Param 12
 
-此参数代表TON区块链中工作链的配置。TON区块链中的工作链被设计为独立的区块链，可以并行运行，使TON能够扩展并处理大量的交易和智能合约。
+This parameter represents the configuration of a workchain in the TON Blockchain. Workchains in the TON Blockchain are designed as independent blockchains that can operate in parallel, allowing TON to scale and process a very large number of transactions and smart contracts.
 
-## 工作链配置参数
+## Workchain configuration parameters
 
-- `enabled_since`：启用此工作链的时刻的UNIX时间戳；
+- `enabled_since`: a UNIX timestamp of the moment this workchain was enabled;
 
-- `actual_min_split`：验证者支持的此工作链的最小拆分（分片）深度；
+- `actual_min_split`: the minimum depth of the split (sharding) of this workchain, supported by validators;
 
-- `min_split`：由配置设置的此工作链的最小拆分深度；
+- `min_split`: the minimum depth of the split of this workchain, set by the configuration;
 
-- `max_split`：此工作链的最大拆分深度；
+- `max_split`: the maximum depth of the split of this workchain;
 
-- `basic`：一个布尔标志位（1表示真，0表示假），指示此工作链是否基础（处理TON币，基于TON虚拟机的智能合约）；
+- `basic`: a boolean flag (1 for true, 0 for false) indicating whether this workchain is basic (handles TON coins, smart contracts based on the TON Virtual Machine);
 
-- `active`：一个布尔标志位，指示此工作链当前是否活跃；
+- `active`: a boolean flag indicating whether this workchain is active at the moment;
 
-- `accept_msgs`：一个布尔标志位，指示此工作链目前是否接受消息；
+- `accept_msgs`: a boolean flag indicating whether this workchain is accepting messages at the moment;
 
-- `flags`：工作链的附加标志位（保留，当前始终为0）；
+- `flags`: additional flags for the workchain (reserved, currently always 0);
 
-- `zerostate_root_hash` 和 `zerostate_file_hash`：工作链第一个区块的哈希；
+- `zerostate_root_hash` and `zerostate_file_hash`: hashes of the first block of the workchain;
 
-- `version`：工作链的版本；
+- `version`: version of the workchain;
 
-- `format`：工作链的格式，包括 vm_version 和 vm_mode - 那里使用的虚拟机。
+- `format`: the format of the workchain, which includes vm_version and vm_mode - the virtual machine used there.
 
-## 参数 13
+## Param 13
 
-此参数定义了在 [Elector](/develop/smart-contracts/governance#elector) 合约中对验证者不正确操作提出投诉的成本。
+This parameter defines the cost of filing complaints about incorrect operation of validators in the [Elector](/develop/smart-contracts/governance#elector) contract.
 
-## 参数 14
+## Param 14
 
-此参数代表TON区块链中区块创建的奖励。Nanograms是nanoTON，因此，masterchain中的区块创建奖励等于1.7 TON，而基本工作链中的区块创建奖励为1.0 TON（同时，如果工作链发生拆分，区块奖励也会拆分：如果工作链中有两个分片链，那么分片区块的奖励将是0.5 TON）。
+This parameter represents the reward for block creation in the TON Blockchain. Nanograms are nanoTON, thus, the reward for block creation in the masterchain equals 1.7 TON, and in the basic workchain - 1.0 TON (meanwhile, in the event of a workchain split, the block reward also splits: if there are two shardchains in the workchain, then the shard block reward will be 0.5 TON).
 
-## 参数 15
+## Param 15
 
-此参数包含TON区块链中不同选举阶段和验证者工作的持续时间。
+This parameter contains the duration of different stages of elections and validators' work in the TON Blockchain.
 
-对于每个验证期，都有一个等于验证开始时UNIX格式时间的 `election_id`。
-你可以通过调用Elector合约的相应get方法 `active_election_id` 和 `past_election_ids` 获得当前的 `election_id`（如果选举正在进行中）或过去的一个。
+For each validation period, there is an `election_id` equal to the UNIX-format time at the start of the validation.
+You can get the current `election_id` (if elections are ongoing) or the past one by invoking the Elector contract's respective get-methods `active_election_id` and `past_election_ids`.
 
-## 工作链配置参数
+## Workchain configuration parameters
 
-- `validators_elected_for`：选举出的验证者集合执行其角色的秒数（一轮）。
+- `validators_elected_for`: the number of seconds the elected set of validators perform their role (one round).
 
-- `elections_start_before`：当前轮次结束前多少秒将开始下一时期的选举过程。
+- `elections_start_before`: how many seconds before the end of the current round the election process for the next period will start.
 
-- `elections_end_before`：当前轮次结束前多少秒将选择下一轮的验证者。
+- `elections_end_before`: how many seconds before the end of the current round the validators for the next round will be chosen.
 
-- `stake_held_for`：在轮次过期后，为处理投诉而持有验证者质押的时期。
+- `stake_held_for`: the period for which a validator's stake is held (for handling complaints) after the round expires.
 
 :::info
-参数中的每个值都由 `uint32` 数据类型确定。
+Each value in the arguments is determined by the `uint32` data type.
 :::
 
-### 示例
+### Examples
 
-在TON区块链中，通常将验证周期分为偶数和奇数。这些轮次相互跟随。由于下一轮的投票在前一轮进行，因此验证者需要将资金分为两个池，以有机会参与两轮。
+In the TON Blockchain, it is customary to conventionally divide validation periods into even and odd ones. These rounds follow one another. Since voting for the next round takes place during the previous one, a validator needs to divide funds into two pools to have the opportunity to participate in both rounds.
 
-#### 主网
+#### Mainnet
 
-当前值：
+Current values:
 
 ```python
 constants = {
-    'validators_elected_for': 65536,  # 18.2小时
-    'elections_start_before': 32768,  # 9.1小时
-    'elections_end_before': 8192,     # 2.2小时
-    'stake_held_for': 32768           # 9.1小时
+    'validators_elected_for': 65536,  # 18.2 hours
+    'elections_start_before': 32768,  # 9.1 hours
+    'elections_end_before': 8192,     # 2.2 hours
+    'stake_held_for': 32768           # 9.1 hours
 }
 ```
 
-方案：
+Scheme:
 
 ![image](/img/docs/blockchain-configs/config15-mainnet.png)
 
-#### 如何计算周期？
+#### How to calculate periods?
 
-假设 `election_id = validation_start = 1600032768`。那么：
+Let `election_id = validation_start = 1600032768`. Then:
 
 ```python
 election_start = election_id - constants['elections_start_before'] = 1600032768 - 32768 = 1600000000
@@ -192,28 +195,28 @@ hold_start = validation_end = election_id + constants['validators_elected_for'] 
 hold_end = hold_start + constants['stake_held_for'] = 1600098304 + 32768 = 1600131072
 ```
 
-因此，目前，一个奇偶性轮次的长度为 `1600131072 - 1600000000 = 131072秒 = 36.40888...小时`
+Thus, at the moment, the length of one round of one parity is `1600131072 - 1600000000 = 131072 seconds = 36.40888... hours`
 
-#### 测试网
+#### Testnet
 
-##### 当前值：
+##### Current values:
 
 ```python
 constants = {
-    'validators_elected_for': 7200,  # 2小时
-    'elections_start_before': 2400,  # 40分钟
-    'elections_end_before': 180,     # 3分钟
-    'stake_held_for': 900            # 15分钟
+    'validators_elected_for': 7200,  # 2 hours
+    'elections_start_before': 2400,  # 40 minutes
+    'elections_end_before': 180,     # 3 minutes
+    'stake_held_for': 900            # 15 minutes
 }
 ```
 
-##### 方案
+##### Scheme
 
 ![image](/img/docs/blockchain-configs/config15-testnet.png)
 
-###### 如何计算周期？
+###### How to calculate periods?
 
-假设 `election_id = validation_start = 160002400`。那么：
+Let `election_id = validation_start = 160002400`. Then:
 
 ```python
 election_start = election_id - constants['elections_start_before'] = 160002400 - 2400 = 1600000000
@@ -222,243 +225,243 @@ hold_start = validation_end = election_id + constants['validators_elected_for'] 
 hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 160010500
 ```
 
-因此，目前，一个奇偶性轮次的长度为 `160010500 - 1600000000 = 10500秒 = 175分钟 = 2.91666...小时`
+Thus, at the moment, the length of one round of one parity is `160010500 - 1600000000 = 10500 seconds = 175 minutes = 2.91666... hours`
 
-## 参数 16
+## Param 16
 
-此参数代表TON区块链中验证者数量的限制。它直接被Elector智能合约使用。
+This parameter represents the limits on the number of validators in the TON Blockchain. It is directly used by the Elector smart contract.
 
-### 选举中验证者数量的配置参数：
+### Configuration parameters for the number of validators for elections:
 
-- `max_validators`：此参数代表任何给定时间可以参与网络运营的验证者的最大数量。
+- `max_validators`: This parameter represents the maximum number of validators that can participate in the network operation at any given time.
 
-- `max_main_validators`：此参数代表主链验证者的最大数量。
+- `max_main_validators`: This parameter represents the maximum number of masterchain validators.
 
-- `min_validators`：此参数代表必须支持网络运营的最小验证者数量。
+- `min_validators`: This parameter represents the minimum number of validators that must support the network operation.
 
-1. 验证者的最大数量应大于或等于主链验证者的最大数量。
-2. 主链验证者的最大数量必须大于或等于验证者的最小数量。
-3. 验证者的最小数量不得少于1。
+1. The maximum number of validators is greater than or equal to the maximum number of masterchain validators.
+2. The maximum number of masterchain validators must be greater than or equal to the minimum number of validators.
+3. The minimum number of validators must be no less than 1.
 
-## 参数 17
+## Param 17
 
-此参数代表TON区块链中的质押参数配置。在许多区块链系统中，特别是使用权益证明或委托权益证明共识算法的系统中，网络原生加密货币的所有者可以“质押”他们的代币成为验证者并获得奖励。
+This parameter represents the stake parameters configuration in the TON Blockchain. In many blockchain systems, especially those using the Proof-of-Stake or Delegated Proof-of-Stake consensus algorithm, cryptocurrency owners native to the network can "stake" their tokens to become validators and earn rewards.
 
-## 配置参数：
+## Configuration parameters:
 
-- `min_stake`：此参数代表有兴趣参与验证过程的一方需要质押的TON的最小金额。
+- `min_stake`: This parameter represents the minimum amount of TONs that an interested party needs to stake to participate in the validation process.
 
-- `max_stake`：此参数代表有兴趣参与验证过程的一方可以质押的TON的最大金额。
+- `max_stake`: This parameter represents the maximum amount of TONs that an interested party can stake.
 
-- `min_total_stake`：此参数代表被选中的验证者集合必须持有的TON的最小总金额。
+- `min_total_stake`: This parameter represents the minimum total amount of TONs that must be held by the chosen set of validators.
 
-- `max_stake_factor`：此参数是一个乘数，指示最大有效质押（抵押）可以超过任何其他验证者发送的最小质押的多少倍。
-
-:::info
-参数中的每个值都由 `uint32` 数据类型确定。
-:::
-
-## 参数 18
-
-此参数代表确定TON区块链中数据存储价格的配置。这作为一种防止垃圾信息的措施，并鼓励网络维护。
-
-### 存储费用参数的字典：
-
-- `utime_since`：此参数提供指定价格适用的初始Unix时间戳。
-
-- `bit_price_ps` 和 `cell_price_ps`：这些参数代表TON区块链主工作链上存储一个位或一个cell的信息65536秒的存储价格
-
-- `mc_bit_price_ps` 和 `mc_cell_price_ps`：这些参数特别代表在TON主链上计算资源的价格，同样为65536秒
+- `max_stake_factor`: This parameter is a multiplier indicating how many times the maximum effective stake (pledge) can exceed the minimum stake sent by any other validator.
 
 :::info
-
-`utime_since` 接受 `uint32` 数据类型的值。
-
-其余接受 `uint64` 数据类型的值。
+Each value in the arguments is determined by the `uint32` data type.
 :::
 
-## 参数 20 和 21
+## Param 18
 
-这些参数定义了TON网络中计算的成本。任何计算的复杂性都以gas单位估计。
+This parameter represents the configuration for determining the prices for data storage on the TON Blockchain. This serves as a measure to prevent spam and encourages network maintenance.
 
-- `flat_gas_limit` 和 `flat_gas_price`：提供了一定数量的起始gas，价格为 `flat_gas_price`（用于抵消启动TON虚拟机的成本）。
+### Dictionary of storage fee parameters:
 
-- `gas_price`：此参数反映了网络中gas的价格，单位是每65536gas单位的nanotons。
+- `utime_since`: This parameter provides the initial Unix timestamp from which the specified prices apply.
 
-- `gas_limit`：此参数代表每笔交易可消耗的最大gas量。
+- `bit_price_ps` and `cell_price_ps`: These parameters represent the storage prices for one bit or one cell of information in the main workchains of the TON Blockchain for 65536 seconds
 
-- `special_gas_limit`：此参数代表特殊（系统）合约每笔交易可消耗的gas量限制。
-
-- `gas_credit`：此参数代表提供给交易的gas单位信用额，用于检查外部消息。
-
-- `block_gas_limit`：此参数代表单个区块内可消耗的最大gas量。
-
-- `freeze_due_limit` 和 `delete_due_limit`：合约被冻结和删除的累积存储费用（nanotons）的限制。
+- `mc_bit_price_ps` and `mc_cell_price_ps`: These parameters represent the prices for computational resources specifically in the TON masterchain for 65536 seconds
 
 :::info
-更多关于 `gas_credit` 和外部消息的其他参数的信息在 [这里](/develop/smart-contracts/guidelines/accept#external-messages) 。
+
+`utime_since` accepts values in the `uint32` data type.
+
+The rest accept values in the `uint64` data type.
 :::
 
-## 参数 22 和 23
+## Param 20 and 21
 
-这些参数设置了区块的限制，达到这些限制时，区块将被完成，剩余消息的回调（如果有的话）将延续到下一个区块。
+These parameters define the cost of computations in the TON network. The complexity of any computation is estimated in gas units.
 
-### 配置参数：
+- `flat_gas_limit` and `flat_gas_price`: A certain starting amount of gas is provided at a price of `flat_gas_price` (to offset the costs of launching the TON Virtual Machine).
 
-- `bytes`：此部分设置了区块大小的字节限制。
+- `gas_price`: This parameter reflects the price of gas in the network, in nanotons per 65536 gas units.
 
-- `underload`：负载不足是指分片意识到没有负载，并倾向于合并（如果相邻的分片愿意的话）。
+- `gas_limit`: This parameter represents the maximum amount of gas that can be consumed per transaction.
 
-- `soft_limit`：软限制 - 达到此限制时，内部消息停止处理。
+- `special_gas_limit`: This parameter represents the limit on the amount of gas that can be consumed per transaction of a special (system) contract.
 
-- `hard_limit`：硬限制 - 这是绝对最大大小。
+- `gas_credit`: This parameter represents a credit in gas units that is provided to transactions for the purpose of checking an external message.
 
-- `gas`：此部分设置了区块可以消耗的gas量限制。在区块链中，gas是计算工作的指标。对于大小（字节），负载不足、软限制和硬限制的限制方式相同。
+- `block_gas_limit`: This parameter represents the maximum amount of gas that can be consumed within a single block.
 
-- `lt_delta`：此部分设置了第一个交易和最后一个交易之间逻辑时间差的限制。逻辑时间是TON区块链用于事件排序的概念。对于大小（字节）和gas，负载不足、软限制和硬限制的限制方式相同。
+- `freeze_due_limit` and `delete_due_limit`: Limits of accumulated storage fees (in nanoTON) at which a contract is frozen and deleted, respectively.
 
 :::info
-在分片上负载不足，相应地，希望与neighbor合并的情况下，`soft_limit` 定义了一种状态，即超过此状态后内部消息停止处理，但外部消息继续处理。外部消息处理直到达到 `(soft_limit + hard_limit)/2` 的限制。
+More about `gas_credit` and other parameters in the section with external messages [here](/develop/smart-contracts/guidelines/accept#external-messages).
 :::
 
-## 参数 24 和 25
+## Param 22 and 23
 
-参数 24 代表了TON区块链主链中发送消息的成本配置。
+These parameters set limits on the block, upon reaching which the block is finalized and the callback of the remaining messages (if any) is carried over to the next block.
 
-参数 25 代表了所有其他情况下发送消息的成本配置。
+### Configuration parameters:
 
-### 定义转发成本的配置参数：
+- `bytes`: This section sets the limits on the block size in bytes.
 
-- `lump_price`：此参数表示转发消息的基础价格，无论其大小或复杂性如何。
+- `underload`: Underload is a state when the shard realizes that there is no load and is inclined to merge if a neighboring shard is willing.
 
-- `bit_price`：此参数代表每位消息转发的成本。
+- `soft_limit`: Soft limit - when this limit is reached, internal messages stop being processed.
 
-- `cell_price`：此参数反映了每个cell消息转发的成本。cell是TON区块链上数据存储的基本单位。
+- `hard_limit`: Hard limit - this is the absolute maximum size.
 
-- `ihr_price_factor`：用于计算即时超立方路由（IHR）成本的因子。
+- `gas`: This section sets the limits on the amount of gas that a block can consume. Gas in the context of blockchain is an indicator of computational work. The limits on underload, soft and hard limit work the same as for size in bytes.
+
+- `lt_delta`: This section sets the limits on the difference in logical time between the first and the last transaction. Logical time is a concept used in the TON Blockchain for ordering events. The limits on underload, soft and hard limit work the same as for size in bytes and gas.
+
+:::info
+In case of insufficient load on the shard and, accordingly, the desire to merge with a neighbor, `soft_limit` defines a state above which internal (internal) messages stop being processed, but external (external) ones continue. External (external) messages are processed until a limit equal to `(soft_limit + hard_limit)/2 is reached`.
+:::
+
+## Param 24 and 25
+
+Parameter 24 represents the configuration for the cost of sending messages in the masterchain of the TON Blockchain.
+
+Parameter 25 represents the configuration for the cost of sending messages in all other cases.
+
+### Configuration parameters defining the costs of forwarding:
+
+- `lump_price`: This parameter means the base price for forwarding a message, regardless of its size or complexity.
+
+- `bit_price`: This parameter represents the cost per bit of message forwarding.
+
+- `cell_price`: This parameter reflects the cost of forwarding a message per cell. A cell is the basic unit of data storage on the TON Blockchain.
+
+- `ihr_price_factor`: This is a factor used to calculate the cost of immediate hypercube routing (IHR).
   :::info
-  IHR是TON区块链网络中的一种消息传递方法，消息直接发送到接收方的分片链。
+  IHR is a method of message delivery in the TON Blockchain network, where messages are sent directly to the recipient's shard chain.
   :::
 
-- `first_frac`：此参数定义了沿消息路线的第一次转换将使用的剩余的remainder的部分。
+- `first_frac`: This parameter defines the fraction of the remaining remainder that will be used for the first transition along the message route.
 
-- `next_frac`：此参数定义了沿消息路线的后续转换将使用的剩余的remainder的部分。
+- `next_frac`: This parameter defines the fraction of the remaining remainder that will be used for subsequent transitions along the message route.
 
-## 参数 28
+## Param 28
 
-此参数提供了TON区块链中Catchain协议的配置。Catchain是TON中用于在验证者之间达成一致的最低层层共识协议。
+This parameter provides the configuration for the Catchain protocol in the TON Blockchain. Catchain is the lowest level consensus protocol used in TON to achieve agreement among validators.
 
-### 配置参数：
+### Configuration parameters:
 
-- `flags`：一个通用字段，可用于设置各种二进制参数。在这种情况下，它等于0，这意味着没有设置特定的标志。
+- `flags`: A general field that can be used to set various binary parameters. In this case, it equals 0, which means that no specific flags are set.
 
-- `shuffle_mc_validators`：一个布尔值，指示是否打乱主链验证者。如果此参数设置为1，则验证者将被打乱；否则，他们不会。
+- `shuffle_mc_validators`: A Boolean value indicating whether to shuffle the masterchain validators or not. If this parameter is set to 1, the validators will be shuffled; otherwise, they will not.
 
-- `mc_catchain_lifetime`：主链catchain组的寿命（秒）。
+- `mc_catchain_lifetime`: The lifetime of masterchain catchain groups in seconds.
 
-- `shard_catchain_lifetime`：分片链catchain组的寿命（秒）。
+- `shard_catchain_lifetime`: The lifetime of shardchain catchain groups in seconds.
 
-- `shard_validators_lifetime`：分片链验证者组的寿命（秒）。
+- `shard_validators_lifetime`: The lifetime of a shardchain validators group in seconds.
 
-- `shard_validators_num`：每个分片链验证组的验证者数量。
+- `shard_validators_num`: The number of validators in each shardchain validation group.
 
-## 参数 29
+## Param 29
 
-此参数提供了TON区块链中catchain（[参数 28](#param-28)）上层共识协议的配置。共识协议是区块链网络的关键组成部分，确保所有节点在分布式账本的状态上达成一致。
+This parameter provides the configuration for the consensus protocol above catchain ([Param 28](#param-28)) in the TON Blockchain. The consensus protocol is a crucial component of a blockchain network, and it ensures that all nodes agree on the state of the distributed ledger.
 
-### 配置参数：
+### Configuration parameters:
 
-- `flags`：一个通用字段，可用于设置各种二进制参数。在这种情况下，它等于0，这意味着没有设置特定的标志。
+- `flags`: A general field that can be used to set various binary parameters. In this case, it equals 0, which means that no specific flags are set.
 
-- `new_catchain_ids`：一个布尔值，指示是否生成新的Catchain标识符。如果此参数设置为1，则将生成新的标识符。在这种情况下，它被赋值为1，这意味着将生成新的标识符。
+- `new_catchain_ids`: A Boolean value indicating whether to generate new Catchain identifiers. If this parameter is set to 1, new identifiers will be generated. In this case, it is assigned the value of 1, which means that new identifiers will be generated.
 
-- `round_candidates`：共识协议每轮考虑的候选人数量。这里设置为3。
+- `round_candidates`: The number of candidates to be considered in each round of the consensus protocol. Here, it is set to 3.
 
-- `next_candidate_delay_ms`：在生成区块候选权转移到下一个验证者之前的延迟（毫秒）。这里设置为2000毫秒（2秒）。
+- `next_candidate_delay_ms`: The delay in milliseconds before the right to generate a block candidate passes to the next validator. Here, it is set to 2000 ms (2 seconds).
 
-- `consensus_timeout_ms`：区块共识的超时时间（毫秒）。这里设置为16000毫秒（16秒）。
+- `consensus_timeout_ms`: The timeout for block consensus in milliseconds. Here, it is set to 16000 ms (16 seconds).
 
-- `fast_attempts`：达成共识的“快速”尝试次数。这里设置为3。
+- `fast_attempts`: The number of "fast" attempts to reach consensus. Here, it is set to 3.
 
-- `attempt_duration`：每次达成一致的尝试持续时间。这里设置为8。
+- `attempt_duration`: The duration of each attempt at agreement. Here, it is set to 8.
 
-- `catchain_max_deps`：Catchain区块的最大依赖数量。这里设置为4。
+- `catchain_max_deps`: The maximum number of dependencies of a Catchain block. Here, it is set to 4.
 
-- `max_block_bytes`：区块的最大大小（字节）。这里设置为2097152字节（2MB）。
+- `max_block_bytes`: The maximum size of a block in bytes. Here, it is set to 2097152 bytes (2 MB).
 
-- `max_collated_bytes`：序列化的区块正确性证明的最大大小（字节）。这里设置为2097152字节（2MB）。
+- `max_collated_bytes`: The maximum size of serialized block correctness proofs in bytes. Here, it is set to 2097152 bytes (2 MB).
 
-- `proto_version`：协议版本。这里设置为2。
+- `proto_version`: The protocol version. Here, it is set to 2.
 
-- `catchain_max_blocks_coeff`：Catchain中区块生成速率的限制系数，[描述](https://github.com/ton-blockchain/ton/blob/master/doc/catchain-dos.md)。这里设置为10000。
+- `catchain_max_blocks_coeff`: The coefficient limiting the rate of block generation in Catchain, [description](https://github.com/ton-blockchain/ton/blob/master/doc/catchain-dos.md). Here, it is set to 10000.
 
-## 参数 31
+## Param 31
 
-此参数代表来自以下智能合约地址的配置，这些地址不收取gas或存储费用，可以创建tick-tok交易。这个列表通常包括治理合约。该参数以二叉树结构呈现——一个树（HashMap 256），其中键是地址的256位表示。此列表中只能出现主链中的地址。
+This parameter represents the configuration of smart contract addresses from which no fees are charged for either gas or storage, and where tick-tok transactions can be created. The list usually includes governance contracts. The parameter is presented as a binary tree structure — a tree (HashMap 256), where the keys are a 256-bit representation of the address. Only addresses in the masterchain can be present in this list.
 
-## 参数 32、34 和 36
+## Param 32, 34 and 36
 
-来自上一轮（32）、当前轮（34）和下一轮（36）的验证者列表。参数 36 负责从选举结束到轮次开始时设置。
+Lists of validators from the previous (32), current (34), and next (36) rounds. Parameter 36 is set from the end of the elections until the start of the round.
 
-### 配置参数：
+### Configuration parameters:
 
-- `cur_validators`：这是当前的验证者列表。验证者通常负责在区块链网络中验证交易。
+- `cur_validators`: This is the current list of validators. Validators are typically responsible for verifying transactions in a blockchain network.
 
-- `utime_since` 和 `utime_until`：这些参数提供了这些验证者活跃的时间段。
+- `utime_since` and `utime_until`: These parameters provide the time period during which these validators are active.
 
-- `total` 和 `main`：这些参数提供了网络中验证者的总数和验证主链的验证者数量。
+- `total` and `main`: These parameters provide the total number of validators and the number of validators validating the masterchain in the network.
 
-- `total_weight`：这将验证者的权重加起来。
+- `total_weight`: This adds up the weights of the validators.
 
-- `list`：一个验证者的树状列表 `id->validator-data`：`validator_addr`、`public_key`、`weight`、`adnl_addr`：这些参数提供了每个验证者的详细信息 - 他们在主链中的256地址、公钥、权重、ADNL地址（TON网络层使用的地址）。
+- `list`: A list of validators in the tree format `id->validator-data`: `validator_addr`, `public_key`, `weight`, `adnl_addr`: These parameters provide details about each validator - their 256 addresses in the masterchain, public key, weight, ADNL address (the address used at the network level of TON).
 
-## 参数 40
+## Param 40
 
-此参数定义了对不当行为（非验证）的惩罚结构的配置。在没有此参数的情况下，默认罚款大小为101 TON。
+This parameter defines the structure of the configuration for punishment for improper behavior (non-validation). In the absence of the parameter, the default fine size is 101 TON.
 
-## 配置参数：
+## Configuration parameters:
 
-**`MisbehaviourPunishmentConfig`**：此数据结构定义了如何惩罚系统中的不当行为。
+\*\* `MisbehaviourPunishmentConfig` \*\*: This data structure defines how improper behavior in the system is punished.
 
-它包含几个字段：
+It contains several fields:
 
-- `default_flat_fine`：这部分罚款与质押大小无关。
+- `default_flat_fine`: This part of the fine does not depend on the stake size.
 
-- `default_proportional_fine`：这部分罚款与验证者的质押大小成比例。
+- `default_proportional_fine`: This part of the fine is proportional to the validator's stake size.
 
-- `severity_flat_mult`：这是应用于验证者重大违规行为的 `default_flat_fine` 值的乘数。
+- `severity_flat_mult`: This is the multiplier applied to the `default_flat_fine` value for significant violations by the validator.
 
-- `severity_proportional_mult`：这是应用于验证者重大违规行为的 `default_proportional_fine` 值的乘数。
+- `severity_proportional_mult`: This is the multiplier applied to the `default_proportional_fine` value for significant violations by the validator.
 
-- `unpunishable_interval`：此参数代表违规者不受惩罚的期间，以消除临时网络问题或其他异常。
+- `unpunishable_interval`: This parameter represents the period during which offenders are not punished to eliminate temporary network problems or other anomalies.
 
-- `long_interval`、`long_flat_mult`、`long_proportional_mult`：这些参数定义了一个“长”时间段及其对不当行为的持平和比例罚款的乘数。
+- `long_interval`, `long_flat_mult`, `long_proportional_mult`: These parameters define a "long" period of time and multipliers for flat and proportional fines for improper behavior.
 
-- `medium_interval`、`medium_flat_mult`、`medium_proportional_mult`：同样，它们定义了一个“中等”时间段及其对不当行为的持平和比例罚款的乘数。
+- `medium_interval`, `medium_flat_mult`, `medium_proportional_mult`: Similarly, they define a "medium" period of time and multipliers for flat and proportional fines for improper behavior.
 
-## 参数 43
+## Param 43
 
-此参数涉及帐户和消息的各种大小限制和其他特性。
+This parameter pertains to various size limits and other characteristics of accounts and messages.
 
-### 配置参数：
+### Configuration parameters:
 
-- `max_msg_bits`：消息的最大大小（位）。
+- `max_msg_bits`: maximum message size in bits.
 
-- `max_msg_cells`：消息可以占用的最大cell数（存储单位的一种形式）。
+- `max_msg_cells`: maximum number of cells (a form of storage unit) a message can occupy.
 
-- `max_library_cells`：用于库cell的最大cell数。
+- `max_library_cells`: maximum number of cells that can be used for library cells.
 
-- `max_vm_data_depth`：消息和账户状态中的最大cell深度。
+- `max_vm_data_depth`: maximum cell depth in messages and account state.
 
-- `max_ext_msg_size`：外部消息的最大大小（位）。
+- `max_ext_msg_size`: maximum external message size in bits.
 
-- `max_ext_msg_depth`：外部消息的最大深度。这可能是指消息内部数据结构的深度。
+- `max_ext_msg_depth`: maximum external message depth. This could refer to the depth of the data structure within the message.
 
-- `max_acc_state_cells`：帐户状态可以占用的最大cell数。
+- `max_acc_state_cells`: maximum number of cells that an account state can occupy.
 
-- `max_acc_state_bits`：帐户状态的最大大小（位）。
+- `max_acc_state_bits`: maximum account state size in bits.
 
-如果缺失，默认参数为：
+If absent, the default parameters are taken:
 
 - `max_size` = 65535
 - `max_depth` = 512
@@ -470,20 +473,20 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 - `max_acc_state_bits` = (1 << 16) \* 1023
 
 :::info
-您可以在源代码[这里](https://github.com/ton-blockchain/ton/blob/fc9542f5e223140fcca833c189f77b1a5ae2e184/crypto/block/mc-config.h#L379)查看有关标准参数的更多详情。
+You can view more details about the standard parameters [here](https://github.com/ton-blockchain/ton/blob/fc9542f5e223140fcca833c189f77b1a5ae2e184/crypto/block/mc-config.h#L379) in the source code.
 :::
 
-## 参数 44
+## Param 44
 
-此参数定义了被暂停的地址列表，这些地址在`suspended_until`之前不能被初始化。它仅适用于尚未启动的账户。这是稳定代币经济学的一种措施（限制早期矿工）。如果未设置 - 则没有限制。每个地址都表示为此树的一个终端节点，树状结构允许有效地检查地址在列表中的存在与否。
+This parameter defines the list of suspended addresses, which cannot be initialized until `suspended_until`. It only applies to yet uninitiated accounts. This is a measure for stabilizing the tokenomics (limiting early miners). If not set - there are no limitations. Each address is represented as an end node in this tree, and the tree-like structure allows to effectively check the presence or absence of an address in the list.
 
 :::info
-代币经济学的稳定进一步在“The Open Network” Telegram 频道的[官方报告](https://t.me/tonblockchain/178)中描述。
+The stabilization of the tokenomics is further described in the [official report](https://t.me/tonblockchain/178) of the "The Open Network" Telegram channel.
 :::
 
-## 参数 71 - 73
+## Param 45
 
-此参数涉及在其他网络中包装TON的桥：
+The list of precompiled contracts is stored in the masterchain config:
 
 ```
 precompiled_smc#b0 gas_usage:uint64 = PrecompiledSmc;
@@ -519,7 +522,7 @@ This parameter pertains to bridges for wrapping tokens from other networks into 
 - BSC-TON \*\* (81) \*\*
 - Polygon-TON \*\* (82) \*\*
 
-### 下一步
+### Configuration parameters:
 
 - `bridge_address` and `oracles_address`: These are the blockchain addresses of the bridge and the bridge management contract (oracles multisig), respectively.
 
