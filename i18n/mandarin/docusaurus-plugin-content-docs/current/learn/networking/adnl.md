@@ -1,37 +1,40 @@
-# ADNL 协议
+# ADNL Protocol
 
-实现：
+Implementation:
+
 * https://github.com/ton-blockchain/ton/tree/master/adnl
 
-## 概览
+## Overview
 
-TON的基石是抽象数据报网络层（ADNL）。
+The cornerstone of TON is the Abstract Datagram Network Layer (ADNL).
 
-这是一个基于**UDP**在**IPv4**（将来是IPv6）之上运行的覆盖层、点对点、不可靠（小尺寸）数据报协议，如果UDP不可用，可以选择**TCP备选**。
+This is an overlay, peer-to-peer, unreliable (small-size) datagram protocol running on top of a **UDP** in **IPv4** (in the future, IPv6), with an optional **TCP fallback** if UDP is not available.
 
-## ADNL 地址
+## ADNL address
 
-每个参与者都有一个256位的ADNL地址。
+Each participant has a 256-bit ADNL Address.
 
-ADNL协议允许您仅使用ADNL地址发送（不可靠）和接收数据报。IP地址和端口由ADNL协议隐藏。
+The ADNL Protocol allows you to send (unreliable) and receive datagrams using only  ADNL Addresses. IP Addresses and Ports are hidden by the ADNL Protocol.
 
-ADNL地址本质上等同于一个256位的ECC公钥。这个公钥可以任意生成，从而为节点创建尽可能多的不同网络身份。然而，为了接收（并解密）发给接收地址的消息，必须知道相应的私钥。
+An ADNL Address is essentially equal to a 256-bit ECC public key. This public key can be arbitrarily generated, thus creating as many different network identities as the node needs.
+However, one must know the corresponding private key in order to receive (and decrypt) messages intended for the recipient address.
 
-实际上，ADNL地址不是公钥本身；相反，它是一个序列化TL对象的256位SHA256哈希，该对象可以根据其构造器来描述几种类型的公钥和地址。
+In reality, the ADNL Address is not the public key itself; instead, it is a 256-bit SHA256 hash of a serialized TL-object that can describe several types of public keys and addresses depending on its constructor.
 
-## 加密与安全
+## Encryption & security
 
-通常，每个发送的数据报都由发送方签名，并加密，以便只有接收方可以解密消息并通过签名来验证其完整性。
+Normally each datagram sent is signed by the sender and encrypted so that only the recipient can decrypt the message and verify its integrity by the signature.
 
-## 邻居表
+## Neighbor tables
 
-通常，一个TON ADNL节点会有一些“邻居节点(neighbors)”，其中包含了其他已知节点的信息，如他们的抽象地址、公钥、IP地址和UDP端口。随着时间的推移，它将逐渐使用从这些已知节点收集的信息扩展此表。这些新信息可以是对特殊查询的回答，或有时是过时记录的移除。
+Normally, a TON ADNL node will have some “neighbor table”, which contains information about other known nodes, such as their abstract addresses, public keys, IP Addresses and UDP Ports. Over time, it will gradually
+extend this table using information gathered from these known nodes. This new information can be in the form of answers to special queries or sometimes the removal of obsolete records.
 
-ADNL允许您建立点对点的通道和隧道（一系列代理）。
+ADNL allows you to set up point-to-point channels and tunnels (a chain of proxies).
 
-还可以在ADNL之上构建类TCP的流协议。
+A TCP-like stream protocol can be built over ADNL.
 
-## 参阅
+## What's next?
 
-* 在[低层级ADNL文章](/learn/networking/low-level-adnl)中阅读更多关于ADNL的信息
-* [TON白皮书](https://docs.ton.org/ton.pdf)的第3.1章。
+* Read more about ADNL in the [Low-Level ADNL article](/learn/networking/low-level-adnl)
+* Chapter 3.1 of the [TON Whitepaper](https://docs.ton.org/ton.pdf).
