@@ -1,16 +1,16 @@
-# 区块布局
+# Block layout
 
 :::info
-为了最大限度地理解本页内容，强烈建议您熟悉 [TL-B 语言](/develop/data-formats/cell-boc)。
+To maximize your comprehension of this page, familiarizing yourself with the [TL-B language](/develop/data-formats/cell-boc) is highly recommended.
 :::
 
-区块链中的一个区块是一条新交易记录，一旦完成，就会作为这个去中心化账本的永久且不可更改的一部分被添加到区块链上。每个区块包含交易数据、时间以及对前一个区块的引用等信息，从而形成一个区块链。
+A block in the blockchain is a record of new transactions that, once completed, is added to the blockchain as a permanent and immutable part of this decentralized ledger. Each block contains information such as transaction data, time, and a reference to the previous block, thereby forming a chain of blocks.
 
-TON 区块链中的区块由于系统的整体复杂性而具有相当复杂的结构。本页描述了这些区块的结构和布局。
+The blocks in the TON Blockchain possess a rather complex structure due to the system's overall complexity. This page describes the structure and layout of these blocks.
 
-## 区块
+## Block
 
-一个区块的原始 TL-B 方案如下：
+Raw TL-B scheme of a block looks as:
 
 ```tlb
 block#11ef55aa global_id:int32
@@ -19,15 +19,15 @@ block#11ef55aa global_id:int32
     extra:^BlockExtra = Block;
 ```
 
-让我们仔细看看每个字段。
+Let's take a closer look at each field.
 
 ## global_id:int32
 
-创建此区块的网络的 ID。主网为 `-239`，测试网为 `-3`。
+An ID of the network where this block is created. `-239` for mainnet and `-3` for testnet.
 
 ## info:^BlockInfo
 
-此字段包含关于区块的信息，如其版本、序列号、标识符和其他标志位。
+This field contains information about the block, such as its version, sequence numbers, identifiers, and other flags.
 
 ```tlb
 block_info#9bc7a987 version:uint32
@@ -52,38 +52,36 @@ block_info#9bc7a987 version:uint32
     = BlockInfo;
 ```
 
-| 字段                               | 类型                    | 描述                                                                                                           |
-| ---------------------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `version`                          | uint32                  | 区块结构的版本。                                                                                               |
-| `not_master`                       | (## 1)                  | 标志位，表示此区块是否为主链区块。                                                                               |
-| `after_merge`                      | (## 1)                  | 标志位，表示此区块是否在两个分片链合并后创建，因此它有两个父区块。                                                |
-| `before_split`                     | (## 1)                  | 标志位，表示此区块是否在其分片链分裂前创建。                                                                      |
-| `after_split`                      | (## 1)                  | 标志位，表示此区块是否在其分片链分裂后创建。                                                                      |
-| `want_split`                       | Bool                    | 标志位，表示是否希望分片链分裂。                                                                                  |
-| `want_merge`                       | Bool                    | 标志位，表示是否希望分片链合并。                                                                                  |
-| `key_block`                        | Bool                    | 标志位，表示此区块是否为关键区块。                                                                                |
-| `vert_seqno_incr`                  | (## 1)                  | 垂直序列号的增量。                                                                                             |
-| `flags`                            | (## 8)                  | 区块的附加标志位。                                                                                               |
-| `seq_no`                           | #                       | 与区块相关的序列号。                                                                                           |
-| `vert_seq_no`                      | #                       | 与区块相关的垂直序列号。                                                                                       |
-| `shard`                            | ShardIdent              |
-
- 此区块所属的分片的标识符。                                                                                     |
-| `gen_utime`                        | uint32                  | 区块的生成时间。                                                                                               |
-| `start_lt`                         | uint64                  | 与区块相关的开始逻辑时间。                                                                                     |
-| `end_lt`                           | uint64                  | 与区块相关的结束逻辑时间。                                                                                     |
-| `gen_validator_list_hash_short`    | uint32                  | 生成此区块时验证者列表的短哈希。                                                                               |
-| `gen_catchain_seqno`               | uint32                  | 与此区块相关的 [Catchain](/catchain.pdf) 序列号。                                                              |
-| `min_ref_mc_seqno`                 | uint32                  | 引用的主链区块的最小序列号。                                                                                   |
-| `prev_key_block_seqno`             | uint32                  | 上一个关键区块的序列号。                                                                                       |
-| `gen_software`                     | GlobalVersion           | 生成区块的软件版本。仅当 `version` 的第一位设置为 `1` 时呈现。                                                  |
-| `master_ref`                       | BlkMasterInfo           | 如果区块不是主区块，则引用主区块。存储在引用块中。                                                              |
-| `prev_ref`                         | BlkPrevInfo after_merge | 引用前一个区块。存储在引用中。                                                                                  |
-| `prev_vert_ref`                    | BlkPrevInfo 0           | 如果存在，则引用垂直序列中的前一个区块。存储在引用中。                                                          |
+| Field                           | Type                                         | Description                                                                                                                                           |
+| ------------------------------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `version`                       | uint32                                       | The version of the block structure.                                                                                                   |
+| `not_master`                    | (## 1)                    | A flag indicating if this block is a masterchain block.                                                                               |
+| `after_merge`                   | (## 1)                    | A flag indicating if this block was created right after the merge of two shardchains, so it has two parent blocks                                     |
+| `before_split`                  | (## 1)                    | A flag indicating if this block was created right before the split of its shardchain                                                                  |
+| `after_split`                   | (## 1)                    | A flag indicating if this block was created right after the split of its shardchain                                                                   |
+| `want_split`                    | Bool                                         | A flag indicating whether a shardchain split is desired.                                                                              |
+| `want_merge`                    | Bool                                         | A flag indicating whether a shardchain merge is desired.                                                                              |
+| `key_block`                     | Bool                                         | A flag indicating if this block is a key block.                                                                                       |
+| `vert_seqno_incr`               | (## 1)                    | Increment of the vertical sequence number.                                                                                            |
+| `flags`                         | (## 8)                    | Additional flags for the block.                                                                                                       |
+| `seq_no`                        | #                                            | Sequence number related to the block.                                                                                                 |
+| `vert_seq_no`                   | #                                            | Vertical sequence number related to the block.                                                                                        |
+| `shard`                         | ShardIdent                                   | The identifier of the shard where this block belongs.                                                                                 |
+| `gen_utime`                     | uint32                                       | The generation time of the block.                                                                                                     |
+| `start_lt`                      | uint64                                       | Start logical time associated with the block.                                                                                         |
+| `end_lt`                        | uint64                                       | End logical time associated with the block.                                                                                           |
+| `gen_validator_list_hash_short` | uint32                                       | Short hash related to the list of validators at the moment of generation of this block.                                               |
+| `gen_catchain_seqno`            | uint32                                       | [Catchain](/catchain.pdf) sequence number related to this block.                                                                      |
+| `min_ref_mc_seqno`              | uint32                                       | Minimum sequence number of referenced masterchain block.                                                                              |
+| `prev_key_block_seqno`          | uint32                                       | Sequence number of the previous key block.                                                                                            |
+| `gen_software`                  | GlobalVersion                                | The version of the software that generated the block. Only presented if the first bit of the `version` is set to `1`. |
+| `master_ref`                    | BlkMasterInfo                                | A reference to the master block if the block is not a master. Stored in a reference. block.           |
+| `prev_ref`                      | BlkPrevInfo after_merge | A reference to the previous block. Stored in a reference.                                                             |
+| `prev_vert_ref`                 | BlkPrevInfo 0                                | A reference to the previous block in the vertical sequence if it exists. Stored in a reference.                       |
 
 ### value_flow:^ValueFlow
 
-此字段代表区块内的货币流动，包括收集的费用和其他涉及货币的交易。
+This field represents the flow of currency within the block, including fees collected and other transactions involving currency.
 
 ```tlb
 value_flow#b8e48dfb ^[ from_prev_blk:CurrencyCollection
@@ -99,44 +97,44 @@ value_flow#b8e48dfb ^[ from_prev_blk:CurrencyCollection
     ] = ValueFlow;
 ```
 
-| 字段              | 类型                                                                   | 描述                                                                          |
-| ----------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `from_prev_blk`   | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 表示从前一个区块流入的货币。                                                   |
-| `to_next_blk`     | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 表示流向下一个区块的货币。                                                     |
-| `imported`        | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 表示导入到区块的货币。                                                         |
-| `exported`        | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 表示从区块导出的货币。                                                         |
-| `fees_collected`  | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 区块中收集的费用总额。                                                         |
-| `fees_imported`   | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 导入到区块的费用金额。仅在主链中非零。                                         |
-| `recovered`       | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 区块中恢复的货币金额。仅在主链中非零。                                         |
-| `created`         | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 区块中创建的新货币金额。仅在主链中非零。                                       |
-| `minted`          | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 区块中铸造的货币金额。仅在主链中非零。                                         |
+| Field            | Type                                                                   | Description                                                                                                      |
+| ---------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `from_prev_blk`  | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | Represents the flow of currencies from the previous block.                                       |
+| `to_next_blk`    | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | Represents the flow of currencies to the next block.                                             |
+| `imported`       | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | Represents the flow of currencies imported to the block.                                         |
+| `exported`       | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | Represents the flow of currencies exported from the block.                                       |
+| `fees_collected` | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | The total amount of fees collected in the block.                                                 |
+| `fees_imported`  | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | The amount of fees imported into the block. Non-zero only in masterchain.        |
+| `recovered`      | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | The amount of currencies recovered in the block. Non-zero only in masterchain.   |
+| `created`        | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | The amount of new currencies created in the block. Non-zero only in masterchain. |
+| `minted`         | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | The amount of currencies minted in the block. Non-zero only in masterchain.      |
 
 ## state_update:^(MERKLE_UPDATE ShardState)
 
-此字段代表分片状态的更新。
+This field represents the update of the shard state.
 
 ```tlb
 !merkle_update#02 {X:Type} old_hash:bits256 new_hash:bits256
     old:^X new:^X = MERKLE_UPDATE X;
 ```
 
-| 字段         | 类型                      | 描述                                                  |
-| ------------ | ------------------------- | ----------------------------------------------------- |
-| `old_hash`   | bits256                   | 分片状态的旧哈希值。                                   |
-| `new_hash`   | bits256                   | 分片状态的新哈希值。                                   |
-| `old`        | [ShardState](#shardstate) | 分片的旧状态。存储为引用。                             |
-| `new`        | [ShardState](#shardstate) | 分片的新状态。存储为引用。                             |
+| Field      | Type                      | Description                                                                        |
+| ---------- | ------------------------- | ---------------------------------------------------------------------------------- |
+| `old_hash` | bits256                   | The old hash of the shard state.                                   |
+| `new_hash` | bits256                   | The new hash of the shard state.                                   |
+| `old`      | [ShardState](#shardstate) | The old state of the shard. Stored in a reference. |
+| `new`      | [ShardState](#shardstate) | The new state of the shard. Stored in a reference. |
 
 ### ShardState
 
-`ShardState` 可以包含关于分片的信息，或者在该分片被拆分的情况下，包含关于左右两个拆分部分的信息。
+`ShardState` can contain either information about the shard, or, in case if this shard is splitted, information about left and right splitted parts.
 
 ```tlb
 _ ShardStateUnsplit = ShardState;
 split_state#5f327da5 left:^ShardStateUnsplit right:^ShardStateUnsplit = ShardState;
 ```
 
-### ShardState 未拆分
+### ShardState Unsplitted
 
 ```tlb
 shard_state#9023afe2 global_id:int32
@@ -156,38 +154,36 @@ shard_state#9023afe2 global_id:int32
     = ShardStateUnsplit;
 ```
 
-| 字段                        | 类型                                                                   | 是否必需 | 描述                                                                                                 |
-| --------------------------- | ---------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------- |
-| `global_id`                 | int32                                                                  | 是       | 此分片所属网络的 ID。主网为 `-239`，测试网为 `-3`。                                                   |
-| `shard_id`                  | ShardIdent                                                             | 是       | 分片的标识符。                                                                                       |
-| `seq_no`                    | uint32                                                                 | 是       | 此分片链的最新序列号。                                                                               |
-| `vert_seq_no`               | #                                                                      | 是       | 此分片链的最新垂直序列号。                                                                           |
-| `gen_utime`                 | uint32                                                                 | 是       | 创建分片的生成时间。                                                                                 |
-| `gen_lt`                    | uint64                                                                 | 是       | 创建分片的逻辑时间。                                                                                 |
-| `min_ref_mc_seqno`          | uint32                                                                 | 是       | 最新引用的主链区块的序列号。                                                                         |
-| `out_msg_queue_info`        | OutMsgQueueInfo                                                        | 是       | 此分片的出消息队列信息。存储为引用。                                                                 |
-| `before_split`              | ## 1                                                                   | 是       | 标志位，表示此分片链的下一个区块是否将发生拆分。                                                       |
-| `accounts`                  | ShardAccounts                                                          | 是       | 分片中账户的状态。存储为引用。                                                                       |
-| `overload_history`          | uint64                                                                 | 是       | 分片的超载事件历史。用于通过分片进行负载均衡。                                                       |
-| `underload_history`         | uint64                                                                 | 是       | 分片的欠载事件历史。用于通过分片进行负载均衡。                                                       |
-| `total_balance`             | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 是       | 分片的总余额。                                                                                       |
-| `total_validator_fees`      | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | 是       | 分片的总验证者费用。                                                                                 |
-| `libraries`                 | HashmapE 256 LibDescr                                                  | 是       | 此分片中的库描述哈希映射。目前仅在主链中非空。
+| Field                  | Type                                                                   | Required | Description                                                                                                                                                                                                 |
+| ---------------------- | ---------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `global_id`            | int32                                                                  | Yes      | An ID of the network where this shard belongs. `-239` for mainnet and `-3` for testnet.                                                                                     |
+| `shard_id`             | ShardIdent                                                             | Yes      | The identifier of the shard.                                                                                                                                                                |
+| `seq_no`               | uint32                                                                 | Yes      | The latest sequence number associated with this shardchain.                                                                                                                                 |
+| `vert_seq_no`          | #                                                                      | Yes      | The latest vertical sequence number associated with this shardchain.                                                                                                                        |
+| `gen_utime`            | uint32                                                                 | Yes      | The generation time associated with the creation of the shard.                                                                                                                              |
+| `gen_lt`               | uint64                                                                 | Yes      | The logical time associated with the creation of the shard.                                                                                                                                 |
+| `min_ref_mc_seqno`     | uint32                                                                 | Yes      | Sequence number of the latest referenced masterchain block.                                                                                                                                 |
+| `out_msg_queue_info`   | OutMsgQueueInfo                                                        | Yes      | Information about the out message queue of this shard. Stored in a reference.                                                                                               |
+| `before_split`         | ## 1                                                                   | Yes      | A flag indicating whether a split will in the next block of this shardchain.                                                                                                                |
+| `accounts`             | ShardAccounts                                                          | Yes      | The state of accounts in the shard. Stored in a reference.                                                                                                                  |
+| `overload_history`     | uint64                                                                 | Yes      | History of overload events for the shard. Used for load balancing through sharding.                                                                                         |
+| `underload_history`    | uint64                                                                 | Yes      | History of underload events for the shard. Used for load balancing through sharding.                                                                                        |
+| `total_balance`        | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | Yes      | Total balance for the shard.                                                                                                                                                                |
+| `total_validator_fees` | [CurrencyCollection](/develop/data-formats/msg-tlb#currencycollection) | Yes      | Total validator fees for the shard.                                                                                                                                                         |
+| `libraries`            | HashmapE 256 LibDescr                                                  | Yes      | A hashmap of library descriptions in this shard. Currently, non-empty only in the masterchain.                                                                              |
+| `master_ref`           | BlkMasterInfo                                                          | No       | A reference to the master block info.                                                                                                                                                       |
+| `custom`               | McStateExtra                                                           | No       | Custom extra data for the shard state. This field is present only in the masterchain and contains all the masterchain-specific data. Stored in a reference. |
 
-                                                         |
-| `master_ref`                | BlkMasterInfo                                                          | 否       | 主块信息的引用。                                                                                     |
-| `custom`                    | McStateExtra                                                           | 否       | 分片状态的自定义额外数据。此字段仅在主链中存在，包含所有主链特有的数据。存储为引用。                   |
+### ShardState Splitted
 
-### ShardState 拆分
-
-| 字段       | 类型                                         | 描述                                                      |
-| ---------- | -------------------------------------------- | --------------------------------------------------------- |
-| `left`     | [ShardStateUnsplit](#shardstate-unsplitted)  | 拆分后左侧分片的状态。存储为引用。                         |
-| `right`    | [ShardStateUnsplit](#shardstate-unsplitted)  | 拆分后右侧分片的状态。存储为引用。                         |
+| Field   | Type                                        | Description                                                                                |
+| ------- | ------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `left`  | [ShardStateUnsplit](#shardstate-unsplitted) | The state of the left split shard. Stored in a reference.  |
+| `right` | [ShardStateUnsplit](#shardstate-unsplitted) | The state of the right split shard. Stored in a reference. |
 
 ## extra:^BlockExtra
 
-此字段包含有关区块的额外信息。
+This field contains extra information about the block.
 
 ```tlb
 block_extra in_msg_descr:^InMsgDescr
@@ -198,18 +194,18 @@ block_extra in_msg_descr:^InMsgDescr
     custom:(Maybe ^McBlockExtra) = BlockExtra;
 ```
 
-| 字段              | 类型                           | 是否必需 | 描述                                                                                                 |
-| ----------------- | ------------------------------ | -------- | ---------------------------------------------------------------------------------------------------- |
-| `in_msg_descr`    | InMsgDescr                     | 是       | 区块中传入消息的描述符。存储为引用。                                                                 |
-| `out_msg_descr`   | OutMsgDescr                    | 是       | 区块中传出消息的描述符。存储为引用。                                                                 |
-| `account_blocks`  | ShardAccountBlocks             | 是       | 区块中处理的所有交易及分片分配账户状态的更新集合。存储为引用。                                       |
-| `rand_seed`       | bits256                        | 是       | 区块的随机种子。                                                                                     |
-| `created_by`      | bits256                        | 是       | 创建区块的实体（通常是验证者的公钥）。                                                               |
-| `custom`          | [McBlockExtra](#mcblockextra)  | 否       | 此字段仅在主链中存在，包含所有主链特有的数据。区块的自定义额外数据。存储为引用。                      |
+| Field            | Type                          | Required | Description                                                                                                                                                                                           |
+| ---------------- | ----------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `in_msg_descr`   | InMsgDescr                    | Yes      | Descriptor of the incoming messages in the block. Stored in a reference.                                                                                              |
+| `out_msg_descr`  | OutMsgDescr                   | Yes      | Descriptor of the outgoing messages in the block. Stored in a reference.                                                                                              |
+| `account_blocks` | ShardAccountBlocks            | Yes      | The collection of all transactions processed in the block along with all updates of the states of the accounts assigned to the shard. Stored in a reference.          |
+| `rand_seed`      | bits256                       | Yes      | The random seed for the block.                                                                                                                                                        |
+| `created_by`     | bits256                       | Yes      | The entity (usually a validator's public key) that created the block.                                                                                              |
+| `custom`         | [McBlockExtra](#mcblockextra) | No       | This field is present only in the masterchain and contains all the masterchain-specific data. Custom extra data for the block. Stored in a reference. |
 
 ### McBlockExtra
 
-此字段包含有关主链区块的额外信息。
+This field contains extra information about the masterchain block.
 
 ```tlb
 masterchain_block_extra#cca5
@@ -223,16 +219,16 @@ masterchain_block_extra#cca5
     = McBlockExtra;
 ```
 
-| 字段                   | 类型                              | 是否必需 | 描述                                                                           |
-| ---------------------- | --------------------------------- | -------- | ------------------------------------------------------------------------------ |
-| `key_block`            | ## 1                              | 是       | 标志位，表示区块是否为关键区块。                                                 |
-| `shard_hashes`         | ShardHashes                       | 是       | 相应分片链的最新区块的哈希。                                                   |
-| `shard_fees`           | ShardFees                         | 是       | 此区块中所有分片收集的总费用。                                                 |
-| `prev_blk_signatures`  | HashmapE 16 CryptoSignaturePair   | 是       | 前一区块的签名。                                                               |
-| `recover_create_msg`   | InMsg                             | 否       | 与恢复额外代币相关的消息（如果有）。存储为引用。                               |
-| `mint_msg`             | InMsg                             | 否       | 与铸造额外代币相关的消息（如果有）。存储为引用。                               |
-| `config`               | ConfigParams                      | 否       | 此区块的实际配置参数。当设置了 `key_block` 时此字段存在。                       |
+| Field                 | Type                            | Required | Description                                                                                                                           |
+| --------------------- | ------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `key_block`           | ## 1                            | Yes      | Flag indicating whether the block is a key block.                                                                     |
+| `shard_hashes`        | ShardHashes                     | Yes      | The hashes of the latest blocks of the corresponding shardchains.                                                     |
+| `shard_fees`          | ShardFees                       | Yes      | The total fees collected from all shards in this block.                                                               |
+| `prev_blk_signatures` | HashmapE 16 CryptoSignaturePair | Yes      | Previous block signatures.                                                                                            |
+| `recover_create_msg`  | InMsg                           | No       | The message related to recovering extra-currencies, if any. Stored in a reference.                    |
+| `mint_msg`            | InMsg                           | No       | The message related to minting extra-currencies, if any. Stored in a reference.                       |
+| `config`              | ConfigParams                    | No       | The actual configuration parameters for this block. This field is present only if `key_block` is set. |
 
-## 参阅
+## See also
 
--   [白皮书](https://docs.ton.org/tblkch.pdf#page=96&zoom=100,148,172)中原始的[区块布局](#)描述
+* Original description of [Block layout](https://docs.ton.org/tblkch.pdf#page=96\&zoom=100,148,172) from whitepaper
