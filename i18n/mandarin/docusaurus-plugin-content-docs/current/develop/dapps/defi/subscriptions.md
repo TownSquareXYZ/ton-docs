@@ -1,30 +1,38 @@
-# TON 上的订阅服务
+# Content Subscriptions
 
-由于 TON 区块链中的交易快速，网络费用低廉，您可以通过智能合约在链上处理定期支付。
+Due to the fact that transactions in TON Blockchain are fast and the network fees are low, you can process recurring payments on-chain via smart contracts.
 
-例如，用户可以订阅数字内容（或其他任何东西）并被收取每月 1 TON 的费用。
+For example, users can subscribe to digital content (or anything else) and be charged a monthly fee of 1 TON.
 
-这没有特定的标准。
+:::tip
+This content is specific for wallets of version v4. Older wallets don't have this functionality; it is eligible to change in future versions as well.
+:::
 
-## 使用案例流程
+:::warning
+Subscription contract requires authorization exactly once, on installation; then it can withdraw TON as it pleases. Do your own research before attaching unknown subscriptions.
 
-目前的标准方法：
+On the other hand, user can't get subscription installed without their knowledge.
+:::
 
-- 用户使用 v4 钱包。（V4R2 是 TON 区块链的默认钱包智能合约。）它允许被称为插件的附加智能合约扩展其功能。
+## Example flow
 
-  确保其功能后，用户可以批准其钱包的可信智能合约（插件）的地址。随后，可信智能合约可以从钱包中提取 Toncoin。这类似于其他区块链中的“无限批准”。
+* Users use a v4 wallet. It allows additional smart contracts, known as plugins, to extend its functionality.
 
-- 每个用户和服务之间使用中间订阅智能合约作为钱包插件。
+  After ensuring their functionality, the user can approve the addresses of trusted smart contracts (plugins) for his wallet. Following that, the trusted smart contracts can withdraw Toncoin from the wallet. This is similar to "Infinite Approval" in some other blockchains.
 
-   该智能合约保证在指定周期内，用户钱包中的指定数量的 Toncoin 不会被扣除超过一次。
+* An intermediate subscription smart contract is used between each user and service as a wallet plugin.
 
-- 服务的后端通过向订阅智能合约发送外部消息，定期发起支付。
+  This smart contract guarantees that a specified amount of Toncoin will be debited from a user's wallet no more than once within a specified period.
 
-## 智能合约示例
+* The service's backend initiates payments on a regular basis by sending an external message to subscription smart contracts.
 
-* [钱包 v4 智能合约源代码](https://github.com/ton-blockchain/wallet-contract/blob/main/func/wallet-v4-code.fc)
-* [订阅智能合约源代码](https://github.com/ton-blockchain/wallet-contract/blob/main/func/simple-subscription-plugin.fc)
+* Either user or service can decide they no longer need a subscription and terminate it.
 
-## 实现
+## Smart contract examples
 
-一个良好的实现示例是通过 [@donate](https://t.me/donate) 机器人和 [Tonkeeper 钱包](https://tonkeeper.com) 对 Telegram 中私人频道的 Toncoin 进行去中心化订阅。
+* [Wallet v4 smart contract source code](https://github.com/ton-blockchain/wallet-contract/blob/main/func/wallet-v4-code.fc)
+* [Subscription smart contract source code](https://github.com/ton-blockchain/wallet-contract/blob/main/func/simple-subscription-plugin.fc)
+
+## Implementation
+
+A good example of implementation is decentralized subscriptions for Toncoin to private channels in Telegram by the [@donate](https://t.me/donate) bot and the [Tonkeeper wallet](https://tonkeeper.com).
