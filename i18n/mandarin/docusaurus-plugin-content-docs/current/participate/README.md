@@ -1,38 +1,38 @@
-# 概述
+# Overview
 
-我们文档中的参与部分旨在让用户发现与TON合作的能力。
-它还旨在提供参与TON生态系统和创建TON对TON全球网（TWWW）愿景所必需的基本框架（浏览器、钱包、TEP）。
+The participate section of our documentation is tailored to allow users to discover the capabilities of working with TON
+It is also meant to offer essential frameworks (explorers, wallets, TEPs) that are necessary to participate in TON Ecosystem and the creation of TON’s vision for the TON World Wide Web (TWWW).
 
-## 参与TON生态系统
+## Participate in TON Ecosystem
 
-* [TON浏览器](/participate/explorers)
-* [钱包应用（开发者用）](/participate/wallets/apps)
-* [钱包合约类型](/participate/wallets/contracts)
+* [TON Explorers](/participate/explorers)
+* [Wallet Apps (for Developers)](/participate/wallets/apps)
+* [Types of Wallet Contracts](/participate/wallets/contracts)
 
-### 加入TON社区
+### Join TON Community
 
-* [TON增强提案（TEP）](https://github.com/ton-blockchain/TEPs)
-* [在answers.ton.org上提问关于TON的问题](https://answers.ton.org/)
-* [与TON提名人共同质押](/participate/network-maintenance/nominators)
+* [TON Enhancement Proposals (TEPs)](https://github.com/ton-blockchain/TEPs)
+* [Discover TON innovations at TON Research](https://tonresear.ch/)
+* [Stake with TON Nominators](/participate/network-maintenance/nominators)
 
-### 跨链桥
+### Bridges
 
-* [跨链桥概述](/participate/crosschain/overview)
-* [跨链桥地址](/participate/crosschain/bridge-addresses)
+* [Bridges Overview](/participate/crosschain/overview)
+* [Bridge Addresses](/participate/crosschain/bridge-addresses)
 
-### 运行节点
+### Run a Node
 
-* [了解TON中的节点类型](/participate/nodes/node-types)
-* [运行您的全节点或验证者](/participate/run-nodes/full-node)
-* [TON验证者维护与安全](/participate/nodes/node-maintenance-and-security)
+* [Discover Node Types in TON](/participate/nodes/node-types)
+* [Run your Full Node or Validator](/participate/run-nodes/full-node)
+* [TON Validator maintenance & security](/participate/nodes/node-maintenance-and-security)
 
-## 参与TON Web3
+## Participate in TON Web3
 
-* [TON Web3概述](/participate/web3/overview)
-* [使用TON DNS为您的域名](/participate/web3/dns)
-* [网站和域名管理](/participate/web3/site-management)
-* [\[教程\] 如何运行您自己的TON站点？](/develop/dapps/tutorials/how-to-run-ton-site)
+* [TON Web3 Overview](/participate/web3/overview)
+* [Use TON DNS for your domains](/participate/web3/dns)
+* [Site & Domain management](/participate/web3/site-management)
+* [\[Tutorial\] How to run your own TON Site?](/develop/dapps/tutorials/how-to-run-ton-site)
 
-### TON代理
+### TON Proxy
 
-* [如何打开任何TON站点？](/participate/web3/how-to-open-any-ton-site)
+* [How to open any TON Site?](/participate/web3/how-to-open-any-ton-site)
