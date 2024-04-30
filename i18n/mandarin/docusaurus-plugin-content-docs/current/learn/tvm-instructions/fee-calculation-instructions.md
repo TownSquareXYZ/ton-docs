@@ -1,4 +1,4 @@
-# 新指令介绍，用于计算廉价手续费
+# TVM Upgrade 2024.04
 
 ## Introduction of new instructions for cheap fee calculation
 
@@ -23,11 +23,11 @@ This update is activated by Config8 `version` >= 6.
 - **15**: "[due payment](https://github.com/ton-blockchain/ton/blob/8a9ff339927b22b72819c5125428b70c406da631/crypto/block/block.tlb#L237)" - current debt for storage fee (nanotons). Asm opcode: `DUEPAYMENT`.
 - **16**: "precompiled gas usage" - gas usage for the current contract if it is precompiled (see ConfigParam 45), null otherwise. Asm opcode: `GETPRECOMPILEDGAS`.
 
-需要到期支付，以便合约能够正确评估存储费用。
+The idea behind this extension of c7 by unpacked config parameters is the following: this data will be retrieved from global configuration by transaction executor, so it is already presented in memory of executor. However (before extension) smart-contract need to get all of these parameters one-by-one from configuration dictionary which is expensive and potentially unpredictable by gas (since cost depends on number of parameters).
 
 Due payment is needed so contract can properly assess storage fees: when message sent in default (bouncable) mode to smart-contract, storage fees are deducted (or added to due_payment field that contains storage fee related debt) prior message value is added to balance. Thus, if contract after processing message send gas excesses back with mode=64, that means that if contract balance hit 0, on next transactions storage fees start accruing in due_payment (and not deducted from incoming messages). That way debt will silently accumulate until account freezes. `DUEPAYMENT` allows developer explicitly account/withhold comission for storage and thus prevent any issues.
 
-## 用于处理新c7值的操作码
+## New opcodes
 
 ### Opcodes to work with new c7 values
 
@@ -42,7 +42,7 @@ Due payment is needed so contract can properly assess storage fees: when message
 
 ### Opcodes to process config parameters
 
-每个操作码使用26 gas。
+The introduction of tuple of configurations slices in the TON transaction executor has made it more cost-effective to parse fee parameters. However, as new config parameters constructors may be introduced in the future, smart contracts may need to be updated to interpret these new parameters. To address this issue, special opcodes for fee calculation have been introduced. These opcodes read parameters from c7 and calculate fees in the same manner as the executor. With the introduction of new parameters constructors, these opcodes will be updated to accommodate the changes. This allows smart contracts to rely on these instructions for fee calculation without needing to interpret all types of constructors.
 
 26 gas for each.
 
@@ -60,15 +60,16 @@ Due payment is needed so contract can properly assess storage fees: when message
 
 ### Cell level operations
 
-每个操作码使用26 gas。
+Operations for working with Merkle proofs, where cells can have non-zero level and multiple hashes.
+26 gas for each.
 
-| xxxxxxxxxxxxxxxxxxxxxx<br/>Fift语法 | xxxxxxxxx<br/>堆栈      | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>描述 |
-| :-------------------------------- | :-------------------- | :------------------------------------------- |
-| `CLEVEL`                          | _`cell - level`_      | 返回cell的级别                                    |
-| `CLEVELMASK`                      | _`cell - level_mask`_ | 返回cell的级别掩码                                  |
-| `i CHASHI`                        | _`cell - hash`_       | 返回cell的`i`th哈希                               |
-| `i CDEPTHI`                       | _`cell - depth`_      | 返回cell的`i`th深度                               |
-| `CHASHIX`                         | _`cell i - depth`_    | 返回cell的`i`th哈希                               |
-| `CDEPTHIX`                        | _`cell i - depth`_    | 返回cell的`i`th深度                               |
+| xxxxxxxxxxxxxxxxxxxxxx<br/>Fift syntax | xxxxxxxxx<br/>Stack   | xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br/>Description |
+| :------------------------------------- | :-------------------- | :---------------------------------------------------- |
+| `CLEVEL`                               | _`cell - level`_      | Returns level of the cell                             |
+| `CLEVELMASK`                           | _`cell - level_mask`_ | Returns level mask of the cell                        |
+| `i CHASHI`                             | _`cell - hash`_       | Returns `i`th hash of the cell                        |
+| `i CDEPTHI`                            | _`cell - depth`_      | Returns `i`th depth of the cell                       |
+| `CHASHIX`                              | _`cell i - depth`_    | Returns `i`th hash of the cell                        |
+| `CDEPTHIX`                             | _`cell i - depth`_    | Returns `i`th depth of the cell                       |
 
-`i`的范围是`0..3`。
+`i` is in range `0..3`.
