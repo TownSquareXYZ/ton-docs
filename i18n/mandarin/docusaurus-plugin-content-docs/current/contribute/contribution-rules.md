@@ -1,11 +1,11 @@
-# 贡献手册
+# Contribution Guidelines
 
-在贡献任何 docs.ton.org 页面之前，请审查以下关于常见的和重要的要求，以确保顺利的提交。
+Before contributing any docs.ton.org page, please review the following list of general and important requirements to guarantee a smooth experience.
 
-## 命名
+## Naming
 
-- 确保正确使用 _THE_ 在 TON 文档中至关重要。_TON Blockchain_ 和 _TON Ecosystem_ 是大写术语，因此，在使用时不需要 _THE_。
-- 我们将 _TON_ 与普通名词一起写，如果根据英语语法需要 _THE_，我们会使用它。例如："_The_ TON Connect _protocol_ is a..."
+* It is essential to ensure the correct use of *THE* in the TON documentation. *TON Blockchain* and *TON Ecosystem* are capitalized terms, and therefore, do not require *THE* in their usage.
+* We write *TON* with regular nouns, and if it requires *THE* according to English grammar, we use it. For instance: "*The* TON Connect *protocol* is a..."
 
 :::info
 TON Blockchain...
@@ -15,27 +15,30 @@ TON Ecosystem...
 The TON Connect protocol...
 :::
 
-请在[这里](https://ton.org/en/brand-assets)查看 TON 的品牌资产。
+Please refer to the actual TON brand assets [here](https://ton.org/en/brand-assets).
 
-## 文档引用
+## Documentation References
 
-TON 文档的每个页面应以“参阅”部分结束。在那里放置你认为与当前页面相关的页面，无需额外描述。
+Every page in TON documentation should be finished with See Also section. Place there page, you think relates to current page without additional description.
 
 :::info
+
 ```
-## 参阅
-* [TON 贡献指南](/contribute/contribution-rules)
-* [教程样式指南](/contribute/tutorials/guidelines)
+## See Also
+* [TON Contribution Guidelines](/contribute/contribution-rules)
+* [Tutorial Styling Guidelines](/contribute/tutorials/guidelines)
 ```
+
 :::
 
-## 英文帮助资源
-TON 生态系统正在为全世界建设，因此，确保每个人都能理解至关重要。在这里，我们提供对想提高英语技能的初级技术写作人员有帮助的材料。
+## English Helpful Sources
 
-* [复数名词](https://www.grammarly.com/blog/plural-nouns/)
-* [文章：A 与 An](https://owl.purdue.edu/owl/general_writing/grammar/articles_a_versus_an.html)
+The TON Ecosystem is being built for the entire world, so it's crucial that it's understandable for everyone on Earth. Here, we provide materials that are helpful for junior tech writers who want to improve their English skills.
 
-## 参阅
+* [Plural Nouns](https://www.grammarly.com/blog/plural-nouns/)
+* [Articles: A versus An](https://owl.purdue.edu/owl/general_writing/grammar/articles_a_versus_an.html)
 
-* [TON 贡献指南](/contribute/contribution-rules)
-* [教程样式指南](/contribute/tutorials/guidelines)
+## See Also
+
+* [TON Contribution Guidelines](/contribute/contribution-rules)
+* [Tutorial Styling Guidelines](/contribute/tutorials/guidelines)
