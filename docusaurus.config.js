@@ -114,7 +114,7 @@ const config = {
   // to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en', 'zh-CN'],
+    locales: ['en', 'zh-CN', 'ru', 'ko', 'pl', 'uk'],
     localeConfigs: {
       en: {
         label: 'English',
@@ -454,9 +454,19 @@ const config = {
             'aria-label': 'GitHub repository',
           },
           {
-          type: 'localeDropdown',
-          position: 'right',
-        },
+            type: 'localeDropdown',
+            position: 'right',
+            dropdownItemsAfter: [
+              {
+                type: 'html',
+                value: '<hr style="margin: 0.3rem 0;">',
+              },
+              {
+                href: "/localization-program-guideline",
+                label: 'Help Us Translate',
+              },
+            ],
+          },
         ],
       },
       footer: {
