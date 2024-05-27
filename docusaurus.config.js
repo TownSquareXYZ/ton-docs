@@ -1,26 +1,51 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
+require("dotenv").config();
+
+const getEnvLangConfig = () => {
+  const defaultLocale = process.env.DEFAULT_LOCALE || "en";
+
+  const langArray = process.env.TARGET_LANGS
+    ? process.env.TARGET_LANGS.split(",")
+    : ["mandarin", "ru", "ko", "pl", "uk"];
+
+  const locales = Array.from(new Set([defaultLocale, ...langArray]));
+
+  return {
+    defaultLocale,
+    locales,
+    localeConfigs: {
+      en: {
+        label: "English",
+      },
+      mandarin: {
+        label: "简体中文",
+      },
+    },
+  };
+};
+
 // function to get current year
-function getCurrentYear () {
-  const now = new Date()
-  return now.getFullYear()
+function getCurrentYear() {
+  const now = new Date();
+  return now.getFullYear();
 }
 
 // show current year in text
-const currentYear = getCurrentYear()
+const currentYear = getCurrentYear();
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'The Open Network',
-  tagline: 'Mass adoption. Massive distribution',
-  url: 'https://docs.ton.org',
-  staticDirectories: ['public', 'static'],
-  baseUrl: '/',
+  title: "The Open Network",
+  tagline: "Mass adoption. Massive distribution",
+  url: "https://docs.ton.org",
+  staticDirectories: ["public", "static"],
+  baseUrl: "/",
   themes: [
-    '@docusaurus/theme-live-codeblock',
+    "@docusaurus/theme-live-codeblock",
     [
-      require.resolve('@easyops-cn/docusaurus-search-local'),
+      require.resolve("@easyops-cn/docusaurus-search-local"),
       {
         // ... Your options.
         // `hashed` is recommended as long-term-cache of index file is possible.
@@ -36,114 +61,102 @@ const config = {
     ],
   ],
   plugins: [
-    ['docusaurus-plugin-sass', {}],
+    ["docusaurus-plugin-sass", {}],
     [
-      '@docusaurus/plugin-client-redirects',
+      "@docusaurus/plugin-client-redirects",
       {
         redirects: [
           // CamelCase to kebab-case
           {
-            to: '/learn/tvm-instructions/tvm-exit-codes',
-            from: '/learn/tvm-instructions/tvm_exit_codes',
+            to: "/learn/tvm-instructions/tvm-exit-codes",
+            from: "/learn/tvm-instructions/tvm_exit_codes",
           },
           {
-            to: '/develop/dapps/telegram-apps',
-            from: '/develop/dapps/twa',
+            to: "/develop/dapps/telegram-apps",
+            from: "/develop/dapps/twa",
           },
           {
-            to: '/learn/tvm-instructions/tvm-overview',
-            from: '/learn/tvm-instructions/tvm_overview',
+            to: "/learn/tvm-instructions/tvm-overview",
+            from: "/learn/tvm-instructions/tvm_overview",
           },
           {
-            to: '/learn/overviews/ton-blockchain',
-            from: '/learn/overviews/TON_Blockchain_overview',
+            to: "/learn/overviews/ton-blockchain",
+            from: "/learn/overviews/TON_Blockchain_overview",
           },
           {
-            to: '/learn/networking/low-level-adnl',
-            from: '/learn/overviews/adnl',
+            to: "/learn/networking/low-level-adnl",
+            from: "/learn/overviews/adnl",
           },
 
           {
-            to: '/develop/dapps/tutorials/accept-payments-in-a-telegram-bot',
-            from: '/develop/dapps/payment-processing/accept-payments-in-a-telegram-bot',
+            to: "/develop/dapps/tutorials/accept-payments-in-a-telegram-bot",
+            from: "/develop/dapps/payment-processing/accept-payments-in-a-telegram-bot",
           },
           {
-            to: '/develop/dapps/tutorials/accept-payments-in-a-telegram-bot-2',
-            from: '/develop/dapps/payment-processing/accept-payments-in-a-telegram-bot-2',
+            to: "/develop/dapps/tutorials/accept-payments-in-a-telegram-bot-2",
+            from: "/develop/dapps/payment-processing/accept-payments-in-a-telegram-bot-2",
           },
           {
-            to: '/develop/get-started-with-ton',
-            from: '/develop/onboarding-challenge',
+            to: "/develop/get-started-with-ton",
+            from: "/develop/onboarding-challenge",
           },
           {
-            to: '/develop/overview',
-            from: '/develop/getting-started',
+            to: "/develop/overview",
+            from: "/develop/getting-started",
           },
           {
-            to: '/develop/data-formats/tl-b-language',
-            from: '/develop/data-formats/tl-b',
+            to: "/develop/data-formats/tl-b-language",
+            from: "/develop/data-formats/tl-b",
           },
           {
-            to: '/learn/tvm-instructions/tvm-upgrade-2023-07',
-            from: '/learn/tvm-instructions/tvm-upgrade',
+            to: "/learn/tvm-instructions/tvm-upgrade-2023-07",
+            from: "/learn/tvm-instructions/tvm-upgrade",
           },
           {
-            to: '/develop/smart-contracts/testing/overview',
-            from: '/develop/smart-contracts/testing/tonstarter',
-          }
+            to: "/develop/smart-contracts/testing/overview",
+            from: "/develop/smart-contracts/testing/tonstarter",
+          },
         ],
       },
     ],
   ],
   stylesheets: [
-    'https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap',
+    "https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&family=Inter:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap",
   ],
-  onBrokenLinks: 'warn', // for PRODUCTION
-  onBrokenMarkdownLinks: 'warn', //for PRODUCTION
+  onBrokenLinks: "warn", // for PRODUCTION
+  onBrokenMarkdownLinks: "warn", //for PRODUCTION
   // onBrokenLinks: 'throw',
   // onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon32x32.png',
+  favicon: "img/favicon32x32.png",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'ton', // Usually your GitHub org/user name.
-  projectName: 'ton-docs', // Usually your repo name.
+  organizationName: "ton", // Usually your GitHub org/user name.
+  projectName: "ton-docs", // Usually your repo name.
 
   // Even if you don't use internalization, you can use this field to set useful
   // metadata like html lang. For example, if your site is Chinese, you may want
   // to replace "en" with "zh-Hans".
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'mandarin'],
-    localeConfigs: {
-      en: {
-        label: 'English',
-      },
-      mandarin: {
-        label: '简体中文',
-      },
-    },
-  },
+  i18n: getEnvLangConfig(),
 
   presets: [
     [
-      'classic',
+      "classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         gtag: {
-          trackingID: 'G-0PVST6PCG8',
+          trackingID: "G-0PVST6PCG8",
           anonymizeIP: true,
         },
         docs: {
-          routeBasePath: '/',
+          routeBasePath: "/",
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
           breadcrumbs: false,
-          sidebarPath: require.resolve('./sidebars.js'),
+          sidebarPath: require.resolve("./sidebars.js"),
           // Please change this to your repo
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/ton-community/ton-docs/tree/main/',
+          editUrl: "https://github.com/ton-community/ton-docs/tree/main/",
           // lastVersion: '1.0.0',
           // versions: {
           //   current: {
@@ -158,38 +171,36 @@ const config = {
           //   }
           // }
           remarkPlugins: [
-            [require('@docusaurus/remark-plugin-npm2yarn'), { sync: true }],
+            [require("@docusaurus/remark-plugin-npm2yarn"), { sync: true }],
           ],
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/ton-community/ton-docs/tree/main/',
+          editUrl: "https://github.com/ton-community/ton-docs/tree/main/",
         },
-        theme:
-          {
-            customCss: require.resolve('./src/css/custom.css'),
-          },
+        theme: {
+          customCss: require.resolve("./src/css/custom.css"),
+        },
         pages: {
-          mdxPageComponent: '@site/src/components/MDXPage'
-        }
+          mdxPageComponent: "@site/src/components/MDXPage",
+        },
       }),
     ],
   ],
 
   themeConfig:
-  /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
+    /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       algolia: {
         // The application ID provided by Algolia
-        appId: 'AIQ3FM6W39',
+        appId: "AIQ3FM6W39",
 
         // Public API key: it is safe to commit it
-        apiKey: 'ab02d1c08f877a738f59233af7f5ed6b',
+        apiKey: "ab02d1c08f877a738f59233af7f5ed6b",
 
-        indexName: 'ton',
+        indexName: "ton",
 
         // Optional: see doc section below
         contextualSearch: true,
@@ -201,7 +212,7 @@ const config = {
         searchParameters: {},
 
         // Optional: path for search page that enabled by default (`false` to disable it)
-        searchPagePath: 'search',
+        searchPagePath: "search",
 
         //... other Algolia params
       },
@@ -213,246 +224,245 @@ const config = {
       //   isCloseable: false,
       // },
 
-      image: 'img/snippet.png',
+      image: "img/snippet.png",
       navbar: {
-        title: '',
+        title: "",
         logo: {
-          alt: 'TON',
-          src: 'img/ton_logo_light_background.svg',
-          srcDark: 'img/ton_logo_dark_background.svg',
+          alt: "TON",
+          src: "img/ton_logo_light_background.svg",
+          srcDark: "img/ton_logo_dark_background.svg",
         },
         items: [
           {
-            type: 'dropdown',
-            to: '/learn/introduction',
-            position: 'left',
-            label: 'Concepts',
+            type: "dropdown",
+            to: "/learn/introduction",
+            position: "left",
+            label: "Concepts",
             items: [
               {
-                to: '/learn/introduction',
-                label: 'Introduction to TON',
+                to: "/learn/introduction",
+                label: "Introduction to TON",
               },
               {
-                to: '/learn/overviews/ton-blockchain',
-                label: 'Blockchain of Blockchains',
+                to: "/learn/overviews/ton-blockchain",
+                label: "Blockchain of Blockchains",
               },
               {
-                to: '/learn/overviews/addresses',
-                label: 'Smart Contract Addresses',
+                to: "/learn/overviews/addresses",
+                label: "Smart Contract Addresses",
               },
               {
-                to: '/learn/overviews/cells',
-                label: 'Cells as a Data Structure',
+                to: "/learn/overviews/cells",
+                label: "Cells as a Data Structure",
               },
               {
-                to: '/learn/networking/overview',
-                label: 'TON Networking',
+                to: "/learn/networking/overview",
+                label: "TON Networking",
               },
               {
-                to: '/learn/docs',
-                label: 'Whitepapers',
+                to: "/learn/docs",
+                label: "Whitepapers",
+              },
+            ],
+          },
+          {
+            type: "dropdown",
+            to: "/develop/overview",
+            position: "left",
+            label: "Get Started",
+            items: [
+              {
+                to: "/develop/overview",
+                label: "Start with Onboarding Tutorials",
+              },
+              {
+                to: "/develop/dapps/telegram-apps/",
+                label: "Build your first Mini App",
+              },
+              {
+                to: "/develop/dapps",
+                label: "Dive into DApps Development",
+              },
+              {
+                to: "/develop/dapps/tutorials/jetton-minter",
+                label: "Mint your first Token (Jetton)",
+              },
+            ],
+          },
+          {
+            type: "dropdown",
+            to: "develop/dapps",
+            position: "left",
+            label: "DApps",
+            items: [
+              {
+                to: "develop/dapps/apis/sdk",
+                label: "APIs and SDKs",
+              },
+              {
+                to: "/develop/dapps/cookbook",
+                label: "Common Tasks Cookbook",
+              },
+              {
+                to: "/develop/dapps/cookbook-diagram",
+                label: "Common Tasks Scheme",
+              },
+              {
+                to: "/develop/dapps/telegram-apps/",
+                label: "Working in Telegram",
+              },
+              {
+                to: "develop/dapps/asset-processing",
+                label: "Advanced Asset Holding",
+              },
+            ],
+          },
+          {
+            type: "dropdown",
+            to: "develop/overview",
+            position: "left",
+            label: "Smart Contracts",
+            items: [
+              {
+                to: "/develop/smart-contracts/tutorials/wallet",
+                label: "Understanding Wallets",
+              },
+              {
+                to: "develop/smart-contracts",
+                label: "Write Smart Contracts",
+              },
+              {
+                to: "/develop/smart-contracts/messages",
+                label: "Sending Messages",
+              },
+              {
+                to: "develop/smart-contracts/fees",
+                label: "Transaction Fees",
+              },
+              {
+                to: "develop/smart-contracts/guidelines",
+                label: "Best Practices for Contracts",
+              },
+              {
+                to: "develop/func/overview",
+                label: "FunC Development Language",
+              },
+              {
+                to: "develop/func/cookbook",
+                label: "FunC Cookbook",
+              },
+              {
+                to: "/develop/data-formats/cell-boc",
+                label: "Data formats",
+              },
+              {
+                to: "learn/tvm-instructions/tvm-overview",
+                label: "TON Virtual Machine (TVM)",
+              },
+            ],
+          },
+          {
+            type: "dropdown",
+            to: "participate",
+            position: "left",
+            label: "Nodes",
+            items: [
+              {
+                to: "participate/nodes/node-types",
+                label: "Node Types",
+              },
+              {
+                to: "https://ton.org/validator",
+                label: "Become a Validator",
+              },
+              {
+                to: "participate/run-nodes/full-node",
+                label: "Run a Full Node",
+              },
+              {
+                to: "https://docs.ton.org/participate/run-nodes/full-node#enable-liteserver-mode",
+                label: "Enable Liteserver",
+              },
+              {
+                to: "participate/run-nodes/archive-node",
+                label: "Run an Archive Node",
+              },
+              {
+                to: "/participate/network-maintenance/single-nominator",
+                label: "Single Nominator Pool",
               },
 
+              {
+                to: "/participate/network-maintenance/vesting-contract",
+                label: "Vesting Contract",
+              },
             ],
           },
           {
-            type: 'dropdown',
-            to: '/develop/overview',
-            position: 'left',
-            label: 'Get Started',
+            type: "dropdown",
+            to: "participate",
+            position: "left",
+            label: "Web3",
             items: [
               {
-                to: '/develop/overview',
-                label: 'Start with Onboarding Tutorials',
+                to: "participate/web3/dns",
+                label: "TON DNS & Domains",
               },
               {
-                to: '/develop/dapps/telegram-apps/',
-                label: 'Build your first Mini App',
+                to: "participate/web3/how-to-open-any-ton-site",
+                label: "Open TON Sites",
               },
               {
-                to: '/develop/dapps',
-                label: 'Dive into DApps Development',
+                to: "develop/dapps/tutorials/how-to-run-ton-site",
+                label: "Run TON Sites",
               },
               {
-                to: '/develop/dapps/tutorials/jetton-minter',
-                label: 'Mint your first Token (Jetton)',
+                to: "participate/ton-storage/storage-daemon",
+                label: "Run a Storage Daemon",
+              },
+              {
+                to: "participate/ton-storage/storage-provider",
+                label: "Build a Storage Provider",
               },
             ],
           },
           {
-            type: 'dropdown',
-            to: 'develop/dapps',
-            position: 'left',
-            label: 'DApps',
+            type: "dropdown",
+            label: "Community",
+            position: "left",
             items: [
               {
-                to: 'develop/dapps/apis/sdk',
-                label: 'APIs and SDKs',
+                to: "https://tonresear.ch/",
+                label: "TON Research",
               },
               {
-                to: '/develop/dapps/cookbook',
-                label: 'Common Tasks Cookbook',
+                to: "https://t.me/addlist/1r5Vcb8eljk5Yzcy",
+                label: "TON Developers Kit",
               },
               {
-                to: '/develop/dapps/cookbook-diagram',
-                label: 'Common Tasks Scheme',
+                to: "https://t.me/tonsupport_aibot",
+                label: "AI TON Support Agent",
               },
               {
-                to: '/develop/dapps/telegram-apps/',
-                label: 'Working in Telegram',
+                to: "https://github.com/ton-blockchain/TEPs",
+                label: "Standards Discussion (TEPs)",
               },
               {
-                to: 'develop/dapps/asset-processing',
-                label: 'Advanced Asset Holding',
+                to: "contribute",
+                label: "Contribute to Docs",
               },
             ],
           },
           {
-            type: 'dropdown',
-            to: 'develop/overview',
-            position: 'left',
-            label: 'Smart Contracts',
-            items: [
-              {
-                to: '/develop/smart-contracts/tutorials/wallet',
-                label: 'Understanding Wallets',
-              },
-              {
-                to: 'develop/smart-contracts',
-                label: 'Write Smart Contracts',
-              },
-              {
-                to: '/develop/smart-contracts/messages',
-                label: 'Sending Messages',
-              },
-              {
-                to: 'develop/smart-contracts/fees',
-                label: 'Transaction Fees',
-              },
-              {
-                to: 'develop/smart-contracts/guidelines',
-                label: 'Best Practices for Contracts',
-              },
-              {
-                to: 'develop/func/overview',
-                label: 'FunC Development Language',
-              },
-              {
-                to: 'develop/func/cookbook',
-                label: 'FunC Cookbook',
-              },
-              {
-                to: '/develop/data-formats/cell-boc',
-                label: 'Data formats',
-              },
-              {
-                to: 'learn/tvm-instructions/tvm-overview',
-                label: 'TON Virtual Machine (TVM)',
-              },
-            ],
+            href: "https://github.com/ton-community/ton-docs",
+            position: "right",
+            className: "header-github-link",
+            "aria-label": "GitHub repository",
           },
           {
-            type: 'dropdown',
-            to: 'participate',
-            position: 'left',
-            label: 'Nodes',
-            items: [
-              {
-                to: 'participate/nodes/node-types',
-                label: 'Node Types',
-              },
-              {
-                to: 'https://ton.org/validator',
-                label: 'Become a Validator',
-              },
-              {
-                to: 'participate/run-nodes/full-node',
-                label: 'Run a Full Node',
-              },
-              {
-                to: 'https://docs.ton.org/participate/run-nodes/full-node#enable-liteserver-mode',
-                label: 'Enable Liteserver',
-              },
-              {
-                to: 'participate/run-nodes/archive-node',
-                label: 'Run an Archive Node',
-              },
-              {
-                to: '/participate/network-maintenance/single-nominator',
-                label: 'Single Nominator Pool',
-              },
-
-              {
-                to: '/participate/network-maintenance/vesting-contract',
-                label: 'Vesting Contract',
-              },
-            ],
+            type: "localeDropdown",
+            position: "right",
           },
-          {
-            type: 'dropdown',
-            to: 'participate',
-            position: 'left',
-            label: 'Web3',
-            items: [
-              {
-                to: 'participate/web3/dns',
-                label: 'TON DNS & Domains',
-              },
-              {
-                to: 'participate/web3/how-to-open-any-ton-site',
-                label: 'Open TON Sites',
-              },
-              {
-                to: 'develop/dapps/tutorials/how-to-run-ton-site',
-                label: 'Run TON Sites',
-              },
-              {
-                to: 'participate/ton-storage/storage-daemon',
-                label: 'Run a Storage Daemon',
-              },
-              {
-                to: 'participate/ton-storage/storage-provider',
-                label: 'Build a Storage Provider',
-              },
-            ],
-          },
-          {
-            type: 'dropdown',
-            label: 'Community',
-            position: 'left',
-            items: [
-              {
-                to: 'https://tonresear.ch/',
-                label: 'TON Research',
-              },
-              {
-                to: 'https://t.me/addlist/1r5Vcb8eljk5Yzcy',
-                label: 'TON Developers Kit',
-              },
-              {
-                to: 'https://t.me/tonsupport_aibot',
-                label: 'AI TON Support Agent',
-              },
-              {
-                to: 'https://github.com/ton-blockchain/TEPs',
-                label: 'Standards Discussion (TEPs)',
-              },
-              {
-                to: 'contribute',
-                label: 'Contribute to Docs',
-              },
-            ],
-          },
-          {
-            href: 'https://github.com/ton-community/ton-docs',
-            position: 'right',
-            className: 'header-github-link',
-            'aria-label': 'GitHub repository',
-          },
-          {
-          type: 'localeDropdown',
-          position: 'right',
-        },
         ],
       },
       footer: {
@@ -460,16 +470,16 @@ const config = {
         // copyright: `Copyright © ${new Date().getFullYear()} TON Foundation`,
       },
       prism: {
-        theme: require('./prism-theme'),
-        darkTheme: require('./prism-theme'),
+        theme: require("./prism-theme"),
+        darkTheme: require("./prism-theme"),
         additionalLanguages: [
-          'java',
-          'python',
-          'kotlin',
-          'go',
-          'typescript',
-          'cpp',
-          'c',
+          "java",
+          "python",
+          "kotlin",
+          "go",
+          "typescript",
+          "cpp",
+          "c",
         ],
       },
       docs: {
@@ -478,11 +488,11 @@ const config = {
         },
       },
       colorMode: {
-        defaultMode: 'light',
+        defaultMode: "light",
         // respectPrefersColorScheme: true,
         // disableSwitch: true,
       },
     }),
-}
+};
 
-module.exports = config
+module.exports = config;
