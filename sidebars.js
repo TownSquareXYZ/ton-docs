@@ -23,6 +23,25 @@ const sidebars = {
     },
     {
       'type': 'html',
+      'value': '<span class=\'menu__link\'><b><small> TON Academy </small></b></span>',
+    },
+    {
+      type: 'category',
+      label: 'Learn',
+      items: [
+        {
+          type: 'doc',
+          label: 'Overview',
+          id: 'learn/academy/academy-overview',
+        },
+      ]
+    },
+    {
+      'type': 'html',
+      'value': '<hr/>',
+    },
+    {
+      'type': 'html',
       'value': '<span class=\'menu__link\'><b><small> TON Concepts </small></b></span>',
     },
     {
@@ -200,6 +219,8 @@ const sidebars = {
               label: 'Security Measures',
               items: [
                 'develop/smart-contracts/security/README',
+                'develop/smart-contracts/security/secure-programming',
+                'develop/smart-contracts/security/things-to-focus',
                 'develop/smart-contracts/security/ton-hack-challenge-1',
                 'develop/smart-contracts/guidelines/random-number-generation',
                 'develop/smart-contracts/security/random',
@@ -335,7 +356,9 @@ const sidebars = {
           label: 'Advanced Asset Holding',
           items: [
             'develop/dapps/asset-processing/README',
+            'develop/dapps/asset-processing/address-verification',
             'develop/dapps/asset-processing/jettons',
+            'develop/dapps/asset-processing/usdt',
             'develop/dapps/asset-processing/nfts',
             'develop/dapps/asset-processing/metadata',
           ],
@@ -423,6 +446,21 @@ const sidebars = {
       ],
     },
     {
+      type: 'category',
+      label: 'Oracles',
+      items: [
+        'develop/oracles/about_blockchain_oracles',
+
+        {
+          type: 'category',
+          label: 'Oracles in TON',
+          items: [
+            'develop/oracles/red_stone',
+          ],
+        },
+      ],
+    },
+    {
       'type': 'html',
       'value': '<hr/>',
     },
@@ -464,6 +502,7 @@ const sidebars = {
             'develop/func/compiler_directives',
             'develop/func/statements',
             'develop/func/builtins',
+            'develop/func/dictionaries',
             'develop/func/stdlib',
           ],
         },
@@ -641,6 +680,7 @@ const sidebars = {
         'participate/network-maintenance/nominators',
         'participate/network-maintenance/persistent-states',
         'participate/nodes/collators',
+        'participate/network-maintenance/custom-overlays',
       ],
     },
     {

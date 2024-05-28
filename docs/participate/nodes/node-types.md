@@ -10,10 +10,14 @@ A **Full Node** in TON is a node that maintains synchronization with the blockch
 
 It retains the _current state_ of the blockchain and can house either the entire block history or parts of it. This makes it the backbone of the TON blockchain, facilitating the network's decentralization and security.
 
+````mdx-code-block 
 <Button href="/participate/run-nodes/full-node"
 colorType="primary" sizeType={'sm'}>
+````
 Running a Full Node
+````mdx-code-block 
 </Button>
+````
 
 ## Validator Node
 
@@ -45,10 +49,7 @@ The TON Foundation provides several public Liteservers, integrated into the glob
 - [Public Liteserver Configurations - mainnet](https://ton.org/global-config.json)
 - [Public Liteserver Configurations - testnet](https://ton.org/testnet-global.config.json)
 
-Use the downloaded `config.json` file in your application with TON SDK.
-
-[Choose a TON SDK](/develop/dapps/apis/sdk)
-
+Use the downloaded `config.json` file in your application with [TON SDK](/participate/nodes/node-types#lite-clients-the-sdks-to-interact-with-ton).
 
 #### Troubleshooting
 
@@ -64,10 +65,7 @@ wget https://api.tontech.io/ton/wallet-mainnet.autoconf.json -O /usr/bin/ton/glo
 
 It removes slow liteservers from the configuration file.
 
-2. Use the downloaded config.json file in your application with TON SDK.
-
-[Choose a TON SDK](/develop/dapps/apis/sdk)
-
+2. Use the downloaded config.json file in your application with [TON SDK](/participate/nodes/node-types#lite-clients-the-sdks-to-interact-with-ton).
 
 
 ### Running a Full Node as a Liteserver

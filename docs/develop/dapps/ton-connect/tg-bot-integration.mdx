@@ -5,8 +5,20 @@ import Button from '@site/src/components/button'
 In this tutorial, we’ll create a sample telegram bot that supports TON Connect 2.0 authentication using Javascript TON Connect SDK.
 We will analyze connecting a wallet, sending a transaction, getting data about the connected wallet, and disconnecting a wallet.
 
-<Button href="https://t.me/ton_connect_example_bot" colorType={'primary'} sizeType={'sm'}>Open Demo Bot</Button>
-<Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>Check out GitHub</Button>
+````mdx-code-block 
+<Button href="https://t.me/ton_connect_example_bot" colorType={'primary'} sizeType={'sm'}>
+````
+Open Demo Bot
+````mdx-code-block 
+</Button>
+````
+````mdx-code-block 
+<Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>
+````
+Check out GitHub
+````mdx-code-block 
+</Button>
+````
 
 ## Documentation links
 
@@ -108,7 +120,7 @@ Create a `.env` file and add your bot token, DAppmanifest and wallets list cache
 TELEGRAM_BOT_TOKEN=<YOUR BOT TOKEN, E.G 1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA>
 TELEGRAM_BOT_LINK=<YOUR TG BOT LINK HERE, E.G. https://t.me/ton_connect_example_bot>
 MANIFEST_URL=https://raw.githubusercontent.com/ton-connect/demo-telegram-bot/master/tonconnect-manifest.json
-WALLETS_LIST_CAHCE_TTL_MS=86400000
+WALLETS_LIST_CACHE_TTL_MS=86400000
 ```
 
 Create directory `src` and file `bot.ts` inside. Let's create a TelegramBot instance there:
@@ -166,7 +178,7 @@ The difference between `name` and `appName` is that `name` is a human-readable l
 import { isWalletInfoRemote, WalletInfoRemote, WalletsListManager } from '@tonconnect/sdk';
 
 const walletsListManager = new WalletsListManager({
-    cacheTTLMs: Number(process.env.WALLETS_LIST_CAHCE_TTL_MS)
+    cacheTTLMs: Number(process.env.WALLETS_LIST_CACHE_TTL_MS)
 });
 
 export async function getWallets(): Promise<WalletInfoRemote[]> {
@@ -1142,7 +1154,7 @@ Let's add a timeout parameter value to the `.env`
 # .env
 TELEGRAM_BOT_TOKEN=<YOUR BOT TOKEN, LIKE 1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA>
 MANIFEST_URL=https://raw.githubusercontent.com/ton-connect/demo-telegram-bot/master/tonconnect-manifest.json
-WALLETS_LIST_CAHCE_TTL_MS=86400000
+WALLETS_LIST_CACHE_TTL_MS=86400000
 DELETE_SEND_TX_MESSAGE_TIMEOUT_MS=600000
 ```
 
@@ -1339,7 +1351,7 @@ To make it works we have to add a new parameter to the `.env`
 # .env
 TELEGRAM_BOT_TOKEN=<YOUR BOT TOKEN, LIKE 1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA>
 MANIFEST_URL=https://ton-connect.github.io/demo-dapp-with-react-ui/tonconnect-manifest.json
-WALLETS_LIST_CAHCE_TTL_MS=86400000
+WALLETS_LIST_CACHE_TTL_MS=86400000
 DELETE_SEND_TX_MESSAGE_TIMEOUT_MS=600000
 CONNECTOR_TTL_MS=600000
 ```
@@ -1924,7 +1936,7 @@ Now add redis connection parameter to the `.env`. Default redis url is `redis://
 # .env
 TELEGRAM_BOT_TOKEN=<YOUR BOT TOKEN, LIKE 1234567890:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA>
 MANIFEST_URL=https://ton-connect.github.io/demo-dapp-with-react-ui/tonconnect-manifest.json
-WALLETS_LIST_CAHCE_TTL_MS=86400000
+WALLETS_LIST_CACHE_TTL_MS=86400000
 DELETE_SEND_TX_MESSAGE_TIMEOUT_MS=600000
 CONNECTOR_TTL_MS=600000
 REDIS_URL=redis://127.0.0.1:6379

@@ -108,7 +108,7 @@ Before working with `slice`, it is necessary to check whether it has any data to
 ```func
 ;; creating empty slice
 slice empty_slice = "";
-;; `slice_empty?()` returns `true`, because slice dosen't have any `bits` and `refs`
+;; `slice_empty?()` returns `true`, because slice doesn't have any `bits` and `refs`
 empty_slice.slice_empty?();
 
 ;; creating slice which contains bits only
@@ -148,14 +148,14 @@ slice_with_bits_and_refs.slice_empty?();
 > ["begin_parse()" in docs](/develop/func/stdlib#begin_parse)
 
 
-### How to determine if slice is empty (dosen't have any bits, but may have refs)
+### How to determine if slice is empty (doesn't have any bits, but may have refs)
 
 If we need to check only the `bits` and it does not matter if there are any `refs` in `slice`, then we should use `slice_data_empty?()`.
 
 ```func 
 ;; creating empty slice
 slice empty_slice = "";
-;; `slice_data_empty?()` returns `true`, because slice dosen't have any `bits`
+;; `slice_data_empty?()` returns `true`, because slice doesn't have any `bits`
 empty_slice.slice_data_empty?();
 
 ;; creating slice which contains bits only
@@ -168,7 +168,7 @@ slice slice_with_refs_only = begin_cell()
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_data_empty?()` returns `true`, because slice dosen't have any `bits`
+;; `slice_data_empty?()` returns `true`, because slice doesn't have any `bits`
 slice_with_refs_only.slice_data_empty?();
 
 ;; creating slice which contains bits and refs
@@ -196,19 +196,19 @@ slice_with_bits_and_refs.slice_data_empty?();
 > ["begin_parse()" in docs](/develop/func/stdlib#begin_parse)
 
 
-### How to determine if slice is empty (dosen't have any refs, but may have bits)
+### How to determine if slice is empty (doesn't have any refs, but may have bits)
 
 In case we are only interested in `refs`, we should check their presence using `slice_refs_empty?()`.
 
 ```func 
 ;; creating empty slice
 slice empty_slice = "";
-;; `slice_refs_empty?()` returns `true`, because slice dosen't have any `refs`
+;; `slice_refs_empty?()` returns `true`, because slice doesn't have any `refs`
 empty_slice.slice_refs_empty?();
 
 ;; creating slice which contains bits only
 slice slice_with_bits_only = "Hello, world!";
-;; `slice_refs_empty?()` returns `true`, because slice dosen't have any `refs`
+;; `slice_refs_empty?()` returns `true`, because slice doesn't have any `refs`
 slice_with_bits_only.slice_refs_empty?();
 
 ;; creating slice which contains refs only
@@ -735,7 +735,7 @@ if (current_time > 1672080143) {
 :::caution draft
 Please note that this method of generating random numbers isn't safe.
 
-TODO: add link to an article about generating random numbers
+Checkout [Random Number Generation](https://docs.ton.org/develop/smart-contracts/guidelines/random-number-generation) for more information.
 :::
 
 ```func
@@ -1487,3 +1487,74 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
     .end_cell();
 }
 ```
+
+### How to update the smart contract logic
+
+Below is a simple `СounterV1` smart-contract that has the functionality to increment the counter and update the smart-contract logic. 
+
+```func
+() recv_internal (slice in_msg_body) {
+    int op = in_msg_body~load_uint(32);
+    
+    if (op == op::increase) {
+        int increase_by = in_msg_body~load_uint(32);
+        ctx_counter += increase_by;
+        save_data();
+        return ();
+    }
+
+    if (op == op::upgrade) {
+        cell code = in_msg_body~load_ref();
+        set_code(code);
+        return ();
+    }
+}
+```
+
+After operating the smart-contract, you realize that you are missing the meter reduction feature. You must copy the code of the smart-contract `CounterV1` and next to the `increase` function, add a new `decrease` function. Now your code looks like this:
+
+```func
+() recv_internal (slice in_msg_body) {
+    int op = in_msg_body~load_uint(32);
+    
+    if (op == op::increase) {
+        int increase_by = in_msg_body~load_uint(32);
+        ctx_counter += increase_by;
+        save_data();
+        return ();
+    }
+
+    if (op == op::decrease) {
+        int decrease_by = in_msg_body~load_uint(32);
+        ctx_counter -= increase_by;
+        save_data();
+        return ();
+    }
+
+    if (op == op::upgrade) {
+        cell code = in_msg_body~load_ref();
+        set_code(code);
+        return ();
+    }
+}
+```
+
+Once the smart-contract `CounterV2` is ready, you must compile it off-chain into a `cell` and send an upgrade message to the `CounterV1` smart-contract.
+
+```javascript
+await contractV1.sendUpgrade(provider.sender(), {
+    code: await compile('ContractV2'),
+    value: toNano('0.05'),
+});
+```
+
+> 💡 Useful links
+> 
+> [Is it possible to re-deploy code to an existing address or does it have to be deployed as a new contract?](/develop/howto/faq#is-it-possible-to-re-deploy-code-to-an-existing-address-or-does-it-have-to-be-deployed-as-a-new-contract)
+>
+> ["set_code()" in docs](/develop/func/stdlib#set_code)
+
+
+
+
+
