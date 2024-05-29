@@ -2,8 +2,8 @@
 description: 이 튜토리얼에서는 지갑, 트랜잭션, 스마트 컨트랙트를 완벽하게 사용하는 방법을 알려드립니다.
 ---
 
-'@theme/Tabs'에서 Tabs 가져오기;
-'@theme/TabItem'에서 TabItem 가져오기;
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # 월렛 스마트 컨트랙트 작업
 

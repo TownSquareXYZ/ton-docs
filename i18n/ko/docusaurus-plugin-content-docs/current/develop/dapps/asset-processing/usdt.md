@@ -1,4 +1,4 @@
-'@site/src/components/button'에서 버튼 가져오기
+import Button from '@site/src/components/button';
 
 # USDT 처리
 

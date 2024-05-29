@@ -1,5 +1,5 @@
-'@theme/Tabs'에서 Tabs 가져오기;
-'@theme/TabItem'에서 TabItem 가져오기;
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 # TON 요리책
 

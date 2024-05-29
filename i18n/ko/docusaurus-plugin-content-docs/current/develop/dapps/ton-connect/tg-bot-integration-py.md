@@ -1,4 +1,4 @@
-'@site/src/components/button'에서 버튼 가져오기
+import Button from '@site/src/components/button';
 
 # 텔레그램 봇용 톤 커넥트 - 파이썬
 
