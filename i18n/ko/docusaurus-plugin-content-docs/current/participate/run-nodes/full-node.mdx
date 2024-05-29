@@ -1,0 +1,720 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 전체 노드 실행
+
+:::caution 시스템 관리자 필요
+노드를 실행하려면 Linux/Ubuntu 시스템 관리에 대한 기본 지식이 필요합니다.
+:::
+
+나만의 노드를 설치 및 관리하려면 TON 재단에서 개발한 **MyTonCtrl** 오픈 소스 도구를 사용하세요. 대부분의 TON 노드는 **MyTonCtrl**에 의해 안정적으로 테스트되었습니다.
+
+[MyTonCtrl](https://github.com/ton-blockchain/mytonctrl)은 파이브, 라이트 클라이언트, 검증인 엔진 콘솔을 위한 편리한 래퍼인 콘솔 애플리케이션입니다. Linux 운영 체제에서 지갑, 도메인, 유효성 검사기 관리 작업을 간소화하기 위해 특별히 개발되었습니다.
+
+설치 과정에 대한 피드백을 적극적으로 받고 있습니다. 질문이나 제안 사항이 있으시면 [문의하기](https://t.me/Alexgton)로 문의해 주세요.
+
+## 전제 조건
+
+지원되는 운영 체제를 사용하여 MyTonCtrl을 설치하는 것이 좋습니다:
+
+- 우분투 20.04
+- 우분투 22.04
+- Debian 11
+
+sudo 권한이 있는 루트 사용자가 아닌 사용자](/참여/실행 노드/전체 노드#전제조건-1)가 MyTonCtrl을 설치 및 실행하세요.
+
+## 하드웨어 요구 사항
+
+이 요구 사항은 **검증자가 있는 풀 노드**에 대한 것입니다. 유효성 검사기 없이 전체 노드를 실행하려는 경우(예: [liteserver](/participate/run-nodes/full-node#hardware-requirements-1)), 덜 강력한 머신을 사용할 수 있습니다.
+
+- 16코어 CPU
+- 128GB RAM
+- 1TB NVME SSD _또는_ 프로비저닝된 64+k IOPS 스토리지
+- 1Gbit/s 네트워크 연결
+- 공용 IP 주소(_고정 IP 주소_)
+- 최대 부하 시 월 16TB/월 트래픽
+
+TON 블록체인 풀 노드를 실행하려면 **고정 IP 주소**와 **고대역폭 네트워크 연결**이 있는 컴퓨터가 필요합니다.
+
+일반적으로 피크 부하를 안정적으로 수용하려면 네트워크 연결이 양호한 데이터 센터에 최소 1Gbit/s 연결을 사용하는 충분히 강력한 서버가 필요합니다(평균 부하가 약 100Mbit/s로 예상됨).
+
+### 포트 포워딩
+
+모든 유형의 노드에는 고정 외부 IP 주소가 필요하며, 들어오는 연결을 위해 하나의 UDP 포트가 전달되고 모든 나가는 연결이 열려 있어야 하며, 노드는 새로운 나가는 연결에 임의의 포트를 사용합니다. 이는 노드가 NAT를 통해 외부에서 볼 수 있도록 하기 위한 필수 사항입니다. 
+
+네트워크 제공업체를 이용하거나 [서버 임대](/참여/실행 노드/전체 노드#권장 제공업체)를 통해 노드를 실행할 수 있습니다.
+
+:::info
+netstat -tulpn\` 명령으로 어떤 UDP 포트가 열려 있는지 확인할 수 있습니다.
+:::
+
+### 추천 제공업체
+
+TON 재단은 검증자를 실행하기 위해 다음 공급자를 권장합니다:
+
+#### GCP(Google 클라우드 플랫폼)
+
+- **기계 유형:** `n2-standard-16`
+- **CPU:** `32 vCPU`
+- **RAM:** `128 GB`
+- **스토리지:** '1TB NVMe SSD 퍼시스턴트 디스크'
+- **네트워크:** `16Gbps`
+- **공인 IP:** `정적 외부 IP 주소를 예약합니다.`
+- **트래픽:** `16TB/월`
+
+#### 알리바바 클라우드
+
+- **인스턴스 유형:** `ecs.g6.4xlarge`
+- **CPU:** `32 vCPU`
+- **RAM:** `128 GB`
+- **스토리지:** `1TB NVMe SSD 디스크`
+- **네트워크:** '최대 10Gbps'
+- **공용 IP:** `고정 IP 주소에 Elastic IP를 바인딩합니다.`
+- **트래픽:** `16TB/월`
+
+#### 텐센트 클라우드
+
+- **인스턴스 유형:** `M5.4XLARGE`
+- **CPU:** `32 vCPU`
+- **RAM:** `128 GB`
+- **스토리지:** '1TB NVMe SSD 클라우드 디스크'
+- **네트워크:** '최대 10Gbps'
+- **공용 IP:** `고정 IP 주소에 대해 Elastic IP를 연결합니다.`
+- **트래픽:** `16TB/월`
+
+#### Vultr
+
+- **인스턴스 유형:** '베어 메탈 인텔 E-2388G'
+- **CPU:** `16 코어 / 32 스레드`
+- **RAM:** `128 GB`
+- **스토리지:** `1.92TB NVMe SSD`
+- **네트워크:** `10Gbps`
+- **공용 IP:** '인스턴스에 포함된 고정 IP 주소'입니다.
+- **트래픽:** `16TB/월`
+
+#### 디지털오션
+
+- **인스턴스 유형:** '범용 프리미엄 인텔'
+- **CPU:** `32 vCPU`
+- **RAM:** `128 GB`
+- **스토리지:** `1TB NVMe SSD`
+- **네트워크:** `10Gbps`
+- **공용 IP:** '인스턴스에 포함된 고정 IP 주소'입니다.
+- **트래픽:** `16TB/월`
+
+#### 위도
+
+- **인스턴스 유형:** `c3.medium.x86`
+- **CPU:** `16 코어 / 32 스레드`
+- **RAM:** `128 GB`
+- **스토리지:** `1.9TB NVMe SSD`
+- **네트워크:** `10Gbps`
+- **공용 IP:** '인스턴스에 포함된 고정 IP 주소'입니다.
+- **트래픽:** `16TB/월`
+
+:::info
+\*\*참고: 가격, 구성, 이용 가능 여부는 다를 수 있습니다. 결정을 내리기 전에 항상 해당 클라우드 제공업체의 공식 문서와 가격 페이지를 확인하는 것이 좋습니다.
+:::
+
+## 노드는 어떻게 실행하나요? (동영상)
+
+[//]: # "<ReactPlayer controls={true} style={{borderRadius:'10pt', margin:'15pt auto', maxWidth: '100%'}} url='/docs/files/setup_validator.mp4' />"
+
+이 동영상에서 단계별 튜토리얼을 확인하여 바로 시작하세요:
+
+```mdx-code-block
+<video style={{borderRadius:'10pt', margin:'auto', width: '100%', maxWidth: '100%'}} controls={true}>
+    <source src="/files/setup_validator.mp4" type="video/mp4" />
+</video>
+```
+
+## 단계별 지침
+
+### 전제 조건
+
+#### 루트 권한이 없는 sudo 사용자로 로그인
+
+루트 권한이 없는 **비루트** 사용자로 서버에 로그인합니다.
+
+#### 루트 권한이 없는 sudo 사용자 만들기 및 로그인
+
+비루트\*\* 사용자가 없는 경우 다음 단계에 따라 만들 수 있습니다.
+
+1. 루트로 로그인하고 새 사용자를 만듭니다:
+
+```bash
+sudo adduser <username>
+```
+
+2. sudo 그룹에 사용자를 추가합니다:
+
+```bash
+sudo usermod -aG sudo <username>
+```
+
+3. ssh를 사용하여 새 사용자로 서버에 로그인합니다.
+
+```bash
+ssh <username>@<server-ip-address>
+```
+
+### MyTonCtrl
+
+루트 권한이 없는 **비루트** 사용자 계정에서 설치 스크립트를 다운로드하여 실행합니다. Linux 배포판을 선택합니다:
+
+<Tabs groupId="operating-systems">
+  <TabItem value="ubuntu" label="Ubuntu">
+
+```bash
+wget https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/scripts/install.sh
+sudo bash install.sh -m full -d
+```
+
+</TabItem>
+  <TabItem 값={'debian'} 레이블={'Debian'}>
+
+```bash
+wget https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/scripts/install.sh
+su root -c 'bash install.sh -m full -d'
+```
+
+</TabItem>
+</Tabs>
+
+- 전체\` - 전체 노드 설치 모드입니다.
+- d\` - **mytonctrl**은 최신 블록체인 상태의 [덤프](https://dump.ton.org/)를 다운로드합니다.
+  이렇게 하면 동기화 시간이 몇 배로 단축됩니다.
+- c `<path>\` - 동기화를 위해 공용 라이트서버가 아닌 다른 서버를 사용하려는 경우. _(필요 없음)_.
+
+### mytonctrl
+
+1. 1단계]에서 설치에 사용한 로컬 사용자 계정으로 **MyTonCtrl** 콘솔을 실행합니다(/참여/실행노드/전체노드#전제조건-1):
+
+```sh
+mytonctrl
+```
+
+2. status\` 명령을 사용하여 MyTonCtrl 상태를 확인합니다:
+
+```sh
+status
+```
+
+다음과 같은 상태가 표시되어야 합니다:
+
+- **마이톤코어 상태**: 녹색으로 표시되어야 합니다.
+- **로컬 유효성 검사기 상태**: 녹색으로 표시되어야 합니다.
+- **로컬 유효성 검사기가 동기화되지 않았습니다**: 처음에는 많은 숫자가 표시됩니다. 새로 생성된 유효성 검사기가 다른 유효성 검사기와 연결되는 즉시 약 25만 개가 표시됩니다. 동기화가 진행됨에 따라 이 숫자는 감소합니다. 20 이하로 떨어지면 유효성 검사기가 동기화된 것입니다.
+
+status\*\* 명령 출력의 예입니다:
+
+![status](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/mytonctrl-status.png)
+
+:::caution 상태에 대해 동일한 출력이 있는지 확인합니다.
+모든 노드 유형에 대해 **로컬 검증자 상태** 섹션이 표시되어야 합니다.
+그렇지 않으면 [문제 해결 섹션 확인](/participate/run-nodes/full-node#status-command-displays-without-local-node-section) 및 [노드 로그 확인](/participate/run-nodes/full-node#check-the-node-logs) 섹션이 표시됩니다.
+:::
+
+'로컬 유효성 검사기 동기화 실패'가 20초 미만이 될 때까지 기다립니다.
+
+## 검증자 되기
+
+### 지갑 목록 보기
+
+wl\` 명령을 사용해 **MyTonCtrl** 콘솔에서 사용 가능한 지갑 목록을 확인하세요:
+
+```sh
+wl
+```
+
+mytonctrl**을 설치하는 동안 **validator_wallet_001\*\* 지갑이 생성됩니다:
+
+![지갑 목록](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytonctrl-wl_ru.png)
+
+### 지갑 활성화
+
+1. 필요한 수의 코인을 지갑으로 전송하고 활성화합니다.
+
+최근(_2023년 말_) 대략적인 수치는 최소 약 **34만 톤에서 최대 약 **1백만 톤이었습니다.
+
+톤스캔닷컴](https://tonscan.com/validation)에서 현재 지분을 확인하여 필요한 코인의 양을 파악하세요.
+
+최대 및 최소 지분 계산 방법](/참여/네트워크-유지/스테이킹-인센티브#지분 가치-최대 유효 지분)을 자세히 읽어보세요.
+
+2. 전송 내역을 표시하려면 `vas` 명령을 사용합니다:
+
+```sh
+vas
+```
+
+3. aw\` 명령을 사용하여 지갑을 활성화합니다.
+
+```sh
+aw [wallet name]
+```
+
+![계정 내역](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytonctrl-vas-aw_ru.png)
+
+### 이제 유효성 검사기가 준비되었습니다.
+
+**마이톤코어**는 자동으로 선거에 참여하게 됩니다. 지갑 잔액을 두 부분으로 나누어 선거에 참여할 수 있는 지분으로 사용합니다. 스테이크 크기를 수동으로 설정할 수도 있습니다:
+
+```sh
+set stake 50000
+```
+
+'스테이크 50000 설정' - 스테이크 크기를 5만 코인으로 설정합니다. 베팅이 수락되고 노드가 검증자가 되면, 베팅은 두 번째 선거에서만 철회할 수 있습니다(유권자 규칙에 따라).
+
+![지분 설정](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytonctrl-set_ru.png)
+
+## 라이트서버 모드 사용
+
+풀 노드에서 엔드포인트가 활성화되면 해당 노드는 **라이트 서버**의 역할을 맡게 됩니다. 이 노드 유형은 라이트 클라이언트의 요청을 처리하고 응답할 수 있어 톤 블록체인과 원활하게 상호작용할 수 있습니다.
+
+### 하드웨어 요구 사항
+
+유효성 검사기](/참여/실행 노드/풀 노드#하드웨어 요구 사항)에 비해 라이트서버 모드는 리소스가 덜 필요합니다. 그러나 라이트서버를 실행하려면 여전히 강력한 컴퓨터를 사용하는 것이 좋습니다.
+
+- 최소 16코어 CPU
+- 최소 128GB RAM
+- 최소 1TB GB NVMe SSD _또는_ 프로비저닝된 32+k IOPS 스토리지
+- 1Gbit/s 네트워크 연결
+- 최대 부하 시 월 16TB/월 트래픽
+- 공용 IP 주소(_고정 IP 주소_)
+
+#### 추천 제공업체
+
+권장 제공자](/참여/실행 노드/전체 노드#권장 제공자) 섹션에 나열된 클라우드 제공자를 자유롭게 사용하세요.
+
+헤츠너와 OVH는 유효성 검사기를 실행하는 것이 금지되어 있지만 라이트서버를 실행하는 데는 사용할 수 있습니다:
+
+- **Hetzner**: EX101, AX102
+- **OVH**: RISE-4
+
+### 라이트서버 설치
+
+1. 이전 단계(/참여하기/실행 노드/전체 노드#단계별 지침)를 완료하여 [MyTonCtrl]을 설치합니다.
+
+2. 구성 파일 만들기
+
+```bash
+MyTonCtrl> installer
+MyTonInstaller> clcf
+
+Local config file created: /usr/bin/ton/local.config.json
+```
+
+3. 이 파일은 라이트서버에 연결하는 데 도움이 됩니다. 지정된 경로에 있는 구성 파일을 홈에 복사하여 저장합니다.
+
+```bash
+cp /usr/bin/ton/local.config.json ~/config.json
+```
+
+4. 로컬 머신에 빈 `config.json` 파일을 만듭니다.
+
+5. 콘솔의 콘텐츠를 로컬 컴퓨터의 `config.json` 파일로 복사합니다.
+
+```bash
+cat ~/config.json
+```
+
+### 방화벽 설정 확인
+
+먼저 `config.json` 파일에 지정된 Liteserver 포트를 확인합니다. 이 포트는 `MyTonCtrl`을 새로 설치할 때마다 변경됩니다. 포트는 `port` 필드에 있습니다:
+
+```json
+{
+  ...
+  "liteservers": [
+    {
+      "ip": 1605600994,
+      "port": LITESERVER_PORT
+      ...
+    }
+  ]
+}
+```
+
+클라우드 제공업체를 사용하는 경우 방화벽 설정에서 이 포트를 열어야 합니다. 예를 들어 AWS를 사용하는 경우 [보안 그룹](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html)에서 이 포트를 열어야 합니다.
+
+아래는 베어메탈 서버 방화벽에서 포트를 여는 예제입니다.
+
+#### 방화벽에서 포트 열기
+
+여기서는 `ufw` 유틸리티([치트시트](https://www.cyberciti.biz/faq/ufw-allow-incoming-ssh-connections-from-a-specific-ip-address-subnet-on-ubuntu-debian/))를 사용합니다. 원하는 것을 사용해도 됩니다.
+
+1. 설치되어 있지 않은 경우 `ufw`를 설치합니다:
+
+```bash
+sudo apt update
+sudo apt install ufw
+```
+
+2. ssh 연결을 허용합니다:
+
+```bash
+sudo ufw allow ssh
+```
+
+3. config.json\` 파일에 지정된 포트를 허용합니다:
+
+```bash
+sudo ufw allow <port>
+```
+
+4. 방화벽 상태를 확인합니다. 이 명령을 실행한 후 UFW 상태를 확인하여 규칙이 성공적으로 추가되었는지 확인할 수 있습니다:
+
+```bash
+sudo ufw status
+```
+
+5. 방화벽을 활성화합니다:
+
+```bash
+sudo ufw enable
+```
+
+이렇게 하면 서버의 방화벽 설정에서 포트를 열 수 있습니다.
+
+### Liteserver와의 상호 작용
+
+0. 컴퓨터에서 빈 프로젝트를 만들고 프로젝트 디렉토리에 `config.js`를 붙여넣습니다.
+
+1. 라이브러리를 설치합니다.
+
+<Tabs groupId="code-examples">
+  <TabItem value="js" label="JavaScript">
+
+```bash
+npm i --save ton-core ton-lite-client
+```
+
+</TabItem>
+  <TabItem value="python" label="Python">
+
+```bash
+pip install pytonlib
+```
+
+</TabItem>
+  <TabItem value="go" label="Golang">
+
+```bash
+go get github.com/xssnick/tonutils-go
+go get github.com/xssnick/tonutils-go/liteclient
+go get github.com/xssnick/tonutils-go/ton
+```
+
+</TabItem>
+</Tabs>
+
+2. 클라이언트를 초기화하고 마스터체인 정보를 요청하여 라이트서버가 실행 중인지 확인합니다.
+
+<Tabs groupId="code-examples">
+  <TabItem value="js" label="JavaScript">
+
+  package.json`파일에서 프로젝트 유형을`module\`로 변경합니다:
+
+```json
+{
+    "type": "module"
+}
+```
+
+  다음 내용으로 `index.js` 파일을 생성합니다:
+
+```js
+import { LiteSingleEngine } from 'ton-lite-client/dist/engines/single.js'
+import { LiteRoundRobinEngine } from 'ton-lite-client/dist/engines/roundRobin.js'
+import { LiteClient } from 'ton-lite-client/dist/client.js'
+import config from './config.json' assert {type: 'json'};
+
+
+function intToIP(int ) {
+    var part1 = int & 255;
+    var part2 = ((int >> 8) & 255);
+    var part3 = ((int >> 16) & 255);
+    var part4 = ((int >> 24) & 255);
+
+    return part4 + "." + part3 + "." + part2 + "." + part1;
+}
+
+let server = config.liteservers[0];
+
+async function main() {
+    const engines = [];
+    engines.push(new LiteSingleEngine({
+        host: `tcp://${intToIP(server.ip)}:${server.port}`,
+        publicKey: Buffer.from(server.id.key, 'base64'),
+    }));
+
+    const engine = new LiteRoundRobinEngine(engines);
+    const client = new LiteClient({ engine });
+    const master = await client.getMasterchainInfo()
+    console.log('master', master)
+
+}
+
+main()
+
+```
+
+</TabItem>
+  <TabItem value="python" label="Python">
+
+```python
+  import asyncio
+  from pytonlib import TonlibClient
+  from pathlib import Path
+  import json
+
+
+  async def get_client() -> TonlibClient:
+  with open('config.json', 'r') as f:
+  config = json.loads(f.read())
+
+  keystore_dir = '/tmp/ton_keystore'
+  Path(keystore_dir).mkdir(parents=True, exist_ok=True)
+
+  client = TonlibClient(ls_index=0, config=config, keystore=keystore_dir, tonlib_timeout=10)
+  await client.init()
+
+  return client
+
+
+  async def test_client():
+  client = await get_client()
+
+  print(await client.get_masterchain_info())
+
+  await client.close()
+
+
+  if __name__ == '__main__':
+  asyncio.run(test_client())
+```
+
+</TabItem>
+  <TabItem value="go" label="Golang">
+
+```go
+package main
+
+import (
+    "context"
+    "encoding/json"
+    "io/ioutil"
+    "log"
+    "github.com/xssnick/tonutils-go/liteclient"
+    "github.com/xssnick/tonutils-go/ton"
+)
+
+func main() {
+    client := liteclient.NewConnectionPool()
+
+    content, err := ioutil.ReadFile("./config.json")
+    if err != nil {
+        log.Fatal("Error when opening file: ", err)
+    }
+
+    config := liteclient.GlobalConfig{}
+    err = json.Unmarshal(content, &config)
+    if err != nil {
+        log.Fatal("Error during Unmarshal(): ", err)
+    }
+
+    err = client.AddConnectionsFromConfig(context.Background(), &config)
+    if err != nil {
+        log.Fatalln("connection err: ", err.Error())
+        return
+    }
+
+    // initialize ton API lite connection wrapper
+    api := ton.NewAPIClient(client)
+
+    master, err := api.GetMasterchainInfo(context.Background())
+    if err != nil {
+        log.Fatalln("get masterchain info err: ", err.Error())
+        return
+    }
+
+    log.Println(master)
+}
+
+```
+
+</TabItem>
+</Tabs>
+
+3. 이제 자체 라이트서버와 상호 작용할 수 있습니다.
+
+### 참고 항목
+
+- [\[유튜브\]라이트서버 시작 방법 튜토리얼](https://youtu.be/p5zPMkSZzPc)
+
+## 팁 및 유용한 정보
+
+### 사용 가능한 명령어 목록
+
+- 도움말\`을 사용하여 사용 가능한 명령어 목록을 확인할 수 있습니다:
+
+![도움말 명령](/img/docs/full-node/help.jpg)
+
+### mytonctrl 로그 확인
+
+- mytoncrl\*\* 로그를 확인하려면 로컬 사용자의 경우 `~/.local/share/mytoncore/mytoncore.log`를, 루트의 경우 `/usr/local/bin/mytoncore/mytoncore.log`를 열면 됩니다.
+
+![로그](https://raw.githubusercontent.com/ton-blockchain/mytonctrl/master/screens/manual-ubuntu_mytoncore-log.png)
+
+### 노드 로그 확인
+
+장애 발생 시 노드 로그를 확인하세요:
+
+```bash
+tail -f /var/ton-work/log.thread*
+```
+
+## 문제 해결
+
+이 섹션에는 노드 실행과 관련하여 가장 자주 묻는 질문에 대한 답변이 포함되어 있습니다.
+
+### 계정 상태 가져오기 실패
+
+```
+Failed to get account state
+```
+
+이 오류는 샤드 상태에서 이 계정을 검색하는 동안 문제가 발생했음을 의미합니다.
+라이트서버 노드의 동기화 속도가 너무 느리거나, 특히 마스터체인 동기화가 샤드체인(베이스체인) 동기화보다 빠르다는 의미일 가능성이 높습니다. 이 경우 노드는 최근 마스터체인 블록을 알고 있지만 최근 샤드체인 블록에서 계정 상태를 확인할 수 없으며 계정 상태 가져오기 실패를 반환합니다.
+
+### 계정 상태 풀기에 실패했습니다.
+
+```
+Failed to unpack account state
+```
+
+이 오류는 요청된 계정이 현재 상태에 존재하지 않는다는 의미입니다. 즉, 이 계정은 배포되지 않았으며 동시에 잔액이 0입니다.
+
+### 현재 상태에 외부 메시지를 적용할 수 없습니다: 외부 메시지가 수락되지 않았습니다.
+
+```
+Cannot apply external message to current state : External message was not accepted
+```
+
+이 오류는 컨트랙트가 외부 메시지를 수락하지 않았음을 의미합니다. 추적에서 종료 코드를 찾아야 합니다. -13은 계정에 메시지를 수락하기에 충분한 TON이 없음을 의미합니다(또는 가스 크레딧보다 더 많이 필요함). 지갑 컨트랙트의 경우 exitcode=33은 잘못된 seqno를 의미하고(아마도 사용하는 seqno 데이터가 outdatd일 것입니다), exitcode=34는 잘못된 subwallet_id를 의미하며(이전 지갑 v1/v2의 경우 잘못된 서명을 의미), exitcode=35는 만료된 메시지(지갑 v1-v3) 또는 잘못된 서명(v4r2), exitcode=36은 만료된 메시지(일반적으로 시스템 시간이 잘못되었다는 의미)를 뜻합니다.
+
+### 오류 651은 무엇을 의미하나요?
+
+'[오류 : 651 : 노드 없음]\`은 노드가 TON 블록체인 내에서 다른 노드를 찾을 수 없음을 나타냅니다.
+
+이 과정은 최대 24시간이 걸릴 수도 있습니다. 그러나 이 오류가 며칠 동안 계속 발생한다면 현재 네트워크 연결을 통해 노드를 동기화할 수 없다는 뜻입니다.
+
+:::tip 솔루션
+
+특정 포트에서 들어오는 연결과 모든 포트에서 나가는 연결을 허용해야 합니다.
+:::
+
+### 유효성 검사기 콘솔이 설정되지 않았습니다.
+
+'유효성 검사기 콘솔이 설정되어 있지 않습니다' 오류가 발생하면 설치에 사용한 사용자가 아닌 다른 사용자로부터 'MyTonCtrl'을 실행하고 있다는 뜻입니다.
+
+:::tip 솔루션
+
+```bash
+mytonctrl
+```
+
+:::
+
+### "차단이 적용되지 않음"이란 무엇을 의미하나요?
+
+Q:\_\_ 다양한 요청에 대해 '차단이 적용되지 않았습니다' 또는 '차단이 준비되지 않았습니다'라는 메시지가 표시되는 경우가 있는데 정상인가요?
+
+**A:** 이것은 정상이며, 일반적으로 요청한 노드에 도달하지 못한 블록을 검색하려고 시도했음을 의미합니다.
+
+Q:\_\_ 비교 빈도가 나타나면 어딘가에 문제가 있다는 뜻인가요?
+
+**A:** 아니요. mytonctrl에서 "로컬 유효성 검사기 동기화되지 않음" 값을 확인해야 합니다. 60초 미만이면 모든 것이 정상입니다.
+
+하지만 노드가 지속적으로 동기화되고 있다는 점을 명심해야 합니다. 때로는 요청한 노드에 도달하지 않은 블록을 수신하려고 시도할 수도 있습니다.
+
+약간의 지연을 두고 요청을 반복해야 합니다.
+
+### d 플래그와 동기화되지 않는 문제
+
+'d' 플래그가 있는 'MyTonCtrl'을 다운로드한 후 '동기화되지 않음'이 타임스탬프와 같은 문제가 발생하면 덤프가 올바르게 설치되지 않았거나 이미 오래된 것일 수 있습니다.
+
+:::tip 솔루션
+권장되는 해결책은 새 덤프와 함께 `MyTonCtrl`을 다시 설치하는 것입니다.
+:::
+
+동기화 시간이 비정상적으로 오래 걸리는 경우 덤프에 문제가 있는 것일 수 있습니다. 도움을 받으려면 [문의하기](https://t.me/SwiftAdviser)로 문의하세요.
+
+설치한 사용자에서 `mytonctrl`을 실행하세요.
+
+### 오류 명령\<...> 이 3초 후에 시간 초과되었습니다.
+
+이 오류는 로컬 노드가 아직 동기화되지 않았으며(20초 미만 동기화) 퍼블릭 노드가 사용 중임을 의미합니다.
+퍼블릭 노드가 항상 응답하지 않고 시간 초과 오류가 발생하는 것은 아닙니다.
+
+:::tip 솔루션
+이 문제에 대한 해결책은 로컬 노드가 동기화될 때까지 기다리거나 동일한 명령을 실행하기 전에 여러 번 실행하는 것입니다.
+:::
+
+### 로컬 노드 섹션 없이 상태 명령이 표시됨
+
+![](\img\docs\full-node\local-validator-status-absent.png)
+
+노드 상태에 로컬 노드 섹션이 없다면 일반적으로 설치 중에 문제가 발생하여 검증자 지갑을 생성/할당하는 단계를 건너뛰었다는 뜻입니다.
+또한 유효성 검사기 지갑이 지정되었는지 확인하세요.
+
+다음을 직접 확인하세요:
+
+```bash
+mytonctrl> get validatorWalletName
+```
+
+유효성 검사기 지갑 이름이 null이면 다음을 실행합니다:
+
+```bash
+mytonctrl> set validatorWalletName validator_wallet_001
+```
+
+### 새 서버에서 유효성 검사기 이전
+
+:::info
+모든 키와 구성을 이전 노드에서 작업 노드로 전송하고 시작하세요. 새 노드에서 문제가 발생하더라도 모든 것이 설정된 소스가 여전히 남아 있습니다.
+:::
+
+가장 좋은 방법(일시적인 미검증에 대한 페널티는 적지만 중단 없이 수행할 수 있음)입니다:
+
+1. mytonctrl\`을 사용하여 새 서버에 새로 설치를 수행하고 모든 것이 동기화될 때까지 기다립니다.
+
+2. 두 시스템 모두에서 `mytoncore` 및 유효성 검사기 `서비스`를 중지하고 소스 및 새 시스템에서 백업을 만듭니다:
+
+- 2.1 `/usr/local/bin/mytoncore/...`
+- 2.2 `/home/${user}/.local/share/mytoncore/...`
+- 2.3 `/var/ton-work/db/config.json`
+- 2.4 `/var/ton-work/db/config.json.backup`
+- 2.5 `/var/ton-work/db/keyring`
+- 2.6 `/var/ton-work/keys`
+
+3. 소스에서 새 소스로 전송(콘텐츠 교체)합니다:
+
+- 3.1 `/usr/local/bin/mytoncore/...`
+- 3.2 `/home/${user}/.local/share/mytoncore/...`
+- 3.3 `/var/ton-work/db/config.json`
+- 3.4 `/var/ton-work/db/keyring`
+- 3.5 `/var/ton-work/keys`
+
+4. var/ton-work/db/config.json`에서 `addrs[0].ip`를 설치 후의 현재 값으로 수정합니다(백업 `/ton-work/db/config.json.backup\`에서 볼 수 있음).
+
+5. 교체된 모든 파일에 대한 권한 확인
+
+6. 새 노드에서 `mytoncore` 및 `validator` 서비스를 시작하고 노드가 동기화되는지 확인한 다음 유효성을 검사합니다.
+
+7. 새 계정에서 백업을 만듭니다:
+
+```bash
+cp var/ton-work/db/config.json var/ton-work/db/config.json.backup
+```

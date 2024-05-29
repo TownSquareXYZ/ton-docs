@@ -1,0 +1,64 @@
+# TMA 설계 가이드라인
+
+:::info
+버전 **6.10**부터, 텔레그램은 미니앱의 색상 팔레트를 업데이트 하였습니다: 몇가지 오래된 색상들이 수정되었고, 새로운 색상들이 추가되었습니다.
+:::
+
+배경 지식을 위해 업데이트의 역사를 기억해 보겠습니다.
+
+변경 로그.
+
+1. bg_color`및`secondary_bg_color\`가 업데이트되었습니다.
+
+![](/img/docs/tma-design-guidelines/tma-design_1.png)
+
+그 이유는 무엇인가요?
+
+- 이 색상은 원래 UI 컨트롤이 아닌 페이지 배경에 사용하기 위한 것입니다.
+
+- 따라서 일관성을 위해 업데이트되었습니다.
+
+- 다양한 섹션과 카드의 배경 색상을 지정하기 위해 section_bg_color가 추가되었습니다.
+
+애플리케이션의 외관을 개선하려면 색상 변수 사용을 약간 조정해야 합니다.
+
+위는 iOS에서 변경되는 사항을 정확히 설명하는 명확한 예입니다. Android에서는 변경 사항이 없습니다.
+
+새로운 색상.
+또한 많은 새로운 색상이 추가되었습니다. 대부분은 Android에서 가장 눈에 띄는 색상입니다. 따라서 아래 예시는 Android를 기준으로 표시되지만 모든 플랫폼에 적용됩니다.
+
+![](/img/docs/tma-design-guidelines/tma-design_2.png)
+
+2. 미니앱의 경우, 텔레그램 헤더 색상을 사용할 수 있게 되었습니다.
+
+![](/img/docs/tma-design-guidelines/tma-design_3.png)
+
+3. 애플리케이션의 모든 강조 요소에 유용한 accent_text_color 토큰을 사용할 수 있게 되었습니다. 이전에는 모두가 덜 적합한 어두운 link_color를 사용했습니다.
+
+![](/img/docs/tma-design-guidelines/tma-design_4.png)
+
+4. 이제 모든 보조 셀 레이블에 `subtitle_text_color`를 사용하는 것이 더 좋습니다. 이렇게 하면 더 대비되는 레이블을 사용할 수 있어 애플리케이션의 접근성이 향상됩니다.
+
+![](/img/docs/tma-design-guidelines/tma-design_5.png)
+
+5. 카드의 섹션 헤더에는 이제 전용 토큰인 '섹션 헤더 텍스트 색상'이 있습니다.
+
+![](/img/docs/tma-design-guidelines/tma-design_6.png)
+
+6. 누르면 파괴 동작이 발생하는 셀의 경우 이제 사용자 지정 색상 대신 '파괴_텍스트_색상'을 사용할 수 있습니다.
+
+```mdx-code-block
+<p align="center">
+    <br />
+    <img width="360" src="/img/docs/tma-design-guidelines/tma-design_7.png" alt="" />
+    <br />
+</p>
+```
+
+7. 이제 `link_color`와 `hint_color`를 어떻게 사용해야 할까요?
+
+섹션 아래의 힌트 섹션의 색상과 'secondary_bg_color'와 같은 배경의 링크 색상으로 사용하는 것이 좋습니다.
+
+## 참고 항목
+
+- [원본 출처](https://telegra.ph/Changes-in-Color-Variables-for-Telegram-Mini-Apps-11-20)

@@ -1,0 +1,141 @@
+# 블루프린트로 테스트 작성
+
+## 개요
+
+테스트 툴킷(일반적으로 샌드박스)은 이미 [블루프린트](/develop/smart-contracts/sdk/javascript)라는 이름의 TypeScript SDK에 포함되어 있습니다. 데모 프로젝트를 생성하고 두 단계로 기본 테스트를 시작할 수 있습니다:
+
+1. 새 블루프린트 프로젝트를 생성합니다:
+
+```bash
+npm create ton@latest MyProject
+```
+
+2. 테스트를 실행합니다:
+
+```bash
+cd MyProject
+npx blueprint test
+```
+
+결과적으로 터미널 창에 해당 출력이 표시됩니다:
+
+```bash
+% npx blueprint test
+
+> MyProject@0.0.1 test
+> jest
+
+ PASS  tests/Main.spec.ts
+  Main
+    ✓ should deploy (127 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        1.224 s, estimated 2 s
+Ran all test suites.
+```
+
+## 기본 사용법
+
+스마트 컨트랙트 테스트를 통해 보안, 가스 지출 최적화, 에지 케이스 검사 등을 수행할 수 있습니다.
+블루프린트([샌드박스](https://github.com/ton-org/sandbox) 기반)에서 테스트를 작성하는 것은 컨트랙트에 임의의 동작을 정의하고 테스트 결과를 예상 결과와 비교하는 등의 방식으로 이루어집니다:
+
+```typescript
+it('should execute with success', async () => {                              // description of the test case
+    const res = await main.sendMessage(sender.getSender(), toNano('0.05'));  // performing an action with contract main and saving result in res
+
+    expect(res.transactions).toHaveTransaction({                             // configure the expected result with expect() function
+        from: main.address,                                                  // set expected sender for transaction we want to test matcher properties from
+        success: true                                                        // set the desirable result using matcher property success
+    });
+
+    printTransactionFees(res.transactions);                                  // print table with details on spent fees
+});
+```
+
+### 복잡한 어설션에 대한 테스트 작성
+
+테스트를 만드는 기본 워크플로우는 다음과 같습니다:
+
+1. blockchain.openContract()`를 사용하여 특정 래핑된 `Contract\` 엔티티를 생성합니다.
+2. 컨트랙트`가 수행해야 할 작업을 설명하고 실행 결과를 `res\` 변수에 저장합니다.
+3. 기대()`함수와`toHaveTransaction()\` 일치자를 사용하여 프로퍼티를 확인합니다.
+
+toHaveTransaction`일치자는 다음 속성으로 정의된`FlatTransaction\` 유형의 필드 조합이 있는 객체를 기대합니다.
+
+| 이름                                     | 유형                   | 설명                                                                                                                                                                                                                                                                                                                 |
+| -------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 에서                                     | 주소?                  | 메시지 발신자의 계약 주소                                                                                                                                                                                                                                                                                                     |
+| on                                     | 주소                   | 메시지 대상의 컨트랙트 주소(속성 `to`의 대체 이름).                                                                                                                                                                                                                                                                |
+| 값                                      | bigint?              | 메시지에 포함된 톤코인의 양(나노톤 단위)                                                                                                                                                                                                                                                                         |
+| body                                   | 셀                    | 셀로 정의된 메시지 본문                                                                                                                                                                                                                                                                                                      |
+| op                                     | 번호?                  | 연산 코드는 연산 식별자 번호입니다(일반적으로 TL-B의 crc32). 메시지 본문의 첫 32비트에서 예상됩니다.                                                                                                                                                                                                                                 |
+| 성공                                     | 부울?                  | 특정 트랜잭션의 결과 상태를 정의하는 사용자 지정 샌드박스 플래그입니다. True - 계산 및 작업 단계가 모두 성공한 경우. 그렇지 않으면 False입니다.                                                                                                                                                                                                                           |
+
+관심 없는 필드는 생략하고 숫자 범위, 메시지 옵코드 등을 확인하기 위해 부울(`참`은 좋음)을 반환하는 타입을 허용하는 함수를 전달할 수 있습니다. 필드가 선택 사항인 경우(예: `from?: Address`) 함수에서 선택적 유형도 허용해야 한다는 점에 유의하세요.
+
+:::tip
+매처 필드 전체 목록은 [샌드박스 문서](https://github.com/ton-org/sandbox#test-a-transaction-with-matcher)에서 확인할 수 있습니다.
+:::
+
+### 특정 테스트 제품군
+
+#### SendMode 추출
+
+보낸 메시지의 전송 모드를 추출하려면 다음 코드를 사용하면 됩니다:
+
+```ts
+
+const smc = await blockchain.getContract(addr);
+
+const re = blockchain.executor.runTransaction({
+    config: blockchain.configBase64, libs: null, verbosity: 'full',
+    now: Math. floor (Date.now) / 1000),
+    lt: BigInt(Date.now()),
+    randomSeed: null,
+    ignoreChksig: false,
+    debugEnabled: true,
+    shardAccount: beginCell()
+        .store (storeShardAccount (smc.account))
+        .endCell()
+        .toBoc()
+        .toString('base64'),
+    message: beginCell()
+        .store (storeMessageRelaxed (...))
+        .endCell(),
+});
+
+if (!re.result. success || !re.result.actions) {
+    throw new Error('fail');
+｝
+const actions = loadoutList(Cell.fromBase64(re.result.actions).beginParse());
+actions[0].type === 'sendMsg' && actions[0].mode;
+
+```
+
+## 튜토리얼
+
+TON에서 가장 유용한 커뮤니티 튜토리얼을 통해 테스트에 대해 자세히 알아보세요:
+
+- [레슨 2: 스마트 컨트랙트를 위한 FunC 테스트](https://github.com/romanovichim/TonFunClessons_Eng/blob/main/lessons/smartcontract/2lesson/secondlesson.md)
+- [톤 헬로월드 4부: 첫 스마트 컨트랙트 테스트를 위한 단계별 가이드](https://ton-community.github.io/tutorials/04-testing/)
+- [TON 스마트 컨트랙트 파이프라인](https://dev.to/roma_i_m/ton-smart-contract-pipeline-write-simple-contract-and-compile-it-4pnh)
+- [\[유튜브\]여섯 번째 강의 FunC & 청사진. 가스, 수수료, 테스트](https://youtu.be/3XIpKZ6wNcg)
+
+## 예제
+
+TON 에코시스템 계약에 사용되는 테스트 스위트를 확인하고 예제를 통해 학습하세요.
+
+- [유동성 스테이킹-계약 샌드박스 테스트](https://github.com/ton-blockchain/liquid-staking-contract/tree/main/tests)
+- [거버넌스\_테스트](https://github.com/Trinketer22/governance_tests/blob/master/config_tests/tests/)
+- [JettonWallet.spec.ts](https://github.com/EmelyanenkoK/modern_jetton/blob/master/tests/JettonWallet.spec.ts)
+- [거버넌스\_테스트](https://github.com/Trinketer22/governance_tests/blob/master/elector_tests/tests/complaint-test.fc)
+- [MassSender.spec.ts](https://github.com/Gusarich/ton-mass-sender/blob/main/tests/MassSender.spec.ts)
+- [TonForwarder.spec.ts](https://github.com/TrueCarry/ton-contract-forwarder/blob/main/src/contracts/ton-forwarder/TonForwarder.spec.ts)
+- [Assurer.spec.ts](https://github.com/aSpite/dominant-assurance-contract/blob/main/tests/Assurer.spec.ts)
+
+## 참고 항목
+
+- [블루프린트](/개발/스마트-계약/sdk/자바스크립트)
+- [톤클리](/개발/스마트-계약/테스트/톤클리)

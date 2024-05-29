@@ -1,0 +1,56 @@
+# 팁 및 유용한 정보
+
+이 페이지에서는 TMA의 문제와 관련된 자주 묻는 질문 목록을 확인할 수 있습니다.
+
+### TMA에서 캐시 오버플로 문제를 해결하려면 어떻게 해야 하나요?
+
+:::tip
+텔레그램 애플리케이션을 재설치하는 것만이 도움이 될 수 있습니다.
+:::
+
+### HTML 파일의 헤더 캐싱에 대한 권장 사항이 있나요?
+
+:::tip
+It's preferable to switch off cache in the HTML. To ensure your cache switched off, specify headers in your request according the following:
+
+```curl
+Cache-Control: no-store, must-revalidate
+Pragma: no-cache
+Expires: 0
+```
+
+:::
+
+### 개발 TMA에 권장되는 IDE는 무엇인가요?
+
+익숙한 개발 도구 덕분에 Google 크롬에서 개발하는 과정이 더 편리해졌습니다.
+
+미니앱의 실행 매개변수를 검색하여 크롬에서 이 링크를 열 수 있습니다. 저희의 경우, 가장 쉬운 방법은, 웹 버전의 텔레그램에서 실행 매개변수를 검색하는 것입니다: <https://web.telegram.org/>
+
+### 닫는 동작
+
+많은 웹 애플리케이션에서 사용자는 상단으로 스크롤하는 동안 실수로 앱을 닫을 수 있습니다. 이는 애플리케이션의 섹션을 너무 멀리 드래그하여 실수로 앱이 닫히도록 트리거하는 경우 발생할 수 있습니다.
+
+```mdx-code-block
+<p align="center">
+    <br />
+    <img width="240" src="/img/docs/telegram-apps/closing-behaviour.svg" alt="closing_behaviour_durgerking" />
+    <br />
+</p>
+```
+
+이러한 실수로 닫히는 것을 방지하려면 TMA에서 `closing_behavior`를 활성화하세요. 이 메서드는 사용자가 웹 앱 종료를 승인하거나 거부할 수 있는 대화 상자를 추가합니다.
+
+```typescript
+window.Telegram.WebApp.enableClosingConfirmation()
+```
+
+## TMA에서 특정 언어에 대한 설명을 지정하는 방법은 무엇인가요?
+
+:::tip
+You can configure your description with following methods:
+
+- https://core.telegram.org/bots/api#setmydescription
+- https://core.telegram.org/bots/api#setmyshortdescription
+
+:::

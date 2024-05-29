@@ -1,0 +1,62 @@
+import Button from '@site/src/components/button'
+
+# 블루프린트 SDK
+
+![블루프린트](\img\blueprint\logo.svg)
+
+스마트 컨트랙트 작성, 테스트, 배포를 위한 TON용 개발 환경입니다.
+
+## 빠른 시작 🚀
+
+터미널에서 다음을 실행하여 새 프로젝트를 만들고 화면의 지시를 따릅니다:
+
+```bash
+npm create ton@latest
+```
+
+```mdx-code-block
+<Button href="https://www.youtube.com/watch?v=7omBDfSqGfA&list=PLtUBO1QNEKwtO_zSyLj-axPzc9O9rkmYa" colorType={'secondary'} sizeType={'sm'}>
+```
+
+비디오 자습서 보기
+
+```mdx-code-block
+</Button>
+```
+
+### 핵심 기능
+
+- 스마트 컨트랙트 구축, 테스트 및 배포를 위한 간소화된 워크플로
+- 선호하는 지갑(예: 톤키퍼)을 사용하여 메인넷/테스트넷에 간단하게 배포할 수 있습니다.
+- 프로세스 중에 실행되는 격리된 블록체인에서 여러 스마트 컨트랙트를 매우 빠르게 테스트합니다.
+
+### 기술 스택
+
+- https://github.com/ton-community/func-js(cli 없음)로 FunC 컴파일하기
+- https://github.com/ton-org/sandbox 으로 스마트 컨트랙트 테스트
+- 톤 커넥트 2.0 호환 지갑 또는 `ton://` 디링크로 스마트 컨트랙트 배포하기
+
+### 요구 사항
+
+- [Node.js](https://nodejs.org/)를 v18과 같은 최신 버전으로, `node -v`로 버전을 확인합니다.
+- Visual Studio Code](https://code.visualstudio.com/), [FunC 플러그인](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)과 같은 타입스크립트 및 FunC를 지원하는 IDE
+
+## 참조
+
+### GitHub
+
+- https://github.com/ton-org/blueprint
+
+### 자료
+
+- [도라핵스 스트림에서 사용하는 블루프린트](https://www.youtube.com/watch?v=5ROXVM-Fojo)
+- [새 프로젝트 만들기](https://github.com/ton-org/blueprint#create-a-new-project)
+- [새로운 스마트 컨트랙트 개발](https://github.com/ton-org/blueprint#develop-a-new-contract)
+- [\[YouTube\] Func with Blueprint EN](https://www.youtube.com/watch?v=7omBDfSqGfA&list=PLtUBO1QNEKwtO_zSyLj-axPzc9O9rkmYa) ([RU 버전](https://youtube.com/playlist?list=PLyDBPwv9EPsA5vcUM2vzjQOomf264IdUZ))
+
+## 참고 항목
+
+- [스마트 컨트랙트 개발 소개](/개발/스마트-컨트랙트/)
+- [지갑 스마트 컨트랙트 작업 방법](/개발/스마트 컨트랙트/자습서/월렛)
+- [톤클리 사용](/개발/스마트-컨트랙트/sdk/toncli)
+- [SDK](/개발/앱/apis/sdk)

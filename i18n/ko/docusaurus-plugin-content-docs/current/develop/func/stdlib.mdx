@@ -1,0 +1,1364 @@
+---
+toc_min_heading_level: 2
+toc_max_heading_level: 6
+---
+
+# FunC 표준 라이브러리
+
+:::info
+이 섹션에서는 FunC에서 사용되는 표준 함수가 포함된 [stdlib.fc](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/stdlib.fc) 라이브러리에 대해 설명합니다.
+:::
+
+현재 라이브러리는 내장되어 있지 않은 가장 일반적인 TVM 명령어 어셈블러를 위한 래퍼일 뿐입니다. 라이브러리에서 사용되는 각 TVM 명령에 대한 설명은 [TVM 문서](/학습/tvm-instructions/tvm-overview) 섹션에서 확인할 수 있습니다. 일부 설명은 이 문서에서 차용한 것입니다.
+
+일부 기능은 파일에 주석 처리되어 있습니다. 이는 최적화를 위해 이미 내장되어 있다는 의미입니다. 그러나 유형 서명과 의미는 동일하게 유지됩니다.
+
+일부 덜 일반적인 명령어는 stdlib에 표시되지 않습니다. 언젠가 이 명령들도 추가될 예정입니다.
+
+## 튜플 조작 프리미티브
+
+이름과 유형은 대부분 설명이 필요 없습니다. 다형성 함수에 대한 자세한 내용은 [forall을 사용한 다형성](/개발/펀크/함수#다형성-with-forall)을 참조하세요.
+
+현재 원자 타입 '튜플'의 값은 복합 튜플 타입(예: `[int, cell]`)으로 캐스팅할 수 없으며, 그 반대의 경우도 마찬가지입니다.
+
+### Lisp 스타일 목록
+
+리스트는 중첩된 2요소 튜플로 표현할 수 있습니다. 빈 리스트는 일반적으로 TVM `null` 값으로 표현됩니다(`null()`을 호출하여 얻을 수 있음). 예를 들어 튜플 `(1, (2, (3, null)))`은 리스트 `[1, 2, 3]`을 나타냅니다. 리스트의 요소는 서로 다른 유형일 수 있습니다.
+
+#### 단점
+
+```func
+forall X -> tuple cons(X head, tuple tail) asm "CONS";
+```
+
+리스프 스타일 목록의 시작 부분에 요소를 추가합니다.
+
+#### uncons
+
+```func
+forall X -> (X, tuple) uncons(tuple list) asm "UNCONS";
+```
+
+리스프 스타일 목록의 머리와 꼬리를 추출합니다.
+
+#### 목록\_다음
+
+```func
+forall X -> (tuple, X) list_next(tuple list) asm( -> 1 0) "UNCONS";
+```
+
+리스프 스타일 목록의 머리와 꼬리를 추출합니다. [(비)수정 메서드](/develop/func/statements#methods-calls)로 사용할 수 있습니다.
+
+```func
+() foo(tuple xs) {
+    (_, int x) = xs.list_next(); ;; get the first element, `_` means do not use tail list
+    int y = xs~list_next(); ;; pop the first element
+    int z = xs~list_next(); ;; pop the second element
+}
+```
+
+#### 자동차
+
+```func
+forall X -> X car(tuple list) asm "CAR";
+```
+
+리스프 스타일 목록의 헤드를 반환합니다.
+
+#### cdr
+
+```func
+tuple cdr(tuple list) asm "CDR";
+```
+
+리스프 스타일 목록의 꼬리를 반환합니다.
+
+### 기타 튜플 프리미티브
+
+#### 빈\_튜플
+
+```func
+tuple empty_tuple() asm "NIL";
+```
+
+0 요소 튜플을 생성합니다.
+
+#### tpush
+
+```func
+forall X -> tuple tpush(tuple t, X value) asm "TPUSH";
+forall X -> (tuple, ()) ~tpush(tuple t, X value) asm "TPUSH";
+```
+
+튜플 t = (x1, ..., xn)`에 값 `x`를 추가하지만 결과 `Tuple t' = (x1, ..., xn, x)\`가 255자를 넘지 않는 경우에만 추가합니다. 그렇지 않으면 유형 검사 예외가 발생합니다.
+
+#### 단일
+
+```func
+forall X -> [X] single(X x) asm "SINGLE";
+```
+
+싱글톤, 즉 길이 1의 튜플을 생성합니다.
+
+#### unsingle
+
+```func
+forall X -> X unsingle([X] t) asm "UNSINGLE";
+```
+
+싱글톤의 포장을 해제합니다.
+
+#### pair
+
+```func
+forall X, Y -> [X, Y] pair(X x, Y y) asm "PAIR";
+```
+
+쌍을 생성합니다.
+
+#### 언페어
+
+```func
+forall X, Y -> (X, Y) unpair([X, Y] t) asm "UNPAIR";
+```
+
+한 쌍의 포장을 해제합니다.
+
+#### triple
+
+```func
+forall X, Y, Z -> [X, Y, Z] triple(X x, Y y, Z z) asm "TRIPLE";
+```
+
+트리플을 생성합니다.
+
+#### untriple
+
+```func
+forall X, Y, Z -> (X, Y, Z) untriple([X, Y, Z] t) asm "UNTRIPLE";
+```
+
+트리플 포장을 해제합니다.
+
+#### tuple4
+
+```func
+forall X, Y, Z, W -> [X, Y, Z, W] tuple4(X x, Y y, Z z, W w) asm "4 TUPLE";
+```
+
+4요소 튜플을 생성합니다.
+
+#### untuple4
+
+```func
+forall X, Y, Z, W -> (X, Y, Z, W) untuple4([X, Y, Z, W] t) asm "4 UNTUPLE";
+```
+
+4 엘리먼트 튜플의 패킹을 해제합니다.
+
+#### 먼저
+
+```func
+forall X -> X first(tuple t) asm "FIRST";
+```
+
+튜플의 첫 번째 요소를 반환합니다.
+
+#### second
+
+```func
+forall X -> X second(tuple t) asm "SECOND";
+```
+
+튜플의 두 번째 요소를 반환합니다.
+
+#### 셋째
+
+```func
+forall X -> X third(tuple t) asm "THIRD";
+```
+
+튜플의 세 번째 요소를 반환합니다.
+
+#### 넷째
+
+```func
+forall X -> X fourth(tuple t) asm "3 INDEX";
+```
+
+튜플의 네 번째 요소를 반환합니다.
+
+#### pair_first
+
+```func
+forall X, Y -> X pair_first([X, Y] p) asm "FIRST";
+```
+
+쌍의 첫 번째 요소를 반환합니다.
+
+#### pair_second
+
+```func
+forall X, Y -> Y pair_second([X, Y] p) asm "SECOND";
+```
+
+쌍의 두 번째 요소를 반환합니다.
+
+#### triple_first
+
+```func
+forall X, Y, Z -> X triple_first([X, Y, Z] p) asm "FIRST";
+```
+
+삼각형의 첫 번째 요소를 반환합니다.
+
+#### triple_second
+
+```func
+forall X, Y, Z -> Y triple_second([X, Y, Z] p) asm "SECOND";
+```
+
+삼각형의 두 번째 요소를 반환합니다.
+
+#### triple_third
+
+```func
+forall X, Y, Z -> Z triple_third([X, Y, Z] p) asm "THIRD";
+```
+
+삼승의 세 번째 요소를 반환합니다.
+
+## 도메인별 기본 요소
+
+### c7에서 정보 추출
+
+스마트 컨트랙트 호출에 관한 몇 가지 유용한 정보는 [c7 특별 레지스터](/학습/tvm-지침/tvm-개요#제어-레지스터)에서 확인할 수 있습니다. 이러한 프리미티브는 편리한 데이터 추출을 위해 사용됩니다.
+
+#### 지금
+
+```func
+int now() asm "NOW";
+```
+
+현재 유닉스 시간을 정수로 반환합니다.
+
+#### 내\_주소
+
+```func
+slice my_address() asm "MYADDR";
+```
+
+현재 스마트 컨트랙트의 내부 주소를 `MsgAddressInt`가 포함된 슬라이스로 반환합니다. 필요한 경우 `parse_std_addr`와 같은 프리미티브를 사용하여 추가로 구문 분석할 수 있습니다.
+
+#### get_balance
+
+```func
+[int, cell] get_balance() asm "BALANCE";
+```
+
+스마트 컨트랙트의 잔액을 `int`(나노톤코인의 잔액)와 `cell`("추가 통화"의 잔액을 나타내는 32비트 키가 있는 사전)로 구성된 `tuple`로 반환합니다. send_raw_message\`와 같은 RAW 프리미티브는 이 필드를 업데이트하지 않는다는 점에 유의하세요.
+
+#### cur_lt
+
+```func
+int cur_lt() asm "LTIME";
+```
+
+현재 트랜잭션의 논리적 시간을 반환합니다.
+
+#### block_lt
+
+```func
+int block_lt() asm "BLOCKLT";
+```
+
+현재
+블록의 시작 논리적 시간을 반환합니다.
+
+#### config_param
+
+```func
+cell config_param(int x) asm "CONFIGOPTPARAM";
+```
+
+정수 인덱스 `i`가 `셀` 또는 `null` 값인 전역 구성 매개변수의 값을 반환합니다.
+
+### 해시
+
+#### 셀\_해시
+
+```func
+int cell_hash(cell c) asm "HASHCU";
+```
+
+셀 c`의 표현 해시를 계산하여 256비트 부호 없는 정수 `x\`로 반환합니다. 셀 트리로 표현되는 임의의 엔티티의 서명을 서명하고 확인하는 데 유용합니다.
+
+#### slice_hash
+
+```func
+int slice_hash(slice s) asm "HASHSU";
+```
+
+슬라이스 s`의 해시를 계산하여 256비트 부호 없는 정수 `x`로 반환합니다. 결과는 `s`의 데이터와 참조만 포함된 일반 셀을 생성하고 `cell_hash\`로 해시를 계산한 경우와 동일합니다.
+
+#### 문자열\_해시
+
+```func
+int string_hash(slice s) asm "SHA256U";
+```
+
+슬라이스 s`의 데이터 비트의 sha256을 계산합니다. s`의 비트 길이가 8로 나눌 수 없는 경우 셀 언더플로 예외가 발생합니다. 해시 값은 256비트 부호 없는 정수 `x`로 반환됩니다.
+
+### 서명 확인
+
+#### 확인\_서명
+
+```func
+int check_signature(int hash, slice signature, int public_key) asm "CHKSIGNU";
+```
+
+공개 키`(256비트 부호 없는 정수, 일반적으로 일부 데이터의 해시로 계산됨)를 사용하여 `해시`(256비트 부호 없는 정수로도 표현됨)의 Ed25519 `서명`을 확인합니다. 서명은 512비트 이상의 데이터 비트를 포함해야 하며, 처음 512비트만 사용됩니다. 서명이 유효하면 결과는 `-1`이고, 그렇지 않으면 `0`입니다. CHKSIGNU`는 해시로 256비트 슬라이스를 생성하고 `CHKSIGNS`를 호출합니다. 즉, `hash`가 어떤 데이터의 해시로 계산되면 이 데이터는 `CHKSIGNS` 내에서 두 번째 해싱이 발생하는 `두 번` 해싱됩니다.
+
+#### 체크_데이터_서명
+
+```func
+int check_data_signature(slice data, slice signature, int public_key) asm "CHKSIGNS";
+```
+
+check_signature`와 유사하게 `public_key`를 사용하여 `signature`가 `slice data`의 데이터 부분에 대한 유효한 Ed25519 서명인지 확인합니다. 데이터`의 비트 길이가 8로 나눌 수 없는 경우 셀 언더플로 예외가 발생합니다. Ed25519 서명의 검증은 표준 검증이며, sha256을 사용하여 `데이터`를 실제로 서명된 256비트 숫자로 줄입니다.
+
+### BOC 크기 계산
+
+아래 기본값은 사용자가 제공한 데이터의 저장소 요금을 계산하는 데 유용할 수 있습니다.
+
+#### compute_data_size?
+
+```func
+(int, int, int, int) compute_data_size?(cell c, int max_cells) asm "CDATASIZEQ NULLSWAPIFNOT2 NULLSWAPIFNOT";
+```
+
+(x, y, z, -1)`또는`(널, 널, 널, 0)`을 반환합니다. 셀 c`를 근원으로 하는 DAG에서 고유 셀 `x`, 데이터 비트 `y`, 셀 참조 `z`의 개수를 재귀적으로 계산하여 동일한 셀의 식별을 고려하여 이 DAG가 사용하는 총 저장공간을 효과적으로 반환합니다. x`, `y`, `z`의 값은 이미 방문한 셀의 방문을 방지하기 위해 사용된 방문한 셀 해시의 해시 테이블과 함께 이 DAG의 깊이 우선 탐색을 통해 계산됩니다. 방문한 셀의 총 개수 `x`는 음수가 아닌 `최대 셀`을 초과할 수 없으며, 그렇지 않으면 `(최대 셀 + 1)` 번째 셀을 방문하기 전에 계산이 중단되고 0 플래그가 반환되어 실패를 나타냅니다. c`가 `null`이면 `x = y = z = 0`을 반환합니다.
+
+#### slice_comput_data_size?
+
+```func
+(int, int, int, int) slice_compute_data_size?(slice s, int max_cells) asm "SDATASIZEQ NULLSWAPIFNOT2 NULLSWAPIFNOT";
+```
+
+계산_데이터_크기?`와 유사하지만 `셀`대신`슬라이스 s`를 받습니다. 반환된 `x`값은 슬라이스`s`자체를 포함하는 셀을 고려하지 않지만,`s`의 데이터 비트와 셀 참조는 `y`와 `z\`에서 고려됩니다.
+
+#### 컴퓨트_데이터_크기
+
+```func
+(int, int, int) compute_data_size(cell c, int max_cells) impure asm "CDATASIZE";
+```
+
+실패 시 셀 오버플로 예외(8)를 던지는 `compute_data_size?`의 조용하지 않은 버전입니다.
+
+#### 슬라이스_컴퓨트_데이터\_크기
+
+```func
+(int, int, int) slice_compute_data_size(slice s, int max_cells) impure asm "SDATASIZE";
+```
+
+실패 시 셀 오버플로 예외(8)를 던지는 `slice_compute_data_size?`의 조용하지 않은 버전입니다.
+
+### 영구 저장소 저장 및 로드
+
+#### get_data
+
+```func
+cell get_data() asm "c4 PUSH";
+```
+
+퍼시스턴트 컨트랙트 저장 셀을 반환합니다. 나중에 슬라이스 및 빌더 프리미티브를 사용하여 구문 분석하거나 수정할 수 있습니다.
+
+#### set_data
+
+```func
+() set_data(cell c) impure asm "c4 POP";
+```
+
+셀 `c`를 영구 컨트랙트 데이터로 설정합니다. 이 프리미티브로 퍼시스턴트 컨트랙트 저장소를 업데이트할 수 있습니다.
+
+### 연속 프리미티브
+
+#### get_c3
+
+```func
+cont get_c3() impure asm "c3 PUSH";
+```
+
+일반적으로 `c3`는 컨트랙트의 전체 코드에 의해 초기화된 컨티뉴어가 있습니다. 함수 호출에 사용됩니다. 프리미티브는 `c3`의 현재 값을 반환합니다.
+
+#### set_c3
+
+```func
+() set_c3(cont c) impure asm "c3 POP";
+```
+
+c3\`의 현재 값을 업데이트합니다. 일반적으로 런타임에 스마트 컨트랙트 코드를 업데이트하는 데 사용됩니다. 이 프리미티브가 실행된 후 현재 코드(및 재귀 함수 호출 스택)는 변경되지 않지만, 다른 함수 호출은 새 코드의 함수를 사용한다는 점에 유의하세요.
+
+#### bless
+
+```func
+cont bless(slice s) impure asm "BLESS";
+```
+
+슬라이스 s`를 `c.code = s`와 빈 스택, 세이버리스트가 있는 단순한 일반 연속 `c\`로 변환합니다.
+
+### 가스 관련 기본 요소
+
+#### 수락\_메시지
+
+```func
+() accept_message() impure asm "ACCEPT";
+```
+
+현재 가스 한도 `gl`을 최대 허용 값 `gm`으로 설정하고 가스 크레딧 `gc`를 0으로 재설정하여 이 과정에서 `gr`의 값을 `gc`만큼 감소시킵니다. 즉, 현재 스마트 콘트랙트는 현재 트랜잭션을 완료하기 위해 일부 가스를 구매하는 데 동의합니다. 이 작업은 가치가 없는(따라서 가스가 없는) 외부 메시지를 처리하는 데 필요합니다.
+
+자세한 내용은 [메시지 효과 수락](/개발/스마트-계약/가이드라인/수락)을 확인하세요.
+
+#### SET_GAS_LIMIT
+
+```func
+() set_gas_limit(int limit) impure asm "SETGASLIMIT";
+```
+
+현재 가스 한도 `gl`을 최소값인 `limit`과 `gm`으로 설정하고 가스 크레딧 `gc`를 0으로 초기화합니다. 이때 소비된 가스(현재 명령 포함)의 양이 결과 값인 `gl`을 초과하면 새로운 가스 한도를 설정하기 전에 (처리되지 않은) 가스 부족 예외가 발생합니다. 인자 `limit ≥ 2^63 - 1`이 포함된 `set_gas_limit`은 `accept_message`와 동일하다는 점에 유의하세요.
+
+자세한 내용은 [메시지 효과 수락](/개발/스마트-계약/가이드라인/수락)을 확인하세요.
+
+#### 커밋
+
+```func
+() commit() impure asm "COMMIT";
+```
+
+레지스터 `c4`("영구 데이터")와 `c5`("작업")의 현재 상태를 커밋하여 나중에 예외가 발생하더라도 현재 실행이 저장된 값으로 "성공"한 것으로 간주되도록 합니다.
+
+#### buy_gas
+
+```func
+() buy_gas(int gram) impure asm "BUYGAS";
+```
+
+:::caution
+BUYGAS\` 연산 코드는 현재 구현되지 않았습니다.
+:::
+
+나노톤코인 `그램`으로 구매할 수 있는 가스의 양을 계산하고 `set_gas_limit`과 같은 방식으로 `gl`을 설정합니다.
+
+### 액션 기본 요소
+
+#### raw_reserve
+
+```func
+() raw_reserve(int amount, int mode) impure asm "RAWRESERVE";
+```
+
+계정의 잔액에서 정확히 `금액` 나노톤코인(`모드 = 0`인 경우), 최대 `금액` 나노톤코인(`모드 = 2`인 경우) 또는 `금액` 나노톤코인(`모드 = 1` 또는 `모드 = 3`인 경우)을 제외한 전부를 예약하는 출력 액션을 생성합니다. 이는 대략 `금액` 나노톤코인(또는 `b - 금액` 나노톤코인, 여기서 `b`는 잔액)을 본인에게 전달하는 아웃바운드 메시지를 생성하여 후속 출력 작업에서 잔액보다 더 많은 돈을 사용할 수 없도록 하는 것과 같습니다. 모드`의 비트 +2는 지정된 금액을 예약할 수 없는 경우 외부 액션이 실패하지 않고 남은 잔액이 모두 예약됨을 의미합니다. 모드`의 비트 +8은 추가 작업을 수행하기 전에 `금액 <- -금액`을 의미합니다. 모드`의 비트 +4는 `금액`이 다른 확인 및 작업을 수행하기 전에 모든 추가 통화를 포함하여 경상 계좌의 원래 잔액(계산 단계 이전)만큼 증가됨을 의미합니다. 현재 `금액`은 음수가 아닌 정수여야 하며 `모드`는 `0..15\` 범위여야 합니다.
+
+#### raw_reserve_extra
+
+```func
+() raw_reserve_extra(int amount, cell extra_amount, int mode) impure asm "RAWRESERVEX";
+```
+
+raw_reserve`와 유사하지만 추가 통화와 함께 사전 `extra_amount`(`셀`또는`null\`로 표시됨)도 허용합니다. 이러한 방식으로 톤코인 이외의 통화를 예약할 수 있습니다.
+
+#### 보내기\_raw_message
+
+```func
+() send_raw_message(cell msg, int mode) impure asm "SENDRAWMSG";
+```
+
+소스 주소에 더미 값 `addr_none`(현재 스마트 컨트랙트 주소로 자동 대체됨)이 허용되고 `ihr_fee`, `fwd_fee`, `created_lt` 및 `created_at` 필드에 임의의 값을 가질 수 있다는 유일한 예외가 있는 `msg`에 포함된 원본 메시지를 전송합니다(현재 거래의 실행 단계에서 올바른 값으로 재작성됨). 정수 매개변수 `mode`에는 플래그가 포함됩니다.
+
+현재 메시지에는 3개의 모드와 4개의 플래그가 있습니다. 하나의 모드를 여러 개의 플래그와 결합하여 필요한 '모드'를 얻을 수 있습니다. 조합은 단순히 값의 합을 구하는 것을 의미합니다. 모드와 플래그에 대한 설명이 담긴 표가 아래에 나와 있습니다.
+
+| 모드    | 설명                                                                                                                                                                                                                       |
+| :---- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0`   | 일반 메시지                                                                                                                                                                                                                   |
+| `64`  | 새 메시지에 처음 표시된 값 외에 인바운드 메시지의 나머지 값을 모두 전달합니다.                                                                                                                                                                            |
+| `128` | 원래 메시지에 표시된 값 대신 현재 스마트 컨트랙트의 남은 잔액을 모두 전달합니다.                                                                                                                                                                           |
+
+| 깃발    | 설명                                                                                                                                                                                                             |
+| :---- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `+1`  | 메시지 금액과 별도로 송금 수수료 지불                                                                                                                                                                                          |
+| `+2`  | 조치 단계에서 이 메시지를 처리하는 동안 발생하는 일부 오류는 무시하세요(아래 참고 사항 확인).                                                                                                                                      |
+| `+16` | 작업 실패의 경우 - 트랜잭션을 반송합니다. 2\`를 사용하면 효과가 없습니다.                                                                                                                                                                   |
+| `+32` | 현재 계정의 잔액이 0인 경우 해당 계정을 삭제해야 합니다(모드 128과 함께 자주 사용됨).                                                                                                                                        |
+
+:::info +2 플래그
+
+1. 톤코인이 충분하지 않습니다:
+   - 메시지와 함께 전송할 값이 충분하지 않습니다(인바운드 메시지 값이 모두 소비됨).
+   - 메시지를 처리할 자금이 부족합니다.
+   - 전달 수수료를 지불할 만큼 메시지에 첨부된 가치가 충분하지 않습니다.
+   - 메시지와 함께 보낼 추가 통화가 충분하지 않습니다.
+   - 아웃바운드 외부 메시지 비용을 지불할 자금이 부족합니다.
+2. 메시지가 너무 큽니다(자세한 내용은 [메시지 크기](/개발/스마트계약/메시지#메시지 크기)를 확인하세요).
+3. 메시지의 머클 깊이가 너무 큽니다.
+
+그러나 다음 시나리오에서는 오류를 무시하지 않습니다:
+
+1. 메시지의 형식이 잘못되었습니다.
+2. 메시지 모드에는 64개 및 128개 모드가 모두 포함됩니다.
+3. 아웃바운드 메시지에 StateInit에 잘못된 라이브러리가 있습니다.
+4. 외부 메시지가 일반 메시지가 아니거나 +16 또는 +32 플래그 또는 둘 다를 포함합니다.
+   :::
+
+예를 들어, 일반 메시지를 보내고 송금 수수료를 별도로 지불하려면 모드 `0`과 플래그 `+1`을 사용하여 `모드 = 1`을 얻습니다. 전체 컨트랙트 잔액을 전송하고 즉시 소멸시키려면 모드 `128`과 플래그 `+32`를 사용하여 `모드 = 160`을 얻습니다.
+
+#### set_code
+
+```func
+() set_code(cell new_code) impure asm "SETCODE";
+```
+
+이 스마트 컨트랙트 코드를 `new_code` 셀에 지정된 코드로 변경하는 출력 작업을 생성합니다. 이 변경 사항은 스마트 컨트랙트의 현재 실행이 성공적으로 종료된 후에만 적용됩니다. (참조: [set_c3](/develop/func/stdlib#set_c3.))
+
+### 난수 생성기 프리미티브
+
+의사 난수 생성기는 랜덤 시드, 부호 없는 256비트 정수, 그리고 (때때로) [c7](/learn/tvm-instructions/tvm-overview#control-registers)에 보관된 기타 데이터를 사용합니다. TON 블록체인에서 스마트 컨트랙트가 실행되기 전 랜덤 시드의 초기 값은 스마트 컨트랙트 주소의 해시와 글로벌 블록 랜덤 시드입니다. 한 블록 내에 동일한 스마트 콘트랙트가 여러 번 실행되는 경우, 모든 실행은 동일한 랜덤 시드를 갖게 됩니다. 예를 들어 의사 난수 생성기를 처음 사용하기 전에 `randomize_lt`를 실행하면 이 문제를 해결할 수 있습니다.
+
+:::caution
+Keep in mind that random numbers generated by the functions below can be predicted if you do not use additional tricks.
+
+- [난수 생성](/개발/스마트-계약/가이드라인/난수 생성)
+  :::
+
+#### 무작위
+
+```func
+int random() impure asm "RANDU256";
+```
+
+새로운 의사 랜덤 부호 없는 256비트 정수 `x`를 생성합니다. 알고리즘은 다음과 같습니다: `r`이 32바이트 배열로 간주되는 랜덤 시드의 이전 값인 경우(부호가 없는 256비트 정수의 빅 엔디안 표현을 구성하여), 그 `sha512(r)`을 계산하고 이 해시의 첫 32바이트는 랜덤 시드의 새 값 `r'`로 저장되고 나머지 32바이트는 다음 랜덤 값 `x`로 반환합니다.
+
+#### rand
+
+```func
+int rand(int range) impure asm "RAND";
+```
+
+0..range-1`범위의 새로운 의사 난수`z`를 생성합니다(또는 `range \< 0`인 경우 `range..-1`). 보다 정확하게는 `random`에서와 같이 부호가 없는 임의의 값 `x`가 생성된 다음 `z := x \* 범위 / 2^256\`이
+계산됩니다.
+
+#### get_seed
+
+```func
+int get_seed() impure asm "RANDSEED";
+```
+
+현재 임의의 시드를 부호 없는 256비트 정수로 반환합니다.
+
+#### set_seed
+
+```func
+int set_seed(int seed) impure asm "SETRAND";
+```
+
+임의의 시드를 부호 없는 256비트 '시드'로 설정합니다.
+
+#### 무작위화
+
+```func
+() randomize(int x) impure asm "ADDRAND";
+```
+
+무작위 시드를 두 개의 32바이트 문자열 연결의 sha256으로 설정하여 부호 없는 256비트 정수 `x`를 무작위 시드 `r`에 혼합합니다: 첫 번째는 이전 시드 `r`의 빅 엔디안 표현을 가진 것이고 두 번째는 `x`의 빅 엔디안 표현을 가진 것입니다.
+
+#### randomize_lt
+
+```func
+() randomize_lt() impure asm "LTIME" "ADDRAND";
+```
+
+랜덤화(cur_lt();\`와 동일합니다.
+
+### 주소 조작 기본 요소
+
+아래 나열된 주소 조작 프리미티브는 다음 TL-B 체계에 따라 값을 직렬화 및 역직렬화합니다.
+
+```func
+addr_none$00 = MsgAddressExt;
+
+addr_extern$01 len:(## 8) external_address:(bits len)
+             = MsgAddressExt;
+
+anycast_info$_ depth:(#<= 30) { depth >= 1 }
+  rewrite_pfx:(bits depth) = Anycast;
+
+addr_std$10 anycast:(Maybe Anycast)
+  workchain_id:int8 address:bits256 = MsgAddressInt;
+
+addr_var$11 anycast:(Maybe Anycast) addr_len:(## 9)
+  workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
+_ _:MsgAddressInt = MsgAddress;
+_ _:MsgAddressExt = MsgAddress;
+
+int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
+  src:MsgAddress dest:MsgAddressInt
+  value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+  created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
+
+ext_out_msg_info$11 src:MsgAddress dest:MsgAddressExt
+  created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
+```
+
+역직렬화된 `MsgAddress`는 다음과 같이 튜플 `t`로 표현됩니다:
+
+- addr_none`은 `t = (0)\`, 즉 정확히
+  0과 같은 정수 하나를 포함하는 튜플로 표현됩니다.
+- addr_extern`은 `t = (1, s)`로 표현되며, 여기서 슬라이스 `s`는
+  필드 `external_address`를 포함합니다. 즉, `t`는 1과 같은 정수와 슬라이스 `s\`를 포함하는 쌍(두 개의 항목으로 구성된 튜플)입니다.
+- addr_std`는 `t = (2, u, x, s)`로 표현되며, 여기서 `u`는 `null`(`anycast`가 없는 경우)이거나 `rewrite_pfx`를 포함하는 슬라이스 `s'`(`anycast`가 있는 경우)입니다. 다음으로, 정수 `x`는 `workchain_id`이고 슬라이스 `s\`는 주소를 포함합니다.
+- addr_var`는 `t = (3, u, x, s)`로 표현되며, 여기서 `u`, `x`, `s`는 `addr_std\`와 동일한 의미를 갖습니다.
+
+#### load_msg_addr
+
+```func
+(slice, slice) load_msg_addr(slice s) asm( -> 1 0) "LDMSGADDR";
+```
+
+슬라이스 s`에서 유효한 `MsgAddress`인 유일한 접두사를 로드하고 이 접두사 `s'`와 `s`의 나머지 `s'\`를 모두 슬라이스로 반환합니다.
+
+#### parse_addr
+
+```func
+tuple parse_addr(slice s) asm "PARSEMSGADDR";
+```
+
+유효한 `메시지 주소`가 포함된 `슬라이스 s`를 이 `메시지 주소`의 개별 필드를 가진 `튜플 t`로 분해합니다. s`가 유효한 `MsgAddress\`가 아닌 경우 셀 역직렬화 예외가 발생합니다.
+
+#### PARSE_STD_ADDR
+
+```func
+(int, int) parse_std_addr(slice s) asm "REWRITESTDADDR";
+```
+
+유효한 `MsgAddressInt`(일반적으로 `msg_addr_std`)가 포함된 슬라이스 `s`를 구문 분석하고, `anycast`(있는 경우)에서 주소의 같은 길이 접두사로 다시 쓰기를 적용한 다음, 워크체인과 256비트 주소를 모두 정수로 반환합니다. 주소가 256비트가 아니거나 `s`가 `MsgAddressInt`의 유효한 직렬화가 아닌 경우 셀 `역직렬화` 예외를 던집니다.
+
+#### PARSE_VAR_ADDR
+
+```func
+(int, slice) parse_var_addr(slice s) asm "REWRITEVARADDR";
+```
+
+정확히 256비트 길이가 아니더라도 (재작성된) 주소를 (재작성된) 주소의 조각 `s`로 반환하는 `parse_std_addr`의 변형입니다(`msg_addr_var`로 표시).
+
+## 프리미티브 디버그
+
+현재는 하나의 기능만 사용할 수 있습니다.
+
+#### 덤프\_스택
+
+```func
+() dump_stack() impure asm "DUMPSTK";
+```
+
+스택(최대 상위 255개 값)을 덤프하고 총 스택 깊이를 표시합니다.
+
+## 슬라이스 프리미티브
+
+프리미티브는 일부 데이터와 나머지 슬라이스를 반환하면 데이터를 _로드_한다고 합니다(따라서 [수정 메서드]로도 사용할 수 있습니다(/develop/func/statements#modifying-methods)).
+
+프리미티브는 데이터만 반환하는 경우 일부 데이터를 _프리로드_한다고 합니다([비수정 메서드]로 사용할 수 있습니다(/개발/펀크/스테이트먼트#비수정-메서드)).
+
+달리 명시되지 않는 한, 프리미티브 로드 및 프리로드는 슬라이스의 접두사에서 데이터를 읽습니다.
+
+#### 시작\_파싱
+
+```func
+slice begin_parse(cell c) asm "CTOS";
+```
+
+셀`을 `슬라이스`로 변환합니다. c`는 일반 셀 또는 이색 셀이어야 하며([TVM.pdf](https://ton.org/tvm.pdf), 3.1.2 참조), 나중에 `슬라이스`로 변환된 일반 셀 `c`를 생성하기 위해 자동으로 로드됩니다.
+
+#### end_parse
+
+```func
+() end_parse(slice s) impure asm "ENDS";
+```
+
+s\`가 비어 있는지 확인합니다. 그렇지 않으면 예외를 던집니다.
+
+#### load_ref
+
+```func
+(slice, cell) load_ref(slice s) asm( -> 1 0) "LDREF";
+```
+
+슬라이스에서 첫 번째 참조를 로드합니다.
+
+#### preload_ref
+
+```func
+cell preload_ref(slice s) asm "PLDREF";
+```
+
+슬라이스에서 첫 번째 참조를 미리 로드합니다.
+
+#### load_int
+
+```func
+;; (slice, int) ~load_int(slice s, int len) asm(s len -> 1 0) "LDIX";
+```
+
+슬라이스에서 부호화된 `len` 비트 정수를 로드합니다.
+
+#### load_uint
+
+```func
+;; (slice, int) ~load_uint(slice s, int len) asm( -> 1 0) "LDUX";
+```
+
+슬라이스에서 부호 없는 `len` 비트 정수를 로드합니다.
+
+#### preload_int
+
+```func
+;; int preload_int(slice s, int len) asm "PLDIX";
+```
+
+슬라이스에서 부호화된 `len` 비트 정수를 미리 로드합니다.
+
+#### preload_uint
+
+```func
+;; int preload_uint(slice s, int len) asm "PLDUX";
+```
+
+슬라이스에서 부호 없는 '렌' 비트 정수를 미리 로드합니다.
+
+#### load_bits
+
+```func
+;; (slice, slice) load_bits(slice s, int len) asm(s len -> 1 0) "LDSLICEX";
+```
+
+슬라이스 `s`의 첫 번째 `0 ≤ len ≤ 1023` 비트를 별도의 슬라이스 `s''`로 로드합니다.
+
+#### PRELOAD_BITS
+
+```func
+;; slice preload_bits(slice s, int len) asm "PLDSLICEX";
+```
+
+슬라이스 `s`의 첫 번째 `0 ≤ len ≤ 1023` 비트를 별도의 슬라이스 `s''`에 미리 로드합니다.
+
+#### load_coins
+
+```func
+(slice, int) load_coins(slice s) asm( -> 1 0) "LDGRAMS";
+```
+
+직렬화된 톤코인(최대 `2^120 - 1`의 부호 없는 정수)을 로드합니다.
+
+#### skip_bits
+
+```func
+slice skip_bits(slice s, int len) asm "SDSKIPFIRST";
+(slice, ()) ~skip_bits(slice s, int len) asm "SDSKIPFIRST";
+```
+
+s`의 첫 번째 `0 ≤ len ≤ 1023\` 비트를 제외한 모든 비트를 반환합니다.
+
+#### first_bits
+
+```func
+slice first_bits(slice s, int len) asm "SDCUTFIRST";
+```
+
+s`의 첫 번째 `0 ≤ len ≤ 1023\` 비트를 반환합니다.
+
+#### SKIP_LAST_BITS
+
+```func
+slice skip_last_bits(slice s, int len) asm "SDSKIPLAST";
+(slice, ()) ~skip_last_bits(slice s, int len) asm "SDSKIPLAST";
+```
+
+s`의 마지막 `0 ≤ len ≤ 1023\` 비트를 제외한 모든 비트를 반환합니다.
+
+#### slice_last
+
+```func
+slice slice_last(slice s, int len) asm "SDCUTLAST";
+```
+
+s`의 마지막 `0 ≤ len ≤ 1023\` 비트를 반환합니다.
+
+#### load_dict
+
+```func
+(slice, cell) load_dict(slice s) asm( -> 1 0) "LDDICT";
+```
+
+슬라이스 `s`에서 딕셔너리 `D`를 로드합니다. 딕셔너리 또는 임의의 `일지도 모르는 ^Y` 타입의 값에 적용할 수 있습니다(`nothing` 생성자가 사용된 경우 `null`을 반환합니다).
+
+#### preload_dict
+
+```func
+cell preload_dict(slice s) asm "PLDDICT";
+```
+
+슬라이스 `s`에서 사전 `D`를 미리 로드합니다.
+
+#### skip_dict
+
+```func
+slice skip_dict(slice s) asm "SKIPDICT";
+```
+
+사전을 `load_dict`로 로드하지만 나머지 슬라이스만 반환합니다.
+
+### 슬라이스 크기 프리미티브
+
+#### slice_refs
+
+```func
+int slice_refs(slice s) asm "SREFS";
+```
+
+슬라이스 `s`의 참조 개수를 반환합니다.
+
+#### slice_bits
+
+```func
+int slice_bits(slice s) asm "SBITS";
+```
+
+슬라이스 `s`의 데이터 비트 수를 반환합니다.
+
+#### 슬라이스_비트_참조
+
+```func
+(int, int) slice_bits_refs(slice s) asm "SBITREFS";
+```
+
+데이터 비트 수와 `s`의 참조 수를 모두 반환합니다.
+
+#### slice_empty?
+
+```func
+int slice_empty?(slice s) asm "SEMPTY";
+```
+
+슬라이스 `s`가 비어 있는지(즉, 데이터 비트와 셀 참조를 포함하지 않는지) 확인합니다.
+
+#### slice_data_empty?
+
+```func
+int slice_data_empty?(slice s) asm "SDEMPTY";
+```
+
+슬라이스 `s`에 데이터 비트가 없는지 확인합니다.
+
+#### slice_refs_empty?
+
+```func
+int slice_refs_empty?(slice s) asm "SREMPTY";
+```
+
+슬라이스 `s`에 참조가 없는지 확인합니다.
+
+#### 슬라이스\_뎁스
+
+```func
+int slice_depth(slice s) asm "SDEPTH";
+```
+
+슬라이스 `s`의 깊이를 반환합니다. s`에 참조가 없으면 `0`을 반환하고, 그렇지 않으면 반환되는 값은 `s\`에서 참조된 셀의 최대 깊이에 1을 더한 값입니다.
+
+## 빌더 기본 요소
+
+프리미티브가 빌더 `b'`의 수정된 버전을 반환하고 그 끝에 `x`라는 값을 저장하면 빌더 `b`에 값 `x`를 _저장_한다고 합니다. 이 메서드는 [비수정 메서드]로 사용할 수 있습니다(/develop/func/statements#non-modifying-methods).
+
+아래 나열된 모든 프리미티브는 먼저 '빌더'에 충분한 공간이 있는지 확인한 다음 직렬화되는 값의 범위를 확인합니다.
+
+#### 시작\_셀
+
+```func
+builder begin_cell() asm "NEWC";
+```
+
+빈 `빌더`를 새로 만듭니다.
+
+#### end_cell
+
+```func
+cell end_cell(builder b) asm "ENDC";
+```
+
+빌더`를 일반 `셀\`로 변환합니다.
+
+#### store_ref
+
+```func
+builder store_ref(builder b, cell c) asm(c b) "STREF";
+```
+
+셀 `c`에 대한 참조를 빌더 `b`에 저장합니다.
+
+#### store_uint
+
+```func
+builder store_uint(builder b, int x, int len) asm(x b len) "STUX";
+```
+
+부호 없는 `len` 비트 정수 `x`를 `0 ≤ len ≤ 256`에 대해 `b`에 저장합니다.
+
+#### store_int
+
+```func
+builder store_int(builder b, int x, int len) asm(x b len) "STIX";
+```
+
+0 ≤ len ≤ 257`에 대해 부호화된 `len`비트 정수`x`를 `b\`에 저장합니다.
+
+#### store_slice
+
+```func
+builder store_slice(builder b, slice s) asm "STSLICER";
+```
+
+슬라이스 `s`를 빌더 `b`에 저장합니다.
+
+#### store_grams
+
+```func
+builder store_grams(builder b, int x) asm "STGRAMS";
+```
+
+#### store_coins
+
+```func
+builder store_coins(builder b, int x) asm "STGRAMS";
+```
+
+0..2^120 - 1`범위의 정수`x`를 빌더 `b`에 저장(직렬화)합니다. x`의 직렬화는 4비트 부호 없는 빅 엔디안 정수 `l`, 즉 `x < 2^8l`이 되는 가장 작은 정수 `l ≥ 0`, 그 다음 `8l` 비트 부호 없는 빅 엔디안 표현 `x`로 구성됩니다. x\`가 지원되는 범위에 속하지 않으면 범위 검사 예외가 발생합니다.
+
+톤코인을 보관하는 가장 일반적인 방법입니다.
+
+#### store_dict
+
+```func
+builder store_dict(builder b, cell c) asm(c b) "STDICT";
+```
+
+셀 `c` 또는 `null`로 표현되는 딕셔너리 `D`를 빌더 `b`에 저장합니다. 즉, `c`가 `null`이 아닌 경우 `1`비트와 `c`에 대한 참조를 저장하고, 그렇지 않으면 `0`비트를 저장합니다.
+
+#### store_maybe_ref
+
+```func
+builder store_maybe_ref(builder b, cell c) asm(c b) "STOPTREF";
+```
+
+store_dict\`에 해당합니다.
+
+### 빌더 크기 프리미티브
+
+#### builder_refs
+
+```func
+int builder_refs(builder b) asm "BREFS";
+```
+
+빌더 `b`에 이미 저장된 셀 참조의 수를 반환합니다.
+
+#### 빌더\_비트
+
+```func
+int builder_bits(builder b) asm "BBITS";
+```
+
+빌더 `b`에 이미 저장된 데이터 비트 수를 반환합니다.
+
+#### 빌더\_뎁스
+
+```func
+int builder_depth(builder b) asm "BDEPTH";
+```
+
+빌더 `b`의 깊이를 반환합니다. b`에 저장된 셀 참조가 없으면 `0`을 반환하고, 그렇지 않으면 `b\`에서 참조된 셀의 최대 깊이에 1을 더한 값을 반환합니다.
+
+## 셀 프리미티브
+
+#### 셀\_뎁스
+
+```func
+int cell_depth(cell c) asm "CDEPTH";
+```
+
+셀 `c`의 깊이를 반환합니다. c`에 참조가 없으면 `0`을 반환하고, 그렇지 않으면 `c`에서 참조된 셀의 최대 깊이에 1을 더한 값을 반환합니다. c`가 셀이 아닌 `null`이면 0을 반환합니다.
+
+#### cell_null?
+
+```func
+int cell_null?(cell c) asm "ISNULL";
+```
+
+c`가 `null`인지 확인합니다. 일반적으로 `null`셀은 빈 사전을 나타냅니다. FunC에는 다형성`null?\`도 내장되어 있습니다. ([built-ins](/develop/func/builtins#다른 프리미티브) 참조).
+
+## 사전 기본 요소
+
+:::caution
+아래의 사전 프리미티브는 저수준이며, 적용되는 셀의 구조가 연산 서명과 일치하는지 확인하지 않습니다. 사전 연산을 '사전이 아닌 것'에 적용하거나 하나의 키 길이/부호에 해당하는 연산을 다른 종류의 키가 있는 사전에 적용하는 것(예: 8비트 부호 키와 7비트 부호 없는 키로 하나의 사전 키 값에 동시에 쓰기)은 **정의되지 않은 동작**입니다. 이러한 경우 종종 예외가 발생하지만 드물게 잘못된 값을 쓰거나 읽을 수 있습니다. 개발자는 이러한 코드를 피할 것을 강력히 권장합니다.
+:::
+
+TVM.pdf](https://ton.org/tvm.pdf)에 나와 있습니다:
+
+> 사전에서는 두 가지 다른 표현을 TVM 스택 값으로 인정합니다:
+>
+> - 해시맵E(n, X)`타입의 TL-B 값을 직렬화한 슬라이스`s`입니다. 즉, `s`는 0과 같은 1비트(사전이 비어 있는 경우) 또는 1과 같은 1비트와 이진 트리의 루트를 포함하는 셀에 대한 참조, 즉 `Hashmap(n, X)\` 타입의 직렬화된 값으로 구성됩니다.
+> - "Maybe cell" `c^?`, 즉 셀(이전처럼 `Hashmap(n, X)` 타입의 직렬화된 값을 포함)이거나 `null`(빈 딕셔너리에 해당, 참조. [null 값](/develop/func/types#null-values))인 값입니다. "어쩌면 셀" `c^?`이 사전을 나타내는 데 사용되는 경우, 일반적으로 `D`로 표시합니다.
+>
+> 아래 나열된 대부분의 사전 프리미티브는 스택 조작에 더 편리한 두 번째 형식의 사전을 받아들이고 반환합니다. 그러나 더 큰 TL-B 객체 내부의 직렬화된 사전은 첫 번째 표현을 사용합니다.
+
+FunC에서 딕셔너리는 `셀` 타입으로 표현되며, `null` 값일 수 있다는 암시적인 가정이 있습니다. 키 길이나 값 유형이 다른 딕셔너리에 대한 별도의 유형은 없습니다(결국 FunC++가 아니라 FunC이기 때문이죠).
+
+### 분류 노트
+
+딕셔너리 프리미티브는 딕셔너리의 키를 부호 없는 `l`비트 정수, 부호 있는 `l`비트 정수 또는 `l`비트 조각으로 해석할 수 있습니다. 아래 나열된 프리미티브는 이름에서 `dict`라는 단어 앞의 접두사에 따라 다릅니다. i`는 부호 있는 정수 키, `u\`는 부호 없는 정수 키, 빈 접두사는 슬라이스 키를 나타냅니다.
+
+예를 들어, `udict_set`은 부호 없는 정수 키가 있는 사전의 경우 키별 집합 함수이고, `idict_set`은 부호 있는 정수 키가 있는 사전의 경우 해당 함수이며, `dict_set`은 슬라이스 키가 있는 사전의 경우 함수입니다.
+
+제목에는 빈 접두사가 사용됩니다.
+
+또한 일부 프리미티브에는 `~`가 접두사로 붙습니다. 이를 통해 [수정 메서드](/develop/func/statements#modifying-methods)로 사용할 수 있습니다.
+
+### 사전의 값
+
+사전 내의 값은 내부 사전 셀 내의 서브슬라이스로 저장하거나 별도의 셀에 대한 참조를 통해 저장할 수 있습니다. 전자의 경우, 내부 셀 공간의 일부는 이미 해당 키의 일부가 차지하고 있을 수 있으므로 셀에 들어갈 만큼 작은 값이 사전에도 들어갈 수 있다는 보장이 없습니다. 반대로 후자의 저장 방식은 가스 사용량 측면에서 효율성이 떨어집니다. 두 번째 방법을 사용하여 값을 저장하는 것은 첫 번째 방법의 값에 대한 데이터 비트와 단일 참조가 없는 슬라이스를 삽입하는 것과 같습니다.
+
+#### dict_set
+
+```func
+cell udict_set(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTUSET";
+cell idict_set(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTISET";
+cell dict_set(cell dict, int key_len, slice index, slice value) asm(value index dict key_len) "DICTSET";
+(cell, ()) ~udict_set(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTUSET";
+(cell, ()) ~idict_set(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTISET";
+(cell, ()) ~dict_set(cell dict, int key_len, slice index, slice value) asm(value index dict key_len) "DICTSET";
+```
+
+딕셔너리 `dict`의 `key_len` 비트 키 `index`와 연관된 값을 `value`(슬라이스)로 설정하고 결과 딕셔너리를 반환합니다.
+
+#### DICT_SET_REF
+
+```func
+cell idict_set_ref(cell dict, int key_len, int index, cell value) asm(value index dict key_len) "DICTISETREF";
+cell udict_set_ref(cell dict, int key_len, int index, cell value) asm(value index dict key_len) "DICTUSETREF";
+(cell, ()) ~idict_set_ref(cell dict, int key_len, int index, cell value) asm(value index dict key_len) "DICTISETREF";
+(cell, ()) ~udict_set_ref(cell dict, int key_len, int index, cell value) asm(value index dict key_len) "DICTUSETREF";
+```
+
+dict_set`과 유사하지만 값이 `value\` 셀에 대한 참조로 설정됩니다.
+
+#### dict_get?
+
+```func
+(slice, int) idict_get?(cell dict, int key_len, int index) asm(index dict key_len) "DICTIGET" "NULLSWAPIFNOT";
+(slice, int) udict_get?(cell dict, int key_len, int index) asm(index dict key_len) "DICTUGET" "NULLSWAPIFNOT";
+```
+
+'key_len' 비트의 키를 사용하는 `dict` 딕셔너리 내에서 `index` 키를 검색합니다. 성공하면 연관된 값을 `슬라이스`로 검색하고 플래그 값 `-1`을 반환하여 **성공**을 나타냅니다. 검색에 실패하면 `(null, 0)`을 반환합니다.
+
+#### dict_get_ref?
+
+```func
+(cell, int) idict_get_ref?(cell dict, int key_len, int index) asm(index dict key_len) "DICTIGETREF";
+(cell, int) udict_get_ref?(cell dict, int key_len, int index) asm(index dict key_len) "DICTUGETREF";
+```
+
+dict_get?\`와 유사하지만 찾은 값의 첫 번째 참조를 반환합니다.
+
+#### DICT_GET_REF
+
+```func
+cell idict_get_ref(cell dict, int key_len, int index) asm(index dict key_len) "DICTIGETOPTREF";
+```
+
+딕셔너리 `dict`에 `index` 키가 없는 경우 값 대신 `null`을 반환하는 `dict_get_ref?`의 변형입니다.
+
+#### DICT_SET_GET_REF
+
+```func
+(cell, cell) idict_set_get_ref(cell dict, int key_len, int index, cell value) asm(value index dict key_len) "DICTISETGETOPTREF";
+(cell, cell) udict_set_get_ref(cell dict, int key_len, int index, cell value) asm(value index dict key_len) "DICTUSETGETOPTREF";
+```
+
+인덱스`와 연관된 값을 `값`으로 설정하고(`값`이 `null`이면 키가 대신 삭제됨) 이전 값(또는 값이 없는 경우 `null\`)을 반환합니다.
+
+#### dict_delete?
+
+```func
+(cell, int) idict_delete?(cell dict, int key_len, int index) asm(index dict key_len) "DICTIDEL";
+(cell, int) udict_delete?(cell dict, int key_len, int index) asm(index dict key_len) "DICTUDEL";
+```
+
+딕셔너리 `dict`에서 `key_len` 비트 키 `index`를 삭제합니다. 키가 있으면, 수정된 딕셔너리 `dict'`와 성공 플래그 `-1`을 반환합니다. 그렇지 않으면, 원래 딕셔너리 `dict`와 `0`을 반환합니다.
+
+#### DICT_DELETE_GET?
+
+```func
+(cell, slice, int) idict_delete_get?(cell dict, int key_len, int index) asm(index dict key_len) "DICTIDELGET" "NULLSWAPIFNOT";
+(cell, slice, int) udict_delete_get?(cell dict, int key_len, int index) asm(index dict key_len) "DICTUDELGET" "NULLSWAPIFNOT";
+(cell, (slice, int)) ~idict_delete_get?(cell dict, int key_len, int index) asm(index dict key_len) "DICTIDELGET" "NULLSWAPIFNOT";
+(cell, (slice, int)) ~udict_delete_get?(cell dict, int key_len, int index) asm(index dict key_len) "DICTUDELGET" "NULLSWAPIFNOT";
+```
+
+딕셔너리 `dict`에서 `key_len` 비트 키 `index`를 삭제합니다. 키가 있으면, 수정된 딕셔너리 `dict'`, 키 k와 연관된 원래 값 `x`(슬라이스로 표시됨), 성공 플래그 `-1`을 반환합니다. 그렇지 않으면 `(딕셔너리, 널, 0)`을 반환합니다.
+
+#### dict_add?
+
+```func
+(cell, int) udict_add?(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTUADD";
+(cell, int) idict_add?(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTIADD";
+```
+
+딕셔너리 `dict_set`의 `add` 대응 함수는 딕셔너리 `dict`의 키 `index`와 연관된 값을 `value`로 설정하지만 `D`에 이미 없는 경우에만 해당 값을 설정합니다. 딕셔너리의 수정된 버전과 `-1` 플래그 또는 `(딕셔너리, 0)`을 반환합니다.
+
+#### dict_replace?
+
+```func
+(cell, int) udict_replace?(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTUREPLACE";
+(cell, int) idict_replace?(cell dict, int key_len, int index, slice value) asm(value index dict key_len) "DICTIREPLACE";
+```
+
+딕셔너리 `dict_set`과 유사하지만, `dict`에 키가 이미 있는 경우에만 딕셔너리 `dict`의 키 `index` 값을 `value`로 설정하는 `replace` 연산입니다. 딕셔너리의 수정된 버전과 `-1` 플래그 또는 `(딕셔너리, 0)`을 반환합니다.
+
+### 빌더 대응 제품
+
+다음 프리미티브는 새 값을 슬라이스 대신 빌더로 받아들이므로 스택에서 계산된 여러 컴포넌트에서 값을 직렬화해야 하는 경우 더 편리합니다. 순 효과는 b를 슬라이스로 변환하고 위에 나열된 해당 프리미티브를 실행하는 것과 거의 같습니다.
+
+#### DICT_SET_빌더
+
+```func
+cell udict_set_builder(cell dict, int key_len, int index, builder value) asm(value index dict key_len) "DICTUSETB";
+cell idict_set_builder(cell dict, int key_len, int index, builder value) asm(value index dict key_len) "DICTISETB";
+cell dict_set_builder(cell dict, int key_len, slice index, builder value) asm(value index dict key_len) "DICTSETB";
+(cell, ()) ~idict_set_builder(cell dict, int key_len, int index, builder value) asm(value index dict key_len) "DICTISETB";
+(cell, ()) ~udict_set_builder(cell dict, int key_len, int index, builder value) asm(value index dict key_len) "DICTUSETB";
+(cell, ()) ~dict_set_builder(cell dict, int key_len, slice index, builder value) asm(value index dict key_len) "DICTSETB";
+```
+
+dict_set\`과 비슷하지만 빌더를 허용합니다.
+
+#### dict_add_builder?
+
+```func
+(cell, int) udict_add_builder?(cell dict, int key_len, int index, builder value) asm(value index dict key_len) "DICTUADDB";
+(cell, int) idict_add_builder?(cell dict, int key_len, int index, builder value) asm(value index dict key_len) "DICTIADDB";
+```
+
+dict_add?\`와 비슷하지만 빌더를 허용합니다.
+
+#### dict_replace_builder?
+
+```func
+(cell, int) udict_replace_builder?(cell dict, int key_len, int index, builder value) asm(value index dict key_len) "DICTUREPLACEB";
+(cell, int) idict_replace_builder?(cell dict, int key_len, int index, builder value) asm(value index dict key_len) "DICTIREPLACEB";
+```
+
+dict_replace?\`와 비슷하지만 빌더를 허용합니다.
+
+#### DICT_DELETE_GET_MIN
+
+```func
+(cell, int, slice, int) udict_delete_get_min(cell dict, int key_len) asm(-> 0 2 1 3) "DICTUREMMIN" "NULLSWAPIFNOT2";
+(cell, int, slice, int) idict_delete_get_min(cell dict, int key_len) asm(-> 0 2 1 3) "DICTIREMMIN" "NULLSWAPIFNOT2";
+(cell, slice, slice, int) dict_delete_get_min(cell dict, int key_len) asm(-> 0 2 1 3) "DICTREMMIN" "NULLSWAPIFNOT2";
+(cell, (int, slice, int)) ~idict::delete_get_min(cell dict, int key_len) asm(-> 0 2 1 3) "DICTIREMMIN" "NULLSWAPIFNOT2";
+(cell, (int, slice, int)) ~udict::delete_get_min(cell dict, int key_len) asm(-> 0 2 1 3) "DICTUREMMIN" "NULLSWAPIFNOT2";
+(cell, (slice, slice, int)) ~dict::delete_get_min(cell dict, int key_len) asm(-> 0 2 1 3) "DICTREMMIN" "NULLSWAPIFNOT2";
+```
+
+딕셔너리 `dict`에서 최소 키 `k`를 계산하여 제거한 후 `(dict', k, x, -1)`를 반환합니다. 여기서 `dict'`는 `dict`의 수정 버전이고 `x`는 `k`와 연관된 값입니다. 딕셔너리가 비어 있으면 `(딕셔너리, 널, 널, 0)`을 반환합니다.
+
+'idict_delete_get_min'이 반환하는 키는 'dict_delete_get_min' 및 'udict_delete_get_min'이 반환하는 키와 다를 수 있습니다.
+
+#### DICT_DELETE_GET_MAX
+
+```func
+(cell, int, slice, int) udict_delete_get_max(cell dict, int key_len) asm(-> 0 2 1 3) "DICTUREMMAX" "NULLSWAPIFNOT2";
+(cell, int, slice, int) idict_delete_get_max(cell dict, int key_len) asm(-> 0 2 1 3) "DICTIREMMAX" "NULLSWAPIFNOT2";
+(cell, slice, slice, int) dict_delete_get_max(cell dict, int key_len) asm(-> 0 2 1 3) "DICTREMMAX" "NULLSWAPIFNOT2";
+(cell, (int, slice, int)) ~udict::delete_get_max(cell dict, int key_len) asm(-> 0 2 1 3) "DICTUREMMAX" "NULLSWAPIFNOT2";
+(cell, (int, slice, int)) ~idict::delete_get_max(cell dict, int key_len) asm(-> 0 2 1 3) "DICTIREMMAX" "NULLSWAPIFNOT2";
+(cell, (slice, slice, int)) ~dict::delete_get_max(cell dict, int key_len) asm(-> 0 2 1 3) "DICTREMMAX" "NULLSWAPIFNOT2";
+```
+
+딕셔너리 `dict`의 최대 키 `k`를 계산하여 제거한 후 `(dict', k, x, -1)`를 반환합니다. 여기서 `dict'는 `dict`의 수정된 버전이고 `x`는 `k`와 연관된 값입니다. 딕셔너리가 비어 있으면 `(딕셔너리, 널, 널, 0)\`을 반환합니다.
+
+#### dict_get_min?
+
+```func
+(int, slice, int) udict_get_min?(cell dict, int key_len) asm (-> 1 0 2) "DICTUMIN" "NULLSWAPIFNOT2";
+(int, slice, int) idict_get_min?(cell dict, int key_len) asm (-> 1 0 2) "DICTIMIN" "NULLSWAPIFNOT2";
+```
+
+딕셔너리 `dict`의 최소 키 `k`와 연관 값 `x`를 계산하여 `(k, x, -1)`를 반환합니다. 딕셔너리가 비어 있으면 `(null, null, 0)`을 반환합니다.
+
+#### dict_get_max?
+
+```func
+(int, slice, int) udict_get_max?(cell dict, int key_len) asm (-> 1 0 2) "DICTUMAX" "NULLSWAPIFNOT2";
+(int, slice, int) idict_get_max?(cell dict, int key_len) asm (-> 1 0 2) "DICTIMAX" "NULLSWAPIFNOT2";
+```
+
+딕셔너리 `dict`의 최대 키 `k`와 연관된 값 `x`를 계산하고 `(k, x, -1)`를 반환합니다. 딕셔너리가 비어 있으면 `(null, null, 0)`을 반환합니다.
+
+#### DICT_GET_MIN_REF?
+
+```func
+(int, cell, int) udict_get_min_ref?(cell dict, int key_len) asm (-> 1 0 2) "DICTUMINREF" "NULLSWAPIFNOT2";
+(int, cell, int) idict_get_min_ref?(cell dict, int key_len) asm (-> 1 0 2) "DICTIMINREF" "NULLSWAPIFNOT2";
+```
+
+dict_get_min?\`과 유사하지만 값의 유일한 참조를 참조로 반환합니다.
+
+#### DICT_GET_MAX_REF?
+
+```func
+(int, cell, int) udict_get_max_ref?(cell dict, int key_len) asm (-> 1 0 2) "DICTUMAXREF" "NULLSWAPIFNOT2";
+(int, cell, int) idict_get_max_ref?(cell dict, int key_len) asm (-> 1 0 2) "DICTIMAXREF" "NULLSWAPIFNOT2";
+```
+
+dict_get_max?\`와 유사하지만 값의 유일한 참조를 참조로 반환합니다.
+
+#### DICT_GET_NEXT?
+
+```func
+(int, slice, int) udict_get_next?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTUGETNEXT" "NULLSWAPIFNOT2";
+(int, slice, int) idict_get_next?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTIGETNEXT" "NULLSWAPIFNOT2";
+```
+
+피벗`보다 큰 딕셔너리 `dict`에서 최소 키 `k`를 계산하고, `k`와 연관된 값, 성공을 나타내는 플래그를 반환합니다. 딕셔너리가 비어 있으면 `(null, null, 0)\`을 반환합니다.
+
+#### DICT_GET_NEXTQ?
+
+```func
+(int, slice, int) udict_get_nexteq?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTUGETNEXTEQ" "NULLSWAPIFNOT2";
+(int, slice, int) idict_get_nexteq?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTIGETNEXTEQ" "NULLSWAPIFNOT2";
+```
+
+dict_get_next?`와 유사하지만 `pivot`보다 크거나 같은 최소 키 `k\`를 계산합니다.
+
+#### DICT_GET_PREV?
+
+```func
+(int, slice, int) udict_get_prev?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTUGETPREV" "NULLSWAPIFNOT2";
+(int, slice, int) idict_get_prev?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTIGETPREV" "NULLSWAPIFNOT2";
+```
+
+dict_get_next?`와 비슷하지만 최대 키 `k`를 `pivot\`보다 작게 계산합니다.
+
+#### DICT_GET_PREVEQ?
+
+```func
+(int, slice, int) udict_get_preveq?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTUGETPREVEQ" "NULLSWAPIFNOT2";
+(int, slice, int) idict_get_preveq?(cell dict, int key_len, int pivot) asm(pivot dict key_len -> 1 0 2) "DICTIGETPREVEQ" "NULLSWAPIFNOT2";
+```
+
+dict_get_prev?\`와 유사하지만 '피벗'보다 작거나 같은 최대 키 'k'를 계산합니다.
+
+#### new_dict
+
+```func
+cell new_dict() asm "NEWDICT";
+```
+
+빈 딕셔너리를 생성하며, 실제로는 `null` 값입니다. null()\`의 특수 케이스입니다.
+
+#### dict_empty?
+
+```func
+int dict_empty?(cell c) asm "DICTEMPTY";
+```
+
+사전이 비어 있는지 확인합니다. 셀\_null?\`에 해당합니다.
+
+## 접두사 사전 프리미티브
+
+TVM은 접두사 코드를 형성하는 길이가 고정되지 않은 키(즉, 다른 키의 접두사가 되는 키가 없는 키)가 있는 사전도 지원합니다. 이에 대한 자세한 내용은 [TVM 지침](/learn/tvm-instructions/tvm-overview) 섹션에서 확인하세요.
+
+#### pfxdict_get?
+
+```func
+(slice, slice, slice, int) pfxdict_get?(cell dict, int key_len, slice key) asm(key dict key_len) "PFXDICTGETQ" "NULLSWAPIFNOT2";
+```
+
+(s', x, s'', -1)`또는`(null, null, s, 0)`을 반환합니다.
+접두사 코드 사전 `dict`에 있는 슬라이스 `key`의 고유 접두사를 조회합니다. 발견되면 `s`의 접두사는 `s'`로, 해당 값(역시 슬라이스)은 `x`로 반환됩니다. 나머지 `s`는 슬라이스 `s''`로 반환됩니다. 접두사 코드 사전 `dict`에서 `s`의 접두사가 키가 아닌 경우 변경되지 않은 `s\`와 실패를 나타내는 0 플래그를 반환합니다.
+
+#### pfxdict_set?
+
+```func
+(cell, int) pfxdict_set?(cell dict, int key_len, slice key, slice value) asm(value key dict key_len) "PFXDICTSET";
+```
+
+dict_set\`과 유사하지만 키가 사전에 제시된 다른 키의 접두사인 경우 실패할 수 있습니다. 성공하면 플래그를 반환합니다.
+
+#### pfxdict_delete?
+
+```func
+(cell, int) pfxdict_delete?(cell dict, int key_len, slice key) asm(key dict key_len) "PFXDICTDEL";
+```
+
+dict_delete?\`와 유사합니다.
+
+## 특수 프리미티브
+
+#### null
+
+```func
+forall X -> X null() asm "PUSHNULL";
+```
+
+TVM 유형 `Null`에서 FunC는 일부 원자 유형의 값이 없음을 나타냅니다. 따라서 `Null`은 실제로 모든 원자 유형을 가질 수 있습니다.
+
+#### ~impure_touch
+
+```func
+forall X -> (X, ()) ~impure_touch(X x) impure asm "NOP";
+```
+
+변수를 사용한 것으로 표시하면 해당 변수를 생성한 코드가 불순하지 않더라도 삭제되지 않습니다. (참조: [불순한 지정자](/개발/펀크/함수#불순한 지정자))
+
+## 기타 기본 요소
+
+#### 분
+
+```func
+int min(int x, int y) asm "MIN";
+```
+
+두 개의 정수 `x`와 `y`의 최소값을 계산합니다.
+
+#### 최대
+
+```func
+int max(int x, int y) asm "MAX";
+```
+
+두 개의 정수 `x`와 `y`의 최대값을 계산합니다.
+
+#### minmax
+
+```func
+(int, int) minmax(int x, int y) asm "MINMAX";
+```
+
+두 정수를 정렬합니다.
+
+#### 복근
+
+```func
+int abs(int x) asm "ABS";
+```
+
+정수 `x`의 절대값을 계산합니다.

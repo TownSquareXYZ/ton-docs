@@ -1,0 +1,68 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 지갑 주소 유효성 검사
+
+### TON 주소의 유효성을 어떻게 확인하나요?
+
+<Tabs groupId="address-examples">
+
+<TabItem value="Tonweb" label="JS (Tonweb)">
+
+```js
+  const TonWeb = require("tonweb")
+  TonWeb.utils.Address.isValid('...')
+```
+
+</TabItem>
+  <TabItem value="GO" label="tonutils-go">
+
+```python
+package main
+
+import (
+  "fmt"
+  "github.com/xssnick/tonutils-go/address"
+)
+
+if _, err := address.ParseAddr("EQCD39VS5j...HUn4bpAOg8xqB2N"); err != nil {
+  return errors.New("invalid address")
+}
+```
+
+</TabItem>
+  <TabItem value="Java" label="ton4j">
+
+```javascript
+  /* Maven
+  <dependency>
+    <groupId>io.github.neodix42</groupId>
+    <artifactId>address</artifactId>
+    <version>0.3.2</version>
+  </dependency>
+  */
+
+  try {
+  Address.of("...");
+  } catch (Exception e) {
+  // not valid address
+  }
+```
+
+</TabItem>
+  <TabItem value="Kotlin" label="ton-kotlin">
+
+```javascript
+  try {
+    AddrStd("...")
+  } catch (e: IllegalArgumentException) {
+      // not valid address
+  }
+```
+
+</TabItem>
+</Tabs>
+
+:::tip
+스마트 컨트랙트 주소](/학습/개요/주소) 페이지의 전체 주소 설명입니다.
+:::

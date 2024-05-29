@@ -1,0 +1,1026 @@
+"name","alias_of","tlb","doc_category","doc_opcode","doc_fift","doc_stack","doc_gas","doc_description","","",""
+"NOP","","#00","stack_basic","00","NOP","-","18","아무것도 하지 않습니다.","","",""
+"SWAP","XCHG_0I","#01","stack_basic","01","SWAP","x y - y x","18","s1 XCHG0`과 동일합니다.","","",""
+"XCHG_0I","","#0 i:(## 4) {1 <= i}","stack_basic","0i","s[i] XCHG0","","18","s0`을 `s[i]`, `1 <= i <= 15`로 교환합니다.","","",""
+"XCHG_IJ","","#10 i:(## 4) j:(## 4) {1 <= i} {i + 1 <= j}","stack_basic","10ij","s[i] s[j] XCHG","","26","s[i]`를 `s[j]`, `1 <= i <= j <= 15`로 교환합니다.","","",""
+"XCHG_0I_LONG","","#11 ii:uint8","stack_basic","11ii","s0 [ii] s() XCHG","","26","s0`을 `s[ii]`, `0 <= ii <= 255`로 교환합니다.","","",""
+"XCHG_1I","","#1 i:(## 4) {2 <= i}","stack_basic","1i","s1 s[i] XCHG","","18","s1`을 `s[i]`, `2 <= i <= 15`로 교환합니다.","","",""
+"PUSH","","#2 i:uint4","stack_basic","2i","s[i] PUSH","","18","이전 `s[i]`의 복사본을 스택에 밀어 넣습니다.","","",""
+"DUP","PUSH","#20","stack_basic","20","DUP","x - x x","18","s0 PUSH`와 동일합니다.","","",""
+"OVER","PUSH","#21","stack_basic","21","OVER","x y - x y x","18","s1 PUSH`와 동일합니다.","","",""
+"POP","","#3 i:uint4","stack_basic","3i","s[i] POP","","18","이전 `s0` 값을 이전 `s[i]`에 넣습니다.","","",""
+"DROP","POP","#30","stack_basic","30","DROP","x -","18","s0 POP`와 동일하게 스택 최상위 값을 버립니다.","","",""
+"NIP","POP","#31","stack_basic","31","NIP","x y - y","18","'s1 POP'와 동일합니다.","","",""
+"XCHG3","","#4 i:uint4 j:uint4 k:uint4","stack_complex","4ijk","s[i] s[j] s[k] XCHG3","","26","s2 s[i] XCHG` `s1 s[j] XCHG` `s[k] XCHG0`에 해당합니다.","","",""
+"XCHG2","","#50 i:uint4 j:uint4","stack_complex","50ij","s[i] s[j] XCHG2","","26","s1 s[i] XCHG` `s[j] XCHG0`에 해당합니다.","","",""
+"XCPU","","#51 i:uint4 j:uint4","stack_complex","51ij","s[i] s[j] XCPU","","26","s[i] XCHG0` `s[j] PUSH`에 해당합니다.","","",""
+"PUXC","","#52 i:uint4 j:uint4","stack_complex","52ij","s[i] s[j-1] PUXC","","26","s[i] PUSH` `SWAP` `s[j] XCHG0`에 해당합니다.","","",""
+"PUSH2","","#53 i:uint4 j:uint4","stack_complex","53ij","s[i] s[j] PUSH2","","26","s[i] PUSH` `s[j+1] PUSH`에 해당합니다.","","",""
+"XCHG3_ALT","","#540 i:uint4 j:uint4 k:uint4","stack_complex","540ijk","s[i] s[j] s[k] XCHG3_l","","34","긴 형식의 `XCHG3`.","","",""
+"XC2PU","","#541 i:uint4 j:uint4 k:uint4","stack_complex","541ijk","s[i] s[j] s[k] XC2PU","","34","s[i] s[j] XCHG2` `s[k] PUSH`에 해당합니다.","","",""
+"XCPUXC","","#542 i:uint4 j:uint4 k:uint4","stack_complex","542ijk","s[i] s[j] s[k-1] XCPUXC","","34","s1 s[i] XCHG` `s[j] s[k-1] PUXC`에 해당합니다.","","",""
+"XCPU2","","#543 i:uint4 j:uint4 k:uint4","stack_complex","543ijk","s[i] s[j] s[k] XCPU2","","34","s[i] XCHG0` `s[j] s[k] PUSH2`에 해당합니다.","","",""
+"PUXC2","","#544 i:uint4 j:uint4 k:uint4","stack_complex","544ijk","s[i] s[j-1] s[k-1] PUXC2","","34","s[i] PUSH` `s2 XCHG0` `s[j] s[k] XCHG2`에 해당합니다.","","",""
+"PUXCPU","","#545 i:uint4 j:uint4 k:uint4","stack_complex","545ijk","s[i] s[j-1] s[k-1] PUXCPU","","34","s[i] s[j-1] PUXC` `s[k] PUSH`에 해당합니다.","","",""
+"PU2XC","","#546 i:uint4 j:uint4 k:uint4","stack_complex","546ijk","s[i] s[j-1] s[k-2] PU2XC","","34","s[i] PUSH` `SWAP` `s[j] s[k-1] PUXC`에 해당합니다.","","",""
+"PUSH3","","#547 i:uint4 j:uint4 k:uint4","stack_complex","547ijk","s[i] s[j] s[k] PUSH3","","34","s[i] PUSH` `s[j+1] s[k+1] PUSH2`에 해당합니다.","","",""
+"BLKSWAP","","#55 i:uint4 j:uint4","stack_complex","55ij","[i+1] [j+1] BLKSWAP","","26","두 블록 `s[j+i+1] … s[j+1]`과 `s[j] … s0`을 순열합니다.
+0 <= i,j <= 15`
+`[i+1] [j+1] REVERSE` `[j+1] 0 REVERSE` `[i+j+2] 0 REVERSE`와 동등합니다.","","",""
+"ROT2","BLKSWAP","#5513","stack_complex","5513","ROT2
+2ROT","a b c d e f - c d e f a b","26","스택 항목의 맨 위 세 쌍을 회전합니다.","","",""
+"ROLL","BLKSWAP","#550 i:uint4","stack_complex","550i","[i+1] ROLL","","26","맨 위 `i+1` 스택 항목을 회전합니다.
+1 [i+1] BLKSWAP`에 해당합니다.","","",""
+"ROLLREV","BLKSWAP","#55 i:uint4 zero:(## 4) {zero = 0}","stack_complex","55i0","[i+1] -ROLL
+[i+1] ROLLREV","","26","위쪽 `i+1` 스택 항목을 다른 방향으로 회전합니다.
+'[i+1] 1 BLKSWAP'에 해당합니다.","","",""
+"PUSH_LONG","","#56 ii:uint8","stack_complex","56ii","[ii] s() PUSH","","26","이전 `s[ii]`의 복사본을 스택에 밀어 넣습니다.
+0 <= ii <= 255`","","",""
+"POP_LONG","","#57 ii:uint8","stack_complex","57ii","[ii] s() POP","","26","이전 `s0` 값을 이전 `s[ii]`에 넣습니다.
+`0 <= ii <= 255`","","",""
+"ROT","","#58","stack_complex","58","ROT","a b c - b c a","18","1 2 BLKSWAP` 또는 `s2 s1 XCHG2`에 해당합니다.","","",""
+"ROTREV","","#59","stack_complex","59","ROTREV
+-ROT","a b c - c a b","18","2 1 BLKSWAP` 또는 `s2 s2 XCHG2`에 해당합니다.","","",""
+"SWAP2","","#5A","stack_complex","5A","SWAP2
+2SWAP","a b c d - c d a b","18","2 2 BLKSWAP` 또는 `s3 s2 XCHG2`에 해당합니다.","","",""
+"DROP2","","#5B","stack_complex","5B","DROP2
+2DROP","a b - ","18","드롭` `드롭`에 해당합니다.","","",""
+"DUP2","","#5C","stack_complex","5C","DUP2
+2DUP","a b - a b a b","18","s1 s0 PUSH2`에 해당합니다.","","",""
+"OVER2","","#5D","stack_complex","5D","OVER2
+2OVER","a b c d - a b c d a b","18","'s3 s2 PUSH2'에 해당합니다.","","",""
+"REVERSE","","#5E i:uint4 j:uint4","stack_complex","5Eij","[i+2] [j] REVERSE","","26","s[j+i+1] … s[j]`의 순서를 반전시킵니다.","","",""
+"BLKDROP","","#5F0 i:uint4","stack_complex","5F0i","[i] BLKDROP","","26","'DROP'을 'i'번 수행한 것과 동일합니다.","","",""
+"BLKPUSH","","#5F i:(## 4) j:uint4 {1 <= i}","stack_complex","5Fij","[i] [j] BLKPUSH","","26","PUSH s(j)`가 `i`번 수행된 것과 같습니다.
+1 <= i <= 15`, `0 <= j <= 15`.","","",""
+"PICK","","#60","stack_complex","60","PICK
+PUSHX","","18","스택에서 정수 `i`를 꺼낸 다음 `s[i] PUSH`를 수행합니다.","","",""
+"ROLLX","","#61","stack_complex","61","ROLLX","","18","스택에서 정수 `i`를 꺼낸 다음 `1 [i] BLKSWAP`을 수행합니다.","","",""
+"-ROLLX","","#62","stack_complex","62","-ROLLX
+ROLLREVX","","18","스택에서 정수 `i`를 꺼낸 다음 `[i] 1 BLKSWAP`을 수행합니다.","","",""
+"BLKSWX","","#63","stack_complex","63","BLKSWX","","18","스택에서 정수 `i`,`j`를 꺼낸 다음 `[i] [j] BLKSWAP`을 수행합니다.","","",""
+"REVX","","#64","stack_complex","64","REVX","","18","스택에서 정수 `i`,`j`를 꺼낸 다음 `[i] [j] REVERSE`를 수행합니다.","","",""
+"DROPX","","#65","stack_complex","65","DROPX","","18","스택에서 정수 `i`를 꺼낸 다음 `[i] BLKDROP`을 수행합니다.","","",""
+"TUCK","","#66","stack_complex","66","TUCK","a b - b a b","18","스왑` `오버` 또는 `s1 s1 XCPU`에 해당합니다.","","",""
+"XCHGX","","#67","stack_complex","67","XCHGX","","18","스택에서 정수 `i`를 꺼낸 다음 `s[i] XCHG`를 수행합니다.","","",""
+"DEPTH","","#68","stack_complex","68","DEPTH","- depth","18","스택의 현재 깊이를 푸시합니다.","","",""
+"CHKDEPTH","","#69","stack_complex","69","CHKDEPTH","i -","18/58","스택에서 정수 `i`를 꺼낸 다음 최소 `i`개의 요소가 있는지 확인하고, 그렇지 않으면 스택 언더플로 예외를 생성합니다.","","",""
+"ONLYTOPX","","#6A","stack_complex","6A","ONLYTOPX","","18","스택에서 정수 `i`를 꺼낸 다음 맨 위 `i` 요소를 제외한 모든 요소를 제거합니다.","","",""
+"ONLYX","","#6B","stack_complex","6B","ONLYX","","18","스택에서 정수 `i`를 꺼낸 다음 맨 아래 `i` 요소만 남깁니다. 대략 `DEPTH` `SWAP` `SUB` `DROPX`와 동일합니다.","","",""
+"BLKDROP2","","#6C i:(## 4) j:uint4 {1 <= i}","stack_complex","6Cij","[i] [j] BLKDROP2","","26","i` 스택 요소를 맨 위 `j` 요소 아래로 떨어뜨립니다.
+1 <= i <= 15`, `0 <= j <= 15`
+`[i+j] 0 REVERSE` `[i] BLKDROP` `[j] 0 REVERSE`와 동일합니다.","","",""
+"NULL","","#6D","tuple","6D","NULL
+PUSHNULL"," - null","18","Null_ 타입의 유일한 값을 푸시합니다.","","",""
+"ISNULL","","#6E","tuple","6E","ISNULL","x - ?","18","x`가 _Null_인지 확인하고, 그에 따라 `-1` 또는 `0`을 반환합니다.","","",""
+"TUPLE","","#6F0 n:uint4","tuple","6F0n","[n] TUPLE","x_1 ... x_n - t","26+n","n` 값 `x_1`,..., `x_n`을 포함하는 새로운 _Tuple_ `t=(x_1, … ,x_n)`을 생성합니다.
+`0 <= n <= 15`","","",""
+"NIL","TUPLE","#6F00","tuple","6F00","NIL","- t","26","길이가 0인 유일한 _Tuple_ `t=()`를 푸시합니다.","","",""
+"SINGLE","TUPLE","#6F01","tuple","6F01","SINGLE","x - t","27","싱글톤 `t:=(x)`, 즉 길이 1의 _Tuple_을 생성합니다.","","",""
+"PAIR","TUPLE","#6F02","tuple","6F02","PAIR
+CONS","x y - t","28","t:=(x,y)` 쌍을 생성합니다.","","",""
+"TRIPLE","TUPLE","#6F03","tuple","6F03","TRIPLE","x y z - t","29","트리플 `t:=(x,y,z)`를 생성합니다.","","",""
+"INDEX","","#6F1 k:uint4","tuple","6F1k","[k] INDEX","t - x","26","튜플_ `t`의 `k`번째 요소를 반환합니다.
+`0 <= k <= 15`.","","",""
+"FIRST","INDEX","#6F10","tuple","6F10","FIRST
+CAR","t - x","26","튜플_의 첫 번째 요소를 반환합니다.","","",""
+"SECOND","INDEX","#6F11","tuple","6F11","SECOND
+CDR","t - y","26","튜플_의 두 번째 요소를 반환합니다.","","",""
+"THIRD","INDEX","#6F12","tuple","6F12","THIRD","t - z","26","튜플_의 세 번째 요소를 반환합니다.","","",""
+"UNTUPLE","","#6F2 n:uint4","tuple","6F2n","[n] UNTUPLE","t - x_1 ... x_n","26+n","길이가 `0 <= n <= 15`인 _Tuple_ `t=(x_1,...,x_n)`를 언팩합니다.
+t`가 _Tuple_이 아니거나 `|t| != n`이면, 타입 검사 예외가 발생합니다.","","",""
+"UNSINGLE","UNTUPLE","#6F21","tuple","6F21","UNSINGLE","t - x","27","싱글톤 `t=(x)`를 언팩합니다.","","",""
+"UNPAIR","UNTUPLE","#6F22","tuple","6F22","UNPAIR
+UNCONS","t - x y","28","t=(x,y)` 쌍을 언팩합니다.","","",""
+"UNTRIPLE","UNTUPLE","#6F23","tuple","6F23","UNTRIPLE","t - x y z","29","트리플 `t=(x,y,z)`의 포장을 해제합니다.","","",""
+"UNPACKFIRST","","#6F3 k:uint4","tuple","6F3k","[k] UNPACKFIRST","t - x_1 ... x_k","26+k","튜플_ `t`의 첫 번째 `0 <= k <= 15` 요소를 언패킹합니다.
+t|<k`이면, 타입 검사 예외를 던집니다.","","",""
+"CHKTUPLE","UNPACKFIRST","#6F30","tuple","6F30","CHKTUPLE","t -","26","t`가 _Tuple_인지 확인합니다. 그렇지 않으면 타입 검사 예외를 던집니다.","","",""
+"EXPLODE","","#6F4 n:uint4","tuple","6F4n","[n] EXPLODE","t - x_1 ... x_m m","26+m","튜플_ `t=(x_1,...,x_m)`의 포장을 풀고 길이 `m`을 반환하지만, `m <= n <= 15`인 경우에만 반환합니다. 그렇지 않으면 형 검사 예외를 던집니다.","","",""
+"SETINDEX","","#6F5 k:uint4","tuple","6F5k","[k] SETINDEX","t x - t'","26+|t|","'x'로 설정된 위치 `t'_{k+1}`에서만 `t`와 다른 _Tuple_ `t'`를 계산합니다.
+0 <= k <= 15`
+`k >= |t|`이면 범위 검사 예외를 던집니다.","","",""
+"SETFIRST","SETINDEX","#6F50","tuple","6F50","SETFIRST","t x - t'","26+|t|","Tuple_ `t`의 첫 번째 컴포넌트를 `x`로 설정하고 결과 _Tuple_ `t'`를 반환합니다.","","",""
+"SETSECOND","SETINDEX","#6F51","tuple","6F51","SETSECOND","t x - t'","26+|t|","Tuple_ `t`의 두 번째 컴포넌트를 `x`로 설정하고 결과 _Tuple_ `t'`를 반환합니다.","","",""
+"SETTHIRD","SETINDEX","#6F52","tuple","6F52","SETTHIRD","t x - t'","26+|t|","Tuple_ `t`의 세 번째 컴포넌트를 `x`로 설정하고 결과 _Tuple_ `t'`를 반환합니다.","","",""
+"INDEXQ","","#6F6 k:uint4","tuple","6F6k","[k] INDEXQ","t - x","26","튜플_ `t`의 `k`번째 요소를 반환하며, 여기서 `0 <= k <= 15`입니다. 즉, `t=(x_1,...,x_n)`이면 `x_{k+1}`를 반환합니다. k>=n`이거나 `t`가 _Null_이면 `x` 대신 _Null_을 반환합니다.","","",""
+"FIRSTQ","INDEXQ","#6F60","tuple","6F60","FIRSTQ
+CARQ","t - x","26","튜플_의 첫 번째 요소를 반환합니다.","","",""
+"SECONDQ","INDEXQ","#6F61","tuple","6F61","SECONDQ
+CDRQ","t - y","26","튜플_의 두 번째 요소를 반환합니다.","","",""
+"THIRDQ","INDEXQ","#6F62","tuple","6F62","THIRDQ","t - z","26","튜플_의 세 번째 요소를 반환합니다.","","",""
+"SETINDEXQ","","#6F7 k:uint4","tuple","6F7k","[k] SETINDEXQ","t x - t'","26+|t’|","튜플_ `t`의 `k`번째 성분을 `x`로 설정하고, 여기서 `0 <= k < 16`인 결과 _Tuple_ `t'`를 반환합니다.
+`|t| <= k`이면 먼저 모든 새 컴포넌트를 _Null_로 설정하여 원래 _Tuple_을 길이 `n'=k+1`로 확장합니다. t`의 원래 값이 _Null_이면 빈 _Tuple_로 처리합니다. t`가 _Null_이나 _Tuple_이 아닌 경우 예외를 발생시킵니다. x`가 _Null_이고 `|t| <= k` 또는 `t`가 _Null_이면 항상 `t'=t`를 반환합니다(튜플 생성 가스를 소비하지 않습니다).","","",""
+"SETFIRSTQ","SETINDEXQ","#6F70","tuple","6F70","SETFIRSTQ","t x - t'","26+|t’|","Tuple_ `t`의 첫 번째 컴포넌트를 `x`로 설정하고 결과 _Tuple_ `t'`를 반환합니다.","","",""
+"SETSECONDQ","SETINDEXQ","#6F71","tuple","6F71","SETSECONDQ","t x - t'","26+|t’|","Tuple_ `t`의 두 번째 컴포넌트를 `x`로 설정하고 결과 _Tuple_ `t'`를 반환합니다.","","",""
+"SETTHIRDQ","SETINDEXQ","#6F72","tuple","6F72","SETTHIRDQ","t x - t'","26+|t’|","Tuple_ `t`의 세 번째 컴포넌트를 `x`로 설정하고 결과 _Tuple_ `t'`를 반환합니다.","","",""
+"TUPLEVAR","","#6F80","tuple","6F80","TUPLEVAR","x_1 ... x_n n - t","26+n","TUPLE`과 유사하지만 스택에서 `0 <= n <= 255`를 가져온 길이 `n`의 새로운 _Tuple_ `t`를 생성합니다.","","",""
+"INDEXVAR","","#6F81","tuple","6F81","INDEXVAR","t k - x","26","k INDEX`와 유사하지만 스택에서 `0 <= k <= 254`를 가져옵니다.","","",""
+"UNTUPLEVAR","","#6F82","tuple","6F82","UNTUPLEVAR","t n - x_1 ... x_n","26+n","n UNTUPLE`과 유사하지만 스택에서 `0 <= n <= 255`를 가져옵니다.","","",""
+"UNPACKFIRSTVAR","","#6F83","tuple","6F83","UNPACKFIRSTVAR","t n - x_1 ... x_n","26+n","n UNPACKFIRST`와 유사하지만 스택에서 `0 <= n <= 255`를 가져옵니다.","","",""
+"EXPLODEVAR","","#6F84","tuple","6F84","EXPLODEVAR","t n - x_1 ... x_m m","26+m","n EXPLODE`와 유사하지만 스택에서 `0 <= n <= 255`를 가져옵니다.","","",""
+"SETINDEXVAR","","#6F85","tuple","6F85","SETINDEXVAR","t x k - t'","26+|t’|","k SETINDEX`와 유사하지만 스택에서 `0 <= k <= 254`를 가져옵니다.","","",""
+"INDEXVARQ","","#6F86","tuple","6F86","INDEXVARQ","t k - x","26","n INDEXQ`와 유사하지만 스택에서 `0 <= k <= 254`를 가져옵니다.","","",""
+"SETINDEXVARQ","","#6F87","tuple","6F87","SETINDEXVARQ","t x k - t'","26+|t’|","k SETINDEXQ`와 유사하지만 스택에서 `0 <= k <= 254`를 가져옵니다.","","",""
+"TLEN","","#6F88","tuple","6F88","TLEN","t - n","26","튜플_의 길이를 반환합니다.","","",""
+"QTLEN","","#6F89","tuple","6F89","QTLEN","t - n or -1","26","TLEN`과 유사하지만 `t`가 _Tuple_이 아닌 경우 `-1`을 반환합니다.","","",""
+"ISTUPLE","","#6F8A","tuple","6F8A","ISTUPLE","t - ?","26","t`가 _Tuple_인지 여부에 따라 `-1` 또는 `0`을 반환합니다.","","",""
+"LAST","","#6F8B","tuple","6F8B","LAST","t - x","26","비어 있지 않은 _Tuple_ `t`의 마지막 요소를 반환합니다.","","",""
+"TPUSH","","#6F8C","tuple","6F8C","TPUSH
+COMMA","t x - t'","26+|t’|","값 `x`를 _Tuple_ `t=(x_1,...,x_n)`에 추가하지만, 결과 _Tuple_ `t'=(x_1,...,x_n,x)`의 길이가 최대 255인 경우에만 추가합니다. 그렇지 않으면 형 검사 예외가 발생합니다.","","",""
+"TPOP","","#6F8D","tuple","6F8D","TPOP","t - t' x","26+|t’|","비어 있지 않은 _Tuple_ `t=(x_1,...,x_n)`에서 마지막 요소 `x=x_n`을 분리하고 결과 _Tuple_ `t'=(x_1,...,x_{n-1})`와 원래 마지막 요소 `x`를 모두 반환합니다.","","",""
+"NULLSWAPIF","","#6FA0","tuple","6FA0","NULLSWAPIF","x - x or null x","26","최상위 _정수_ `x` 아래에 _Null_을 푸시하지만, `x!=0`인 경우에만 푸시합니다.","","",""
+"NULLSWAPIFNOT","","#6FA1","tuple","6FA1","NULLSWAPIFNOT","x - x or null x","26","최상위 _정수_ `x` 아래에 _Null_을 밀어넣지만, `x=0`일 경우에만 가능합니다. PLDUXQ`와 같은 조용한 프리미티브 뒤에 스택 정렬에 사용할 수 있습니다.","","",""
+"NULLROTRIF","","#6FA2","tuple","6FA2","NULLROTRIF","x y - x y or null x y","26","위쪽에서 두 번째 스택 항목 아래로 _Null_을 밀어 넣지만, 맨 위 _정수_ `y`가 0이 아닌 경우에만 가능합니다.","","",""
+"NULLROTRIFNOT","","#6FA3","tuple","6FA3","NULLROTRIFNOT","x y - x y or null x y","26","위쪽에서 두 번째 스택 항목 아래로 _Null_을 밀어넣지만, 맨 위 _Integer_ `y`가 0인 경우에만 가능합니다. LDUXQ`와 같은 조용한 프리미티브 뒤에 스택 정렬에 사용할 수 있습니다.","","",""
+"NULLSWAPIF2","","#6FA4","tuple","6FA4","NULLSWAPIF2","x - x or null null x","26","최상위 _Integer_ `x` 아래에 두 개의 널을 푸시하지만, `x!=0`인 경우에만 가능합니다.
+NULLSWAPIF` `NULLSWAPIF`와 동등합니다.","","",""
+"NULLSWAPIFNOT2","","#6FA5","tuple","6FA5","NULLSWAPIFNOT2","x - x or null null x","26","최상위 _Integer_ `x` 아래에 두 개의 널을 밀어넣지만 `x=0`인 경우에만 가능합니다.
+NULLSWAPIFNOT` `NULLSWAPIFNOT`와 동등합니다.","","",""
+"NULLROTRIF2","","#6FA6","tuple","6FA6","NULLROTRIF2","x y - x y or null null x y","26","두 번째 스택 항목 아래에 두 개의 0을 위에서부터 밀어넣습니다. 단, 맨 위 _Integer_ `y`가 0이 아닌 경우에만 가능합니다.
+NULLROTRIF` `NULLROTRIF`와 동등합니다.","","",""
+"NULLROTRIFNOT2","","#6FA7","tuple","6FA7","NULLROTRIFNOT2","x y - x y or null null x y","26","두 번째 스택 항목 아래에 두 개의 널을 위에서부터 밀어넣습니다. 단, 맨 위 _Integer_ `y`가 0인 경우에만 가능합니다.
+NULLROTRIFNOT` `NULLROTRIFNOT`와 동등합니다.","","",""
+"INDEX2","","#6FB i:uint2 j:uint2","tuple","6FBij","[i] [j] INDEX2","t - x","26","0 <= i,j <= 3`에 대해 `x=(t_{i+1})_{j+1}`를 복구합니다.
+i] INDEX` `[j] INDEX`와 동일합니다.","","",""
+"CADR","INDEX2","#6FB4","tuple","6FB4","CADR","t - x","26","x=(t_2)_1`을 복구합니다.","","",""
+"CDDR","INDEX2","#6FB5","tuple","6FB5","CDDR","t - x","26","x=(t_2)_2`를 복구합니다.","","",""
+"INDEX3","","#6FE_ i:uint2 j:uint2 k:uint2","tuple","6FE_ijk","[i] [j] [k] INDEX3","t - x","26","x=t_{i+1}_{j+1}_{k+1}`를 복구합니다.
+0 <= i,j,k <= 3`
+`[i] [j] INDEX2` `[k] INDEX`에 해당합니다.","","",""
+"CADDR","INDEX3","#6FD4","tuple","6FD4","CADDR","t - x","26","x=t_2_2_1`을 복구합니다.","","",""
+"CDDDR","INDEX3","#6FD5","tuple","6FD5","CDDDR","t - x","26","x=t_2_2_2`를 복구합니다.","","",""
+"PUSHINT_4","","#7 i:uint4","const_int","7i","[x] PUSHINT
+[x] INT","- x","18","정수 `x`를 스택에 밀어 넣습니다. `-5 <= x <= 10`.
+여기서 `i`는 `x`의 4번째 하위 비트와 같습니다(`i=x mod 16`).","","",""
+"ZERO","PUSHINT_4","#70","const_int","70","ZERO
+FALSE","- 0","18","","","",""
+"ONE","PUSHINT_4","#71","const_int","71","ONE","- 1","18","","","",""
+"TWO","PUSHINT_4","#72","const_int","72","TWO","- 2","18","","","",""
+"TEN","PUSHINT_4","#7A","const_int","7A","TEN","- 10","18","","","",""
+"TRUE","PUSHINT_4","#7F","const_int","7F","TRUE","- -1","18","","","",""
+"PUSHINT_8","","#80 xx:int8","const_int","80xx","[xx] PUSHINT
+[xx] INT","- xx","26","정수 `xx`를 푸시합니다. `-128 <= xx <= 127`.","","",""
+"PUSHINT_16","","#81 xxxx:int16","const_int","81xxxx","[xxxx] PUSHINT
+[xxxx] INT","- xxxx","34","정수 `xxxx`를 밀어 넣습니다. 2^15 <= xx < 2^15`.","","",""
+"PUSHINT_LONG","","#82 l:(## 5) xxx:(int (8 * l + 19))","const_int","82lxxx","[xxx] PUSHINT
+[xxx] INT","- xxx","23","정수 `xxx`를 푸시합니다.
+세부 정보:_ 5비트 `0 <= l <= 30`은 부호 있는 빅 엔디안 정수 `xxx`의 길이 `n=8l+19`를 결정합니다.
+이 명령의 총 길이는 `l+4` 바이트 또는 `n+13=8l+32` 비트입니다.","","",""
+"PUSHPOW2","","#83 xx:uint8","const_int","83xx","[xx+1] PUSHPOW2","- 2^(xx+1)","26","(조용히) `0 <= xx <= 255`에 대해 `2^(xx+1)`를 밀어 넣습니다.
+2^256`은 `NaN`입니다.","","",""
+"PUSHNAN","PUSHPOW2","#83FF","const_int","83FF","PUSHNAN","- NaN","26","NaN`을 푸시합니다.","","",""
+"PUSHPOW2DEC","","#84 xx:uint8","const_int","84xx","[xx+1] PUSHPOW2DEC","- 2^(xx+1)-1","26","0 <= xx <= 255`에 대해 `2^(xx+1)-1`을 푸시합니다.","","",""
+"PUSHNEGPOW2","","#85 xx:uint8","const_int","85xx","[xx+1] PUSHNEGPOW2","- -2^(xx+1)","26","0 <= xx <= 255`에 대해 `-2^(xx+1)`를 푸시합니다.","","",""
+"PUSHREF","","#88 c:^Cell","const_data","88","[ref] PUSHREF","- c","18","참조 `ref`를 스택으로 밀어 넣습니다.
+세부 정보:_ `cc.code`의 첫 번째 참조를 스택에 _셀_로 밀어넣습니다(그리고 현재 연속에서 이 참조를 제거합니다).","","",""
+"PUSHREFSLICE","","#89 c:^Cell","const_data","89","[ref] PUSHREFSLICE","- s","118/43","PUSHREF`와 유사하지만 셀을 _슬라이스_로 변환합니다.","","",""
+"PUSHREFCONT","","#8A c:^Cell","const_data","8A","[ref] PUSHREFCONT","- cont","118/43","푸시레프슬라이스`와 비슷하지만 셀에서 단순한 일반 `연속`을 만듭니다.","","",""
+"PUSHSLICE","","#8B x:(## 4) sss:((8 * x + 4) * Bit)","const_data","8Bxsss","[slice] PUSHSLICE
+[slice] SLICE","- s","22","슬라이스 `슬라이스`를 스택으로 밀어 넣습니다.
+_Details:_ `0 <= x <= 15`인 첫 번째 `8x+4` 비트와 참조가 없는 (즉, 본질적으로 비트 문자열) `cc.code`의 (접두사) 서브슬라이스를 밀어넣습니다.
+완성 태그가 가정되며, 이는 모든 후행 0과 마지막 이진수 1(있는 경우)이 이 비트스트링에서 제거됨을 의미합니다.
+원래 비트 문자열이 0으로만 구성된 경우 빈 슬라이스가 푸시됩니다.","","",""
+"PUSHSLICE_REFS","","#8C r:(## 2) xx:(## 5) c:((r + 1) * ^Cell) ssss:((8 * xx + 1) * Bit)","const_data","8Crxxssss","[slice] PUSHSLICE
+[slice] SLICE","- s","25","슬라이스 `슬라이스`를 스택으로 밀어 넣습니다.
+_Details:_ 첫 번째 `1 <= r+1 <= 4` 참조와 최대 첫 번째 `8xx+1` 비트의 데이터로 구성된 `cc.code`의 (접두사) 서브 슬라이스를 `0 <= xx <= 31`로 푸시합니다.
+완성 태그도 가정합니다.","","",""
+"PUSHSLICE_LONG","","#8D r:(#<= 4) xx:(## 7) c:(r * ^Cell) ssss:((8 * xx + 6) * Bit)","const_data","8Drxxsssss","[slice] PUSHSLICE
+[slice] SLICE","- s","28","슬라이스 `슬라이스`를 스택으로 밀어 넣습니다.
+세부 정보:_ `0 <= r <= 4` 참조와 최대 `8xx+6` 비트의 데이터로 구성된 `cc.code`의 서브 슬라이스를 `0 <= xx <= 127`로 푸시합니다.
+완성 태그가 가정됩니다.","","",""
+"","","","const_data","","x{} PUSHSLICE
+x{ABCD1234} PUSHSLICE
+b{01101} PUSHSLICE","- s","","푸시슬라이스`의 예.
+x{}`는 빈 슬라이스입니다. x{...}`는 16진수 리터럴입니다. b{...}`는 이진 리터럴입니다.
+슬라이스 리터럴에 대한 자세한 내용은 [여기](https://github.com/Piterden/TON-docs/blob/master/Fift.%20A%20Brief%20Introduction.md#user-content-51-slice-literals) 참조.
+어셈블러는 특정 상황(예: 현재 연속에 공간이 충분하지 않은 경우)에서 `PUSHSLICE`를 `PUSHREFSLICE`로 대체할 수 있다는 점에 유의하세요.","","",""
+"","","","const_data","","<b x{AB12} s, b> PUSHREF
+<b x{AB12} s, b> PUSHREFSLICE","- c/s","","푸시레프`와 `푸시레프슬라이스`의 예시.
+5에서 셀을 만드는 방법에 대한 자세한 내용은 [여기](https://github.com/Piterden/TON-docs/blob/master/Fift.%20A%20Brief%20Introduction.md#user-content-52-builder-primitives) 참조하세요.","","",""
+"PUSHCONT","","#8F_ r:(## 2) xx:(## 7) c:(r * ^Cell) ssss:((8 * xx) * Bit)","const_data","8F_rxxcccc","[builder] PUSHCONT
+[builder] CONT","- c","26","builder`에서 만든 연속을 푸시합니다.
+_Details:_ `cc.code`의 첫 번째 `0 <= r <= 3` 참조와 첫 번째 `0 <= xx <= 127` 바이트로 만든 단순 일반 연속 `cccc`를 푸시합니다.","","",""
+"PUSHCONT_SHORT","","#9 x:(## 4) ssss:((8 * x) * Bit)","const_data","9xccc","[builder] PUSHCONT
+[builder] CONT","- c","18","빌더`에서 만든 연속을 푸시합니다.
+세부 정보:_ `0 <= x <= 15`에 대해 `x` 바이트 연속을 푸시합니다.","","",""
+"","","","const_data","","<{ code }> PUSHCONT
+<{ code }> CONT
+CONT:<{ code }>","- c","","코드 `코드`가 있는 연속을 푸시합니다.
+어셈블러는 특정 상황(예: 현재 연속에 공간이 충분하지 않은 경우)에서 `PUSHCONT`를 `PUSHREFCONT`로 바꿀 수 있다는 점에 유의하세요.","","",""
+"ADD","","#A0","arithm_basic","A0","ADD","x y - x+y","18","","","",""
+"SUB","","#A1","arithm_basic","A1","SUB","x y - x-y","18","","","",""
+"SUBR","","#A2","arithm_basic","A2","SUBR","x y - y-x","18","스왑` `서브`에 해당합니다.","","",""
+"NEGATE","","#A3","arithm_basic","A3","NEGATE","x - -x","18","1 MULCONST` 또는 `ZERO SUBR`에 해당합니다.
+x=-2^256`이면 정수 오버플로 예외가 발생한다는 점에 유의하세요.","","",""
+"INC","","#A4","arithm_basic","A4","INC","x - x+1","18","1 ADDCONST`에 해당합니다.","","",""
+"DEC","","#A5","arithm_basic","A5","DEC","x - x-1","18","1 ADDCONST`에 해당합니다.","","",""
+"ADDCONST","","#A6 cc:int8","arithm_basic","A6cc","[cc] ADDCONST
+[cc] ADDINT
+[-cc] SUBCONST
+[-cc] SUBINT","x - x+cc","26","`-128 <= cc <= 127`.","","",""
+"MULCONST","","#A7 cc:int8","arithm_basic","A7cc","[cc] MULCONST
+[cc] MULINT","x - x*cc","26","`-128 <= cc <= 127`.","","",""
+"MUL","","#A8","arithm_basic","A8","MUL","x y - x*y","18","","","",""
+"DIV_BASE","","#A9 m:uint1 s:uint2 cdft:(Either [ d:uint2 f:uint2 ] [ d:uint2 f:uint2 tt:uint8 ])","arithm_div","A9mscdf","","","26","이것은 나눗셈의 일반적인 인코딩이며, 선택적 사전 곱셈과 나눗셈 또는 곱셈을 시프트에 의해 대체하는 옵션이 있습니다. 변수 필드는 다음과 같습니다:
+0 <= m <= 1` - 사전 곱셈(`MULDIV` 및 그 변형)이 있는지 여부를 나타내며, 왼쪽 시프트로 대체될 수 있습니다.
+0 <= s <= 2` - 곱셈 또는 나눗셈이 시프트에 의해 대체되었는지 여부를 나타냅니다: `s=0` - 대체 없음, `s=1` - 오른쪽 시프트로 대체된 나눗셈, `s=2` - 왼쪽 시프트로 대체된 곱셈 (`m=1`에만 가능).
+0 <= c <= 1` - 시프트 연산자에 대해 상수 1바이트 인자 `tt`가 있는지 여부를 나타냅니다(`s!=0`인 경우). s=0`의 경우, `c=0`. c=1`이면 `0 <= tt <= 255`이고, 시프트는 `tt+1` 비트만큼 수행됩니다. s!=0`, `c=0`이면, 시프트 양은 `0...256` 범위의 최상위 스택 _Integer_로 인스트럭션에 제공됩니다.
+1 <= d <= 3` - 어떤 나눗셈 결과가 필요한지를 나타냅니다: 1` - 몫만, `2` - 나머지 부분만, `3` - 둘 다.
+0 <= f <= 2` - 반올림 모드: 0` - 바닥, `1` - 가장 가까운 정수, `2` - 천장.
+아래의 모든 지침은 이것의 변형입니다.","","",""
+"DIV","DIV_BASE","#A904","arithm_div","A904","DIV","x y - q","26","`q=바닥(x/y)`, `r=x-y*q`","","",""
+"DIVR","DIV_BASE","#A905","arithm_div","A905","DIVR","x y - q’","26","`q'=라운드(x/y)`, `r'=x-y*q'`","","",""
+"DIVC","DIV_BASE","#A906","arithm_div","A906","DIVC","x y - q''","26","`q''=CEIL(X/Y)`, `r''=X-Y*Q''`","","",""
+"MOD","DIV_BASE","#A908","arithm_div","A908","MOD","x y - r","26","","","",""
+"DIVMOD","DIV_BASE","#A90C","arithm_div","A90C","DIVMOD","x y - q r","26","","","",""
+"DIVMODR","DIV_BASE","#A90D","arithm_div","A90D","DIVMODR","x y - q' r'","26","","","",""
+"DIVMODC","DIV_BASE","#A90E","arithm_div","A90E","DIVMODC","x y - q'' r''","26","","","",""
+"RSHIFTR_VAR","DIV_BASE","#A925","arithm_div","A925","RSHIFTR","x y - round(x/2^y)","26","","","",""
+"RSHIFTC_VAR","DIV_BASE","#A926","arithm_div","A926","RSHIFTC","x y - ceil(x/2^y)","34","","","",""
+"RSHIFTR","DIV_BASE","#A935 tt:uint8","arithm_div","A935tt","[tt+1] RSHIFTR#","x y - round(x/2^(tt+1))","34","","","",""
+"RSHIFTC","DIV_BASE","#A936 tt:uint8","arithm_div","A936tt","[tt+1] RSHIFTC#","x y - ceil(x/2^(tt+1))","34","","","",""
+"MODPOW2","DIV_BASE","#A938 tt:uint8","arithm_div","A938tt","[tt+1] MODPOW2#","x - x mod 2^(tt+1)","26","","","",""
+"MULDIV","DIV_BASE","#A984","arithm_div","A98","MULDIV","x y z - q","26","`q=바닥(x*y/z)`","","",""
+"MULDIVR","DIV_BASE","#A985","arithm_div","A985","MULDIVR","x y z - q'","26","`q'=라운드(x*y/z)`","","",""
+"MULDIVMOD","DIV_BASE","#A98C","arithm_div","A98C","MULDIVMOD","x y z - q r","26","`q=floor(x*y/z)`, `r=x*y-z*q`","","",""
+"MULRSHIFT_VAR","DIV_BASE","#A9A4","arithm_div","A9A4","MULRSHIFT","x y z - floor(x*y/2^z)","26","`0 <= z <= 256`","","",""
+"MULRSHIFTR_VAR","DIV_BASE","#A9A5","arithm_div","A9A5","MULRSHIFTR","x y z - round(x*y/2^z)","26","`0 <= z <= 256`","","",""
+"MULRSHIFTC_VAR","DIV_BASE","#A9A6","arithm_div","A9A6","MULRSHIFTC","x y z - ceil(x*y/2^z)","34","`0 <= z <= 256`","","",""
+"MULRSHIFT","DIV_BASE","#A9B4 tt:uint8","arithm_div","A9B4tt","[tt+1] MULRSHIFT#","x y - floor(x*y/2^(tt+1))","34","","","",""
+"MULRSHIFTR","DIV_BASE","#A9B5 tt:uint8","arithm_div","A9B5tt","[tt+1] MULRSHIFTR#","x y - round(x*y/2^(tt+1))","34","","","",""
+"MULRSHIFTC","DIV_BASE","#A9B6 tt:uint8","arithm_div","A9B6tt","[tt+1] MULRSHIFTC#","x y - ceil(x*y/2^(tt+1))","26","","","",""
+"LSHIFTDIV_VAR","DIV_BASE","#A9C4","arithm_div","A9C4","LSHIFTDIV","x y z - floor(2^z*x/y)","26","`0 <= z <= 256`","","",""
+"LSHIFTDIVR_VAR","DIV_BASE","#A9C5","arithm_div","A9C5","LSHIFTDIVR","x y z - round(2^z*x/y)","26","`0 <= z <= 256`","","",""
+"LSHIFTDIVC_VAR","DIV_BASE","#A9C6","arithm_div","A9C6","LSHIFTDIVC","x y z - ceil(2^z*x/y)","34","`0 <= z <= 256`","","",""
+"LSHIFTDIV","DIV_BASE","#A9D4 tt:uint8","arithm_div","A9D4tt","[tt+1] LSHIFT#DIV","x y - floor(2^(tt+1)*x/y)","34","","","",""
+"LSHIFTDIVR","DIV_BASE","#A9D5 tt:uint8","arithm_div","A9D5tt","[tt+1] LSHIFT#DIVR","x y - round(2^(tt+1)*x/y)","34","","","",""
+"LSHIFTDIVC","DIV_BASE","#A9D6 tt:uint8","arithm_div","A9D6tt","[tt+1] LSHIFT#DIVC","x y - ceil(2^(tt+1)*x/y)","26","","","",""
+"LSHIFT","","#AA cc:uint8","arithm_logical","AAcc","[cc+1] LSHIFT#","x - x*2^(cc+1)","26","`0 <= cc <= 255`","","",""
+"RSHIFT","","#AB cc:uint8","arithm_logical","ABcc","[cc+1] RSHIFT#","x - floor(x/2^(cc+1))","18","`0 <= cc <= 255`","","",""
+"LSHIFT_VAR","","#AC","arithm_logical","AC","LSHIFT","x y - x*2^y","18","`0 <= y <= 1023`","","",""
+"RSHIFT_VAR","","#AD","arithm_logical","AD","RSHIFT","x y - floor(x/2^y)","18","`0 <= y <= 1023`","","",""
+"POW2","","#AE","arithm_logical","AE","POW2","y - 2^y","18","0 <= y <= 1023`
+`ONE` `SWAP` `LSHIFT`에 해당합니다.","","",""
+"AND","","#B0","arithm_logical","B0","AND","x y - x&y","18","비트 단위로, 부호가 무한대로 확장된 두 개의 부호 있는 정수 `x`와 `y`입니다.","","",""
+"OR","","#B1","arithm_logical","B1","OR","x y - x|y","18","비트 단위 또는 두 개의 정수입니다.","","",""
+"XOR","","#B2","arithm_logical","B2","XOR","x y - x xor y","18","두 정수의 비트단위 x 또는.","","",""
+"NOT","","#B3","arithm_logical","B3","NOT","x - ~x","26","정수가 아닌 비트 단위입니다.","","",""
+"FITS","","#B4 cc:uint8","arithm_logical","B4cc","[cc+1] FITS","x - x","26/76","x`가 `0 <= cc <= 255`에 대해 `cc+1` 비트 부호 정수인지 확인합니다(즉, `-2^cc <= x < 2^cc`인지 여부).
+그렇지 않은 경우 정수 오버플로 예외를 트리거하거나 `x`를 `NaN`(조용한 버전)으로 바꿉니다.","","",""
+"CHKBOOL","FITS","#B400","arithm_logical","B400","CHKBOOL","x - x","26/76","x`가 '부울 값'(즉, 0 또는 -1)인지 여부를 확인합니다.","","",""
+"UFITS","","#B5 cc:uint8","arithm_logical","B5cc","[cc+1] UFITS","x - x","26/76","0 <= cc <= 255`에 대해 `x`가 `cc+1` 비트 부호 없는 정수인지 확인합니다(즉, `0 <= x < 2^(cc+1)`인지 여부).","","",""
+"CHKBIT","UFITS","#B500","arithm_logical","B500","CHKBIT","x - x","26/76","'x'가 이진수(즉, 0 또는 1)인지 여부를 확인합니다.","","",""
+"FITSX","","#B600","arithm_logical","B600","FITSX","x c - x","26/76","x`가 `0 <= c <= 1023`에 대해 `c` 비트 부호 정수인지 확인합니다.","","",""
+"UFITSX","","#B601","arithm_logical","B601","UFITSX","x c - x","26/76","0 <= c <= 1023`에 대해 `x`가 `c` 비트 부호 없는 정수인지 확인합니다.","","",""
+"BITSIZE","","#B602","arithm_logical","B602","BITSIZE","x - c","26","x`가 `c` 비트 부호 정수(`-2^(c-1) <= c < 2^(c-1)`)에 맞도록 가장 작은 `c >= 0`을 계산합니다.","","",""
+"UBITSIZE","","#B603","arithm_logical","B603","UBITSIZE","x - c","26","x`가 `c` 비트 부호 없는 정수(`0 <= x < 2^c`)에 맞도록 가장 작은 `c >= 0`을 계산하거나 범위 검사 예외를 던집니다.","","",""
+"MIN","","#B608","arithm_logical","B608","MIN","x y - x or y","26","두 개의 정수 `x`와 `y`의 최소값을 계산합니다.","","",""
+"MAX","","#B609","arithm_logical","B609","MAX","x y - x or y","26","두 개의 정수 `x`와 `y`의 최대값을 계산합니다.","","",""
+"MINMAX","","#B60A","arithm_logical","B60A","MINMAX
+INTSORT2","x y - x y or y x","26","두 정수를 정렬합니다. 이 연산의 조용한 버전은 인자 중 하나라도 `N`인 경우 두 개의 `N`을 반환합니다.","","",""
+"ABS","","#B60B","arithm_logical","B60B","ABS","x - |x|","26","정수 `x`의 절대값을 계산합니다.","","",""
+"QADD","","#B7A0","arithm_quiet","B7A0","QADD","x y - x+y","26","","","",""
+"QSUB","","#B7A1","arithm_quiet","B7A1","QSUB","x y - x-y","26","","","",""
+"QSUBR","","#B7A2","arithm_quiet","B7A2","QSUBR","x y - y-x","26","","","",""
+"QNEGATE","","#B7A3","arithm_quiet","B7A3","QNEGATE","x - -x","26","","","",""
+"QINC","","#B7A4","arithm_quiet","B7A4","QINC","x - x+1","26","","","",""
+"QDEC","","#B7A5","arithm_quiet","B7A5","QDEC","x - x-1","26","","","",""
+"QMUL","","#B7A8","arithm_quiet","B7A8","QMUL","x y - x*y","26","","","",""
+"QDIV","","#B7A904","arithm_quiet","B7A904","QDIV","x y - q","34","나눗셈은 `y=0`이면 `NaN`을 반환합니다.","","",""
+"QDIVR","","#B7A905","arithm_quiet","B7A905","QDIVR","x y - q’","34","","","",""
+"QDIVC","","#B7A906","arithm_quiet","B7A906","QDIVC","x y - q''","34","","","",""
+"QMOD","","#B7A908","arithm_quiet","B7A908","QMOD","x y - r","34","","","",""
+"QDIVMOD","","#B7A90C","arithm_quiet","B7A90C","QDIVMOD","x y - q r","34","","","",""
+"QDIVMODR","","#B7A90D","arithm_quiet","B7A90D","QDIVMODR","x y - q' r'","34","","","",""
+"QDIVMODC","","#B7A90E","arithm_quiet","B7A90E","QDIVMODC","x y - q'' r''","34","","","",""
+"QMULDIVR","","#B7A985","arithm_quiet","B7A985","QMULDIVR","x y z - q'","34","","","",""
+"QMULDIVMOD","","#B7A98C","arithm_quiet","B7A98C","QMULDIVMOD","x y z - q r","34","","","",""
+"QLSHIFT","","#B7AC","arithm_quiet","B7AC","QLSHIFT","x y - x*2^y","26","","","",""
+"QRSHIFT","","#B7AD","arithm_quiet","B7AD","QRSHIFT","x y - floor(x/2^y)","26","","","",""
+"QPOW2","","#B7AE","arithm_quiet","B7AE","QPOW2","y - 2^y","26","","","",""
+"QAND","","#B7B0","arithm_quiet","B7B0","QAND","x y - x&y","26","","","",""
+"QOR","","#B7B1","arithm_quiet","B7B1","QOR","x y - x|y","26","","","",""
+"QXOR","","#B7B2","arithm_quiet","B7B2","QXOR","x y - x xor y","26","","","",""
+"QNOT","","#B7B3","arithm_quiet","B7B3","QNOT","x - ~x","26","","","",""
+"QFITS","","#B7B4 cc:uint8","arithm_quiet","B7B4cc","[cc+1] QFITS","x - x","34","x`가 `cc+1` 비트 부호 정수가 아닌 경우 `NaN`으로 바꾸고, 그렇지 않은 경우 그대로 둡니다.","","",""
+"QUFITS","","#B7B5 cc:uint8","arithm_quiet","B7B5cc","[cc+1] QUFITS","x - x","34","x가 `cc+1` 비트 부호 없는 정수가 아닌 경우 `x`를 `NaN`으로 바꾸고, 그렇지 않은 경우 그대로 둡니다.","","",""
+"QFITSX","","#B7B600","arithm_quiet","B7B600","QFITSX","x c - x","34","x가 c비트 부호 정수가 아닌 경우 `x`를 `NaN`으로 바꾸고, 그렇지 않은 경우 그대로 둡니다.","","",""
+"QUFITSX","","#B7B601","arithm_quiet","B7B601","QUFITSX","x c - x","34","x가 c비트 부호 없는 정수가 아닌 경우 `x`를 `NaN`으로 바꾸고, 그렇지 않은 경우 그대로 둡니다.","","",""
+"SGN","","#B8","compare_int","B8","SGN","x - sgn(x)","18","x<0`, `0` if `x=0`, `1` if `x>0`이면 `x` 정수의 부호를 계산합니다:
+`-1`.","","",""
+"LESS","","#B9","compare_int","B9","LESS","x y - x<y","18","x<y`이면 `-1`, 그렇지 않으면 `0`을 반환합니다.","","",""
+"EQUAL","","#BA","compare_int","BA","EQUAL","x y - x=y","18","x=y`이면 `-1`을 반환하고, 그렇지 않으면 `0`을 반환합니다.","","",""
+"LEQ","","#BB","compare_int","BB","LEQ","x y - x<=y","18","","","",""
+"GREATER","","#BC","compare_int","BC","GREATER","x y - x>y","18","","","",""
+"NEQ","","#BD","compare_int","BD","NEQ","x y - x!=y","18","같음` `아님`에 해당합니다.","","",""
+"GEQ","","#BE","compare_int","BE","GEQ","x y - x>=y","18","'적다' '아니다'에 해당합니다.","","",""
+"CMP","","#BF","compare_int","BF","CMP","x y - sgn(x-y)","18","x-y`의 부호를 계산합니다:
+`-1` if `x<y`, `0` if `x=y`, `1` if `x>y`.
+여기서 `x` 또는 `y`가 `NaN`이 아니면 정수 오버플로가 발생할 수 없습니다.","","",""
+"EQINT","","#C0 yy:int8","compare_int","C0yy","[yy] EQINT","x - x=yy","26","x=yy`이면 `-1`을 반환하고, 그렇지 않으면 `0`을 반환합니다.
+2^7 <= yy < 2^7`.","","",""
+"ISZERO","EQINT","#C000","compare_int","C000","ISZERO","x - x=0","26","정수가 0인지 확인합니다. 포스의 `0=`에 해당합니다.","","",""
+"LESSINT","","#C1 yy:int8","compare_int","C1yy","[yy] LESSINT
+[yy-1] LEQINT","x - x<yy","26","x<yy`이면 `-1`을 반환하고, 그렇지 않으면 `0`을 반환합니다.
+2^7 <= yy < 2^7`.","","",""
+"ISNEG","LESSINT","#C100","compare_int","C100","ISNEG","x - x<0","26","정수가 음수인지 확인합니다. 포스의 `0<`에 해당합니다.","","",""
+"ISNPOS","LESSINT","#C101","compare_int","C101","ISNPOS","x - x<=0","26","정수가 양수가 아닌지 확인합니다.","","",""
+"GTINT","","#C2 yy:int8","compare_int","C2yy","[yy] GTINT
+[yy+1] GEQINT","x - x>yy","26","x>yy`이면 `-1`을 반환하고, 그렇지 않으면 `0`을 반환합니다.
+2^7 <= yy < 2^7`.","","",""
+"ISPOS","GTINT","#C200","compare_int","C200","ISPOS","x - x>0","26","정수가 양수인지 확인합니다. 포스의 `0>`에 해당합니다.","","",""
+"ISNNEG","GTINT","#C2FF","compare_int","C2FF","ISNNEG","x - x >=0","26","정수가 음수가 아닌지 확인합니다.","","",""
+"NEQINT","","#C3 yy:int8","compare_int","C3yy","[yy] NEQINT","x - x!=yy","26","x!=yy`이면 `-1`을 반환하고, 그렇지 않으면 `0`을 반환합니다.
+2^7 <= yy < 2^7`.","","",""
+"ISNAN","","#C4","compare_int","C4","ISNAN","x - x=NaN","18","x`가 `NaN`인지 확인합니다.","","",""
+"CHKNAN","","#C5","compare_int","C5","CHKNAN","x - x","18/68","x`가 `NaN`이면 산술 오버플로 예외를 던집니다.","","",""
+"SEMPTY","","#C700","compare_other","C700","SEMPTY","s - ?","26","슬라이스_ `s`가 비어 있는지(즉, 데이터 비트와 셀 참조를 포함하지 않는지) 확인합니다.","","",""
+"SDEMPTY","","#C701","compare_other","C701","SDEMPTY","s - ?","26","슬라이스_ `s`에 데이터 비트가 없는지 확인합니다.","","",""
+"SREMPTY","","#C702","compare_other","C702","SREMPTY","s - ?","26","슬라이스_ `s`에 참조가 없는지 확인합니다.","","",""
+"SDFIRST","","#C703","compare_other","C703","SDFIRST","s - ?","26","슬라이스_ `s`의 첫 번째 비트가 1인지 확인합니다.","","",""
+"SDLEXCMP","","#C704","compare_other","C704","SDLEXCMP","s s' - x","26","s`의 데이터를 사전적으로 `s'의 데이터와 비교하여 결과에 따라 `-1`, 0 또는 1을 반환합니다.","","",""
+"SDEQ","","#C705","compare_other","C705","SDEQ","s s' - ?","26","s`와 `s'의 데이터 부분이 일치하는지, 즉 `SDLEXCMP` `ISZERO`에 해당하는지 확인합니다.","","",""
+"SDPFX","","#C708","compare_other","C708","SDPFX","s s' - ?","26","s`가 `s'의 접두사인지 확인합니다.","","",""
+"SDPFXREV","","#C709","compare_other","C709","SDPFXREV","s s' - ?","26","s'`가 `SWAP` `SDPFX`에 해당하는 `s`의 접두사인지 확인합니다.","","",""
+"SDPPFX","","#C70A","compare_other","C70A","SDPPFX","s s' - ?","26","s`가 `s'`의 올바른 접두사인지(즉, `s'`와 구별되는 접두사인지) 확인합니다.","","",""
+"SDPPFXREV","","#C70B","compare_other","C70B","SDPPFXREV","s s' - ?","26","'s'가 `s`의 올바른 접두사인지 확인합니다.","","",""
+"SDSFX","","#C70C","compare_other","C70C","SDSFX","s s' - ?","26","s`가 `s'의 접미사인지 여부를 확인합니다.","","",""
+"SDSFXREV","","#C70D","compare_other","C70D","SDSFXREV","s s' - ?","26","s'`가 `s`의 접미사인지 확인합니다.","","",""
+"SDPSFX","","#C70E","compare_other","C70E","SDPSFX","s s' - ?","26","s`가 `s'의 올바른 접미사인지 확인합니다.","","",""
+"SDPSFXREV","","#C70F","compare_other","C70F","SDPSFXREV","s s' - ?","26","'s'가 `s`의 올바른 접미사인지 확인합니다.","","",""
+"SDCNTLEAD0","","#C710","compare_other","C710","SDCNTLEAD0","s - n","26","s`에서 선행 0의 개수를 반환합니다.","","",""
+"SDCNTLEAD1","","#C711","compare_other","C711","SDCNTLEAD1","s - n","26","선행하는 `s`의 개수를 반환합니다.","","",""
+"SDCNTTRAIL0","","#C712","compare_other","C712","SDCNTTRAIL0","s - n","26","뒤에 오는 0의 개수를 `s`로 반환합니다.","","",""
+"SDCNTTRAIL1","","#C713","compare_other","C713","SDCNTTRAIL1","s - n","26","뒤에 오는 `s`의 개수를 반환합니다.","","",""
+"NEWC","","#C8","cell_build","C8","NEWC","- b","18","빈 _빌더_를 새로 생성합니다.","","",""
+"ENDC","","#C9","cell_build","C9","ENDC","b - c","518","빌더_를 일반 _셀_로 변환합니다.","","",""
+"STI","","#CA cc:uint8","cell_build","CAcc","[cc+1] STI","x b - b'","26","부호화된 `cc+1` 비트 정수 `x`를 `0 <= cc <= 255`에 대해 _Builder_ `b`에 저장하고, `x`가 `cc+1` 비트에 맞지 않으면 범위 검사 예외를 던집니다.","","",""
+"STU","","#CB cc:uint8","cell_build","CBcc","[cc+1] STU","x b - b'","26","부호 없는 `cc+1` 비트 정수 `x`를 _Builder_ `b`에 저장합니다. 다른 모든 면에서 `STI`와 유사합니다.","","",""
+"STREF","","#CC","cell_build","CC","STREF","c b - b'","18","셀_ `c`에 대한 참조를 _빌더_ `b`에 저장합니다.","","",""
+"STBREFR","","#CD","cell_build","CD","STBREFR
+ENDCST","b b'' - b","518","엔디` `스왑` `스트레프`에 해당합니다.","","",""
+"STSLICE","","#CE","cell_build","CE","STSLICE","s b - b'","18","슬라이스_ `s`를 _빌더_ `b`에 저장합니다.","","",""
+"STIX","","#CF00","cell_build","CF00","STIX","x b l - b'","26","0 <= l <= 257`에 대해 부호화된 `l`비트 정수 `x`를 `b`에 저장합니다.","","",""
+"STUX","","#CF01","cell_build","CF01","STUX","x b l - b'","26","부호 없는 `l`비트 정수 `x`를 `0 <= l <= 256`에 대해 `b`에 저장합니다.","","",""
+"STIXR","","#CF02","cell_build","CF02","STIXR","b x l - b'","26","STIX`와 유사하지만 인자 순서가 다릅니다.","","",""
+"STUXR","","#CF03","cell_build","CF03","STUXR","b x l - b'","26","STUX`와 유사하지만 인자 순서가 다릅니다.","","",""
+"STIXQ","","#CF04","cell_build","CF04","STIXQ","x b l - x b f or b' 0","26","STIX`의 조용한 버전. b`에 공백이 없으면, `b'=b`와 `f=-1`을 설정합니다.
+x`가 `l` 비트에 맞지 않으면, `b'=b`와 `f=1`을 설정합니다.
+연산이 성공하면 `b'`는 새로운 _Builder_가 되고 `f=0`이 됩니다.
+그러나 `0 <= l <= 257`, 그렇지 않은 경우 범위 검사 예외가 발생합니다.","","",""
+"STUXQ","","#CF05","cell_build","CF05","STUXQ","x b l - x b f or b' 0","26","조용한 버전의 `STUX`.","","",""
+"STIXRQ","","#CF06","cell_build","CF06","STIXRQ","b x l - b x f or b' 0","26","조용한 버전의 'STIXR'.","","",""
+"STUXRQ","","#CF07","cell_build","CF07","STUXRQ","b x l - b x f or b' 0","26","조용한 버전의 `STUXR`.","","",""
+"STI_ALT","","#CF08 cc:uint8","cell_build","CF08cc","[cc+1] STI_l","x b - b'","34","'[cc+1] STI'의 긴 버전입니다.","","",""
+"STU_ALT","","#CF09 cc:uint8","cell_build","CF09cc","[cc+1] STU_l","x b - b'","34","'[cc+1] STU'의 긴 버전입니다.","","",""
+"STIR","","#CF0A cc:uint8","cell_build","CF0Acc","[cc+1] STIR","b x - b'","34","스왑` '[cc+1] STI'와 동일합니다.","","",""
+"STUR","","#CF0B cc:uint8","cell_build","CF0Bcc","[cc+1] STUR","b x - b'","34","SWAP` `[cc+1] STU`에 해당합니다.","","",""
+"STIQ","","#CF0C cc:uint8","cell_build","CF0Ccc","[cc+1] STIQ","x b - x b f or b' 0","34","조용한 버전의 `STI`.","","",""
+"STUQ","","#CF0D cc:uint8","cell_build","CF0Dcc","[cc+1] STUQ","x b - x b f or b' 0","34","STU`의 조용한 버전입니다.","","",""
+"STIRQ","","#CF0E cc:uint8","cell_build","CF0Ecc","[cc+1] STIRQ","b x - b x f or b' 0","34","조용한 버전의 `STIR`.","","",""
+"STURQ","","#CF0F cc:uint8","cell_build","CF0Fcc","[cc+1] STURQ","b x - b x f or b' 0","34","조용한 버전의 `STUR`.","","",""
+"STREF_ALT","","#CF10","cell_build","CF10","STREF_l","c b - b'","26","더 긴 버전의 `STREF`입니다.","","",""
+"STBREF","","#CF11","cell_build","CF11","STBREF","b' b - b''","526","SWAP` `STBREFR`에 해당합니다.","","",""
+"STSLICE_ALT","","#CF12","cell_build","CF12","STSLICE_l","s b - b'","26","더 긴 버전의 `STSLICE`입니다.","","",""
+"STB","","#CF13","cell_build","CF13","STB","b' b - b''","26","빌더_ `b'`의 모든 데이터를 _빌더_ `b`에 추가합니다.","","",""
+"STREFR","","#CF14","cell_build","CF14","STREFR","b c - b'","26","스왑` `STREF`에 해당합니다.","","",""
+"STBREFR_ALT","","#CF15","cell_build","CF15","STBREFR_l","b b' - b''","526","더 긴 `STBREFR` 인코딩.","","",""
+"STSLICER","","#CF16","cell_build","CF16","STSLICER","b s - b'","26","스왑` `STSLICE`에 해당합니다.","","",""
+"STBR","","#CF17","cell_build","CF17","STBR
+BCONCAT","b b' - b''","26","두 빌더를 연결합니다.
+SWAP` `STB`에 해당합니다.","","",""
+"STREFQ","","#CF18","cell_build","CF18","STREFQ","c b - c b -1 or b' 0","26","조용한 버전의 `STREF`.","","",""
+"STBREFQ","","#CF19","cell_build","CF19","STBREFQ","b' b - b' b -1 or b'' 0","526","조용한 버전의 `STBREF`.","","",""
+"STSLICEQ","","#CF1A","cell_build","CF1A","STSLICEQ","s b - s b -1 or b' 0","26","조용한 버전의 `STSLICE`.","","",""
+"STBQ","","#CF1B","cell_build","CF1B","STBQ","b' b - b' b -1 or b'' 0","26","조용한 버전의 `STB`.","","",""
+"STREFRQ","","#CF1C","cell_build","CF1C","STREFRQ","b c - b c -1 or b' 0","26","조용한 버전의 `STREFR`.","","",""
+"STBREFRQ","","#CF1D","cell_build","CF1D","STBREFRQ","b b' - b b' -1 or b'' 0","526","조용한 버전의 `STBREFR`.","","",""
+"STSLICERQ","","#CF1E","cell_build","CF1E","STSLICERQ","b s - b s -1 or b'' 0","26","조용한 버전의 `STSLICER`.","","",""
+"STBRQ","","#CF1F","cell_build","CF1F","STBRQ
+BCONCATQ","b b' - b b' -1 or b'' 0","26","STBR`의 조용한 버전입니다.","","",""
+"STREFCONST","","#CF20 c:^Cell","cell_build","CF20","[ref] STREFCONST","b - b’","26","푸시레프` `스트레프`에 해당합니다.","","",""
+"STREF2CONST","","#CF21 c1:^Cell c2:^Cell","cell_build","CF21","[ref] [ref] STREF2CONST","b - b’","26","STREFCONST` `STREFCONST`와 동일합니다.","","",""
+"ENDXC","","#CF23","cell_build","CF23","","b x - c","526","x!=0`이면, _Builder_ `b`에서 _special_ 또는 _exotic_ 셀을 생성합니다.
+이색 셀의 유형은 `b`의 처음 8비트에 저장되어야 합니다.
+x=0`이면 `ENDC`에 해당합니다. 그렇지 않으면 이색 셀을 생성하기 전에 `b`의 데이터 및 참조에 대한 유효성 검사가 수행됩니다.","","",""
+"STILE4","","#CF28","cell_build","CF28","STILE4","x b - b'","26","리틀 엔디안 부호 32비트 정수를 저장합니다.","","",""
+"STULE4","","#CF29","cell_build","CF29","STULE4","x b - b'","26","리틀 엔디안 부호 없는 32비트 정수를 저장합니다.","","",""
+"STILE8","","#CF2A","cell_build","CF2A","STILE8","x b - b'","26","리틀 엔디안 부호 64비트 정수를 저장합니다.","","",""
+"STULE8","","#CF2B","cell_build","CF2B","STULE8","x b - b'","26","리틀 엔디안 부호 없는 64비트 정수를 저장합니다.","","",""
+"BDEPTH","","#CF30","cell_build","CF30","BDEPTH","b - x","26","빌더_ `b`의 깊이를 반환합니다. b`에 저장된 셀 참조가 없으면 `x=0`이고, 그렇지 않으면 `x`는 `b`에서 참조된 셀의 최대 깊이에 1을 더한 값입니다.","","",""
+"BBITS","","#CF31","cell_build","CF31","BBITS","b - x","26","빌더_ `b`에 이미 저장된 데이터 비트 수를 반환합니다.","","",""
+"BREFS","","#CF32","cell_build","CF32","BREFS","b - y","26","b`에 이미 저장된 셀 참조의 수를 반환합니다.","","",""
+"BBITREFS","","#CF33","cell_build","CF33","BBITREFS","b - x y","26","데이터 비트와 `b`의 셀 참조 수를 모두 반환합니다.","","",""
+"BREMBITS","","#CF35","cell_build","CF35","BREMBITS","b - x'","26","여전히 `b`에 저장할 수 있는 데이터 비트 수를 반환합니다.","","",""
+"BREMREFS","","#CF36","cell_build","CF36","BREMREFS","b - y'","26","아직 `b`에 저장할 수 있는 참조 수를 반환합니다.","","",""
+"BREMBITREFS","","#CF37","cell_build","CF37","BREMBITREFS","b - x' y'","26","'b'에 저장할 수 있는 데이터 비트와 참조의 수를 모두 반환합니다.","","",""
+"BCHKBITS","","#CF38 cc:uint8","cell_build","CF38cc","[cc+1] BCHKBITS#","b -","34/84","0 <= cc <= 255`에서 `cc+1` 비트를 `b`에 저장할 수 있는지 확인합니다.","","",""
+"BCHKBITS_VAR","","#CF39","cell_build","CF39","BCHKBITS","b x - ","26/76","x` 비트를 `b`, `0 <= x <= 1023`에 저장할 수 있는지 확인합니다. 만약 `b`에 `x` 비트를 더 저장할 공간이 없거나 `x`가 `0...1023` 범위 내에 있지 않으면 예외를 던집니다.","","",""
+"BCHKREFS","","#CF3A","cell_build","CF3A","BCHKREFS","b y - ","26/76","y` 참조를 `b`, `0 <= y <= 7`에 저장할 수 있는지 확인합니다.","","",""
+"BCHKBITREFS","","#CF3B","cell_build","CF3B","BCHKBITREFS","b x y - ","26/76","x` 비트와 `y` 참조를 `b`, `0 <= x <= 1023`, `0 <= y <= 7`에 저장할 수 있는지 확인합니다.","","",""
+"BCHKBITSQ","","#CF3C cc:uint8","cell_build","CF3Ccc","[cc+1] BCHKBITSQ#","b - ?","34","0 <= cc <= 255`에서 `cc+1` 비트를 `b`에 저장할 수 있는지 확인합니다.","","",""
+"BCHKBITSQ_VAR","","#CF3D","cell_build","CF3D","BCHKBITSQ","b x - ?","26","x` 비트를 `b`, `0 <= x <= 1023`에 저장할 수 있는지 확인합니다.","","",""
+"BCHKREFSQ","","#CF3E","cell_build","CF3E","BCHKREFSQ","b y - ?","26","y` 참조를 `b`, `0 <= y <= 7`에 저장할 수 있는지 확인합니다.","","",""
+"BCHKBITREFSQ","","#CF3F","cell_build","CF3F","BCHKBITREFSQ","b x y - ?","26","x` 비트와 `y` 참조를 `b`, `0 <= x <= 1023`, `0 <= y <= 7`에 저장할 수 있는지 확인합니다.","","",""
+"STZEROES","","#CF40","cell_build","CF40","STZEROES","b n - b'","26","빌더_ `b`에 `n` 이진 0을 저장합니다.","","",""
+"STONES","","#CF41","cell_build","CF41","STONES","b n - b'","26","이진 `n`을 _Builder_ `b`에 저장합니다.","","",""
+"STSAME","","#CF42","cell_build","CF42","STSAME","b n x - b'","26","n` 이진 `x`(`0 <= x <= 1`)를 _Builder_ `b`에 저장합니다.","","",""
+"STSLICECONST","","#CFC0_ x:(## 2) y:(## 3) c:(x * ^Cell) sss:((8 * y + 2) * Bit)","cell_build","CFC0_xysss","[slice] STSLICECONST","b - b'","24","상수 서브슬리스 `sss`를 저장합니다.
+세부 정보:_ `sss`는 `0 <= x <= 3` 참조와 최대 `8y+2` 데이터 비트(`0 <= y <= 7`)로 구성됩니다. 완료 비트가 가정됩니다.
+슬라이스가 너무 크면 어셈블러가 `STSLICECONST`를 `PUSHSLICE` `STSLICER`로 대체할 수 있습니다.","","",""
+"STZERO","STSLICECONST","#CF81","cell_build","CF81","STZERO","b - b'","24","이진 0을 하나 저장합니다.","","",""
+"STONE","STSLICECONST","#CF83","cell_build","CF83","STONE","b - b'","24","바이너리 하나를 저장합니다.","","",""
+"CTOS","","#D0","cell_parse","D0","CTOS","c - s","118/43","셀_을 _슬라이스_로 변환합니다. c`는 일반 셀이거나 자동으로 _로드_되어 일반 셀 `c'`를 생성하고 나중에 _슬라이스_로 변환되는 이색 셀이어야 한다는 점에 유의하세요.","","",""
+"ENDS","","#D1","cell_parse","D1","ENDS","s - ","18/68","스택에서 _슬라이스_ `s`를 제거하고, 비어 있지 않으면 예외를 던집니다.","","",""
+"LDI","","#D2 cc:uint8","cell_parse","D2cc","[cc+1] LDI","s - x s'","26","슬라이스_ `s`에서 부호화된 `cc+1` 비트 정수 `x`를 로드(즉, 구문 분석)하고 `s`의 나머지를 `s'`로 반환합니다.","","",""
+"LDU","","#D3 cc:uint8","cell_parse","D3cc","[cc+1] LDU","s - x s'","26","슬라이스_ `s`에서 부호 없는 `cc+1` 비트 정수 `x`를 로드합니다.","","",""
+"LDREF","","#D4","cell_parse","D4","LDREF","s - c s'","18","s`에서 셀 참조 `c`를 로드합니다.","","",""
+"LDREFRTOS","","#D5","cell_parse","D5","LDREFRTOS","s - s' s''","118/43","LDREF` `SWAP` `CTOS`에 해당합니다.","","",""
+"LDSLICE","","#D6 cc:uint8","cell_parse","D6cc","[cc+1] LDSLICE","s - s'' s'","26","다음 `cc+1` 비트의 `s`를 별도의 _Slice_ `s''`로 잘라냅니다.","","",""
+"LDIX","","#D700","cell_parse","D700","LDIX","s l - x s'","26","슬라이스_ `s`에서 부호화된 `l`비트(`0 <= l <= 257`) 정수 `x`를 로드하고 `s`의 나머지를 `s'`로 반환합니다.","","",""
+"LDUX","","#D701","cell_parse","D701","LDUX","s l - x s'","26","0 <= l <= 256`인 (`s`의 첫 번째 `l` 비트) `x`에서 부호 없는 `l` 비트 정수 `x`를 로드합니다.","","",""
+"PLDIX","","#D702","cell_parse","D702","PLDIX","s l - x","26","슬라이스_ `s`에서 `0 <= l <= 257`에 대해 부호화된 `l`비트 정수를 미리 로드합니다.","","",""
+"PLDUX","","#D703","cell_parse","D703","PLDUX","s l - x","26","0 <= l <= 256`에 대해 `s`에서 부호 없는 `l`비트 정수를 미리 로드합니다.","","",""
+"LDIXQ","","#D704","cell_parse","D704","LDIXQ","s l - x s' -1 or s 0","26","LDIX`의 조용한 버전: `LDIX`와 유사하게 `s`에서 부호 있는 `l` 비트 정수를 로드하지만, 셀 언더플로 예외를 발생시키는 대신 성공 시 `-1`, 실패 시 `0`(`s`에 `l` 비트가 없는 경우)과 같은 성공 플래그를 반환합니다.","","",""
+"LDUXQ","","#D705","cell_parse","D705","LDUXQ","s l - x s' -1 or s 0","26","조용한 버전의 `LDUX`.","","",""
+"PLDIXQ","","#D706","cell_parse","D706","PLDIXQ","s l - x -1 or 0","26","조용한 버전의 `PLDIX`.","","",""
+"PLDUXQ","","#D707","cell_parse","D707","PLDUXQ","s l - x -1 or 0","26","조용한 버전의 `PLDUX`.","","",""
+"LDI_ALT","","#D708 cc:uint8","cell_parse","D708cc","[cc+1] LDI_l","s - x s'","34","LDI`에 대한 더 긴 인코딩입니다.","","",""
+"LDU_ALT","","#D709 cc:uint8","cell_parse","D709cc","[cc+1] LDU_l","s - x s'","34","LDU`에 대한 더 긴 인코딩입니다.","","",""
+"PLDI","","#D70A cc:uint8","cell_parse","D70Acc","[cc+1] PLDI","s - x","34","슬라이스_ `s`에서 부호화된 `cc+1` 비트 정수를 미리 로드합니다.","","",""
+"PLDU","","#D70B cc:uint8","cell_parse","D70Bcc","[cc+1] PLDU","s - x","34","s`에서 부호 없는 `cc+1`비트 정수를 미리 로드합니다.","","",""
+"LDIQ","","#D70C cc:uint8","cell_parse","D70Ccc","[cc+1] LDIQ","s - x s' -1 or s 0","34","조용한 버전의 `LDI`.","","",""
+"LDUQ","","#D70D cc:uint8","cell_parse","D70Dcc","[cc+1] LDUQ","s - x s' -1 or s 0","34","조용한 버전의 `LDU`.","","",""
+"PLDIQ","","#D70E cc:uint8","cell_parse","D70Ecc","[cc+1] PLDIQ","s - x -1 or 0","34","조용한 버전의 `PLDI`.","","",""
+"PLDUQ","","#D70F cc:uint8","cell_parse","D70Fcc","[cc+1] PLDUQ","s - x -1 or 0","34","조용한 버전의 `PLDU`.","","",""
+"PLDUZ","","#D714_ c:uint3","cell_parse","D714_c","[32(c+1)] PLDUZ","s - s x","26","0 <= c <= 7`에 대해 _Slice_ `s`의 첫 번째 `32(c+1)` 비트를 부호 없는 정수 `x`에 미리 로드합니다. s`가 필요보다 짧으면 누락된 비트는 0으로 간주합니다. 이 연산은 `IFBITJMP` 및 유사한 명령어와 함께 사용하도록 되어 있습니다.","","",""
+"LDSLICEX","","#D718","cell_parse","D718","LDSLICEX","s l - s'' s'","26","슬라이스_ `s`의 첫 번째 `0 <= l <= 1023` 비트를 별도의 _Slice_ `s''`로 로드하고 나머지 `s`를 `s'`로 반환합니다.","","",""
+"PLDSLICEX","","#D719","cell_parse","D719","PLDSLICEX","s l - s''","26","s`의 첫 번째 `0 <= l <= 1023` 비트를 `s''`로 반환합니다.","","",""
+"LDSLICEXQ","","#D71A","cell_parse","D71A","LDSLICEXQ","s l - s'' s' -1 or s 0","26","조용한 버전의 `LDSLICEX`.","","",""
+"PLDSLICEXQ","","#D71B","cell_parse","D71B","PLDSLICEXQ","s l - s' -1 or 0","26","LDSLICEXQ`의 조용한 버전입니다.","","",""
+"LDSLICE_ALT","","#D71C cc:uint8","cell_parse","D71Ccc","[cc+1] LDSLICE_l","s - s'' s'","34","LDSLICE`에 대한 더 긴 인코딩입니다.","","",""
+"PLDSLICE","","#D71D cc:uint8","cell_parse","D71Dcc","[cc+1] PLDSLICE","s - s''","34","s`의 첫 번째 `0 < cc+1 <= 256` 비트를 `s''`로 반환합니다.","","",""
+"LDSLICEQ","","#D71E cc:uint8","cell_parse","D71Ecc","[cc+1] LDSLICEQ","s - s'' s' -1 or s 0","34","LDSLICE`의 조용한 버전입니다.","","",""
+"PLDSLICEQ","","#D71F cc:uint8","cell_parse","D71Fcc","[cc+1] PLDSLICEQ","s - s'' -1 or 0","34","조용한 버전의 `PLDSLICE`.","","",""
+"SDCUTFIRST","","#D720","cell_parse","D720","SDCUTFIRST","s l - s'","26","s`의 첫 번째 `0 <= l <= 1023` 비트를 반환합니다. 이는 `PLDSLICEX`와 같습니다.","","",""
+"SDSKIPFIRST","","#D721","cell_parse","D721","SDSKIPFIRST","s l - s'","26","첫 번째 `0 <= l <= 1023` 비트를 제외한 모든 `s` 비트를 반환합니다. 이는 `LDSLICEX` `NIP`와 동일합니다.","","",""
+"SDCUTLAST","","#D722","cell_parse","D722","SDCUTLAST","s l - s'","26","마지막 `0 <= l <= 1023` 비트의 `s`를 반환합니다.","","",""
+"SDSKIPLAST","","#D723","cell_parse","D723","SDSKIPLAST","s l - s'","26","마지막 `0 <= l <= 1023` 비트의 `s`를 제외한 모든 비트를 반환합니다.","","",""
+"SDSUBSTR","","#D724","cell_parse","D724","SDSUBSTR","s l l' - s'","26","오프셋 `0 <= l' <= 1023`에서 시작하여 `s`의 `0 <= l <= 1023` 비트를 반환하여 `s`의 데이터에서 비트 부분 문자열을 추출합니다.","","",""
+"SDBEGINSX","","#D726","cell_parse","D726","SDBEGINSX","s s' - s''","26","s`가 (데이터 비트가) `s'로 시작하는지 확인하고, 성공하면 `s`에서 `s`를 제거합니다. 실패하면 셀 역직렬화 예외를 던집니다. 원시 `SDPFXREV`는 `SDBEGINSX`의 조용한 버전으로 간주할 수 있습니다.","","",""
+"SDBEGINSXQ","","#D727","cell_parse","D727","SDBEGINSXQ","s s' - s'' -1 or s 0","26","SDBEGINSX`의 조용한 버전입니다.","","",""
+"SDBEGINS","","#D72A_ x:(## 7) sss:((8 * x + 3) * Bit)","cell_parse","D72A_xsss","[slice] SDBEGINS","s - s''","31","s`가 길이 `8x+3`(연속 비트 가정)의 상수 비트 문자열 `sss`로 시작하는지, 여기서 `0 <= x <= 127`인지 확인하고, 성공하면 `s`에서 `sss`를 제거합니다.","","",""
+"SDBEGINSQ","","#D72E_ x:(## 7) sss:((8 * x + 3) * Bit)","cell_parse","D72E_xsss","[slice] SDBEGINSQ","s - s'' -1 or s 0","31","SDBEGINS`의 조용한 버전입니다.","","",""
+"SCUTFIRST","","#D730","cell_parse","D730","SCUTFIRST","s l r - s'","26","첫 번째 `0 <= l <= 1023` 비트와 `s`의 첫 번째 `0 <= r <= 4` 참조를 반환합니다.","","",""
+"SSKIPFIRST","","#D731","cell_parse","D731","SSKIPFIRST","s l r - s'","26","s`의 첫 번째 `l` 비트와 `r` 참조를 제외한 모든 `s` 비트를 반환합니다.","","",""
+"SCUTLAST","","#D732","cell_parse","D732","SCUTLAST","s l r - s'","26","마지막 `0 <= l <= 1023` 데이터 비트와 `s`의 마지막 `0 <= r <= 4` 참조를 반환합니다.","","",""
+"SSKIPLAST","","#D733","cell_parse","D733","SSKIPLAST","s l r - s'","26","s`의 마지막 `l` 비트와 `r` 참조를 제외한 모든 `s`를 반환합니다.","","",""
+"SUBSLICE","","#D734","cell_parse","D734","SUBSLICE","s l r l' r' - s'","26","슬라이스_ `s`에서 첫 번째 `0 <= l' <= 1023` 비트와 첫 번째 `0 <= r' <= 4` 참조를 건너뛴 후 `0 <= l' <= 1023` 비트와 `0 <= r' <= 4` 레퍼런스를 반환합니다.","","",""
+"SPLIT","","#D736","cell_parse","D736","SPLIT","s l r - s' s''","26","s`에서 첫 번째 `0 <= l <= 1023` 데이터 비트와 첫 번째 `0 <= r <= 4` 참조를 `s`로 분할하여 나머지 `s`를 `s''`로 반환합니다.","","",""
+"SPLITQ","","#D737","cell_parse","D737","SPLITQ","s l r - s' s'' -1 or s 0","26","조용한 버전의 '스플릿'입니다.","","",""
+"XCTOS","","#D739","cell_parse","D739","","c - s ?","","일반 셀 또는 이색 셀을 일반 셀인 것처럼 _슬라이스_로 변환합니다. c`가 이국적인지 여부를 나타내는 플래그가 반환됩니다. 이 경우, 그 유형은 나중에 `s`의 처음 8비트에서 역직렬화할 수 있습니다.","","",""
+"XLOAD","","#D73A","cell_parse","D73A","","c - c'","","이색 셀 `c`를 로드하고 일반 셀 `c'`를 반환합니다. c`가 이미 일반 셀이면, 아무것도 하지 않습니다. c`를 로드할 수 없으면 예외를 던집니다.","","",""
+"XLOADQ","","#D73B","cell_parse","D73B","","c - c' -1 or c 0","","이색 셀 `c`를 로드하고 일반 셀 `c'`를 반환합니다. c`가 이미 일반 셀이면, 아무것도 하지 않습니다. c`를 로드할 수 없으면 0을 반환합니다.","","",""
+"SCHKBITS","","#D741","cell_parse","D741","SCHKBITS","s l - ","26/76","슬라이스_ `s`에 최소 `l` 데이터 비트가 있는지 확인합니다. 그렇지 않은 경우 셀 역직렬화(즉, 셀 언더플로) 예외를 던집니다.","","",""
+"SCHKREFS","","#D742","cell_parse","D742","SCHKREFS","s r - ","26/76","슬라이스_ `s`에 적어도 `r` 참조가 있는지 확인합니다.","","",""
+"SCHKBITREFS","","#D743","cell_parse","D743","SCHKBITREFS","s l r - ","26/76","슬라이스_ `s`에 최소 `l` 데이터 비트와 `r` 참조가 있는지 확인합니다.","","",""
+"SCHKBITSQ","","#D745","cell_parse","D745","SCHKBITSQ","s l - ?","26","슬라이스_ `s`에 `l` 이상의 데이터 비트가 있는지 확인합니다.","","",""
+"SCHKREFSQ","","#D746","cell_parse","D746","SCHKREFSQ","s r - ?","26","슬라이스_ `s`에 적어도 `r` 참조가 있는지 확인합니다.","","",""
+"SCHKBITREFSQ","","#D747","cell_parse","D747","SCHKBITREFSQ","s l r - ?","26","슬라이스_ `s`에 최소 `l` 데이터 비트와 `r` 참조가 있는지 확인합니다.","","",""
+"PLDREFVAR","","#D748","cell_parse","D748","PLDREFVAR","s n - c","26","0 <= n <= 3`에 대한 _Slice_ `s`의 `n` 번째 셀 참조를 반환합니다.","","",""
+"SBITS","","#D749","cell_parse","D749","SBITS","s - l","26","슬라이스_ `s`의 데이터 비트 수를 반환합니다.","","",""
+"SREFS","","#D74A","cell_parse","D74A","SREFS","s - r","26","슬라이스_ `s`의 참조 개수를 반환합니다.","","",""
+"SBITREFS","","#D74B","cell_parse","D74B","SBITREFS","s - l r","26","데이터 비트 수와 `s`의 참조 수를 모두 반환합니다.","","",""
+"PLDREFIDX","","#D74E_ n:uint2","cell_parse","D74E_n","[n] PLDREFIDX","s - c","26","슬라이스_ `s`의 `n`번째 셀 참조를 반환합니다(여기서 `0 <= n <= 3`).","","",""
+"PLDREF","PLDREFIDX","#D74C","cell_parse","D74C","PLDREF","s - c","26","슬라이스_의 첫 번째 셀 참조를 미리 로드합니다.","","",""
+"LDILE4","","#D750","cell_parse","D750","LDILE4","s - x s'","26","리틀 엔디안 부호 32비트 정수를 로드합니다.","","",""
+"LDULE4","","#D751","cell_parse","D751","LDULE4","s - x s'","26","리틀 엔디안 부호 없는 32비트 정수를 로드합니다.","","",""
+"LDILE8","","#D752","cell_parse","D752","LDILE8","s - x s'","26","리틀 엔디안 부호 64비트 정수를 로드합니다.","","",""
+"LDULE8","","#D753","cell_parse","D753","LDULE8","s - x s'","26","리틀 엔디안 부호 없는 64비트 정수를 로드합니다.","","",""
+"PLDILE4","","#D754","cell_parse","D754","PLDILE4","s - x","26","리틀 엔디안 부호 32비트 정수를 미리 로드합니다.","","",""
+"PLDULE4","","#D755","cell_parse","D755","PLDULE4","s - x","26","리틀 엔디안 부호 없는 32비트 정수를 미리 로드합니다.","","",""
+"PLDILE8","","#D756","cell_parse","D756","PLDILE8","s - x","26","리틀 엔디안 부호 64비트 정수를 미리 로드합니다.","","",""
+"PLDULE8","","#D757","cell_parse","D757","PLDULE8","s - x","26","리틀 엔디안 부호 없는 64비트 정수를 미리 로드합니다.","","",""
+"LDILE4Q","","#D758","cell_parse","D758","LDILE4Q","s - x s' -1 or s 0","26","리틀 엔디안 부호 32비트 정수를 조용히 로드합니다.","","",""
+"LDULE4Q","","#D759","cell_parse","D759","LDULE4Q","s - x s' -1 or s 0","26","리틀 엔디안 부호 없는 32비트 정수를 조용히 로드합니다.","","",""
+"LDILE8Q","","#D75A","cell_parse","D75A","LDILE8Q","s - x s' -1 or s 0","26","리틀 엔디안 부호 64비트 정수를 조용히 로드합니다.","","",""
+"LDULE8Q","","#D75B","cell_parse","D75B","LDULE8Q","s - x s' -1 or s 0","26","리틀 엔디안 부호 없는 64비트 정수를 조용히 로드합니다.","","",""
+"PLDILE4Q","","#D75C","cell_parse","D75C","PLDILE4Q","s - x -1 or 0","26","리틀 엔디안 부호 32비트 정수를 조용히 미리 로드합니다.","","",""
+"PLDULE4Q","","#D75D","cell_parse","D75D","PLDULE4Q","s - x -1 or 0","26","리틀 엔디안 부호 없는 32비트 정수를 조용히 미리 로드합니다.","","",""
+"PLDILE8Q","","#D75E","cell_parse","D75E","PLDILE8Q","s - x -1 or 0","26","리틀 엔디안 부호 64비트 정수를 조용히 미리 로드합니다.","","",""
+"PLDULE8Q","","#D75F","cell_parse","D75F","PLDULE8Q","s - x -1 or 0","26","리틀 엔디안 부호 없는 64비트 정수를 조용히 미리 로드합니다.","","",""
+"LDZEROES","","#D760","cell_parse","D760","LDZEROES","s - n s'","26","s`에서 선행 0 비트의 개수 `n`을 반환하고 `s`에서 이러한 비트를 제거합니다.","","",""
+"LDONES","","#D761","cell_parse","D761","LDONES","s - n s'","26","s`에서 앞의 1비트 개수 `n`을 반환하고 `s`에서 이 비트를 제거합니다.","","",""
+"LDSAME","","#D762","cell_parse","D762","LDSAME","s x - n s'","26","s`에서 `0 <= x <= 1`과 같은 선행 비트의 개수 `n`을 반환하고 `s`에서 이러한 비트를 제거합니다.","","",""
+"SDEPTH","","#D764","cell_parse","D764","SDEPTH","s - x","26","슬라이스_ `s`의 깊이를 반환합니다. s`에 참조가 없으면 `x=0`이고, 그렇지 않으면 `x`는 `s`에서 참조된 셀의 최대 깊이에 1을 더한 값입니다.","","",""
+"CDEPTH","","#D765","cell_parse","D765","CDEPTH","c - x","26","셀_ `c`의 깊이를 반환합니다. c`에 참조가 없으면 `x=0`, 그렇지 않으면 `x`는 `c`에서 참조된 셀의 최대 깊이에 1을 더한 값입니다. c`가 _셀_이 아닌 _Null_이면 0을 반환합니다.","","",""
+"EXECUTE","","#D8","cont_basic","D8","EXECUTE
+CALLX","c - ","18","호출_ 또는 _실행_, 연속 `c`.","","",""
+"JMPX","","#D9","cont_basic","D9","JMPX","c - ","18","점프_, 즉 연속 `c`로 제어를 전송합니다.
+이전 현재 연속 `cc`의 나머지는 버려집니다.","","",""
+"CALLXARGS","","#DA p:uint4 r:uint4","cont_basic","DApr","[p] [r] CALLXARGS","c - ","26","호출_연속 `c`에 `p` 매개변수를 사용하고 `r` 반환 값을 기대하는 경우
+`0 <= p <= 15`, `0 <= r <= 15`","","",""
+"CALLXARGS_VAR","","#DB0 p:uint4","cont_basic","DB0p","[p] -1 CALLXARGS","c - ","26","0 <= p <= 15` 매개변수와 함께 `c`를 호출하여 임의의 수의 반환값을 기대합니다.","","",""
+"JMPXARGS","","#DB1 p:uint4","cont_basic","DB1p","[p] JMPXARGS","c - ","26","연속 `c`로 _점프_하여 현재 스택의 최상위 `0 <= p <= 15` 값만 전달합니다(현재 스택의 나머지는 버려짐).","","",""
+"RETARGS","","#DB2 r:uint4","cont_basic","DB2r","[r] RETARGS","","26","현재 스택에서 가져온 `0 <= r <= 15` 반환값을 사용하여 `c0`으로 _Return_을 반환합니다.","","",""
+"RET","","#DB30","cont_basic","DB30","RET
+RETTRUE","","26","c0`의 연속으로 _반환_합니다. 현재 연속의 나머지 `cc`는 버려집니다.
+대략 `c0 PUSHCTR` `JMPX`와 동일합니다.","","",""
+"RETALT","","#DB31","cont_basic","DB31","RETALT
+RETFALSE","","26","c1`의 연속으로 _반환_합니다.
+대략 `c1 PUSHCTR` `JMPX`와 동일합니다.","","",""
+"BRANCH","","#DB32","cont_basic","DB32","BRANCH
+RETBOOL","f - ","26","정수 `f!=0`이면 `RETTRUE`를, `f=0`이면 `RETFALSE`를 수행합니다.","","",""
+"CALLCC","","#DB34","cont_basic","DB34","CALLCC","c - ","26","현재 연속으로 호출_은 `c`로 제어권을 이전하여 `cc`의 이전 값을 버리거나 새로운 `c0`에 쓰는 대신 `c`의 스택으로 밀어 넣습니다.","","",""
+"JMPXDATA","","#DB35","cont_basic","DB35","JMPXDATA","c - ","26","CALLCC`와 비슷하지만, 현재 연속의 나머지 부분(`cc`의 이전 값)은 `c` 스택에 밀어 넣기 전에 _Slice_로 변환됩니다.","","",""
+"CALLCCARGS","","#DB36 p:uint4 r:uint4","cont_basic","DB36pr","[p] [r] CALLCCARGS","c - ","34","CALLXARGS`와 유사하지만 `cc`의 이전 값(원래 스택의 상위 `0 <= p <= 15` 값과 함께)을 새로 호출된 연속 `c`의 스택으로 밀어넣어 `cc.nargs`를 `-1 <= r <= 14`로 설정합니다.","","",""
+"CALLXVARARGS","","#DB38","cont_basic","DB38","CALLXVARARGS","c p r - ","26","CALLXARGS`와 비슷하지만 스택에서 `-1 <= p,r <= 254`를 취합니다. 다음 세 연산도 `-1...254` 범위에서 스택에서 `p`와 `r`을 가져옵니다.","","",""
+"RETVARARGS","","#DB39","cont_basic","DB39","RETVARARGS","p r - ","26","RETARGS`와 유사합니다.","","",""
+"JMPXVARARGS","","#DB3A","cont_basic","DB3A","JMPXVARARGS","c p r - ","26","JMPXARGS`와 유사합니다.","","",""
+"CALLCCVARARGS","","#DB3B","cont_basic","DB3B","CALLCCVARARGS","c p r - ","26","CALLCCARGS`와 유사합니다.","","",""
+"CALLREF","","#DB3C c:^Cell","cont_basic","DB3C","[ref] CALLREF","","126/51","PUSHREFCONT` `CALLX`에 해당합니다.","","",""
+"JMPREF","","#DB3D c:^Cell","cont_basic","DB3D","[ref] JMPREF","","126/51","PUSHREFCONT` `JMPX`에 해당합니다.","","",""
+"JMPREFDATA","","#DB3E c:^Cell","cont_basic","DB3E","[ref] JMPREFDATA","","126/51","PUSHREFCONT` `JMPXDATA`에 해당합니다.","","",""
+"RETDATA","","#DB3F","cont_basic","DB3F","RETDATA","","26","c0 PUSHCTR` `JMPXDATA`에 해당합니다. 이런 식으로 현재 연속의 나머지 부분은 _슬라이스_로 변환되어 호출자에게 반환됩니다.","","",""
+"IFRET","","#DC","cont_conditional","DC","IFRET
+IFNOT:","f - ","18","RET`를 수행하지만, 정수 `f`가 0이 아닌 경우에만 수행합니다. f`가 `NaN`이면 정수 오버플로 예외가 발생합니다.","","",""
+"IFNOTRET","","#DD","cont_conditional","DD","IFNOTRET
+IF:","f - ","18","정수 `f`가 0인 경우에만 `RET`를 수행합니다.","","",""
+"IF","","#DE","cont_conditional","DE","IF","f c - ","18","c`에 대해 `EXECUTE`를 수행합니다(즉, `c`를 _executes_). 단, 정수 `f`가 0이 아닌 경우에만 수행합니다. 그렇지 않으면 두 값을 모두 버립니다.","","",""
+"","","","cont_conditional","DE","IF:<{ code }>
+<{ code }>IF","f -","","{ code }> CONT` `IF`에 해당합니다.","","",""
+"IFNOT","","#DF","cont_conditional","DF","IFNOT","f c - ","18","연속 `c`를 실행하지만 정수 `f`가 0인 경우에만 실행합니다. 그렇지 않으면 두 값을 모두 버립니다.","","",""
+"","","","cont_conditional","DF","IFNOT:<{ code }>
+<{ code }>IFNOT","f -","","{ code }> CONT` `IFNOT`에 해당합니다.","","",""
+"IFJMP","","#E0","cont_conditional","E0","IFJMP","f c - ","18","c`로 점프합니다(`JMPX`와 유사). 단, `f`가 0이 아닌 경우에만 점프합니다.","","",""
+"","","","cont_conditional","E0","IFJMP:<{ code }>","f -","","{ code }> CONT` `IFJMP`에 해당합니다.","","",""
+"IFNOTJMP","","#E1","cont_conditional","E1","IFNOTJMP","f c - ","18","c`로 점프합니다(`JMPX`와 유사). 단, `f`가 0인 경우에만 점프합니다.","","",""
+"","","","cont_conditional","E1","IFNOTJMP:<{ code }>","f -","","{ code }> CONT` `IFNOTJMP`에 해당합니다.","","",""
+"IFELSE","","#E2","cont_conditional","E2","IFELSE","f c c' - ","18","정수 `f`가 0이 아닌 경우 `c`를 실행하고, 그렇지 않으면 `c'`를 실행합니다. CONDSELCHK` `EXECUTE`와 동일합니다.","","",""
+"","","","cont_conditional","E2","IF:<{ code1 }>ELSE<{ code2 }>","f -","","{ code1 }> CONT` `<{ code2 }> CONT` `IFELSE`에 해당합니다.","","",""
+"IFREF","","#E300 c:^Cell","cont_conditional","E300","[ref] IFREF","f - ","26/126/51","셀 참조가 실제로 _슬라이스_에 로드되지 않고 `f=0`인 경우 일반 _연속_으로 변환되는 최적화를 통해 `PUSHREFCONT` `IF`와 동일합니다.
+이 프리미티브의 가스 소비량은 `f=0` 여부와 이전에 참조가 로드되었는지 여부에 따라 달라집니다.
+연속을 참조로 받아들이는 다른 프리미티브에도 비슷한 설명이 적용됩니다.","","",""
+"IFNOTREF","","#E301 c:^Cell","cont_conditional","E301","[ref] IFNOTREF","f - ","26/126/51","PUSHREFCONT` `IFNOT`에 해당합니다.","","",""
+"IFJMPREF","","#E302 c:^Cell","cont_conditional","E302","[ref] IFJMPREF","f - ","26/126/51","PUSHREFCONT` `IFJMP`와 동일합니다.","","",""
+"IFNOTJMPREF","","#E303 c:^Cell","cont_conditional","E303","[ref] IFNOTJMPREF","f - ","26/126/51","PUSHREFCONT` `IFNOTJMP`에 해당합니다.","","",""
+"CONDSEL","","#E304","cont_conditional","E304","CONDSEL","f x y - x or y","26","정수 `f`가 0이 아닌 경우 `x`를 반환하고, 그렇지 않으면 `y`를 반환합니다. x`와 `y`에는 타입 검사가 수행되지 않으므로 조건부 스택 연산과 비슷합니다. 대략 `ROT` `ISZERO` `INC` `ROLLX` `NIP`와 동일합니다.","","",""
+"CONDSELCHK","","#E305","cont_conditional","E305","CONDSELCHK","f x y - x or y","26","CONDSEL`과 동일하지만, 먼저 `x`와 `y`의 유형이 같은지 확인합니다.","","",""
+"IFRETALT","","#E308","cont_conditional","E308","IFRETALT","f -","26","정수 `f!=0`이면 `RETALT`를 수행합니다.","","",""
+"IFNOTRETALT","","#E309","cont_conditional","E309","IFNOTRETALT","f -","26","정수 `f=0`이면 `RETALT`를 수행합니다.","","",""
+"IFREFELSE","","#E30D c:^Cell","cont_conditional","E30D","[ref] IFREFELSE","f c -","26/126/51","셀 참조가 실제로 _슬라이스_에 로드되지 않고 `f=0`인 경우 일반 _연속_으로 변환되는 최적화를 통해 `PUSHREFCONT` `SWAP` `IFELSE`와 동일합니다. 다음 두 프리미티브에도 비슷한 설명이 적용됩니다. 셀은 필요한 경우에만 연속으로 변환됩니다.","","",""
+"IFELSEREF","","#E30E c:^Cell","cont_conditional","E30E","[ref] IFELSEREF","f c -","26/126/51","푸시레코드` `IFELSE`에 해당합니다.","","",""
+"IFREFELSEREF","","#E30F c1:^Cell c2:^Cell","cont_conditional","E30F","[ref] [ref] IFREFELSEREF","f -","126/51","푸시레코드` `푸시레코드` `IFELSE`에 해당합니다.","","",""
+"IFBITJMP","","#E39_ n:uint5","cont_conditional","E39_n","[n] IFBITJMP","x c - x","26","비트 `0 <= n <= 31`이 정수 `x`로 설정되어 있는지 확인하고, 설정되어 있다면 `JMPX`를 연속 `c`로 수행합니다. 값 `x`는 스택에 남습니다.","","",""
+"IFNBITJMP","","#E3B_ n:uint5","cont_conditional","E3B_n","[n] IFNBITJMP","x c - x","26","비트 `0 <= n <= 31`이 정수 `x`에 설정되지 않은 경우 `c`로 점프합니다.","","",""
+"IFBITJMPREF","","#E3D_ n:uint5 c:^Cell","cont_conditional","E3D_n","[ref] [n] IFBITJMPREF","x - x","126/51","비트 `0 <= n <= 31`이 정수 `x`로 설정된 경우 `JMPREF`를 수행합니다.","","",""
+"IFNBITJMPREF","","#E3F_ n:uint5 c:^Cell","cont_conditional","E3F_n","[ref] [n] IFNBITJMPREF","x - x","126/51","비트 `0 <= n <= 31`이 정수 `x`로 설정되지 않은 경우 `JMPREF`를 수행합니다.","","",""
+"REPEAT","","#E4","cont_loops","E4","REPEAT","n c - ","18","정수 `n`이 음수가 아닌 경우, 연속 `c` `n` 번을 실행합니다. n>=2^31` 또는 `n<-2^31`이면 범위 검사 예외를 생성합니다.
+c` 코드 안의 `RET`는 `break`가 아닌 `continue`로 작동한다는 점에 유의하세요. 루프에서 `브레이크`하려면 대체(실험적) 루프 또는 대체 `RETALT`(루프 앞에 `SETEXITALT`와 함께)를 사용해야 합니다.","","",""
+"","","","cont_loops","E4","REPEAT:<{ code }>
+<{ code }>REPEAT","n -","","{ code }> CONT` `REPEAT`에 해당합니다.","","",""
+"REPEATEND","","#E5","cont_loops","E5","REPEATEND
+REPEAT:","n - ","18","반복`과 유사하지만 현재 연속 `cc`에 적용됩니다.","","",""
+"UNTIL","","#E6","cont_loops","E6","UNTIL","c - ","18","연속 `c`를 실행한 다음 결과 스택에서 정수 `x`를 꺼냅니다. x`가 0이면 이 루프의 다른 반복을 수행합니다. 이 프리미티브의 실제 구현에는 인수가 루프 본문(연속 `c`)과 원래의 현재 연속 `cc`로 설정된 특수한 연속 `ec_until`이 포함됩니다. 그런 다음 이 특별한 연속은 `c`의 새벨리스트에 `c.c0`으로 저장되고 수정된 `c`가 실행됩니다. 다른 루프 프리미티브도 적절한 특수 연속을 사용하여 유사하게 구현됩니다.","","",""
+"","","","cont_loops","E6","UNTIL:<{ code }>
+<{ code }>UNTIL","-","","{ code }> CONT` `UNTIL`에 해당합니다.","","",""
+"UNTILEND","","#E7","cont_loops","E7","UNTILEND
+UNTIL:","-","18","UNTIL`과 유사하지만 현재 연속 `cc`를 루프에서 실행합니다. 루프 종료 조건이 만족되면 `RET`을 수행합니다.","","",""
+"WHILE","","#E8","cont_loops","E8","WHILE","c' c - ","18","c'`를 실행하고 결과 스택에서 정수 `x'를 꺼냅니다. x`가 0이면 루프가 존재하고 원래 `cc`로 제어권을 넘깁니다. x`가 0이 아니라면 `c`를 실행한 다음 새 반복을 시작합니다.","","",""
+"","","","cont_loops","E8","WHILE:<{ cond }>DO<{ code }>","-","","{ cond }> CONT` `<{ code }> CONT` `WHILE`에 해당합니다.","","",""
+"WHILEEND","","#E9","cont_loops","E9","WHILEEND","c' - ","18","동안`과 유사하지만 현재 연속문 `cc`를 루프 본문으로 사용합니다.","","",""
+"AGAIN","","#EA","cont_loops","EA","AGAIN","c - ","18","REPEAT`와 비슷하지만 `c`를 무한히 여러 번 실행합니다. RET`는 무한 루프의 새로운 반복을 시작할 뿐이며, 예외 또는 `RETALT`(또는 명시적 `JMPX`)에 의해서만 종료될 수 있습니다.","","",""
+"","","","cont_loops","EA","AGAIN:<{ code }>
+<{ code }>AGAIN","-","","{ code }> CONT` `AGAIN`에 해당합니다.","","",""
+"AGAINEND","","#EB","cont_loops","EB","AGAINEND
+AGAIN:","-","18","다시`와 유사하지만 현재 연속 `cc`에 대해 수행됩니다.","","",""
+"REPEATBRK","","#E314","cont_loops","E314","REPEATBRK","n c -","26","REPEAT`와 유사하지만 `c1`의 이전 값을 원래 `cc`의 세이버리스트에 저장한 후 `c1`을 원래 `cc`로 설정합니다. 이런 식으로 `RETALT`는 루프 본문에서 벗어나는 데 사용할 수 있습니다.","","",""
+"","","","cont_loops","E314","REPEATBRK:<{ code }>
+<{ code }>REPEATBRK","n -","","{ code }> CONT` `REPEATBRK`에 해당합니다.","","",""
+"REPEATENDBRK","","#E315","cont_loops","E315","REPEATENDBRK","n -","26","REPEATEND`와 유사하지만, `c1`의 이전 값을 원래 `c0`의 세이버리스트에 저장한 후 `c1`을 원래 `c0`으로 설정합니다. 동일알트세이브` `REPEATEND`와 동일합니다.","","",""
+"UNTILBRK","","#E316","cont_loops","E316","UNTILBRK","c -","26","UNTIL`과 유사하지만 `REPEATBRK`와 같은 방식으로 `c1`을 수정합니다.","","",""
+"","","","cont_loops","E316","UNTILBRK:<{ code }>","-","","{ code }> CONT` `UNTILBRK`에 해당합니다.","","",""
+"UNTILENDBRK","","#E317","cont_loops","E317","UNTILENDBRK
+UNTILBRK:","-","26","동일알트저장` `유효기간`에 해당합니다.","","",""
+"WHILEBRK","","#E318","cont_loops","E318","WHILEBRK","c' c -","26","동안`과 유사하지만 `REPEATBRK`와 같은 방식으로 `c1`을 수정합니다.","","",""
+"","","","cont_loops","E318","WHILEBRK:<{ cond }>DO<{ code }>","-","","{ cond }> CONT` `<{ code }> CONT` `WHILEBRK`에 해당합니다.","","",""
+"WHILEENDBRK","","#E319","cont_loops","E319","WHILEENDBRK","c -","26","동일알트세이브` `WHILEEND`에 해당합니다.","","",""
+"AGAINBRK","","#E31A","cont_loops","E31A","AGAINBRK","c -","26","다시`와 비슷하지만 `REPEATBRK`와 같은 방식으로 `c1`을 수정합니다.","","",""
+"","","","cont_loops","E31A","AGAINBRK:<{ code }>","-","","{ code }> CONT` `AGAINBRK`에 해당합니다.","","",""
+"AGAINENDBRK","","#E31B","cont_loops","E31B","AGAINENDBRK
+AGAINBRK:","-","26","동일 저장` `다시 시작`에 해당합니다.","","",""
+"SETCONTARGS_N","","#EC r:uint4 n:(#<= 14)","cont_stack","ECrn","[r] [n] SETCONTARGS","x_1 x_2...x_r c - c'","26+s”","r] -1 SETCONTARGS`와 유사하지만 `c.nargs`를 `c'`에 `n`을 더한 스택의 최종 크기로 설정합니다. 즉, `c`를 `0 <= n <= 14` 인수가 누락된 _closure_ 또는 _부분 적용 함수_로 변환합니다.","","",""
+"SETNUMARGS","SETCONTARGS_N","#EC0 n:(#<= 14)","cont_stack","EC0n","[n] SETNUMARGS","c - c'","26","c.nargs`를 `n`에 `c`의 스택의 현재 깊이를 더한 값으로 설정합니다(여기서 `0 <= n <= 14`). c.nargs`가 이미 음수가 아닌 값으로 설정되어 있으면 아무 작업도 수행하지 않습니다.","","",""
+"SETCONTARGS","","#EC r:uint4 n:(## 4) {n = 15}","cont_stack","ECrF","[r] -1 SETCONTARGS","x_1 x_2...x_r c - c'","26+s”","0 <= r <= 15` 값 `x_1...x_r`을 `x_1`부터 시작하여 연속 `c`의 스택(복사본)으로 밀어 넣습니다. c` 스택의 최종 깊이가 `c.nargs`보다 큰 것으로 판명되면 스택 오버플로 예외가 생성됩니다.","","",""
+"RETURNARGS","","#ED0 p:uint4","cont_stack","ED0p","[p] RETURNARGS","-","26+s”","현재 스택에 최상위 `0 <= p <= 15` 값만 남기고(`ONLYTOPX`와 다소 유사), 사용하지 않은 모든 하단 값은 버리지 않고 `SETCONTARGS`와 같은 방식으로 연속 `c0`에 저장합니다.","","",""
+"RETURNVARARGS","","#ED10","cont_stack","ED10","RETURNVARARGS","p -","26+s”","반환값`과 유사하지만 스택에서 가져온 정수 `0 <= p <= 255`를 사용합니다.","","",""
+"SETCONTVARARGS","","#ED11","cont_stack","ED11","SETCONTVARARGS","x_1 x_2...x_r c r n - c'","26+s”","SETCONTARGS`와 유사하지만 스택에서 `0 <= r <= 255`와 `-1 <= n <= 255`를 가져옵니다.","","",""
+"SETNUMVARARGS","","#ED12","cont_stack","ED12","SETNUMVARARGS","c n - c'","26","1 <= n <= 255`
+`n=-1`이면 이 연산은 아무 작업도 수행하지 않습니다(`c'=c`).
+그렇지 않으면 `[n] SETNUMARGS`와 비슷하지만 스택에서 `n`을 가져옵니다.","","",""
+"BLESS","","#ED1E","cont_create","ED1E","BLESS","s - c","26","슬라이스_ `s`를 `c.code=s`와 빈 스택 및 새벨리스트가 있는 단순한 일반 연속 `c`로 변환합니다.","","",""
+"BLESSVARARGS","","#ED1F","cont_create","ED1F","BLESSVARARGS","x_1...x_r s r n - c","26+s”","로트` `블레스` `로트레브` `세트콘바스`에 해당합니다.","","",""
+"BLESSARGS","","#EE r:uint4 n:uint4","cont_create","EErn","[r] [n] BLESSARGS","x_1...x_r s - c","26","0 <= r <= 15`, `-1 <= n <= 14`
+`BLESS` `[r] [n] SETCONTARGS`와 동일합니다.
+n`의 값은 명령어 내부에서 4비트 정수 `n mod 16`으로 표시됩니다.","","",""
+"BLESSNUMARGS","BLESSARGS","#EE0 n:uint4","cont_create","EE0n","[n] BLESSNUMARGS","s - c","26","또한 _슬라이스_ `s`를 _연속성_ `c`로 변환하지만 `c.nargs`를 `0 <= n <= 14`로 설정합니다.","","",""
+"PUSHCTR","","#ED4 i:uint4","cont_registers","ED4i","c[i] PUSHCTR
+c[i] PUSH","- x","26","제어 레지스터 `c(i)`의 현재 값을 푸시합니다. 제어 레지스터가 현재 코드페이지에서 지원되지 않거나 값이 없는 경우 예외가 발생합니다.","","",""
+"PUSHROOT","PUSHCTR","#ED44","cont_registers","ED44","c4 PUSHCTR
+c4 PUSH","- x","26","""글로벌 데이터 루트"" 셀 참조를 푸시하여 영구적인 스마트 컨트랙트 데이터에 액세스할 수 있도록 합니다.","","",""
+"POPCTR","","#ED5 i:uint4","cont_registers","ED5i","c[i] POPCTR
+c[i] POP","x - ","26","현재 코드페이지에서 지원되는 경우 스택에서 값 `x`를 꺼내서 제어 레지스터 `c(i)`에 저장합니다. 제어 레지스터가 특정 타입의 값만 허용하는 경우 타입 검사 예외가 발생할 수 있습니다.","","",""
+"POPROOT","POPCTR","#ED54","cont_registers","ED54","c4 POPCTR
+c4 POP","x -","26","""글로벌 데이터 루트"" 셀 참조를 설정하여 영구적인 스마트 컨트랙트 데이터를 수정할 수 있도록 합니다.","","",""
+"SETCONTCTR","","#ED6 i:uint4","cont_registers","ED6i","c[i] SETCONT
+c[i] SETCONTCTR","x c - c'","26","x`를 연속 `c`의 새벨리스트에 `c(i)`로 저장하고 결과 연속 `c'`를 반환합니다. 연속이 있는 거의 모든 연산은 `SETCONTCTR`, `POPCTR`, `PUSHCTR`로 표현할 수 있습니다.","","",""
+"SETRETCTR","","#ED7 i:uint4","cont_registers","ED7i","c[i] SETRETCTR","x - ","26","c0 PUSHCTR` `c[i] SETCONTCTR` `c0 POPCTR`에 해당합니다.","","",""
+"SETALTCTR","","#ED8 i:uint4","cont_registers","ED8i","c[i] SETALTCTR","x - ","26","c1 PUSHCTR` `c[i] SETCONTCTR` `c1 POPCTR`에 해당합니다.","","",""
+"POPSAVE","","#ED9 i:uint4","cont_registers","ED9i","c[i] POPSAVE
+c[i] POPCTRSAVE","x -","26","c[i] POPCTR`과 유사하지만, `c[i]`의 이전 값을 연속 `c0`에 저장합니다.
+c[i] SAVECTR` `c[i] POPCTR`과 동등합니다(예외까지).","","",""
+"SAVE","","#EDA i:uint4","cont_registers","EDAi","c[i] SAVE
+c[i] SAVECTR","","26","c(i)`의 현재 값을 연속 `c0`의 새벨리스트에 저장합니다. c[i]`에 대한 항목이 이미 `c0`의 세이브 리스트에 있으면 아무 작업도 수행되지 않습니다. c[i] PUSHCTR` `c[i] SETRETCTR`에 해당합니다.","","",""
+"SAVEALT","","#EDB i:uint4","cont_registers","EDBi","c[i] SAVEALT
+c[i] SAVEALTCTR","","26","c[i] SAVE`와 유사하지만 `c[i]`의 현재 값을 `c0`이 아닌 `c1`의 세이버리스트에 저장합니다.","","",""
+"SAVEBOTH","","#EDC i:uint4","cont_registers","EDCi","c[i] SAVEBOTH
+c[i] SAVEBOTHCTR","","26","c[i] SAVE` `c[i] SAVEALT`와 동일합니다.","","",""
+"PUSHCTRX","","#EDE0","cont_registers","EDE0","PUSHCTRX","i - x","26","c[i] PUSHCTR`과 비슷하지만, `i`가 `0 <= i <= 255`로 스택에서 가져옵니다.
+이 프리미티브는 스택 조작 프리미티브처럼 다형성이 없는 몇 안 되는 '이색' 프리미티브 중 하나이며, 동시에 `x`의 유형이 `i`에 의존하기 때문에 파라미터와 반환값의 유형이 잘 정의되어 있지 않습니다.","","",""
+"POPCTRX","","#EDE1","cont_registers","EDE1","POPCTRX","x i - ","26","c[i] POPCTR`과 유사하지만 스택에서 `0 <= i <= 255`를 사용합니다.","","",""
+"SETCONTCTRX","","#EDE2","cont_registers","EDE2","SETCONTCTRX","x c i - c'","26","c[i] SETCONTCTR`과 유사하지만 스택에서 `0 <= i <= 255`를 사용합니다.","","",""
+"COMPOS","","#EDF0","cont_registers","EDF0","COMPOS
+BOOLAND","c c' - c''","26","""`c`를 수행하고, 성공하면 `c'`''(`c`가 부울 회로인 경우) 또는 단순히 ""`c`를 수행한 다음 `c'`''의 의미를 갖는 `compose0(c, c')` 구성을 계산합니다. SWAP` `c0 SETCONT`에 해당합니다.","","",""
+"COMPOSALT","","#EDF1","cont_registers","EDF1","COMPOSALT
+BOOLOR","c c' - c''","26","""`c`를 수행하고, 성공하지 못하면 `c'`를 수행한다""는 의미를 갖는 대체 구성 `compose1(c, c')`를 계산합니다(`c`가 부울 회로인 경우). SWAP` `c1 SETCONT`와 동일합니다.","","",""
+"COMPOSBOTH","","#EDF2","cont_registers","EDF2","COMPOSBOTH","c c' - c''","26","""부울 회로 `c`를 계산한 다음 `c`의 결과에 관계없이 `c'`를 계산한다""는 의미를 갖는 컴포지션 `compose1(compose0(c, c'), c')`을 계산합니다.","","",""
+"ATEXIT","","#EDF3","cont_registers","EDF3","ATEXIT","c - ","26","c0`을 `compose0(c, c0)`로 설정합니다. 즉, 현재 서브루틴을 종료하기 전에 `c`가 실행됩니다.","","",""
+"","","","cont_registers","EDF3","ATEXIT:<{ code }>
+<{ code }>ATEXIT","-","","{ code }> CONT` `ATEXIT`에 해당합니다.","","",""
+"ATEXITALT","","#EDF4","cont_registers","EDF4","ATEXITALT","c - ","26","c1`을 `compose1(c, c1)`로 설정합니다. 즉, `c`는 대체 반환 경로를 통해 현재 서브루틴을 종료하기 전에 실행됩니다.","","",""
+"","","","cont_registers","EDF4","ATEXITALT:<{ code }>
+<{ code }>ATEXITALT","-","","{ code }> CONT` `ATEXITALT`에 해당합니다.","","",""
+"SETEXITALT","","#EDF5","cont_registers","EDF5","SETEXITALT","c - ","26","c1`을 `compose1(compose0(c, c0), c1)`,
+이렇게 하면 후속 `RETALT`가 먼저 `c`를 실행한 다음 원래 `c0`로 제어권을 넘깁니다. 예를 들어 중첩된 루프를 종료하는 데 사용할 수 있습니다.","","",""
+"THENRET","","#EDF6","cont_registers","EDF6","THENRET","c - c'","26","컴포지트0(c, c0)`을 계산합니다.","","",""
+"THENRETALT","","#EDF7","cont_registers","EDF7","THENRETALT","c - c'","26","컴포지트0(c, c1)`을 계산합니다.","","",""
+"INVERT","","#EDF8","cont_registers","EDF8","INVERT","-","26","c0`과 `c1`을 교환합니다.","","",""
+"BOOLEVAL","","#EDF9","cont_registers","EDF9","BOOLEVAL","c - ?","26","cc:=compose1(compose0(c, compose0(-1 PUSHINT, cc)), compose0(0 PUSHINT, cc))`를 수행합니다. c`가 부울 회로를 나타내는 경우, 순 효과는 계속하기 전에 이를 평가하고 `-1` 또는 `0`을 스택에 밀어 넣는 것입니다.","","",""
+"SAMEALT","","#EDFA","cont_registers","EDFA","SAMEALT","-","26","c1`을 `c0`으로 설정합니다. c0 PUSHCTR` `c1 POPCTR`과 동일합니다.","","",""
+"SAMEALTSAVE","","#EDFB","cont_registers","EDFB","SAMEALTSAVE","-","26","c1`을 `c0`으로 설정하지만, 먼저 `c1`의 이전 값을 `c0`의 세이벨리스트에 저장합니다.
+c1 SAVE` `SAMEALT`에 해당합니다.","","",""
+"CALLDICT","","#F0 n:uint8","cont_dict","F0nn","[nn] CALL
+[nn] CALLDICT","- nn","","c3`의 연속을 호출하여 정수 `0 <= nn <= 255`를 인자로 스택에 밀어 넣습니다.
+대략 `[nn] PUSHINT` `c3 PUSHCTR` `EXECUTE`와 동등합니다.","","",""
+"CALLDICT_LONG","","#F12_ n:uint14","cont_dict","F12_n","[n] CALL
+[n] CALLDICT","- n","","0 <= n < 2^14`의 경우, `n`의 값이 클 경우 '[n] CALL` 인코딩을 사용합니다.","","",""
+"JMPDICT","","#F16_ n:uint14","cont_dict","F16_n","[n] JMP"," - n","","인자로 정수 `0 <= n < 2^14`를 푸시하여 `c3`의 연속으로 점프합니다.
+대략 `n PUSHINT` `c3 PUSHCTR` `JMPX`와 동등합니다.","","",""
+"PREPAREDICT","","#F1A_ n:uint14","cont_dict","F1A_n","[n] PREPARE
+[n] PREPAREDICT"," - n c","","0 <= n < 2^14`의 경우 `n PUSHINT` `c3 PUSHCTR`에 해당합니다.
+이런 식으로 `[n] CALL`은 `[n] PREPARE` `EXECUTE`와 거의 같고, `[n] JMP`는 `[n] PREPARE` `JMPX`와 거의 같습니다.
+예를 들어 여기서는 `EXECUTE` 대신 `CALLXARGS` 또는 `CALLCC`를 사용할 수 있습니다.","","",""
+"THROW_SHORT","","#F22_ n:uint6","exceptions","F22_n","[n] THROW"," - 0 n","76","매개변수가 0인 예외 `0 <= n <= 63`을 던집니다.
+즉, `c2`의 연속으로 제어권을 이전하여 `0`과 `n`을 스택으로 밀어넣고 이전 스택을 모두 버립니다.","","",""
+"THROWIF_SHORT","","#F26_ n:uint6","exceptions","F26_n","[n] THROWIF","f - ","26/76","정수 `f!=0`인 경우에만 매개변수 0이 있는 예외 `0 <= n <= 63`을 던집니다.","","",""
+"THROWIFNOT_SHORT","","#F2A_ n:uint6","exceptions","F2A_n","[n] THROWIFNOT","f - ","26/76","정수 `f=0`인 경우에만 매개변수 0이 있는 예외 `0 <= n <= 63`을 던집니다.","","",""
+"THROW","","#F2C4_ n:uint11","exceptions","F2C4_n","[n] THROW","- 0 nn","84","0 <= n < 2^11`의 경우, `n`의 값이 클 경우 '[n] THROW` 인코딩을 사용합니다.","","",""
+"THROWARG","","#F2CC_ n:uint11","exceptions","F2CC_n","[n] THROWARG","x - x nn","84","x`와 `n`을 `c2`의 스택에 복사하고 제어권을 `c2`로 전송하여 매개변수 `x`와 함께 `0 <= n < 2^11` 예외를 던집니다.","","",""
+"THROWIF","","#F2D4_ n:uint11","exceptions","F2D4_n","[n] THROWIF","f - ","34/84","0 <= n < 2^11`의 경우, `n`의 값이 클 경우 '[n] THROWIF` 인코딩을 사용합니다.","","",""
+"THROWARGIF","","#F2DC_ n:uint11","exceptions","F2DC_n","[n] THROWARGIF","x f - ","34/84","정수 `f!=0`인 경우에만 매개변수 `x`와 함께 `0 <= nn < 2^11` 예외를 던집니다.","","",""
+"THROWIFNOT","","#F2E4_ n:uint11","exceptions","F2E4_n","[n] THROWIFNOT","f - ","34/84","0 <= n < 2^11`의 경우, `n`의 값이 클 경우 '[n] THROWIFNOT` 인코딩을 사용합니다.","","",""
+"THROWARGIFNOT","","#F2EC_ n:uint11","exceptions","F2EC_n","[n] THROWARGIFNOT","x f - ","34/84","정수 `f=0`인 경우에만 매개변수 `x`와 함께 `0 <= n < 2^11` 예외를 던집니다.","","",""
+"THROWANY","","#F2F0","exceptions","F2F0","THROWANY","n - 0 n","76","파라미터 0으로 `0 <= n < 2^16` 예외를 던집니다.
+ZERO` `SWAP` `THROWARGANY`와 거의 같습니다.","","",""
+"THROWARGANY","","#F2F1","exceptions","F2F1","THROWARGANY","x n - x n","76","파라미터 `x`와 함께 `0 <= n < 2^16` 예외를 던져, `c2`의 연속으로 제어권을 넘깁니다.
+대략 `c2 PUSHCTR` `2 JMPXARGS`와 같습니다.","","",""
+"THROWANYIF","","#F2F2","exceptions","F2F2","THROWANYIF","n f - ","26/76","f!=0`인 경우에만 매개변수 0이 있는 예외 `0 <= n < 2^16`을 던집니다.","","",""
+"THROWARGANYIF","","#F2F3","exceptions","F2F3","THROWARGANYIF","x n f - ","26/76","f!=0`인 경우에만 매개변수 `x`와 함께 `0 <= n<2^16` 예외를 던집니다.","","",""
+"THROWANYIFNOT","","#F2F4","exceptions","F2F4","THROWANYIFNOT","n f - ","26/76","f=0`인 경우에만 매개변수 0이 있는 예외 `0 <= n<2^16`을 던집니다.","","",""
+"THROWARGANYIFNOT","","#F2F5","exceptions","F2F5","THROWARGANYIFNOT","x n f - ","26/76","f=0`인 경우에만 파라미터 `x`와 함께 `0 <= n<2^16` 예외를 던집니다.","","",""
+"TRY","","#F2FF","exceptions","F2FF","TRY","c c' - ","26","c2`를 `c'`로 설정하고, 먼저 `c2`의 이전 값을 `c'`의 새벨리스트와 현재 연속의 새벨리스트에 모두 저장하여 `c.c0` 및 `c'.c0`에 저장합니다. 그런 다음 `c`를 `EXECUTE`와 유사하게 실행합니다. c`가 예외를 던지지 않으면 `c`에서 반환될 때 `c2`의 원래 값이 자동으로 복원됩니다. 예외가 발생하면 실행이 `c'`로 넘어가지만 그 과정에서 `c2`의 원래 값이 복원되므로 `c'`가 자체적으로 처리할 수 없는 경우 `THROWANY`에 의해 예외를 다시 던질 수 있습니다.","","",""
+"","","","exceptions","F2FF","TRY:<{ code1 }>CATCH<{ code2 }>","-","","{ code1 }> CONT` `<{ code2 }> CONT` `TRY`에 해당합니다.","","",""
+"TRYARGS","","#F3 p:uint4 r:uint4","exceptions","F3pr","[p] [r] TRYARGS","c c' - ","26","TRY`와 비슷하지만, 내부적으로 `EXECUTE` 대신 `[p] [r] CALLXARGS`가 사용됩니다.
+이렇게 하면 최상위 `0 <= p <= 15` 스택 요소를 제외한 모든 스택 요소가 현재 연속 스택에 저장된 다음 `c` 또는 `c'`에서 반환될 때 복원되며, `c` 또는 `c'`의 결과 스택의 최상위 `0 <= r <= 15` 값이 반환값으로 복사됩니다.","","",""
+"NEWDICT","NULL","#6D","dict_create","6D","NEWDICT"," - D","18","새로운 빈 딕셔너리를 반환합니다.
+PUSHNULL`의 대체 니모닉입니다.","","",""
+"DICTEMPTY","ISNULL","#6E","dict_create","6E","DICTEMPTY","D - ?","18","딕셔너리 `D`가 비어 있는지 확인하고 그에 따라 `-1` 또는 `0`을 반환합니다.
+이 함수는 `ISNULL`의 대체 니모닉입니다.","","",""
+"STDICTS","STSLICE","#CE","dict_serial","CE","STDICTS
+","s b - b'","18","슬라이스_로 표현되는 딕셔너리 `s`를 _빌더_ `b`에 저장합니다.
+실제로는 `STSLICE`의 동의어입니다.","","",""
+"STDICT","","#F400","dict_serial","F400","STDICT
+STOPTREF","D b - b'","26","딕셔너리 `D`를 _Builder_ `b`에 저장하여 결과 _Builder_ `b'`를 리턴합니다.
+즉, `D`가 셀이면 `STONE`과 `STREF`를 수행하고, `D`가 _Null_이면 `NIP`와 `STZERO`를 수행하고, 그렇지 않으면 타입 검사 예외를 던집니다.","","",""
+"SKIPDICT","","#F401","dict_serial","F401","SKIPDICT
+SKIPOPTREF","s - s'","26","LDDICT` `NIP`에 해당합니다.","","",""
+"LDDICTS","","#F402","dict_serial","F402","LDDICTS","s - s' s''","26","슬라이스_ `s`에서 (_Slice_로 표현된) 딕셔너리 `s'`를 로드(구문 분석)하고 나머지 `s`를 `s''`로 반환합니다.
+이것은 모든 `HashmapE(n,X)` 딕셔너리 유형에 대한 ""분할 함수""입니다.","","",""
+"PLDDICTS","","#F403","dict_serial","F403","PLDDICTS","s - s'","26","슬라이스_ `s`에서 (_슬라이스_로 표시된) 딕셔너리 `s'`를 미리 로드합니다.
+LDDICTS` `DROP`와 거의 같습니다.","","",""
+"LDDICT","","#F404","dict_serial","F404","LDDICT
+LDOPTREF","s - D s'","26","슬라이스_ `s`에서 사전 `D`를 로드(구문 분석)하고 나머지 `s`를 `s'`로 반환합니다. 사전이나 임의의 `(^Y)?' 타입의 값에 적용할 수 있습니다.","","",""
+"PLDDICT","","#F405","dict_serial","F405","PLDDICT
+PLDOPTREF","s - D","26","슬라이스_ `s`에서 딕셔너리 `D`를 미리 로드합니다.
+대략 `LDDICT` `DROP`에 해당합니다.","","",""
+"LDDICTQ","","#F406","dict_serial","F406","LDDICTQ","s - D s' -1 or s 0","26","조용한 버전의 `LDDICT`.","","",""
+"PLDDICTQ","","#F407","dict_serial","F407","PLDDICTQ","s - D -1 or 0","26","조용한 버전의 `PLDDICT`.","","",""
+"DICTGET","","#F40A","dict_get","F40A","DICTGET","k D n - x -1 or 0","","해시맵E(n,X)` 타입의 사전 `D`에서 키 `k`(_Slice_로 표시되며, 이 중 첫 번째 `0 <= n <= 1023` 데이터 비트가 키로 사용됨)를 `n` 비트 키로 조회합니다.
+성공하면 찾은 값을 _Slice_ `x`로 반환합니다.","","",""
+"DICTGETREF","","#F40B","dict_get","F40B","DICTGETREF","k D n - c -1 or 0","","DICTGET`과 유사하지만, 성공 시 `LDREF` `ENDS`가 `x`에 적용됩니다.
+이 연산은 '해시맵E(n,^Y)` 유형의 딕셔너리에 유용합니다.","","",""
+"DICTIGET","","#F40C","dict_get","F40C","DICTIGET","i D n - x -1 or 0","","DICTGET`과 유사하지만 부호 있는(빅 엔디안) `n`비트 _Integer_ `i`를 키로 사용합니다. i`가 `n`비트에 맞지 않으면 `0`을 반환합니다. i`가 `NaN`이면 정수 오버플로 예외를 발생시킵니다.","","",""
+"DICTIGETREF","","#F40D","dict_get","F40D","DICTIGETREF","i D n - c -1 or 0","","DICTIGET`과 `DICTGETREF`를 결합: 부호화된 `n`비트 _정수_ `i`를 키로 사용하며 성공 시 _슬라이스_ 대신 _셀_을 반환합니다.","","",""
+"DICTUGET","","#F40E","dict_get","F40E","DICTUGET","i D n - x -1 or 0","","DICTIGET`과 유사하지만 _부호 없는_(빅 엔디안) `n` 비트 _정수_ `i`를 키로 사용합니다.","","",""
+"DICTUGETREF","","#F40F","dict_get","F40F","DICTUGETREF","i D n - c -1 or 0","","DICTIGETREF`와 유사하지만 부호 없는 `n`비트 _Integer_ 키 `i`가 있습니다.","","",""
+"DICTSET","","#F412","dict_set","F412","DICTSET","x k D n - D'","","딕셔너리 `D`(역시 _슬라이스_로 표시)의 `n`비트 키 `k`(`DICTGET`에서처럼 _슬라이스_로 표시)와 관련된 값을 `x`(역시 _슬라이스_) 값으로 설정하고 결과 딕셔너리를 `D'`로 반환합니다.","","",""
+"DICTSETREF","","#F413","dict_set","F413","DICTSETREF","c k D n - D'","","DICTSET`과 유사하지만 값이 _셀_ `c`에 대한 참조로 설정됩니다.","","",""
+"DICTISET","","#F414","dict_set","F414","DICTISET","x i D n - D'","","DICTSET`과 유사하지만, 키가 (빅 엔디안) 부호 있는 `n`비트 정수 `i`로 표현됩니다. i`가 `n`비트에 맞지 않으면 범위 검사 예외가 생성됩니다.","","",""
+"DICTISETREF","","#F415","dict_set","F415","DICTISETREF","c i D n - D'","","DICTSETREF`와 유사하지만 키는 `DICTISET`에서와 같이 부호화된 `n`비트 정수입니다.","","",""
+"DICTUSET","","#F416","dict_set","F416","DICTUSET","x i D n - D'","","DICTISET`과 유사하지만, `i`는 _부호 없는` `n`비트 정수입니다.","","",""
+"DICTUSETREF","","#F417","dict_set","F417","DICTUSETREF","c i D n - D'","","DICTISETREF`와 유사하지만 `i`가 부호화되지 않습니다.","","",""
+"DICTSETGET","","#F41A","dict_set","F41A","DICTSETGET","x k D n - D' y -1 or D' 0","","DICTSET`과 `DICTGET`을 결합: 키 `k`에 해당하는 값을 `x`로 설정하지만 해당 키와 연관된 이전 값 `y`가 있는 경우 이를 반환합니다.","","",""
+"DICTSETGETREF","","#F41B","dict_set","F41B","DICTSETGETREF","c k D n - D' c' -1 or D' 0","","DICTSETREF`를 `DICTSETGET`과 유사하게 `DICTGETREF`와 결합합니다.","","",""
+"DICTISETGET","","#F41C","dict_set","F41C","DICTISETGET","x i D n - D' y -1 or D' 0","","DICTISETGET`을 사용하되, `i`는 부호 있는 `n`비트 정수를 사용합니다.","","",""
+"DICTISETGETREF","","#F41D","dict_set","F41D","DICTISETGETREF","c i D n - D' c' -1 or D' 0","","DICTISETGETREF`를 사용하되, `i`는 부호 있는 `n`비트 정수입니다.","","",""
+"DICTUSETGET","","#F41E","dict_set","F41E","DICTUSETGET","x i D n - D' y -1 or D' 0","","`DICTISETGET`을 사용하되, `i`는 부호 없는 `n`비트 정수입니다.","","",""
+"DICTUSETGETREF","","#F41F","dict_set","F41F","DICTUSETGETREF","c i D n - D' c' -1 or D' 0","","`DICTISETGETREF`를 사용하되, `i`는 부호 없는 `n`비트 정수입니다.","","",""
+"DICTREPLACE","","#F422","dict_set","F422","DICTREPLACE","x k D n - D' -1 or D 0","","Replace_ 연산은 `DICTSET`과 유사하지만, `D`에 키 `k`가 이미 있는 경우에만 사전 `D`의 키 `k`의 값을 `x`로 설정합니다.","","",""
+"DICTREPLACEREF","","#F423","dict_set","F423","DICTREPLACEREF","c k D n - D' -1 or D 0","","DICTSETREF`에 대응하는 _Replace_입니다.","","",""
+"DICTIREPLACE","","#F424","dict_set","F424","DICTIREPLACE","x i D n - D' -1 or D 0","","DICTREPLACE`를 사용하되, `i`는 부호 있는 `n`비트 정수를 사용합니다.","","",""
+"DICTIREPLACEREF","","#F425","dict_set","F425","DICTIREPLACEREF","c i D n - D' -1 or D 0","","'DICTREPLACEREF'를 사용하되, 'i'는 부호 있는 'n'비트 정수입니다.","","",""
+"DICTUREPLACE","","#F426","dict_set","F426","DICTUREPLACE","x i D n - D' -1 or D 0","","DICTREPLACE`를 사용하되, `i`는 부호 없는 `n`비트 정수입니다.","","",""
+"DICTUREPLACEREF","","#F427","dict_set","F427","DICTUREPLACEREF","c i D n - D' -1 or D 0","","`DICTREPLACEREF`를 사용하되 `i`는 부호 없는 `n`비트 정수입니다.","","",""
+"DICTREPLACEGET","","#F42A","dict_set","F42A","DICTREPLACEGET","x k D n - D' y -1 or D 0","","DICTSETGET`: 의 _Replace_ 대응 항목은 성공 시 해당 키와 관련된 이전 값도 반환합니다.","","",""
+"DICTREPLACEGETREF","","#F42B","dict_set","F42B","DICTREPLACEGETREF","c k D n - D' c' -1 or D 0","","DICTSETGETREF`에 대응하는 _Replace_입니다.","","",""
+"DICTIREPLACEGET","","#F42C","dict_set","F42C","DICTIREPLACEGET","x i D n - D' y -1 or D 0","","DICTREPLACEGET`을 사용하되, `i`는 부호 있는 `n`비트 정수를 사용합니다.","","",""
+"DICTIREPLACEGETREF","","#F42D","dict_set","F42D","DICTIREPLACEGETREF","c i D n - D' c' -1 or D 0","","`DICTREPLACEGETREF`를 사용하되, `i`는 부호 있는 `n`비트 정수입니다.","","",""
+"DICTUREPLACEGET","","#F42E","dict_set","F42E","DICTUREPLACEGET","x i D n - D' y -1 or D 0","","DICTREPLACEGET`을 사용하되, `i`는 부호 없는 `n`비트 정수입니다.","","",""
+"DICTUREPLACEGETREF","","#F42F","dict_set","F42F","DICTUREPLACEGETREF","c i D n - D' c' -1 or D 0","","`DICTREPLACEGETREF`를 사용하되 `i`는 부호 없는 `n`비트 정수입니다.","","",""
+"DICTADD","","#F432","dict_set","F432","DICTADD","x k D n - D' -1 or D 0","","DICTSET`의 _Add_ 대응: 사전 `D`의 키 `k`와 연관된 값을 `D`에 이미 존재하지 않는 경우에만 `x`로 설정합니다.","","",""
+"DICTADDREF","","#F433","dict_set","F433","DICTADDREF","c k D n - D' -1 or D 0","","DICTSETREF`에 대응하는 _Add_입니다.","","",""
+"DICTIADD","","#F434","dict_set","F434","DICTIADD","x i D n - D' -1 or D 0","","DICTADD`를 사용하되, `i`는 부호 있는 `n`비트 정수를 사용합니다.","","",""
+"DICTIADDREF","","#F435","dict_set","F435","DICTIADDREF","c i D n - D' -1 or D 0","","DICTADDREF`를 사용하되, `i`는 부호 있는 `n`비트 정수입니다.","","",""
+"DICTUADD","","#F436","dict_set","F436","DICTUADD","x i D n - D' -1 or D 0","","DICTADD`를 사용하되, `i`는 부호 없는 `n`비트 정수를 사용합니다.","","",""
+"DICTUADDREF","","#F437","dict_set","F437","DICTUADDREF","c i D n - D' -1 or D 0","","DICTADDREF`를 사용하되, `i`는 부호 없는 `n`비트 정수입니다.","","",""
+"DICTADDGET","","#F43A","dict_set","F43A","DICTADDGET","x k D n - D' -1 or D y 0","","DICTSETGET`의 _Add_ 대응 함수: 사전 `D`의 키 `k`와 연관된 값을 `x`로 설정하지만, 키 `k`가 `D`에 이미 존재하지 않는 경우에만 해당합니다. 그렇지 않으면 사전을 변경하지 않고 이전 값 `y`를 반환합니다.","","",""
+"DICTADDGETREF","","#F43B","dict_set","F43B","DICTADDGETREF","c k D n - D' -1 or D c' 0","","DICTSETGETREF`에 대응하는 _Add_입니다.","","",""
+"DICTIADDGET","","#F43C","dict_set","F43C","DICTIADDGET","x i D n - D' -1 or D y 0","","`DICTADDGET`을 사용하되, `i`는 부호 있는 `n`비트 정수입니다.","","",""
+"DICTIADDGETREF","","#F43D","dict_set","F43D","DICTIADDGETREF","c i D n - D' -1 or D c' 0","","DICTADDGETREF`를 사용하되, `i`는 부호 있는 `n`비트 정수를 사용합니다.","","",""
+"DICTUADDGET","","#F43E","dict_set","F43E","DICTUADDGET","x i D n - D' -1 or D y 0","","DICTADDGET`을 사용하되, `i`는 부호 없는 `n`비트 정수를 사용합니다.","","",""
+"DICTUADDGETREF","","#F43F","dict_set","F43F","DICTUADDGETREF","c i D n - D' -1 or D c' 0","","`DICTADDGETREF`를 사용하되, `i`는 부호 없는 `n`비트 정수입니다.","","",""
+"DICTSETB","","#F441","dict_set_builder","F441","DICTSETB","b k D n - D'","","","","",""
+"DICTISETB","","#F442","dict_set_builder","F442","DICTISETB","b i D n - D'","","","","",""
+"DICTUSETB","","#F443","dict_set_builder","F443","DICTUSETB","b i D n - D'","","","","",""
+"DICTSETGETB","","#F445","dict_set_builder","F445","DICTSETGETB","b k D n - D' y -1 or D' 0","","","","",""
+"DICTISETGETB","","#F446","dict_set_builder","F446","DICTISETGETB","b i D n - D' y -1 or D' 0","","","","",""
+"DICTUSETGETB","","#F447","dict_set_builder","F447","DICTUSETGETB","b i D n - D' y -1 or D' 0","","","","",""
+"DICTREPLACEB","","#F449","dict_set_builder","F449","DICTREPLACEB","b k D n - D' -1 or D 0","","","","",""
+"DICTIREPLACEB","","#F44A","dict_set_builder","F44A","DICTIREPLACEB","b i D n - D' -1 or D 0","","","","",""
+"DICTUREPLACEB","","#F44B","dict_set_builder","F44B","DICTUREPLACEB","b i D n - D' -1 or D 0","","","","",""
+"DICTREPLACEGETB","","#F44D","dict_set_builder","F44D","DICTREPLACEGETB","b k D n - D' y -1 or D 0","","","","",""
+"DICTIREPLACEGETB","","#F44E","dict_set_builder","F44E","DICTIREPLACEGETB","b i D n - D' y -1 or D 0","","","","",""
+"DICTUREPLACEGETB","","#F44F","dict_set_builder","F44F","DICTUREPLACEGETB","b i D n - D' y -1 or D 0","","","","",""
+"DICTADDB","","#F451","dict_set_builder","F451","DICTADDB","b k D n - D' -1 or D 0","","","","",""
+"DICTIADDB","","#F452","dict_set_builder","F452","DICTIADDB","b i D n - D' -1 or D 0","","","","",""
+"DICTUADDB","","#F453","dict_set_builder","F453","DICTUADDB","b i D n - D' -1 or D 0","","","","",""
+"DICTADDGETB","","#F455","dict_set_builder","F455","DICTADDGETB","b k D n - D' -1 or D y 0","","","","",""
+"DICTIADDGETB","","#F456","dict_set_builder","F456","DICTIADDGETB","b i D n - D' -1 or D y 0","","","","",""
+"DICTUADDGETB","","#F457","dict_set_builder","F457","DICTUADDGETB","b i D n - D' -1 or D y 0","","","","",""
+"DICTDEL","","#F459","dict_delete","F459","DICTDEL","k D n - D' -1 or D 0","","슬라이스_ `k`로 표시되는 `n`비트 키를 딕셔너리 `D`에서 삭제합니다. 키가 있으면, 수정된 딕셔너리 `D'`와 성공 플래그 `-1`을 반환합니다. 그렇지 않으면 원래 딕셔너리 `D`와 `0`을 반환합니다.","","",""
+"DICTIDEL","","#F45A","dict_delete","F45A","DICTIDEL","i D n - D' ?","","키가 부호 있는 `n` 비트 _Integer_ `i`로 표현되는 `DICTDEL` 버전. i`가 `n`비트에 맞지 않으면 `D` `0`을 반환합니다(""키를 찾을 수 없음, 사전이 수정되지 않음"").","","",""
+"DICTUDEL","","#F45B","dict_delete","F45B","DICTUDEL","i D n - D' ?","","DICTIDEL`과 유사하지만 `i`는 부호 없는 `n`비트 정수입니다.","","",""
+"DICTDELGET","","#F462","dict_delete","F462","DICTDELGET","k D n - D' x -1 or D 0","","슬라이스_ `k`로 표시되는 `n`비트 키를 딕셔너리 `D`에서 삭제합니다. 키가 있으면, 수정된 딕셔너리 `D'`, 키 `k`와 연관된 원래 값 `x`(_Slice_로 표시됨), 성공 플래그 `-1`을 반환합니다. 그렇지 않으면 원래 딕셔너리 `D`와 `0`을 반환합니다.","","",""
+"DICTDELGETREF","","#F463","dict_delete","F463","DICTDELGETREF","k D n - D' c -1 or D 0","","DICTDELGET`과 유사하지만, 성공 시 `LDREF` `ENDS`가 `x`에 적용되므로 반환되는 값은 `c`가 _Cell_이 됩니다.","","",""
+"DICTIDELGET","","#F464","dict_delete","F464","DICTIDELGET","i D n - D' x -1 or D 0","","DICTDELGET`을 사용하되, `i`는 부호 있는 `n`비트 정수를 사용합니다.","","",""
+"DICTIDELGETREF","","#F465","dict_delete","F465","DICTIDELGETREF","i D n - D' c -1 or D 0","","DICTDELGETREF`를 사용하되, `i`는 부호 있는 `n`비트 정수입니다.","","",""
+"DICTUDELGET","","#F466","dict_delete","F466","DICTUDELGET","i D n - D' x -1 or D 0","","DICTDELGET`을 사용하되, `i`는 부호 없는 `n`비트 정수입니다.","","",""
+"DICTUDELGETREF","","#F467","dict_delete","F467","DICTUDELGETREF","i D n - D' c -1 or D 0","","DICTDELGETREF`를 사용하되, `i`는 부호 없는 `n`비트 정수를 사용합니다.","","",""
+"DICTGETOPTREF","","#F469","dict_mayberef","F469","DICTGETOPTREF","k D n - c^?","","사전 `D`에 키 `k`가 없는 경우 `c^?` 값 대신 _Null_을 반환하는 `DICTGETREF`의 변형입니다.","","",""
+"DICTIGETOPTREF","","#F46A","dict_mayberef","F46A","DICTIGETOPTREF","i D n - c^?","","를 반환하지만, `i`는 부호 있는 `n`비트 정수를 반환합니다. 키 `i`가 범위를 벗어나면 _Null_도 반환합니다.","","",""
+"DICTUGETOPTREF","","#F46B","dict_mayberef","F46B","DICTUGETOPTREF","i D n - c^?","","를 반환하지만, `i`는 부호 없는 `n`비트 정수를 반환합니다. 키 `i`가 범위를 벗어나면 _Null_도 반환합니다.","","",""
+"DICTSETGETOPTREF","","#F46D","dict_mayberef","F46D","DICTSETGETOPTREF","c^? k D n - D' ~c^?","","사전 `D`의 키 `k`에 해당하는 값을 `c^?`로 설정하고(`c^?`가 _Null_이면 키가 대신 삭제됨) 이전 값 `~c^?`를 반환(`k` 키가 이전에 없었다면 대신 _Null_을 반환)하는 `DICTGETOPTREF`와 `DICTSETGETREF의 변형입니다.","","",""
+"DICTISETGETOPTREF","","#F46E","dict_mayberef","F46E","DICTISETGETOPTREF","c^? i D n - D' ~c^?","","원시 `DICTSETGETTOPTREF`와 비슷하지만, 부호 있는 `n`비트 _Integer_ `i`를 키로 사용합니다. i`가 `n`비트에 맞지 않으면, 범위 검사 예외를 던집니다.","","",""
+"DICTUSETGETOPTREF","","#F46F","dict_mayberef","F46F","DICTUSETGETOPTREF","c^? i D n - D' ~c^?","","원시 `DICTSETGETTOPTREF`와 유사하지만 부호 없는 `n`비트 _Integer_ `i`를 키로 사용합니다.","","",""
+"PFXDICTSET","","#F470","dict_prefix","F470","PFXDICTSET","x k D n - D' -1 or D 0","","","","",""
+"PFXDICTREPLACE","","#F471","dict_prefix","F471","PFXDICTREPLACE","x k D n - D' -1 or D 0","","","","",""
+"PFXDICTADD","","#F472","dict_prefix","F472","PFXDICTADD","x k D n - D' -1 or D 0","","","","",""
+"PFXDICTDEL","","#F473","dict_prefix","F473","PFXDICTDEL","k D n - D' -1 or D 0","","","","",""
+"DICTGETNEXT","","#F474","dict_next","F474","DICTGETNEXT","k D n - x' k' -1 or 0","","사전 `D`에서 사전적으로 `k`보다 큰 최소 키 `k'`를 계산하고, 연관 값 `x'`(_Slice_로 표시)와 함께 `k'`(_Slice_로도 표시)를 반환합니다.","","",""
+"DICTGETNEXTEQ","","#F475","dict_next","F475","DICTGETNEXTEQ","k D n - x' k' -1 or 0","","DICTGETNEXT`와 유사하지만 사전적으로 `k`보다 크거나 같은 최소 키 `k'`를 계산합니다.","","",""
+"DICTGETPREV","","#F476","dict_next","F476","DICTGETPREV","k D n - x' k' -1 or 0","","DICTGETNEXT`와 유사하지만 최대 키 `k`를 사전적으로 `k`보다 작게 계산합니다.","","",""
+"DICTGETPREVEQ","","#F477","dict_next","F477","DICTGETPREVEQ","k D n - x' k' -1 or 0","","DICTGETPREV`와 유사하지만 사전적으로 `k`보다 작거나 같은 최대 키 `k'를 계산합니다.","","",""
+"DICTIGETNEXT","","#F478","dict_next","F478","DICTIGETNEXT","i D n - x' i' -1 or 0","","DICTGETNEXT`와 유사하지만 사전 `D`의 모든 키를 빅 엔디안 부호 `n`비트 정수로 해석하고 _Integer_ `i`보다 큰(반드시 `n`비트에 맞지는 않음) 최소 키 `i'`를 계산합니다.","","",""
+"DICTIGETNEXTEQ","","#F479","dict_next","F479","DICTIGETNEXTEQ","i D n - x' i' -1 or 0","","DICTGETNEXTEQ`와 유사하지만 키를 부호화된 `n`비트 정수로 해석합니다.","","",""
+"DICTIGETPREV","","#F47A","dict_next","F47A","DICTIGETPREV","i D n - x' i' -1 or 0","","DICTGETPREV`와 유사하지만 키를 부호 있는 `n`비트 정수로 해석합니다.","","",""
+"DICTIGETPREVEQ","","#F47B","dict_next","F47B","DICTIGETPREVEQ","i D n - x' i' -1 or 0","","DICTGETPREVEQ`와 유사하지만 키를 부호화된 `n`비트 정수로 해석합니다.","","",""
+"DICTUGETNEXT","","#F47C","dict_next","F47C","DICTUGETNEXT","i D n - x' i' -1 or 0","","DICTGETNEXT`와 유사하지만 사전 `D`의 모든 키를 빅 엔디안 부호 없는 `n`비트 정수로 해석하고 _Integer_ `i`보다 큰 최소 키 `i'`를 계산합니다(반드시 `n`비트에 맞지 않을 수 있으며 반드시 음수가 아닐 필요는 없음).","","",""
+"DICTUGETNEXTEQ","","#F47D","dict_next","F47D","DICTUGETNEXTEQ","i D n - x' i' -1 or 0","","DICTGETNEXTEQ`와 유사하지만 키를 부호 없는 `n`비트 정수로 해석합니다.","","",""
+"DICTUGETPREV","","#F47E","dict_next","F47E","DICTUGETPREV","i D n - x' i' -1 or 0","","DICTGETPREV`와 유사하지만 키를 부호 없는 `n`비트 정수로 해석합니다.","","",""
+"DICTUGETPREVEQ","","#F47F","dict_next","F47F","DICTUGETPREVEQ","i D n - x' i' -1 or 0","","DICTGETPREVEQ`와 유사하지만 키를 부호 없는 `n`비트 정수로 해석합니다.","","",""
+"DICTMIN","","#F482","dict_min","F482","DICTMIN","D n - x k -1 or 0","","사전 `D`에서 최소 키 `k`(데이터 비트가 `n`인 _Slice_로 표현됨)를 계산하고, 연관된 값 `x`와 함께 `k`를 반환합니다.","","",""
+"DICTMINREF","","#F483","dict_min","F483","DICTMINREF","D n - c k -1 or 0","","DICTMIN`과 유사하지만 값의 유일한 참조를 _셀_ `c`로 반환합니다.","","",""
+"DICTIMIN","","#F484","dict_min","F484","DICTIMIN","D n - x i -1 or 0","","DICTMIN`과 유사하지만 모든 키가 빅 엔디안 부호 `n` 비트 정수라는 가정 하에 최소 키 `i`를 계산합니다. 반환되는 키와 값은 `DICTMIN` 및 `DICTUMIN`이 계산한 키와 다를 수 있습니다.","","",""
+"DICTIMINREF","","#F485","dict_min","F485","DICTIMINREF","D n - c i -1 or 0","","DICTIMIN`과 유사하지만 값의 유일한 참조를 반환합니다.","","",""
+"DICTUMIN","","#F486","dict_min","F486","DICTUMIN","D n - x i -1 or 0","","DICTMIN`과 유사하지만 키를 부호 없는 `n`비트 _Integer_ `i`로 반환합니다.","","",""
+"DICTUMINREF","","#F487","dict_min","F487","DICTUMINREF","D n - c i -1 or 0","","DICTUMIN`과 유사하지만 값의 유일한 참조를 반환합니다.","","",""
+"DICTMAX","","#F48A","dict_min","F48A","DICTMAX","D n - x k -1 or 0","","사전 `D`에서 최대 키 `k`(데이터 비트가 `n`인 _Slice_로 표현됨)를 계산하고, 연관된 값 `x`와 함께 `k`를 반환합니다.","","",""
+"DICTMAXREF","","#F48B","dict_min","F48B","DICTMAXREF","D n - c k -1 or 0","","DICTMAX`와 유사하지만 값의 유일한 참조를 반환합니다.","","",""
+"DICTIMAX","","#F48C","dict_min","F48C","DICTIMAX","D n - x i -1 or 0","","DICTMAX`와 유사하지만 모든 키가 빅 엔디안 부호 `n`비트 정수라는 가정 하에 최대 키 `i`를 계산합니다. 반환되는 키와 값은 `DICTMAX` 및 `DICTUMAX`에서 계산된 키와 값과 다를 수 있습니다.","","",""
+"DICTIMAXREF","","#F48D","dict_min","F48D","DICTIMAXREF","D n - c i -1 or 0","","DICTIMAX`와 유사하지만 값의 유일한 참조를 반환합니다.","","",""
+"DICTUMAX","","#F48E","dict_min","F48E","DICTUMAX","D n - x i -1 or 0","","DICTMAX`와 유사하지만 키를 부호 없는 `n`비트 _Integer_ `i`로 반환합니다.","","",""
+"DICTUMAXREF","","#F48F","dict_min","F48F","DICTUMAXREF","D n - c i -1 or 0","","DICTUMAX`와 유사하지만 값의 유일한 참조를 반환합니다.","","",""
+"DICTREMMIN","","#F492","dict_min","F492","DICTREMMIN","D n - D' x k -1 or D 0","","사전 `D`에서 최소 키 `k`(데이터 비트가 `n`인 _Slice_로 표현됨)를 계산하고, 사전에서 `k`를 제거한 다음, 연관된 값 `x` 및 수정된 사전 `D'`와 함께 `k`를 반환합니다.","","",""
+"DICTREMMINREF","","#F493","dict_min","F493","DICTREMMINREF","D n - D' c k -1 or D 0","","DICTREMMIN`과 유사하지만 값의 유일한 참조를 _셀_ `c`로 반환합니다.","","",""
+"DICTIREMMIN","","#F494","dict_min","F494","DICTIREMMIN","D n - D' x i -1 or D 0","","DICTREMMIN`과 유사하지만 모든 키가 빅 엔디안 부호 `n` 비트 정수라는 가정 하에 최소 키 `i`를 계산합니다. 반환되는 키와 값은 `DICTREMMIN` 및 `DICTUREMMIN`에서 계산된 것과 다를 수 있습니다.","","",""
+"DICTIREMMINREF","","#F495","dict_min","F495","DICTIREMMINREF","D n - D' c i -1 or D 0","","DICTIREMMIN`과 유사하지만 값의 유일한 참조를 반환합니다.","","",""
+"DICTUREMMIN","","#F496","dict_min","F496","DICTUREMMIN","D n - D' x i -1 or D 0","","DICTREMMIN`과 유사하지만 키를 부호 없는 `n`비트 _Integer_ `i`로 반환합니다.","","",""
+"DICTUREMMINREF","","#F497","dict_min","F497","DICTUREMMINREF","D n - D' c i -1 or D 0","","DICTUREMMIN`과 유사하지만 값의 유일한 참조를 반환합니다.","","",""
+"DICTREMMAX","","#F49A","dict_min","F49A","DICTREMMAX","D n - D' x k -1 or D 0","","사전 `D`에서 최대 키 `k`(데이터 비트가 `n`인 _Slice_로 표현됨)를 계산하고, 사전에서 `k`를 제거한 다음, 연관 값 `x` 및 수정된 사전 `D'`와 함께 `k`를 반환합니다.","","",""
+"DICTREMMAXREF","","#F49B","dict_min","F49B","DICTREMMAXREF","D n - D' c k -1 or D 0","","DICTREMMAX`와 유사하지만 값의 유일한 참조를 _셀_ `c`로 반환합니다.","","",""
+"DICTIREMMAX","","#F49C","dict_min","F49C","DICTIREMMAX","D n - D' x i -1 or D 0","","DICTREMMAX`와 유사하지만 모든 키가 빅 엔디안 부호 `n` 비트 정수라는 가정 하에 최소 키 `i`를 계산합니다. 반환되는 키와 값은 `DICTREMMAX` 및 `DICTUREMMAX`가 계산한 것과 다를 수 있습니다.","","",""
+"DICTIREMMAXREF","","#F49D","dict_min","F49D","DICTIREMMAXREF","D n - D' c i -1 or D 0","","DICTIREMMAX`와 유사하지만 값의 유일한 참조를 반환합니다.","","",""
+"DICTUREMMAX","","#F49E","dict_min","F49E","DICTUREMMAX","D n - D' x i -1 or D 0","","DICTREMMAX`와 유사하지만 키를 부호 없는 `n`비트 _Integer_ `i`로 반환합니다.","","",""
+"DICTUREMMAXREF","","#F49F","dict_min","F49F","DICTUREMMAXREF","D n - D' c i -1 or D 0","","DICTUREMMAX`와 유사하지만 값의 유일한 참조를 반환합니다.","","",""
+"DICTIGETJMP","","#F4A0","dict_special","F4A0","DICTIGETJMP","i D n - ","","DICTIGET`과 비슷하지만, 성공 시 `x` `BLESS`가 연속으로 이어지며 그 뒤에 `JMPX`가 붙습니다. 실패하면 아무것도 하지 않습니다. 스위치`/`케이스` 구문을 구현할 때 유용합니다.","","",""
+"DICTUGETJMP","","#F4A1","dict_special","F4A1","DICTUGETJMP","i D n - ","","DICTIGETJMP`와 유사하지만 `DICTIGET` 대신 `DICTUGET`을 수행합니다.","","",""
+"DICTIGETEXEC","","#F4A2","dict_special","F4A2","DICTIGETEXEC","i D n - ","","DICTIGETJMP`와 비슷하지만 `JMPX` 대신 `EXECUTE`를 사용합니다.","","",""
+"DICTUGETEXEC","","#F4A3","dict_special","F4A3","DICTUGETEXEC","i D n - ","","DICTUGETJMP`와 비슷하지만 `JMPX` 대신 `EXECUTE`를 사용합니다.","","",""
+"DICTPUSHCONST","","#F4A6_ d:^Cell n:uint10","dict_special","F4A6_n","[ref] [n] DICTPUSHCONST"," - D n","34","비어 있지 않은 상수 사전 `D`(`셀^?`로)를 키 길이 `0 <= n <= 1023`과 함께 인스트럭션의 일부로 저장하여 밀어넣습니다. 사전 자체는 현재 연속의 나머지 참조 중 첫 번째 참조에서 생성됩니다. 이러한 방식으로 완전한 `DICTPUSHCONST` 명령은 먼저 `xF4A4_`를 직렬화한 다음 비어 있지 않은 사전 자체(하나의 `1` 비트와 셀 참조)와 부호 없는 10비트 정수 `n`(마치 `STU 10` 명령처럼)을 직렬화하여 얻을 수 있습니다. 빈 딕셔너리는 대신 `NEWDICT` 프리미티브에 의해 푸시될 수 있습니다.","","",""
+"PFXDICTGETQ","","#F4A8","dict_special","F4A8","PFXDICTGETQ","s D n - s' x s'' -1 or s 0","","Cell^?` `D` 및 `0 <= n <= 1023`으로 표현되는 접두사 코드 사전에 존재하는 _Slice_ `s`의 고유 접두사를 조회합니다. 발견되면 `s`의 접두사는 `s'`로, 해당 값(_Slice_이기도 함)은 `x`로 반환됩니다. 나머지 `s`는 _Slice_ `s''`로 반환됩니다. 접두사 코드 사전 `D`에 `s`의 접두사가 키가 없으면 변경되지 않은 `s`와 실패를 나타내는 0 플래그를 반환합니다.","","",""
+"PFXDICTGET","","#F4A9","dict_special","F4A9","PFXDICTGET","s D n - s' x s''","","PFXDICTGET`과 유사하지만 실패 시 셀 역직렬화 실패 예외를 던집니다.","","",""
+"PFXDICTGETJMP","","#F4AA","dict_special","F4AA","PFXDICTGETJMP","s D n - s' s'' or s","","PFXDICTGETQ`와 유사하지만, 성공하면 `BLESS`는 `x` 값을 _Continuation_에 저장하고 `JMPX`처럼 제어권을 넘깁니다. 실패하면 `s`를 변경되지 않은 상태로 반환하고 실행을 계속합니다.","","",""
+"PFXDICTGETEXEC","","#F4AB","dict_special","F4AB","PFXDICTGETEXEC","s D n - s' s''","","PFXDICTGETJMP`와 비슷하지만 `EXEC`는 발견한 연속을 점프하는 대신 실행합니다. 실패하면 셀 역직렬화 예외를 던집니다.","","",""
+"PFXDICTCONSTGETJMP","","#F4AE_ d:^Cell n:uint10","dict_special","F4AE_n","[ref] [n] PFXDICTCONSTGETJMP
+[ref] [n] PFXDICTSWITCH","s - s' s'' or s","","0 <= n <= 1023`에 대한 `[n] DICTPUSHCONST`를 `PFXDICTGETJMP`와 결합합니다.","","",""
+"DICTIGETJMPZ","","#F4BC","dict_special","F4BC","DICTIGETJMPZ","i D n - i or nothing","","실패 시 인덱스 `i`를 반환하는 `DICTIGETJMP`의 변형입니다.","","",""
+"DICTUGETJMPZ","","#F4BD","dict_special","F4BD","DICTUGETJMPZ","i D n - i or nothing","","실패 시 인덱스 `i`를 반환하는 `DICTUGETJMP`의 변형입니다.","","",""
+"DICTIGETEXECZ","","#F4BE","dict_special","F4BE","DICTIGETEXECZ","i D n - i or nothing","","실패 시 인덱스 `i`를 반환하는 `DICTIGETEXEC`의 변형입니다.","","",""
+"DICTUGETEXECZ","","#F4BF","dict_special","F4BF","DICTUGETEXECZ","i D n - i or nothing","","실패 시 인덱스 `i`를 반환하는 `DICTUGETEXEC`의 변형입니다.","","",""
+"SUBDICTGET","","#F4B1","dict_sub","F4B1","SUBDICTGET","k l D n - D'","","접두사 `k`로 시작하는 모든 키로 구성된 서브 딕셔너리를 `n` 비트 키를 가진 `해시맵E(n,X)` 타입의 사전 `D`에서 길이 `l`(_Slice_로 표시되며, 첫 번째 `0 <= l <= n <= 1023` 데이터 비트가 키로 사용됨)로 구축합니다. 성공하면, 같은 타입의 새로운 하위 딕셔너리 `HashmapE(n,X)`를 _Slice_ `D'`로 반환합니다.","","",""
+"SUBDICTIGET","","#F4B2","dict_sub","F4B2","SUBDICTIGET","x l D n - D'","","접두사가 부호 있는 빅 엔디안 `l` 비트 _Integer_ `x`로 표시되는 `SUBDICTGET`의 변형으로, 반드시 `l <= 257`이어야 합니다.","","",""
+"SUBDICTUGET","","#F4B3","dict_sub","F4B3","SUBDICTUGET","x l D n - D'","","접두사가 부호 없는 빅 엔디안 `l` 비트 _Integer_ `x`로 표시되는 `SUBDICTGET`의 변형으로, 반드시 `l <= 256`이어야 합니다.","","",""
+"SUBDICTRPGET","","#F4B5","dict_sub","F4B5","SUBDICTRPGET","k l D n - D'","","서브딕트겟`과 유사하지만 새 딕셔너리 `D'`의 모든 키에서 공통 접두사 `k`를 제거하여 `해시맵E(n-l,X)` 유형이 됩니다.","","",""
+"SUBDICTIRPGET","","#F4B6","dict_sub","F4B6","SUBDICTIRPGET","x l D n - D'","","접두사가 부호 있는 빅 엔디안 `l` 비트 _Integer_ `x`로 표시되는 `SUBDICTRPGET`의 변형으로, 반드시 `l <= 257`이어야 합니다.","","",""
+"SUBDICTURPGET","","#F4B7","dict_sub","F4B7","SUBDICTURPGET","x l D n - D'","","접두사가 부호 없는 빅 엔디안 `l` 비트 _Integer_ `x`로 표시되는 `SUBDICTRPGET`의 변형으로, 여기서 반드시 `l <= 256`이어야 합니다.","","",""
+"ACCEPT","","#F800","app_gas","F800","ACCEPT","-","26","현재 가스 한도 `g_l`을 최대 허용값 `g_m`으로 설정하고 가스 크레딧 `g_c`을 0으로 재설정하여 이 과정에서 `g_r`의 값을 `g_c`만큼 감소시킵니다.
+즉, 현재 스마트 콘트랙트는 현재 트랜잭션을 완료하기 위해 일부 가스를 구매하기로 동의합니다. 이 작업은 자체적으로 가치가 없는(따라서 가스가 없는) 외부 메시지를 처리하는 데 필요합니다.","","",""
+"SETGASLIMIT","","#F801","app_gas","F801","SETGASLIMIT","g - ","26","현재 가스 한도 `g_l`을 최소값인 `g`와 `g_m`으로 설정하고 가스 크레딧 `g_c`을 0으로 초기화합니다. 지금까지 소비된 가스(현재 명령 포함)가 결과 값인 `g_l`을 초과하면, 새로운 가스 한도를 설정하기 전에 (처리되지 않은) 가스 부족 예외가 발생합니다. 인자 `g >= 2^63-1`이 포함된 `SETGASLIMIT`는 `ACCEPT`와 동일하다는 점에 유의하세요.","","",""
+"COMMIT","","#F80F","app_gas","F80F","COMMIT","-","26","레지스터 `c4`('영구 데이터')와 `c5`('액션')의 현재 상태를 커밋하여 나중에 예외가 발생하더라도 현재 실행이 저장된 값으로 '성공'한 것으로 간주되도록 합니다.","","",""
+"RANDU256","","#F810","app_rnd","F810","RANDU256","- x","26+|c7|+|c1_1|","새로운 의사 랜덤 256비트 부호 없는 _정수_ `x`를 생성합니다. 알고리즘은 다음과 같습니다: `r`이 32바이트 배열로 간주되는 랜덤 시드의 이전 값인 경우(부호 없는 256비트 정수의 빅 엔디안 표현을 구성하여), 그 `sha512(r)`을 계산하고 이 해시의 첫 32바이트는 랜덤 시드의 새 값 `r'`로 저장되고 나머지 32바이트는 다음 랜덤 값 `x`로 반환합니다.","","",""
+"RAND","","#F811","app_rnd","F811","RAND","y - z","26+|c7|+|c1_1|","0...y-1`(또는 `y<0`인 경우 `y...-1`) 범위의 새로운 의사 난수 `z`를 생성합니다. 보다 정확하게는 `RAND256U`에서와 같이 부호가 없는 임의의 값 `x`가 생성된 다음 `z:=floor(x*y/2^256)`가 계산됩니다.
+RANDU256` `256 MULRSHIFT`에 해당합니다.","","",""
+"SETRAND","","#F814","app_rnd","F814","SETRAND","x - ","26+|c7|+|c1_1|","랜덤 시드를 부호 없는 256비트 _정수_ `x`로 설정합니다.","","",""
+"ADDRAND","","#F815","app_rnd","F815","ADDRAND
+RANDOMIZE","x - ","26","무작위 시드를 두 개의 32바이트 문자열을 연결한 '샤'로 설정하여 부호 없는 256비트 _정수_ `x`를 무작위 시드 `r`에 혼합합니다: 첫 번째는 이전 시드 `r`의 빅 엔디안 표현을, 두 번째는 `x`의 빅 엔디안 표현을 사용합니다.","","",""
+"GETPARAM","","#F82 i:uint4","app_config","F82i","[i] GETPARAM"," - x","26","0 <= i <= 15`에 대해 `c7`에 제공된 _Tuple_에서 `i`번째 파라미터를 반환합니다. c7 PUSHCTR` `FIRST` `[i] INDEX`에 해당합니다.
+이러한 내부 연산 중 하나가 실패하면 적절한 타입 검사 또는 범위 검사 예외를 던집니다.","","",""
+"NOW","GETPARAM","#F823","app_config","F823","NOW"," - x","26","현재 유닉스 시간을 _Integer_로 반환합니다. c7`부터 시작하는 요청된 값을 복구할 수 없는 경우, 적절히 타입 검사 또는 범위 검사 예외를 던집니다.
+3 GETPARAM`과 동일합니다.","","",""
+"BLOCKLT","GETPARAM","#F824","app_config","F824","BLOCKLT"," - x","26","현재 블록의 시작 논리 시간을 반환합니다.
+4 GETPARAM`에 해당합니다.","","",""
+"LTIME","GETPARAM","#F825","app_config","F825","LTIME"," - x","26","현재 트랜잭션의 논리적 시간을 반환합니다.
+5 GETPARAM`에 해당합니다.","","",""
+"RANDSEED","GETPARAM","#F826","app_config","F826","RANDSEED"," - x","26","현재 임의의 시드를 부호 없는 256비트 _Integer_로 반환합니다.
+6 GETPARAM`에 해당합니다.","","",""
+"BALANCE","GETPARAM","#F827","app_config","F827","BALANCE"," - t","26","스마트 컨트랙트의 남은 잔액을 _Integer_(나노그램 단위의 남은 그램 잔액)와 _Maybe Cell_('추가 통화'의 잔액을 나타내는 32비트 키가 있는 사전)로 구성된 _Tuple_로 반환합니다.
+7 GETPARAM`에 해당합니다.
+SENDRAWMSG`와 같은 `RAW` 프리미티브는 이 필드를 업데이트하지 않는다는 점에 유의하세요.","","",""
+"MYADDR","GETPARAM","#F828","app_config","F828","MYADDR"," - s","26","현재 스마트 컨트랙트의 내부 주소를 `MsgAddressInt`가 포함된 _Slice_로 반환합니다. 필요한 경우 `PARSEMSGADDR` 또는 `REWRITESTDADDR`과 같은 프리미티브를 사용하여 추가로 파싱할 수 있습니다.
+8 GETPARAM`에 해당합니다.","","",""
+"CONFIGROOT","GETPARAM","#F829","app_config","F829","CONFIGROOT"," - D","26","현재 전역 구성 사전이 있는 _Maybe Cell_ `D`를 반환합니다. 9 GETPARAM `에 해당합니다.","","",""
+"CONFIGDICT","","#F830","app_config","F830","CONFIGDICT"," - D 32","26","전역 구성 딕셔너리를 키 길이(32)와 함께 반환합니다.
+CONFIGROOT` `32 PUSHINT`에 해당합니다.","","",""
+"CONFIGPARAM","","#F832","app_config","F832","CONFIGPARAM","i - c -1 or 0","","정수 인덱스 `i`가 포함된 전역 구성 매개변수의 값을 _셀_ `c`로 반환하고 성공을 나타내는 플래그를 반환합니다.
+CONFIGDICT` `DICTIGETREF`와 동일합니다.","","",""
+"CONFIGOPTPARAM","","#F833","app_config","F833","CONFIGOPTPARAM","i - c^?","","정수 인덱스 `i`가 있는 전역 구성 매개변수의 값을 _Maybe Cell_ `c^?`로 반환합니다.
+CONFIGDICT` `DICTIGETOPTREF`와 동등합니다.","","",""
+"GETGLOBVAR","","#F840","app_global","F840","GETGLOBVAR","k - x","26","0 <= k < 255`에 대한 `k`번째 전역 변수를 반환합니다.
+c7 PUSHCTR` `SWAP` `INDEXVARQ`에 해당합니다.","","",""
+"GETGLOB","","#F85_ k:(## 5) {1 <= k}","app_global","F85_k","[k] GETGLOB"," - x","26","1 <= k <= 31`에 대한 `k`번째 전역 변수를 반환합니다.
+c7 PUSHCTR` `[k] INDEXQ`에 해당합니다.","","",""
+"SETGLOBVAR","","#F860","app_global","F860","SETGLOBVAR","x k - ","26+|c7’|","0 <= k < 255`에 대해 `x`를 `k`번째 전역 변수에 할당합니다.
+c7 PUSHCTR` `ROTREV` `SETINDEXVARQ` `c7 POPCTR`에 해당합니다.","","",""
+"SETGLOB","","#F87_ k:(## 5) {1 <= k}","app_global","F87_k","[k] SETGLOB","x - ","26+|c7’|","1 <= k <= 31`의 `k`번째 전역 변수에 `x`를 할당합니다.
+c7 PUSHCTR` `SWAP` `k SETINDEXQ` `c7 POPCTR`과 동등합니다.","","",""
+"HASHCU","","#F900","app_crypto","F900","HASHCU","c - x","26","셀_ `c`의 표현 해시를 계산하여 256비트 부호 없는 정수 `x`로 반환합니다. 셀 트리로 표현되는 임의의 엔티티의 서명을 서명하고 확인하는 데 유용합니다.","","",""
+"HASHSU","","#F901","app_crypto","F901","HASHSU","s - x","526","슬라이스_ `s`의 해시를 계산하여 256비트 부호 없는 정수 `x`로 반환합니다. 결과는 `s`의 데이터와 참조만 포함된 일반 셀을 생성하고 `HASHCU`로 해시를 계산한 경우와 동일합니다.","","",""
+"SHA256U","","#F902","app_crypto","F902","SHA256U","s - x","26","슬라이스_ `s`의 데이터 비트 중 `샤`를 계산합니다. s`의 비트 길이가 8로 나눌 수 없는 경우 셀 언더플로 예외가 발생합니다. 해시 값은 256비트 부호 없는 정수 `x`로 반환됩니다.","","",""
+"CHKSIGNU","","#F910","app_crypto","F910","CHKSIGNU","h s k - ?","26","공개 키 `k`(256비트 부호 없는 정수로도 표현됨)를 사용하여 해시 `h`(일반적으로 일부 데이터의 해시로 계산되는 256비트 부호 없는 정수)의 Ed25519 서명 `s`를 확인합니다.
+서명 `s`는 512비트 이상의 데이터 비트를 포함하는 _슬라이스_여야 하며, 처음 512비트만 사용됩니다. 서명이 유효하면 결과는 `-1`이고, 그렇지 않으면 `0`입니다.
+CHKSIGNU`는 `ROT` `NEWC` `256 STU` `ENDC` `ROTREV` `CHKSIGNS`, 즉 첫 번째 인수 `d`가 `h`를 포함하는 256비트 _Slice_로 설정된 `CHKSIGNS`와 동일하다는 것을 주목하세요. 따라서 `h`가 일부 데이터의 해시로 계산되면 이러한 데이터는 `CHKSIGNS` 내에서 두 번째로 발생하는 해싱인 `두 번_해싱됩니다.","","",""
+"CHKSIGNS","","#F911","app_crypto","F911","CHKSIGNS","d s k - ?","26","공개 키 `k`를 사용하여 `s`가 `CHKSIGNU`와 유사하게 _Slice_ `d`의 데이터 부분에 대한 유효한 Ed25519 서명인지 확인합니다. 슬라이스_ `d`의 비트 길이가 8로 나눌 수 없는 경우 셀 언더플로 예외를 발생시킵니다. Ed25519 서명의 검증은 표준 검증이며, `Sha`를 사용하여 `d`를 실제로 서명된 256비트 숫자로 줄입니다.","","",""
+"CDATASIZEQ","","#F940","app_misc","F940","CDATASIZEQ","c n - x y z -1 or 0","","Cell_ `c`에 루팅된 dag에서 고유 셀 `x`, 데이터 비트 `y`, 셀 참조 `z`의 개수를 재귀적으로 계산하여 동일한 셀의 식별을 고려하여 이 dag가 사용하는 총 저장 공간을 효과적으로 반환합니다. x`, `y`, `z`의 값은 이미 방문한 셀의 방문을 방지하기 위해 방문한 셀 해시의 해시 테이블을 사용하여 이 dag의 깊이 우선 순회를 통해 계산됩니다. 방문한 셀의 총 개수 `x`는 음수가 아닌 _Integer_ `n`을 초과할 수 없으며, 그렇지 않으면 `(n+1)` 번째 셀을 방문하기 전에 계산이 중단되고 0을 반환하여 실패를 나타냅니다. c`가 _Null_이면 `x=y=z=0`을 반환합니다.","","",""
+"CDATASIZE","","#F941","app_misc","F941","CDATASIZE","c n - x y z","","실패 시 셀 오버플로 예외(8)를 던지는 `CDATASIZEQ`의 조용하지 않은 버전입니다.","","",""
+"SDATASIZEQ","","#F942","app_misc","F942","SDATASIZEQ","s n - x y z -1 or 0","","데이터사이즈`와 비슷하지만, _셀_ 대신 _슬라이스_ `s`를 받습니다. 반환된 `x` 값은 슬라이스 `s` 자체를 포함하는 셀을 고려하지 않지만, `s`의 데이터 비트와 셀 참조는 `y`와 `z`에서 고려됩니다.","","",""
+"SDATASIZE","","#F943","app_misc","F943","SDATASIZE","s n - x y z","","실패 시 셀 오버플로 예외(8)를 던지는 `SDATASIZEQ`의 조용하지 않은 버전입니다.","","",""
+"LDGRAMS","","#FA00","app_currency","FA00","LDGRAMS
+LDVARUINT16","s - x s'","26","Slice_ `s`에서 `Gram` 또는 `VarUInteger 16` 양을 로드(역직렬화)하고, `s`의 나머지 `s'와 함께 양을 _Integer_ `x`로 반환합니다. x`의 예상 직렬화는 4비트 부호 없는 빅엔디안 정수 `l`과 `x`의 `8l`비트 부호 없는 빅엔디안 표현으로 구성됩니다.
+순 효과는 대략 `4 LDU` `SWAP` `3 LSHIFT#` `LDUX`와 같습니다.","","",""
+"LDVARINT16","","#FA01","app_currency","FA01","LDVARINT16","s - x s'","26","LDVARUINT16`과 유사하지만, _signed_ _Integer_ `x`를 로드합니다.
+대략 `4 LDU` `SWAP` `3 LSHIFT#` `LDIX`와 같습니다.","","",""
+"STGRAMS","","#FA02","app_currency","FA02","STGRAMS
+STVARUINT16","b x - b'","26","0...2^120-1` 범위의 _Integer_ `x`를 _Builder_ `b`에 저장(직렬화)하고 그 결과 _Builder_ `b'`를 반환합니다. x`의 직렬화는 `x<2^(8l)`가 되는 가장 작은 정수 `l>=0`인 4비트 부호 없는 빅엔디안 정수 `l`과 `x`의 `8l` 비트 부호 없는 빅엔디안 표현으로 구성됩니다. x`가 지원되는 범위에 속하지 않으면 범위 검사 예외가 발생합니다.","","",""
+"STVARINT16","","#FA03","app_currency","FA03","STVARINT16","b x - b'","26","STVARUINT16`과 유사하지만 `-2^119...2^119-1` 범위의 _signed_ _Integer_ `x`를 직렬화합니다.","","",""
+"LDMSGADDR","","#FA40","app_addr","FA40","LDMSGADDR","s - s' s''","26","슬라이스_ `s`에서 유효한 `메시지주소`인 유일한 접두사를 로드하고 이 접두사 `s'`와 `s`의 나머지 `s'`를 슬라이스로 반환합니다.","","",""
+"LDMSGADDRQ","","#FA41","app_addr","FA41","LDMSGADDRQ","s - s' s'' -1 or s 0","26","성공하면 추가 `-1`을 푸시하고, 실패하면 원래 `에스`와 0을 푸시하는 조용한 버전의 `LDMSGADDR`입니다.","","",""
+"PARSEMSGADDR","","#FA42","app_addr","FA42","PARSEMSGADDR","s - t","26","유효한 `메시지 주소`가 포함된 _Slice_ `s`를 이 `메시지 주소`의 개별 필드가 있는 _Tuple_ `t`로 분해합니다. s`가 유효한 `MsgAddress`가 아닌 경우 셀 역직렬화 예외가 발생합니다.","","",""
+"PARSEMSGADDRQ","","#FA43","app_addr","FA43","PARSEMSGADDRQ","s - t -1 or 0","26","조용한 버전의 `PARSEMSGADDR`: 오류 시 예외를 던지는 대신 0을 반환합니다.","","",""
+"REWRITESTDADDR","","#FA44","app_addr","FA44","REWRITESTDADDR","s - x y","26","유효한 `MsgAddressInt`(일반적으로 `msg_addr_std`)가 포함된 _Slice_ `s`를 구문 분석하고, `anycast`(있는 경우)에서 주소의 같은 길이 접두사로 다시 쓰기를 적용한 다음, 작업 체인 `x`와 256비트 주소 `y`를 모두 정수로 반환합니다. 주소가 256비트가 아니거나 `s`가 `MsgAddressInt`의 유효한 직렬화가 아닌 경우 셀 역직렬화 예외가 발생합니다.","","",""
+"REWRITESTDADDRQ","","#FA45","app_addr","FA45","REWRITESTDADDRQ","s - x y -1 or 0","26","원시 `REWRITESTDADDR`의 조용한 버전입니다.","","",""
+"REWRITEVARADDR","","#FA46","app_addr","FA46","REWRITEVARADDR","s - x s'","26","정확히 256비트 길이가 아니더라도 (재작성된) 주소를 _Slice_ `s`로 반환하는 `REWRITESTDADDR`의 변형입니다(`msg_addr_var`로 표시).","","",""
+"REWRITEVARADDRQ","","#FA47","app_addr","FA47","REWRITEVARADDRQ","s - x s' -1 or 0","26","원시 `REWRITEVARADDR`의 조용한 버전입니다.","","",""
+"SENDRAWMSG","","#FB00","app_actions","FB00","SENDRAWMSG","c x - ","526","셀 `c`_에 포함된 원시 메시지를 전송하며, 여기에는 올바르게 직렬화된 객체 `메시지 X`가 포함되어야 합니다. 단, 소스 주소에 더미 값 `addr_none`(현재 스마트 컨트랙트 주소로 자동 대체)이 허용되고 `ihr_fee`, `fwd_fee`, `created_lt` 및 `created_at` 필드에는 임의의 값(현재 트랜잭션의 작업 단계에서 올바른 값으로 다시 작성)이 있을 수 있다는 예외가 있을 수 있음). 정수 매개변수 `x`에는 플래그가 포함됩니다. 현재 `x=0`은 일반 메시지에 사용되며, `x=128`은 (원래 메시지에 표시된 값 대신) 현재 스마트 컨트랙트의 잔액을 모두 전달해야 하는 메시지에 사용됩니다; 'x=64'는 새 메시지에 처음에 표시된 값에 더해 인바운드 메시지의 남은 값을 모두 전달하는 메시지에 사용되며(비트 0이 설정되지 않은 경우 이 금액에서 가스 요금이 차감됨), `x'=x+1`은 발신자가 전송 수수료를 별도로 지불하고자 함을 의미하고, `x'=x+2`는 액션 단계에서 이 메시지를 처리하는 동안 발생하는 모든 오류는 무시해야 함을 의미합니다. 마지막으로 `x'=x+32`는 결과 잔액이 0이면 현재 계좌를 소멸해야 함을 의미합니다. 이 플래그는 보통 `+128`과 함께 사용됩니다.","","",""
+"RAWRESERVE","","#FB02","app_actions","FB02","RAWRESERVE","x y - ","526","계정의 잔액에서 정확히 `x` 나노그램(`y=0`인 경우), 최대 `x` 나노그램(`y=2`인 경우) 또는 `x` 나노그램을 제외한 전량(`y=1` 또는 `y=3`인 경우)을 예약하는 출력 액션을 생성합니다. 이는 대략 `x` 나노그램(또는 `b`가 잔액인 경우 `b-x` 나노그램)을 자신에게 전달하는 아웃바운드 메시지를 생성하는 것과 같으므로 후속 출력 작업에서 잔액보다 더 많은 돈을 쓸 수 없게 됩니다. y`의 비트 `+2`는 지정된 금액을 예약할 수 없는 경우 외부 액션이 실패하지 않고 남은 잔액이 모두 예약됨을 의미합니다. y`의 비트 `+8`은 추가 작업을 수행하기 전에 `x:=-x`를 의미합니다. y`의 비트 `+4`는 다른 확인 및 작업을 수행하기 전에 모든 추가 통화를 포함하여 경상 계좌의 원래 잔액(계산 단계 이전)만큼 `x`가 증가됨을 의미합니다. 현재 `x`는 음수가 아닌 정수여야 하며 `y`는 `0...15` 범위에 있어야 합니다.","","",""
+"RAWRESERVEX","","#FB03","app_actions","FB03","RAWRESERVEX","x D y - ","526","RAWRESERVE`와 유사하지만 추가 통화와 함께 사전 `D`(_셀_ 또는 _Null_로 표시)도 허용합니다. 이런 식으로 그램 이외의 통화를 예약할 수 있습니다.","","",""
+"SETCODE","","#FB04","app_actions","FB04","SETCODE","c - ","526","이 스마트 컨트랙트 코드를 _셀_ `c`가 지정한 코드로 변경하는 출력 액션을 생성합니다. 이 변경 사항은 스마트 컨트랙트의 현재 실행이 성공적으로 종료된 후에만 적용됩니다.","","",""
+"SETLIBCODE","","#FB06","app_actions","FB06","SETLIBCODE","c x - ","526","Cell_ `c`에 주어진 코드로 라이브러리를 추가하거나 제거하여 이 스마트 컨트랙트 라이브러리 컬렉션을 수정하는 출력 액션을 생성합니다. x=0`이면 라이브러리가 이전에 컬렉션에 있었다면 실제로 제거됩니다(그렇지 않은 경우 이 액션은 아무 작업도 수행하지 않습니다). x=1`이면 라이브러리가 프라이빗 라이브러리로 추가되고, `x=2`이면 라이브러리가 퍼블릭 라이브러리로 추가되며(현재 스마트 컨트랙트가 마스터체인에 있는 경우 모든 스마트 컨트랙트가 사용할 수 있게 됨), 이전에 컬렉션에 라이브러리가 있었다면 `x`에 따라 공개/비공개 상태가 변경됩니다. 또한 `x`에 `16`을 추가하여 실패 시 바운스 트랜잭션을 활성화할 수 있습니다. 0...2 (+16 가능)` 이외의 `x` 값은 유효하지 않습니다.","","",""
+"CHANGELIB","","#FB07","app_actions","FB07","CHANGELIB","h x - ","526","SETLIBCODE`와 유사하게 출력 액션을 생성하지만, 라이브러리 코드 대신 해시를 부호 없는 256비트 정수 `h`로 받습니다. x!=0`이고 해시가 `h`인 라이브러리가 이 스마트 컨트랙트의 라이브러리 컬렉션에 없는 경우 이 출력 작업은 실패합니다.","","",""
+"DEBUG","","#FE nn:(#<= 239)","debug","FEnn","{nn} DEBUG","-","26","`0 <= nn < 240`","","",""
+"DEBUGSTR","","#FEF n:(## 4) ssss:((n * 8 + 8) * Bit)","debug","FEFnssss","{string} DEBUGSTR
+{string} {x} DEBUGSTRI","-","26","`0 <= n < 16`. SSSS`의 길이는 `n+1` 바이트입니다.
+{string}`는 [문자열 리터럴]입니다(https://github.com/Piterden/TON-docs/blob/master/Fift.%20A%20Brief%20Introduction.md#user-content-29-string-literals).
+디버그스트립`: `ssss`는 주어진 문자열입니다.
+디버그스트립`: `ssss`는 1바이트 정수 `0 <= x <= 255` 뒤에 주어진 문자열입니다.","","",""
+"DUMPSTK","DEBUG","#FE00","debug","FE00","DUMPSTK","-","26","스택(최대 상위 255개 값)을 덤프하고 총 스택 깊이를 표시합니다.","","",""
+"DUMP","DEBUG","#FE2 i:uint4","debug","FE2i","s[i] DUMP","-","26","s[i]`를 덤프합니다.","","",""
+"SETCP","","#FF nn:(#<= 239)","codepage","FFnn","[nn] SETCP","-","26","TVM 코드페이지 `0 <= nn < 240`을 선택합니다. 코드페이지가 지원되지 않으면 잘못된 옵코드 예외가 발생합니다.","","",""
+"SETCP0","SETCP","#FF00","codepage","FF00","SETCP0","-","26","이 문서에 설명된 대로 TVM(테스트) 코드페이지 0을 선택합니다.","","",""
+"SETCP_SPECIAL","","#FFF z:(## 4) {1 <= z}","codepage","FFFz","[z-16] SETCP","-","26","1 <= z <= 15`에 대해 TVM 코드페이지 `z-16`을 선택합니다. 음수 코드페이지 `-13...-1`은 다른 코드페이지에서 TVM의 실행을 검증하는 데 필요한 제한된 버전의 TVM을 위해 예약되어 있습니다. 네거티브 코드페이지 `-14`는 실험용 코드페이지를 위해 예약되어 있으며, 다른 TVM 구현 간에 반드시 호환되는 것은 아니므로 프로덕션 버전의 TVM에서는 비활성화해야 합니다.","","",""
+"SETCPX","","#FFF0","codepage","FFF0","SETCPX","c - ","26","스택 상단에 `-2^15 <= c < 2^15`가 전달된 코드페이지 `c`를 선택합니다.","","",""
+"MYCODE","","#F8210","app_config","F8210","MYCODE","- c","26","c7에서 스마트 컨트랙트 코드를 가져옵니다. 10 GETPARAM`에 해당합니다.","","",""
+"INCOMINGVALUE","","#F8211","app_config","F8211","INCOMINGVALUE","- t","26","c7에서 들어오는 메시지의 값을 가져옵니다. 11 GETPARAM`에 해당합니다.","","",""
+"STORAGEFEES","","#F8212","app_config","F8212","STORAGEFEES","- i","26","c7에서 저장 단계 수수료 값을 가져옵니다. 12 GETPARAM`에 해당합니다.","","",""
+"PREVBLOCKSINFOTUPLE","","#F8213","app_config","F8213","PREVBLOCKSINFOTUPLE","- t","26","PrevBlocksInfo: `[last_mc_blocks"," prev_key_block]` from c7. Equivalent to `13 GETPARAM`.","",""
+"PREVMCBLOCKS","","#F83400","app_config","F83400","PREVMCBLOCKS","- t","34","c7(매개변수 13)에서 PrevBlocksInfo의 `last_mc_blocks` 부분을 가져옵니다.","","",""
+"PREVKEYBLOCK","","#F83401","app_config","F83401","PREVKEYBLOCK","- t","34","c7(매개변수 13)에서 PrevBlocksInfo의 `prev_key_block` 부분을 가져옵니다.","","",""
+"GLOBALID","","#F835","app_config","F835","GLOBALID","- i","26","19개 네트워크 구성에서 global_id를 검색합니다.","","",""
+"GASCONSUMED","","#F807","app_gas","F807","GASCONSUMED","- g_c","26","지금까지 VM이 소비한 가스(이 명령 포함)를 반환합니다.","","",""
+"MULADDDIVMOD","","#A980","arithm_div","A980","MULADDDIVMOD","x y w z - q=floor((xy+w)/z) r=(xy+w)-zq","26","곱셈 수행"," addition"," division"," and modulo in one step. Calculates q as floor((xy+w)/z) and r as (xy+w)-zq."
+"MULADDDIVMODR","","#A981","arithm_div","A981","MULADDDIVMODR","x y w z - q=round((xy+w)/z) r=(xy+w)-zq","26","MULADDDIVMOD와 유사하지만 q를 라운드((xy+w)/z)로 계산합니다.","","",""
+"MULADDDIVMODC","","#A982","arithm_div","A982","MULADDDIVMODC","x y w z - q=ceil((xy+w)/z) r=(xy+w)-zq","26","MULADDDIVMOD와 유사하지만 q를 ceil((xy+w)/z)로 계산합니다.","","",""
+"ADDDIVMOD","","#A900","arithm_div","A900","ADDDIVMOD","x w z - q=floor((x+w)/z) r=(x+w)-zq","26","덧셈 수행"," division"," and modulo in one step. Calculates q as floor((x+w)/z) and r as (x+w)-zq.",""
+"ADDDIVMODR","","#A901","arithm_div","A901","ADDDIVMODR","x w z - q=round((x+w)/z) r=(x+w)-zq","26","ADDDIVMOD와 유사하지만 q를 라운드((x+w)/z)로 계산합니다.","","",""
+"ADDDIVMODC","","#A902","arithm_div","A902","ADDDIVMODC","x w y - q=ceil((x+w)/z) r=(x+w)-zq","26","ADDDIVMOD와 유사하지만 q를 ceil((x+w)/z)로 계산합니다. 제공된 데이터에 잘못된 스택 설명이 있습니다. 입력 스택에 'y' 대신 'z'가 오타로 추정됩니다.","","",""
+"ADDRSHIFTMOD","","#A920","arithm_div","A920","ADDRSHIFTMOD","x w z - q=floor((x+w)/2^z) r=(x+w)-q*2^z","26","덧셈 수행"," right shift"," and modulo in one step. Calculates q as floor((x+w)/2^z) and r as (x+w)-q*2^z.",""
+"ADDRSHIFTMODR","","#A921","arithm_div","A921","ADDRSHIFTMODR","x w z - q=round((x+w)/2^z) r=(x+w)-q*2^z","26","ADDRSHIFTMOD와 유사하지만 q를 round((x+w)/2^z)로 계산합니다.","","",""
+"ADDRSHIFTMODC","","#A922","arithm_div","A922","ADDRSHIFTMODC","x w z - q=ceil((x+w)/2^z) r=(x+w)-q*2^z","26","ADDRSHIFTMOD와 유사하지만 q를 ceil((x+w)/2^z)로 계산합니다.","","",""
+"MULADDRSHIFTMOD","","#A9A0","arithm_div","A9A0","MULADDRSHIFTMOD","x y w z - q=floor((xy+w)/2^z) r=(xy+w)-q*2^z","26","곱셈 결합"," addition"," right shift"," and modulo. Calculates q as floor((xy+w)/2^z) and r as (xy+w)-q*2^z."
+"MULADDRSHIFTRMOD","","#A9A1","arithm_div","A9A1","MULADDRSHIFTRMOD","x y w z - q=round((xy+w)/2^z) r=(xy+w)-q*2^z","26","MULADDRSHIFTMOD와 유사하지만 q를 라운드((xy+w)/2^z)로 계산합니다.","","",""
+"MULADDRSHIFTCMOD","","#A9A2","arithm_div","A9A2","MULADDRSHIFTCMOD","x y w z - q=ceil((xy+w)/2^z) r=(xy+w)-q*2^z","26","MULADDRSHIFTMOD와 유사하지만 q를 ceil((xy+w)/2^z)로 계산합니다.","","",""
+"LSHIFTADDDIVMOD","","#A9D0 tt:uint8","arithm_div","A9D0tt","[tt+1] LSHIFT#ADDDIVMOD","x w z - q=floor((x*2^y+w)/z) r=(x*2^y+w)-zq","34","x에서 왼쪽 시프트 수행"," adds w"," then divides by z"," rounding down for q and calculates remainder r."
+"LSHIFTADDDIVMODR","","#A9D1 tt:uint8","arithm_div","A9D1tt","[tt+1] LSHIFT#ADDDIVMODR","x w z - q=round((x*2^y+w)/z) r=(x*2^y+w)-zq","34","LSHIFTADDDIVMOD와 유사하지만 q를 가장 가까운 정수로 반올림합니다.","","",""
+"LSHIFTADDDIVMODC","","#A9D2 tt:uint8","arithm_div","A9D2tt","[tt+1] LSHIFT#ADDDIVMODC","x w z - q=ceil((x*2^y+w)/z) r=(x*2^y+w)-zq","34","LSHIFTADDDIVMOD와 유사하지만 q를 가장 가까운 정수로 반올림합니다.","","",""
+"HASHEXT_SHA256","","#F90400","app_crypto","F90400","HASHEXT_SHA256","s_1 ... s_n n - h","1/33 gas per byte","슬라이스(또는 빌더) `s_1...s_n`의 연결 해시를 계산하여 반환합니다.","","",""
+"HASHEXT_SHA512","","#F90401","app_crypto","F90401","HASHEXT_SHA512","s_1 ... s_n n - h","1/16 gas per byte","슬라이스(또는 빌더) `s_1...s_n`의 연결 해시를 계산하여 반환합니다.","","",""
+"HASHEXT_BLAKE2B","","#F90402","app_crypto","F90402","HASHEXT_BLAKE2B","s_1 ... s_n n - h","1/19 gas per byte","슬라이스(또는 빌더) `s_1...s_n`의 연결 해시를 계산하여 반환합니다.","","",""
+"HASHEXT_KECCAK256","","#F90403","app_crypto","F90403","HASHEXT_KECCAK256","s_1 ... s_n n - h","1/11 gas per byte","슬라이스(또는 빌더) `s_1...s_n`의 연결 해시를 계산하여 반환합니다.","","",""
+"HASHEXT_KECCAK512","","#F90404","app_crypto","F90404","HASHEXT_KECCAK512","s_1 ... s_n n - h","1/19 gas per byte","슬라이스(또는 빌더) `s_1...s_n`의 연결 해시를 계산하여 반환합니다.","","",""
+"HASHEXTR_SHA256","","#F90500","app_crypto","F90500","HASHEXTR_SHA256","s_n ... s_1 n - h","1/33 gas per byte","해시텍스트_`와 동일"," but arguments are given in reverse order.","",""
+"HASHEXTR_SHA512","","#F90501","app_crypto","F90501","HASHEXTR_SHA512","s_n ... s_1 n - h","1/16 gas per byte","해시텍스트_`와 동일"," but arguments are given in reverse order.","",""
+"HASHEXTR_BLAKE2B","","#F90502","app_crypto","F90502","HASHEXTR_BLAKE2B","s_n ... s_1 n - h","1/19 gas per byte","해시텍스트_`와 동일"," but arguments are given in reverse order.","",""
+"HASHEXTR_KECCAK256","","#F90503","app_crypto","F90503","HASHEXTR_SHA256","s_n ... s_1 n - h","1/11 gas per byte","해시텍스트_`와 동일"," but arguments are given in reverse order.","",""
+"HASHEXTR_KECCAK512","","#F90504","app_crypto","F90504","HASHEXTR_KECCAK512","s_n ... s_1 n - h","1/19 gas per byte","해시텍스트_`와 동일"," but arguments are given in reverse order.","",""
+"HASHEXTA_SHA256","","#F90600","app_crypto","F90600","HASHEXTA_SHA256","b s_1 ... s_n n - b'","1/33 gas per byte","결과 해시를 스택에 푸시하는 대신 빌더 `b`에 추가합니다.","","",""
+"HASHEXTA_SHA512","","#F90601","app_crypto","F90601","HASHEXTA_SHA512","b s_1 ... s_n n - b'","1/16 gas per byte","결과 해시를 스택에 푸시하는 대신 빌더 `b`에 추가합니다.","","",""
+"HASHEXTA_BLAKE2B","","#F90602","app_crypto","F90602","HASHEXTA_BLAKE2B","b s_1 ... s_n n - b'","1/19 gas per byte","결과 해시를 스택에 푸시하는 대신 빌더 `b`에 추가합니다.","","",""
+"HASHEXTA_KECCAK256","","#F90603","app_crypto","F90603","HASHEXTA_KECCAK256","b s_1 ... s_n n - b'","1/11 gas per byte","결과 해시를 스택에 푸시하는 대신 빌더 `b`에 추가합니다.","","",""
+"HASHEXTA_KECCAK512","","#F90604","app_crypto","F90604","HASHEXTA_KECCAK512","b s_1 ... s_n n - b'","1/6 gas per byte","결과 해시를 스택에 푸시하는 대신 빌더 `b`에 추가합니다.","","",""
+"HASHEXTAR_SHA256","","#F90700","app_crypto","F90700","HASHEXTAR_SHA256","b s_n ... s_1 n - b'","1/33 gas per byte","인수는 역순으로 제공됩니다."," appends hash to builder.","",""
+"HASHEXTAR_SHA512","","#F90701","app_crypto","F90701","HASHEXTAR_SHA512","b s_n ... s_1 n - b'","1/16 gas per byte","인수는 역순으로 제공됩니다."," appends hash to builder.","",""
+"HASHEXTAR_BLAKE2B","","#F90702","app_crypto","F90702","HASHEXTAR_BLAKE2B","b s_n ... s_1 n - b'","1/19 gas per byte","인수는 역순으로 제공됩니다."," appends hash to builder.","",""
+"HASHEXTAR_KECCAK256","","#F90703","app_crypto","F90703","HASHEXTAR_KECCAK256","b s_n ... s_1 n - b'","1/11 gas per byte","인수는 역순으로 제공됩니다."," appends hash to builder.","",""
+"HASHEXTAR_KECCAK512","","#F90704","app_crypto","F90704","HASHEXTAR_KECCAK512","b s_n ... s_1 n - b'","1/6 gas per byte","인수는 역순으로 제공됩니다."," appends hash to builder.","",""
+"ECRECOVER","","#F912","app_crypto","F912","ECRECOVER","hash v r s - 0 or h x1 x2 -1","1526","서명에서 공개 키 복구"," identical to Bitcoin/Ethereum operations.","",""
+"P256_CHKSIGNS","","#F915","app_crypto","F915","P256_CHKSIGNS","d sig k - ?","3526","슬라이스 `d`와 공개키 `k`의 데이터 부분의 seck256r1-서명 `sig`를 확인합니다. 성공 시 -1을 반환합니다."," 0 on failure.","",""
+"P256_CHKSIGNU","","#F914","app_crypto","F914","P256_CHKSIGNU","h sig k - ?","3526","P256_CHKSIGNS와 동일"," but the signed data is 32-byte encoding of 256-bit unsigned integer h.","",""
+"RIST255_FROMHASH","","#F920","app_crypto","F920","RIST255_FROMHASH","h1 h2 - x","626","결정론적으로 512비트 해시(256비트 정수 두 개로 주어짐)에서 유효한 점 'x'를 생성합니다.","","",""
+"RIST255_VALIDATE","","#F921","app_crypto","F921","RIST255_VALIDATE","x - ","226","정수 `x`가 어떤 커브 점의 유효한 표현인지 확인합니다. 에러가 발생하면 `range_chk`를 던집니다.","","",""
+"RIST255_ADD","","#F922","app_crypto","F922","RIST255_ADD","x y - x+y","626","커브에 두 점을 더합니다.","","",""
+"RIST255_SUB","","#F923","app_crypto","F923","RIST255_SUB","x y - x-y","626","커브에서 두 점을 뺍니다.","","",""
+"RIST255_MUL","","#F924","app_crypto","F924","RIST255_MUL","x n - x*n","2026","포인트 `x`에 스칼라 `n`을 곱합니다. 모든 `n`이 유효합니다."," including negative.","",""
+"RIST255_MULBASE","","#F925","app_crypto","F925","RIST255_MULBASE","n - g*n","776","제너레이터 포인트 `g`에 스칼라 `n`을 곱합니다. 모든 `n`이 유효합니다."," including negative.","",""
+"RIST255_PUSHL","","#F926","app_crypto","F926","RIST255_PUSHL","- l","26","Pushes integer `l=2^252+27742317777372353535851937790883648493`"," which is the order of the group.","",""
+"RIST255_QVALIDATE","","#B7F921","app_crypto","B7F921","RIST255_QVALIDATE","x - 0 or -1","234","RIST255_VALIDATE`의 조용한 버전입니다.","","",""
+"RIST255_QADD","","#B7F922","app_crypto","B7F922","RIST255_QADD","x y - 0 or x+y -1","634","RIST255_ADD`의 조용한 버전입니다.","","",""
+"RIST255_QSUB","","#B7F923","app_crypto","B7F923","RIST255_QSUB","x y - 0 or x-y -1","634","RIST255_SUB`의 조용한 버전입니다.","","",""
+"RIST255_QMUL","","#B7F924","app_crypto","B7F924","RIST255_QMUL","x n - 0 or x*n -1","2034","RIST255_MUL`의 조용한 버전입니다.","","",""
+"RIST255_QMULBASE","","#B7F925","app_crypto","B7F925","RIST255_QMULBASE","n - 0 or g*n -1","784","조용한 버전의 `RIST255_MULBASE`","","",""
+"RUNVM","","#DB4 flags:(## 12)","cont_basic","DB4fff","RUNVM","x_1 ... x_n n code [r] [c4] [c7] [g_l] [g_m] - x'_1 ... x'_m exitcode [data'] [c4'] [c5] [g_c]","66+x","코드 `code`와 스택 `x_1...x_n`으로 자식 VM을 실행합니다. 결과 스택 `x'_1...x'_m`과 종료 코드를 반환합니다. 다른 인자와 반환 값은 플래그로 활성화할 수 있습니다.","","",""
+"RUNVMX","","#DB50","cont_basic","DB50","RUNVMX","x_1 ... x_n n code [r] [c4] [c7] [g_l] [g_m] flags - x'_1 ... x'_m exitcode [data'] [c4'] [c5] [g_c]","66+x","런브엠`과 동일"," but pops flags from stack.","",""
+"GETGASFEE","","#F836","app_config","F836","GETGASFEE","gas_used is_mc - price","","가스 요금 계산","","",""
+"GETSTORAGEFEE","","#F837","app_config","F837","GETSTORAGEFEE","cells bits seconds is_mc - price","","현재 스토리지 가격을 기준으로 계약에 대한 나노톤 단위의 스토리지 요금을 계산합니다. 셀`과 `비트`는 [AccountState](https://github.com/ton-blockchain/ton/blob/8a9ff339927b22b72819c5125428b70c406da631/crypto/block/block.tlb#L247)의 크기입니다(중복 제거 포함)."," including root cell).","",""
+"GETFORWARDFEE","","#F838","app_config","F838","GETFORWARDFEE","cells bits is_mc - price","","발신 메시지에 대한 전달 수수료를 나노톤 단위로 계산합니다. 소스 또는 목적지가 마스터체인에 있는 경우 `is_mc`는 참입니다."," false if both are in basechain. Note"," cells and bits in Message should be counted with account for deduplication and root-is-not-counted rules.",""
+"GETPRECOMPILEDGAS","","#F839","app_config","F839","GETPRECOMPILEDGAS","- x","","예약됨"," currently returns null. Will return cost of contract execution in gas units if this contract is precompiled","",""
+"GETORIGINALFWDFEE","","#F83A","app_config","F83A","GETORIGINALFWDFEE","fwd_fee is_mc - orig_fwd_fee","","fwd_fee * 2^16 / first_frac`을 계산합니다. 수신 메시지에서 파싱한 `fwd_fee`에서 메시지의 원래 `fwd_fee`(이](https://github.com/ton-blockchain/token-contract/blob/21e7844fa6dbed34e0f4c70eb5f0824409640a30/ft/jetton-wallet.fc#L224C17-L224C46)와 같은 하드코딩된 값 대신)를 가져오는 데 사용할 수 있습니다. 소스 또는 목적지가 마스터체인에 있는 경우 `is_mc`는 참입니다."," false if both are in basechain.","",""
+"GETGASFEESIMPLE","","#F83B","app_config","F83B","GETGASFEESIMPLE","gas_used is_mc - price","","GETGASFEE`와 동일합니다."," but without flat price (just `(gas_used * price) / 2^16)`.","",""
+"GETFORWARDFEESIMPLE","","#F83C","app_config","F83C","GETFORWARDFEESIMPLE","cells bits is_mc - price","","추가 `셀` 및 `비트`가 포함된 메시지에 대한 추가 전달 비용을 나노톤 단위로 계산합니다. 다시 말해"," same as `GETFORWARDFEE`"," but without lump price (just `(bits*bit_price + cells*cell_price) / 2^16)`.",""
+"UNPACKEDCONFIGTUPLE","","#F82E","app_config","F82E","UNPACKEDCONFIGTUPLE","- c","26","c7에서 구성 조각의 튜플을 검색합니다.","","",""
+"DUEPAYMENT","","#F82F","app_config","F82F","DUEPAYMENT","- i","26","C7에서 만기 결제 금액을 검색합니다.","","",""
+"GLOBALID","","#F835","app_config","F835","GLOBALID","- i","26","이제 c7에서 `ConfigParam 19`를 검색합니다."," ton form config dict.","",""
+"SENDMSG","","#FB08","app_config","FB08","SENDMSG","msg mode - i","","이제 c7에서 `ConfigParam 24/25`(메시지 가격) 및 `ConfigParam 43`(`max_msg_cells`)을 검색합니다."," not from config dict.","",""
+"CLEVEL","","#D766","cell_parse","D766","CLEVEL","cell - level","26","셀의 레벨을 반환합니다.","","",""
+"CLEVELMASK","","#D767","cell_parse","D767","CLEVELMASK","cell - level_mask","26","셀의 레벨 마스크를 반환합니다.","","",""
+"CHASHIX","","#D770","cell_parse","D770","CHASHIX","cell i - depth","26","셀의 해시를 반환합니다(i는 0..3 범위 내).","","",""
+"CDEPTHIX","","#D771","cell_parse","D771","CDEPTHIX","cell i - depth","26","셀의 깊이를 반환합니다(i는 0..3 범위입니다).","","",""

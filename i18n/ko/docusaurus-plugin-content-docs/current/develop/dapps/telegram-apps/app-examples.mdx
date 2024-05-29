@@ -1,0 +1,324 @@
+import Button from '@site/src/components/button'
+
+# TMA 예제
+
+아래의 예시를 통해, 나만의 텔레그램 미니앱을 만드는 방법을 확인해보세요.
+
+## 기본 TMA 예제
+
+```mdx-code-block
+<p align="center">
+  <br />
+    <img width="240" src="/img/docs/telegram-apps/tapps.png" alt="logo of telegram mini apps" />
+      <br />
+</p>
+```
+
+이것은 일반 자바스크립트, HTML, CSS를 사용하여 구현된 기본적이고 간단한 텔레그램 미니앱(TMA)입니다. 이 프로젝트는 복잡한 빌드 툴이나 최첨단 라이브러리에 의존하지 않고, 간단한 TMA를 만들고 텔레그램 내에서 실행하는 최소한의 예시를 제공하는 것을 목표로 하고 있습니다.
+
+- 직접 링크를 통해 앱을 사용할 수 있습니다: [t.me/simple_telegram_mini_app_bot/app](https://t.me/simple_telegram_mini_app_bot/app)
+- 또는 봇 메뉴 버튼으로 앱을 실행할 수 있습니다: [t.me/simple_telegram_mini_app_bot](https://t.me/simple_telegram_mini_app_bot)
+- 배포 URL: <https://telegram-mini-apps-dev.github.io/vanilla-js-boilerplate/>
+
+```mdx-code-block
+<Button href="https://t.me/simple_telegram_mini_app_bot/app" colorType={'primary'} sizeType={'sm'}>
+```
+
+데모 열기
+
+```mdx-code-block
+</Button>
+```
+
+```mdx-code-block
+<Button href="https://github.com/Telegram-Mini-Apps-Dev/vanilla-js-boilerplate.git" colorType={'secondary'} sizeType={'sm'}>
+```
+
+GitHub
+
+```mdx-code-block
+</Button>
+```
+
+### 특징
+
+- 최소한의 사용자 인터페이스.
+- 외부 라이브러리나 프레임워크를 사용하지 않습니다.
+- 쉽게 이해하고 수정할 수 있습니다.
+
+### 시작하기
+
+#### 전제 조건
+
+이 예제를 실행하려면 자바스크립트가 활성화된 최신 웹 브라우저가 필요합니다.
+
+#### 설치
+
+1. 이 리포지토리를 로컬 머신에 복제합니다:
+
+```bash
+git clone https://github.com/Telegram-Mini-Apps-Dev/vanilla-js-boilerplate.git
+```
+
+2. 프로젝트 디렉토리로 이동합니다:
+
+```bash
+cd vanilla-js-boilerplate
+```
+
+선호하는 코드 편집기 또는 IDE에서 index.html을 엽니다.
+
+### 사용법
+
+1. 선호하는 코드 편집기 또는 IDE에서 index.html을 엽니다.
+2. 변경 사항 적용
+3. 나만의 GitHub 리포지토리를 만들고, 업데이트를 커밋하고 푸시하세요.
+4. 리포지토리 GitHub 페이지로 이동하여 설정을 엽니다. 페이지 탭과 빌드 및 배포 섹션을 확인합니다. GitHub 작업 옵션을 선택한 경우 에셋이 페이지에 배포되어야 하며 `https://<username>.github.io/vanilla-js-boilerplate/`와 같은 URL이 표시됩니다. 이 URL을 복사하여 [BotFather](https://tg.me/BotFather) 봇과 함께 사용하여 자신만의 TWA를 만들 수 있습니다.
+
+## 최신 TMA 예제
+
+### 소개
+
+프랑스어로 "빠르다"라는 뜻의 Vite는 최신 웹 프로젝트에 더 빠르고 간결한 개발 경험을 제공하는 것을 목표로 하는 프론트엔드 빌드 도구이자 개발 서버입니다. Vite를 활용하여 텔레그램 미니앱 예시를 만들어 보겠습니다.
+
+예제 프로젝트는 여기<https://github.com/Telegram-Mini-Apps-Dev/vite-boilerplate>에서 확인하거나 다음 안내에 따라 진행하실 수 있습니다.
+
+### 전제 조건
+
+Vite 프로젝트의 발판을 마련하는 것부터 시작하겠습니다.
+
+NPM으로:
+
+```bash
+$ npm create vite@latest
+```
+
+Yarn으로:
+
+```bash
+$ yarn create vite
+```
+
+그런 다음 지시를 따르세요!
+
+또는 이 명령을 실행하여 TypeScript를 지원하는 React 프로젝트를 생성할 수도 있습니다:
+
+```bash
+# npm 7+, extra double-dash is needed:
+npm create vite my-react-telegram-web-app -- --template react-ts
+
+# or yarn
+yarn create vite my-react-telegram-web-app --template react-ts
+
+# this will change the directory to recently created project
+cd my-react-telegram-web-app
+```
+
+### 미니 앱 개발
+
+이제 프로젝트의 개발 모드를 시작하고 터미널에서 다음 명령을 실행해야 합니다:
+
+```bash
+# npm
+npm install
+npm run dev --host
+
+# or yarn
+yarn
+yarn dev --host
+```
+
+호스트\` 옵션을 사용하면 개발 과정에서 테스트 목적으로 사용할 수 있는 IP 주소가 있는 URL을 얻을 수 있습니다. 중요 참고: 개발 모드에서는 자체 서명된 SSL 인증서를 사용하게 되며, 다른 플랫폼(iOS, 안드로이드, 맥OS)의 정책으로 인해 웹 버전의 텔레그램 [https://web.telegram.org](https://web.telegram.org/a/#6549734463)/에서만 핫 리로드로 앱을 테스트 할 수 있는 옵션이 제공됩니다.
+
+'@vitejs/plugin-basic-ssl' 플러그인을 추가해야 합니다:
+
+```bash npm2yarn
+npm install @vitejs/plugin-basic-ssl
+```
+
+이제 `vite.config.ts`를 변경해야 합니다. 가져오기를 추가합니다:
+
+```jsx
+import basicSsl from '@vitejs/plugin-basic-ssl';
+```
+
+그리고 플러그인 추가
+
+```jsx
+export default defineConfig({
+   plugins: [react(), basicSsl()]
+});
+```
+
+엔그록\`을 사용하여 로컬 서버를 SSL 인증서로 인터넷에 노출할 수 있습니다. 모든 텔레그램 플랫폼에서 핫 모듈 교체로 개발이 가능합니다. 새 터미널 창을 열고 실행합니다:
+
+```bash
+# where 5173 is the port number from npm/yarn dev --host
+ngrok http 5173
+```
+
+또한 프로젝트를 GitHub 페이지에 배포할 수 있도록 준비할 것입니다:
+
+```jsx
+export default defineConfig({
+   plugins: [react(), basicSsl()],
+	 build: {
+	   outDir: './docs'
+	 },
+   base: './'
+});
+```
+
+마스터 브랜치를 대상으로 하는 푸시에서 실행되는 GitHub 액션에 배포 스크립트를 사용하겠습니다. 프로젝트의 루트에서:
+
+```bash
+# we are going to create GitHub Actions config for deployment
+mkdir .github
+cd .github
+mkdir workflows
+cd workflows
+touch static.yml
+```
+
+이제 이 구성을 `static.yml`에 추가합니다:
+
+```yaml
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ['master']
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: './'
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload dist repository
+          path: './docs'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+```
+
+GitHub 리포지토리의 설정→페이지에서 빌드 및 배포를 위한 GitHub 작업 옵션을 선택하는 것을 잊지 마세요. 이제 푸시할 때마다 코드가 페이지에 배포됩니다.
+
+![스크린샷 2023-09-11 at 22.07.44.png](/img/docs/telegram-apps/modern-1.png)
+
+이제 `@twa-dev/sdk`를 추가합니다. 텔레그램은 [링크](https://core.telegram.org/bots/webapps#initializing-web-apps)를 통해 SDK를 배포합니다. 이것은 라이브러리로 작업하는 일종의 오래된 방식입니다. twa-dev/sdk\` 패키지를 사용하면, npm 패키지와 같이 SDK와 함께 타입스크립트를 지원하여 작업할 수 있습니다.
+
+```bash npm2yarn
+npm install @twa-dev/sdk
+```
+
+src/main.tsx\` 파일을 열고 다음을 추가합니다:
+
+```tsx
+import WebApp from '@twa-dev/sdk'
+
+WebApp.ready();
+
+ReactDOM.createRoot...
+```
+
+WebApp.ready()\` - 텔레그램 앱에 미니앱을 표시할 준비가 되었음을 알리는 메소드입니다. 모든 필수 인터페이스 요소가 로드되는 즉시, 가능한 한 빨리 이 메서드를 호출하는 것이 좋습니다. 이 메서드가 호출되면, 로딩 플레이스홀더가 숨겨지고 미니앱이 표시됩니다.
+
+그런 다음 사용자와의 상호작용을 추가합니다. src/App.tsx\`로 이동하여 알림이 있는 버튼을 추가합니다.
+
+```tsx
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+
+import WebApp from '@twa-dev/sdk'
+
+function App() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <>
+      <div>
+        <a href="https://vitejs.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+      </div>
+		{/* Here we add our button with alert callback */}
+      <div className="card">
+        <button onClick={() => WebApp.showAlert(`Hello World! Current count is ${count}`)}>
+            Show Alert
+        </button>
+      </div>
+    </>
+  )
+}
+
+export default App
+```
+
+이제 메신저 애플리케이션 내에서 텔레그램 미니앱을 실행할 수 있도록 텔레그램 봇을 만들어야 합니다.
+
+### 앱용 봇 설정
+
+미니앱을 텔레그램에 연결하려면, 봇을 생성하고 이를 위한 미니앱을 설정해야 합니다. 새로운 텔레그램 봇을 설정하려면 다음 단계를 따르세요:
+
+```mdx-code-block
+<Button href="/develop/dapps/telegram-apps/step-by-step-guide#setting-up-a-bot-for-the-app" colorType={'primary'} sizeType={'sm'}>
+```
+
+봇 설정
+
+```mdx-code-block
+</Button>
+```
+
+### 힌트
+
+자체 서명된 SSL 인증서를 사용하면 이러한 종류의 경고에 이의를 제기할 수 있습니다. "고급" 버튼을 클릭하고 `진행 <local dev server address here>`을 클릭합니다. 이 단계가 없으면, 웹 버전의 텔레그램에서 디버깅을 할 수 없습니다.
+
+스크린샷 2023-09-11 at 18.58.24.png](/img/docs/telegram-apps/modern-2.png)

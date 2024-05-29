@@ -1,0 +1,184 @@
+# 단일 지명자 풀
+
+## mytonctrl 사용
+
+현재 [mytonctrl](https://github.com/ton-blockchain/mytonctrl)은 `단일_노미네이터` 컨트랙트를 지원하지만, 먼저 mytonctrl 2.0을 설치해야 합니다.
+
+### MYTONCTRL 2.0
+
+mytonctrl을 이미 설치한 경우 `update mytonctrl2` 명령을 사용하면 됩니다. mytonctrl을 설치하지 않은 경우 다음 단계를 따르세요:
+
+1. 설치 스크립트를 다운로드합니다:
+
+```bash
+wget https://raw.githubusercontent.com/ton-blockchain/mytonctrl/mytonctrl2/scripts/install.sh
+```
+
+2. 설치 스크립트를 실행합니다:
+
+```bash
+sudo bash ./install.sh -b mytonctrl2
+```
+
+### 단일 호칭자 설정
+
+검증자의 지갑을 생성하고 활성화한 후 다음 단계를 따르세요:
+
+1. 단일 지명자 모드 활성화
+
+```bash
+MyTonCtrl> enable_mode single-nominator
+```
+
+2. 풀 만들기
+
+```bash
+MyTonCtrl> new_single_pool <pool-name> <owner_address>
+```
+
+3. 풀 주소를 표시하려면 `pools_list`를 입력합니다.
+
+4. 풀에 1톤을 보내고 활성화합니다.
+
+```bash
+MyTonCtrl> activate_single_pool <pool-name>
+```
+
+이제 표준 지명자 풀과 마찬가지로 mytonctrl을 통해 이 풀로 작업할 수 있습니다.
+
+## mytonctrl 없음
+
+#### 유효성 검사기 출시 준비
+
+  mytonctrl이 설치되어 있고 유효성 검사기가 실행 중인 경우:
+
+1. 유효성 검사를 중지하고 모든 자금을 인출합니다.
+
+#### 처음부터 준비하기
+
+  이전에 유효성 검사기가 없었다면 다음을 수행하세요:
+
+1. [유효성 검사기 실행](/참여/실행 노드/전체 노드)을 클릭하고 동기화되었는지 확인합니다.
+2. 유효성 검사를 중지하고 모든 자금을 인출합니다.
+
+## 단일 지칭자 준비
+
+1. nodejs](https://nodejs.org/en) v.16 이상 및 npm([상세 지침](https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions)을 설치합니다.
+2. t-node`및`arg\` 모듈 설치
+
+```bash
+$ sudo apt install ts-node
+$ sudo npm i arg -g
+```
+
+4. 심볼릭 링크를 만듭니다:
+
+```bash
+$ sudo ln -s /usr/bin/ton/crypto/fift /usr/local/bin/fift
+$ sudo ln -s /usr/bin/ton/crypto/func /usr/local/bin/func
+```
+
+5. 테스트를 실행하여 모든 것이 제대로 설정되었는지 확인합니다:
+
+```bash
+$ npm run test
+```
+
+6. mytonctrl 지명자 풀 스크립트 교체: https://raw.githubusercontent.com/orbs-network/single-nominator/main/mytonctrl-scripts/install-pool-scripts.sh
+
+## 단일\_지목자 풀 생성
+
+1. 텔레그램[@tonapibot](https://t.me/tonapibot)에서 톤센터 API 키 받기
+2. 환경 변수를 설정합니다:
+
+```bash
+export OWNER_ADDRESS=<owner_address>
+export VALIDATOR_ADDRESS=<validator_wallet_address>
+export TON_ENDPOINT=https://toncenter.com/api/v2/jsonRPC
+export TON_API_KEY=<toncenter api key>
+```
+
+2. 배포자 주소를 만듭니다:
+
+```bash
+$ npm run init-deploy-wallet
+Insufficient Deployer [EQAo5U...yGgbvR] funds 0
+```
+
+3. 2.1톤으로 배포자 주소 충전하기
+4. 풀 컨트랙트를 배포하면 풀 주소를 얻게 됩니다: `Ef-kC0..._WLqgs`:
+
+```
+$ npm run deploy
+```
+
+5. 주소를 .addr로 변환합니다:
+
+```
+$ fift -s ./scripts/fift/str-to-addr.fif Ef-kC0..._WLqgs
+```
+
+(단일지명자.addr 파일에 주소 저장)
+
+6. 백업 배포자 개인 키 "./build/deploy.config.json" 및 "single-nominator.addr" 파일
+7. "single-nominator.addr"을 "mytoncore/pools/single-nominator-1.addr"로 복사합니다.
+8. 소유자 주소에서 단일 지명자 주소로 지분 보내기
+
+## 단일 지명자로부터 출금
+
+지갑을 사용하여 단일 노미네이터에서 출금하기
+파이브:
+
+1. 금액이 포함된 'withdraw.boc' 요청을 생성합니다:
+
+```bash
+$ fift -s ./scripts/fift/withdraw.fif <withdraw_amount>
+```
+
+2. 소유자의 지갑에서 요청을 생성하고 서명합니다:
+
+```bash
+$ fift -s wallet-v3.fif <my-wallet> <single_nominator_address> <sub_wallet_id> <seqno> <amount=1> -B withdraw.boc
+```
+
+3. 생방송 쿼리:
+
+```bash
+$ lite-client -C global.config.json -c 'sendfile wallet-query.boc'
+tons
+```
+
+1. 금액이 포함된 'withdraw.boc' 요청을 생성합니다:
+
+```bash
+$ fift -s ./scripts/fift/withdraw.fif <withdraw_amount>
+```
+
+2. 단일 지명자 주소로 요청을 보냅니다:
+
+a.
+
+```bash
+$ tons wallet transfer <my-wallet> <single_nominator_address> <amount=1> --body withdraw.boc
+tonkeeper
+```
+
+b.
+
+```
+npm link typescript
+```
+
+c.
+
+```
+npx ts-node scripts/ts/withdraw-deeplink.ts <single-nominator-addr> <withdraw-amount>
+```
+
+d. 소유자의 휴대폰에서 딥링크 열기
+
+## 참고 항목
+
+- [단일 지명자 풀 계약](https://github.com/orbs-network/single-nominator)
+- [투자 계약](/참여/네트워크-유지/투자-계약)
+- [단일 노미네이터-빠른 방법 09-25](https://telegra.ph/single-nominator-quick-how-to-09-25)

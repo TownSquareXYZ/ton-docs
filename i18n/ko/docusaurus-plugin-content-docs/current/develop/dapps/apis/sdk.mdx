@@ -1,0 +1,77 @@
+# SDK
+
+오른쪽 사이드바에서 선호하는 언어로 즉시 탐색할 수 있습니다.
+
+## 개요
+
+블록체인에 연결하는 방법에는 여러 가지가 있습니다:
+
+1. RPC 데이터 공급자 또는 기타 API: 대부분의 경우 안정성과 보안에 _의존_해야 합니다.
+2. ADNL 연결: [라이트서버](/참여/런-노드/라이트서버)에 연결 중입니다. 접근이 불가능할 수도 있지만 특정 수준의 유효성 검사(라이브러리에서 구현됨)를 거치면 거짓말을 할 수 없습니다.
+3. 톤라이브 바이너리: 라이트서버에도 연결하므로 모든 장점과 단점이 적용되지만 애플리케이션에는 외부에서 컴파일된 동적 로딩 라이브러리도 포함되어 있습니다.
+4. 오프체인 전용. 이러한 SDK를 사용하면 셀을 생성하고 직렬화할 수 있으며, 이를 API로 전송할 수 있습니다.
+
+### 타입스크립트 / 자바스크립트
+
+| 라이브러리                                           | 블록체인 연결                                                                                                          | 설명                                                                                                   |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| [ton](https://github.com/ton-org/ton)           | RPC를 통해 ([오브스](https://www.orbs.com/ton-access/) / [톤센터](https://toncenter.com/api/v2/) / 기타) | TON 블록체인의 디앱 개발을 위한 지갑 래퍼가 포함된 편리한 클라이언트 라이브러리.                                                      |
+| [톤웹](https://github.com/toncenter/tonweb)       | RPC를 통해 ([오브스](https://www.orbs.com/ton-access/) / [톤센터](https://toncenter.com/api/v2/) / 기타) | 외부 종속성을 최소화하고 프로덕션에서 광범위하게 테스트된 구형 TON JS SDK.                                                       |
+| [tonkite/adnl](https://github.com/tonkite/adnl) | [ADNL](/개발/네트워크/adnl-tcp) 네이티브/웹소켓 경유                                                                            | ADNL 타입스크립트 구현.                                                                                      |
+| [토누틸](https://github.com/thekiba/tonutils)      | 네이티브 [ADNL](/개발/네트워크/adnl-tcp)                                                                                   | TON 생태계에서 애플리케이션을 구축하고 상호 작용하기 위한 타입스크립트 기반 인터페이스. 네이티브 ADNL 종속성으로 인해 브라우저에서 블록체인 상호 작용에 사용할 수 없습니다. |
+
+### Java
+
+| 라이브러리                                      | 블록체인 연결  | 설명                                        |
+| ------------------------------------------ | -------- | ----------------------------------------- |
+| [ton4j](https://github.com/neodix42/ton4j) | 톤리브 바이너리 | 오픈 네트워크용 Java SDK(TON) |
+
+### Python
+
+<!-- tonsdk dropped due to invalid cells serialization -->
+
+| 라이브러리                                                         | 블록체인 연결                                                                                                          | 설명                                                                           |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| [파이토닉](https://github.com/yungwine/pytoniq)                   | 네이티브 ADNL                                                                                                        | 네이티브 LiteClient 및 기타 ADNL 기반 프로토콜 구현이 포함된 Python SDK.                        |
+| [파이토닉 코어](https://github.com/yungwine/pytoniq-core)           | _오프체인 전용_                                                                                                        | 파이썬의 강력한 전송 프리 SDK                                                           |
+| [파이톤라이브](https://github.com/toncenter/pytonlib)               | 톤리브 바이너리                                                                                                         | 이것은 TON 모노레포에서 바이너리 종속성으로 가져온 libtonlibjson을 기반으로 하는 독립 실행형 Python 라이브러리입니다. |
+| [mytonlib](https://github.com/igroman787/mytonlib)            | 네이티브 ADNL                                                                                                        | 오픈 네트워크 작업을 위한 네이티브 Python SDK 라이브러리                                         |
+| [톤툴즈](https://github.com/yungwine/TonTools)                   | RPC를 통해 ([오브스](https://www.orbs.com/ton-access/) / [톤센터](https://toncenter.com/api/v2/) / 기타) | 톤툴즈는 톤 블록체인과 상호작용하는 데 사용할 수 있는 파이썬용 하이레벨 OOP 라이브러리입니다.                       |
+| [톤피](https://github.com/disintar/tonpy)                       | 네이티브 ADNL                                                                                                        | TON 블록체인과 상호 작용할 수 있는 데이터 구조와 API를 제공하는 Python 패키지입니다.                       |
+| [tvm_valuetypes](https://github.com/toncenter/tvm_valuetypes) | _오프체인 전용_                                                                                                        | 라이브러리는 TVM 유형을 처리하기 위한 유틸리티 모음입니다.                                           |
+| [pytvm](https://github.com/yungwine/pytvm)                    | _오프체인_                                                                                                           | C++ 표준 에뮬레이터에 바인딩을 사용하는 Python TVM 에뮬레이터                                     |
+
+### C#
+
+| 라이브러리                                                             | 블록체인 연결          | 설명                                                                     |
+| ----------------------------------------------------------------- | ---------------- | ---------------------------------------------------------------------- |
+| [TonSdk.NET](https://github.com/continuation-team/TonSdk.NET)     | 네이티브 ADNL 또는 RPC | 오픈 네트워크를 위한 네이티브 C# SDK.                                               |
+| [justdmitry/TonLib.NET](https://github.com/justdmitry/TonLib.NET) | 톤리브 바이너리         | 오픈 네트워크용 .NET SDK로, TON 모노레포에서 바이너리 종속성으로 가져온 libtonlibjson을 통해 연결합니다. |
+
+### Rust
+
+| 라이브러리                                                         | 블록체인 연결  | 설명                                                                              |
+| ------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------- |
+| [tonlib-rs](https://github.com/ston-fi/tonlib-rs)             | 톤리브 바이너리 | TON 모노레포에서 바이너리 종속성을 가져오는 오픈 네트워크용 Rust SDK.                                    |
+| [getgems-io/ton-grpc](https://github.com/getgems-io/ton-grpc) | 톤리브 바이너리 | 톤라이브제이슨(따라서 톤 모노레포의 바이너리에 따라 달라짐)과 그 위에 구축된 서비스에 대한 Rust 바인딩 |
+
+### 이동
+
+| 라이브러리                                                 | 블록체인 연결   | 설명                                |
+| ----------------------------------------------------- | --------- | --------------------------------- |
+| [tonutils-go](https://github.com/xssnick/tonutils-go) | 네이티브 ADNL | TON 블록체인과 상호 작용하기 위한 Golang 라이브러리 |
+| [통고](https://github.com/tonkeeper/tongo)              | 네이티브 ADNL | TON 블록체인을 위한 라이브러리의 Go 구현         |
+| [톤라이브-고](https://github.com/ton-blockchain/tonlib-go) | 톤리브 바이너리  | libtonlibjson의 공식 바인딩             |
+
+### 다른 언어용 SDK
+
+| 라이브러리                                                                     | 언어     | 블록체인 연결   | 설명                                                  |   |
+| ------------------------------------------------------------------------- | ------ | --------- | --------------------------------------------------- | - |
+| [톤-코틀린](https://github.com/ton-community/ton-kotlin)                      | Kotlin | 네이티브 ADNL | 오픈 네트워크를 위한 Kotlin/멀티플랫폼 SDK.                       |   |
+| [tonlib-java](https://github.com/ton-blockchain/tonlib-java)              | Java   | 톤립 빈	     | Java/Scala/Kotlin 등과 함께 사용할 수 있는 TonLib용 JVM 래퍼입니다. |   |
+| [ayrat555/ton](https://github.com/ayrat555/ton)                           | 엘릭서    | _오프체인 전용_ | 엘릭서용 TON SDK.                                       |   |
+| [C++ 톤라이브](https://github.com/ton-blockchain/ton/tree/master/example/cpp) | C++    | 톤리브 바이너리  | 톤 모노레포의 스마트 컨트랙트 상호작용에 대한 공식 예시                     | . |
+| [자바 톤라이브](https://github.com/ton-blockchain/tonlib-java)                  | Java   | 톤리브 바이너리  | 톤 모노레포의 스마트 컨트랙트 상호작용에 대한 공식 예시입니다.                 |   |
+| [랩라번/스위프티톤](https://github.com/labraburn/SwiftyTON)                       | Swift  | 톤리브 바이너리  | 비동기/대기 기능을 갖춘 톤라이브용 네이티브 Swift 래퍼.                  |   |
+| [톤라이브-xc프레임워크](https://github.com/labraburn/tonlib-xcframework)           | Swift  | 톤리브 바이너리  | iOS, 모든 아키텍처용 Tonlib 빌드 헬퍼.                         |   |
+| [랩랩번/노드-톤라이브](https://github.com/labraburn/node-tonlib)                   | NodeJS | 톤리브 바이너리  | 톤라이브제이슨과 함께 작동하는 NodeJS용 C++ 애드온입니다.                |   |

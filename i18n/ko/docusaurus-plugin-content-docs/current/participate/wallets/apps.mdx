@@ -1,0 +1,245 @@
+import Player from '@site/src/components/player'
+
+# 월렛 앱(개발자용)
+
+## 개요
+
+이 문서에서는 개발 관점에서 지갑에 대해 설명합니다. 최종 목표는 TON의 대량 채택을 지원하는 지갑 애플리케이션을 만드는 것입니다.
+
+<br></br>
+<Player url="https://www.youtube.com/watch?v=OfW96enpD4Q" />
+<br></br>
+
+설치할 지갑을 찾으려면 [ton.org/wallets](https://ton.org/wallets)를 엽니다.
+
+## 비수탁 소프트웨어 (핫) 지갑
+
+:::info
+흔히 핫월렛으로 알려진 소프트웨어 지갑은 호스트 장치에서 소프트웨어로 작동하며, 인터페이스 내에 개인 키를 저장합니다. 이러한 지갑은 대부분 비위탁형 지갑으로, 키를 보관하지 않습니다.
+:::
+
+다음은 TON 블록체인을 위한 비수탁 지갑입니다:
+
+- [톤 지갑](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) - 톤 재단에서 개발한 톤 생태계의 멀티플랫폼(iOS, 안드로이드, 맥OS, 리눅스, 윈도우) 클래식 지갑입니다.
+- [톤키퍼](https://tonkeeper.com/) - 사용자층이 두터운 오픈소스 멀티플랫폼(iOS, Android, Firefox, Chrome) 지갑입니다.
+- [톤허브](https://tonhub.com/) - 고급 기능(톤 웨일즈 스테이킹 UI)을 갖춘 오픈소스(iOS, 안드로이드) 대체 휴대폰 지갑입니다.
+- [오픈마스크](https://www.openmask.app/) - 생체 인증 기능을 갖춘 오픈소스 Chrome 확장 프로그램 지갑입니다.
+- [마이톤월렛](https://mytonwallet.io/) - 오픈소스 브라우저 웹 지갑이자 TON용 브라우저 확장 지갑입니다.
+
+### 기본 기능
+
+| 지갑         | 제톤 및 NFT 전송               | 톤 커넥트 2.0                                                                                                             | 권한 부여                                                                                             | 지갑 계약                                                                                                                                                                                             |
+| ---------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TON 월렛     | 구현되지 않음                   | -                                                                                                                     | -                                                                                                 | [지갑 V3](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/wallet3-code.fc)                                                                                                       |
+| 톤키퍼        | 지원                        | [지원됨](https://github.com/ton-society/ton-footsteps/issues/161)                                                        | [톤 커넥트 2.0](/개발/앱/톤 커넥트)                                                       | [지갑 V4](https://github.com/ton-blockchain/wallet-contract/tree/3fd1d7ae39f1c46ec1f2be54c4040d8d87505e0f)                                                                                          |
+| Tonhub     | 지원\*                      | [지원됨](https://github.com/ton-society/ton-footsteps/issues/108)                                                        | [톤 커넥트 2.0](/개발/앱/톤 커넥트)                                                       | [지갑 V4](https://github.com/ton-blockchain/wallet-contract/tree/3fd1d7ae39f1c46ec1f2be54c4040d8d87505e0f)                                                                                          |
+| OpenMask   | 지원                        | [지원됨](https://github.com/ton-society/ton-footsteps/issues/107)                                                        | [톤 커넥트 2.0](/개발/앱/톤 커넥트)                                                       | [지갑 V4](https://github.com/ton-blockchain/wallet-contract/tree/3fd1d7ae39f1c46ec1f2be54c4040d8d87505e0f)                                                                                          |
+| 마이톤월렛      | 지원                        | [지원됨](https://github.com/ton-society/ton-footsteps/issues/149)                                                        | [톤 커넥트 2.0](/개발/앱/톤 커넥트)                                                       | [지갑 V4](https://github.com/ton-blockchain/wallet-contract/tree/3fd1d7ae39f1c46ec1f2be54c4040d8d87505e0f)                                                                                          |
+
+> \*톤허브 확장 프로그램을 사용하면 내장 브라우저를 열어 NFT 마켓플레이스를 이용할 수 있습니다. 제톤이 완벽하게 지원됩니다.
+
+### TON 월렛
+
+TON 지갑은 일반 사용자가 사용할 수 있는 블록체인 기술의 대중화를 위한 첫 번째 단계였습니다. TON 블록체인에서 지갑이 어떻게 작동해야 하는지 보여줍니다.
+
+|                                                                                                       |
+| ----------------------------------------------------------------------------------------------------- |
+|               ![TON 지갑](/img/docs/wallet-apps/TonWallet.png?raw=true)                                 |
+
+#### 장단점
+
+- TON 재단에서 개발한 오리지널 지갑입니다. TON 월렛은 TON 블록체인의 핵심 개발자들의 비전에 따라 작동합니다.
+- ✅ 멀티 플랫폼 아키텍처 지원. Linux, Windows, macOS, iOS, Android 및 Chrome 플러그인에서 작동합니다.
+- ✅ [버그 바운티 프로그램](https://github.com/ton-blockchain/bug-bounty)
+- 업데이트가 거의 없습니다. 이 지갑은 모든 최신 기능을 제공하지 않습니다(TON DNS 주소, 지갑-v4 컨트랙트가 지원되지 않음).
+- ❌ 현재 UI는 구식이며 대체 지갑보다 더 나쁩니다.
+
+#### 톤 월렛 테스트 환경
+
+TON 클래식 지갑을 테스트 환경으로 전환하려면 테스트넷 파라미터를 사용하여 브라우저에서 열어야 합니다:
+
+#### 링크
+
+- [깃허브\*](https://github.com/ton-blockchain/wallet-ios)
+
+  > 지원되는 모든 OS에 대한 \*TON 월렛 클라이언트가 가까운 저장소에 배치되어 있습니다.
+
+### 톤키퍼
+
+[톤키퍼](https://tonkeeper.com/) - 톤키퍼 팀이 개발한 가장 많이 다운로드되고 인기 있는 지갑으로, 사용자와 개발자 모두의 적극적인 지지를 받고 있습니다.
+
+|                                                                                                          |
+| -------------------------------------------------------------------------------------------------------- |
+|               ![Tonkeeper](/img/docs/wallet-apps/Tonkeeper.png?raw=true)                                 |
+
+#### 장단점
+
+- ✅ 이 앱은 사용자들에게 가장 인기 있는 앱입니다.
+- 사용자 지갑 간 기본 NFT 전송을 포함한 모든 최신 기능을 지원합니다.
+- iOS, Android 등 모든 주요 플랫폼을 지원하며, Firefox나 Chrome과 같은 인기 브라우저에서도 작동합니다.
+- 소스 코드에 기여하려면 고급 기술이 필요합니다. 이미 많은 작업이 완료되어 있어 신규 사용자가 중요하거나 유용한 내용을 추가하기 어려울 수 있습니다.
+
+#### 톤키퍼 테스트 환경
+
+메인넷과 테스트넷 사이에서 톤키퍼 애플리케이션을 전환하려면: 설정에서 하단의 톤키퍼 아이콘을 5번 탭하고 개발자 메뉴에서 네트워크를 전환합니다. 개발자 메뉴에서 필요한 네트워크에 따라 '테스트넷으로 전환' 또는 '메인넷으로 전환'을 탭합니다.
+
+|                                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------- |
+|               ![TestMode](/img/docs/wallet-apps/Tonkeeper-testnet.png?raw=true)                                 |
+
+#### 링크
+
+- [깃허브](https://github.com/tonkeeper/wallet)
+- [톤키퍼 월렛 API](https://github.com/tonkeeper/wallet-api)
+
+### Tonhub
+
+[톤허브](https://tonhub.com/) - 기본적인 최신 기능을 지원하는 또 다른 본격적인 TON 지갑입니다. 톤 웨일즈는 지갑의 기능을 빠르게 늘리고 있습니다.
+
+|                                                                                                    |
+| -------------------------------------------------------------------------------------------------- |
+|               ![Tonhub](/img/docs/wallet-apps/Tonhub.png?raw=true)                                 |
+
+#### 장단점
+
+- 톤허브 UI에서 지원되는 자체 커스텀 [톤 노미네이터](https://github.com/tonwhales/ton-nominators) 계약이 있습니다.
+- ✅ 기존 애플리케이션의 시작부터 오픈소스 지갑을 사용합니다.
+- ✅ [버그 바운티 프로그램](https://tonwhales.com/bounty).
+- 데스크톱 플랫폼에 대한 지원이 없습니다.
+- 소스 코드에 기여하려면 고급 기술이 필요합니다.
+
+#### 톤허브 테스트 환경
+
+테스트넷에 연결하려면 별도의 애플리케이션을 다운로드해야 합니다.
+
+#### 링크
+
+- [깃허브](https://github.com/tonwhales/wallet)
+- [샌드박스 iOS](https://apps.apple.com/app/ton-development-wallet/id1607857373)
+- [샌드박스 안드로이드](https://play.google.com/store/apps/details?id=com.tonhub.wallet.testnet)
+
+### OpenMask
+
+[OpenMask](https://www.openmask.app/) - 브라우저 확장 기능으로 Web3에서 사용자 상호 작용과 경험을 가능하게 하는 선구적인 도구입니다.
+
+|                                                                                                        |
+| ------------------------------------------------------------------------------------------------------ |
+|               ![OpenMask](/img/docs/wallet-apps/OpenMask.png?raw=true)                                 |
+
+#### 장단점
+
+- 개발자가 모바일 기기 없이 데스크톱을 통해 편리하게 디앱을 학습하고 제작할 수 있습니다.
+- ✅ 여러 개의 지갑과 같은 고유 기능에 대한 자세한 설명과 예시가 문서에 나와 있습니다.
+- 현재 디앱과의 통합이 거의 이루어지지 않고 있습니다.
+- ❌ 브라우저 확장 플랫폼만 지원합니다.
+
+#### OpenMask 테스트 환경
+
+메인넷과 테스트넷 간에 OpenMask를 전환하려면: OpenMask 메인 화면 상단의 "메인넷/테스트넷" 버튼을 클릭하고 필요한 네트워크를 선택해야 합니다.
+
+#### 링크
+
+- [깃허브](https://github.com/OpenProduct/openmask-extension)
+- [문서](https://www.openmask.app/docs/introduction)
+
+### 마이톤월렛
+
+[마이톤월렛](https://mytonwallet.io/) - 가장 풍부한 기능을 갖춘 TON용 웹 지갑이자 브라우저 확장 프로그램으로 토큰, NFT, TON DNS, TON 사이트, TON 프록시, TON 매직 등을 지원합니다.
+
+|                                                                                                              |
+| ------------------------------------------------------------------------------------------------------------ |
+|               ![MyTonWallet](/img/docs/wallet-apps/MyTonWallet.png?raw=true)                                 |
+
+#### 장단점
+
+- ✅ 모든 기본 기능이 구현되어 있습니다.
+- 고유 기능 - 지갑 UI에서 공식 [지명자 풀 계약](https://github.com/ton-blockchain/nominator-pool)을 관리할 수 있습니다.
+- 모든 주요 플랫폼(예: macOS, Linux, Windows)을 지원하며 Chrome에서도 확장 프로그램으로 실행됩니다.
+- ❌ Firefox에서 확장 프로그램으로 작동하지 않습니다.
+
+#### 마이톤월렛 테스트 환경
+
+마이톤월렛을 테스트넷으로 전환하려면: 설정을 열고 앱 버전을 5번 클릭하여 네트워크 전환기를 엽니다.
+
+#### 링크
+
+- [깃허브](https://github.com/mytonwalletorg/mytonwallet)
+- [마이톤월렛 텔레그램](https://t.me/MyTonWalletRu)
+
+## 비수탁 하드웨어(콜드) 지갑
+
+:::info
+하드웨어 지갑은 암호화폐 자금의 개인 키를 인터넷에서 떨어진 곳에 저장하는 물리적 장치입니다. 이 지갑으로 거래를 하더라도 지갑은 오프라인 환경에서 거래를 확인합니다. 이 과정을 통해 개인 키를 인터넷의 위험으로부터 항상 안전하게 보호할 수 있습니다.
+:::
+
+### 원장
+
+[레저](https://www.ledger.com/) 하드웨어 지갑과 레저 라이브 앱.
+
+#### 링크
+
+- [레저 지갑의 TON 사용 설명서](https://blog.ton.org/ton-is-coming-to-ledger-hardware-wallets) 블로그 포스트.
+- [레저](https://www.ledger.com/) 공식 사이트.
+
+### SafePal
+
+[세이프팔](https://www.safepal.com/en/)은 빠르게 확장되고 있는 탈중앙화 애플리케이션의 은하계로 가는 관문입니다.
+
+#### 링크
+
+- [세이프팔](https://www.safepal.com/en/) 공식 사이트
+
+## 보관 지갑
+
+:::info
+커스터디 지갑을 사용하면 사용자는 다른 사람이 지갑의 개인 키를 보유하도록 신뢰합니다.
+:::
+
+### 지갑
+
+[@wallet](https://t.me/wallet) - 텔레그램에서 P2P를 사용하여 실제 돈으로 TON을 주고 받거나 거래하는 봇입니다. 텔레그램 미니 앱 UI를 지원합니다.
+
+|                                                                                                |
+| ---------------------------------------------------------------------------------------------- |
+|               ![지갑](/img/docs/wallet-apps/Wallet.png?raw=true)                                 |
+
+### 크립토봇
+
+[크립토봇](https://t.me/cryptobot) - TON을 저장, 전송, 교환할 수 있는 텔레그램 봇 지갑입니다.
+
+|                                                                                                          |
+| -------------------------------------------------------------------------------------------------------- |
+|               ![CryptoBot](/img/docs/wallet-apps/CryptoBot.png?raw=true)                                 |
+
+#### 타사 통합을 위한 링크
+
+- [크립토 페이 API](https://help.crypt.bot/crypto-pay-api)
+
+### 톤로켓봇
+
+[톤로켓봇](https://t.me/tonRocketBot) - 톤을 보관, 전송, 교환할 수 있는 텔레그램 봇 지갑입니다. 제톤 거래도 지원합니다.
+
+|                                                                                                                |
+| -------------------------------------------------------------------------------------------------------------- |
+|               ![tonrocketbot](/img/docs/wallet-apps/tonrocketbot.png?raw=true)                                 |
+
+#### 타사 통합을 위한 링크
+
+- [로켓 교환](https://trade.ton-rocket.com/api/)
+- [로켓 페이 문서](https://pay.ton-rocket.com/api/)
+
+## 다중 서명 지갑
+
+### Tonkey
+
+톤키는 톤 블록체인에 다중 서명 기능을 도입하는 고급 프로젝트입니다.
+
+### 링크
+
+- https://tonkey.app/
+- [깃허브](https://github.com/tonkey-app)
+
+## 참고 항목
+
+- [블록체인이란 무엇인가요? 스마트 컨트랙트란 무엇인가요? 가스란 무엇인가요?](https://blog.ton.org/what-is-blockchain)
+- [지갑 계약 유형](/참여/지갑/계약)

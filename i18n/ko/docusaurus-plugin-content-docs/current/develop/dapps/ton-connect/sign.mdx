@@ -1,0 +1,223 @@
+import ThemedImage from '@theme/ThemedImage';
+
+# 백엔드에서 로그인한 사용자 확인
+
+이 페이지에서는 백엔드에서 사용자가 신고한 주소를 실제로 소유하고 있는지 확인하는 방법에 대해 설명합니다.
+모든 디앱에 사용자 인증이 필요한 것은 아닙니다.
+
+백엔드에서 개인 정보를 제공하기 위해 사용자를 확인하려는 경우 유용합니다.
+
+## 어떻게 작동하나요?
+
+- 사용자가 로그인 프로세스를 시작합니다.
+- 백엔드는 ton_proof 엔티티를 생성하여 프론트엔드로 전송합니다.
+- 프론트엔드에서 톤프루프를 사용하여 지갑에 로그인하고 서명된 톤프루프를 다시 받습니다.
+- 프론트엔드에서 서명된 ton_proof를 백엔드로 전송하여 확인합니다.
+
+```mdx-code-block
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/docs/ton-connect/ton_proof_scheme.svg?raw=true',
+        dark: '/img/docs/ton-connect/ton_proof_scheme-dark.svg?raw=true',
+    }}
+/>
+<br></br>
+```
+
+## 톤\_프루프의 구조
+
+커넥터 내부에 구현된 톤프루프 엔티티를 사용할 것입니다.
+
+```js
+type TonProofItemReply = TonProofItemReplySuccess | TonProofItemReplyError;
+
+type TonProofItemReplySuccess = {
+  name: "ton_proof";
+  proof: {
+    timestamp: string; // 64-bit unix epoch time of the signing operation (seconds)
+    domain: {
+      lengthBytes: number; // AppDomain Length
+      value: string;  // app domain name (as url part, without encoding)
+    };
+    signature: string; // base64-encoded signature
+    payload: string; // payload from the request
+  }
+}
+
+```
+
+## 서버 측에서 ton_proof 확인
+
+1. 사용자로부터 '톤 증명 항목 응답'을 검색합니다.
+2. 수신한 도메인이 애플리케이션의 도메인과 일치하는지 확인합니다.
+3. 원본 서버에서 `TonProofItemReply.payload`가 허용되고 여전히 활성화되어 있는지 확인합니다.
+4. 현재 '타임스탬프'가 실제 존재하는지 확인합니다.
+5. 메시지 구성표](/개발/앱/톤 연결/사인#개념-설명)에 따라 메시지를 구성합니다.
+6. API(a) 또는 백엔드 로직(b)을 통해 `public_key`를 검색합니다.
+
+- 6a:
+  - TON API](https://docs.tonconsole.com/tonapi/api-v2#:~:text=/v2/-,tonconnect,-/stateinit) 메서드 `POST /v2/tonconnect/stateinit`로 `walletStateInit`에서 `{public_key, address}`를 검색합니다.
+  - 지갑 상태 초기화`에서 추출한 `주소`가 사용자가 신고한 지갑 `주소\`와 일치하는지 확인합니다.
+- 6b:
+  - 지갑 컨트랙트 [get 메서드](https://github.com/ton-blockchain/wallet-contract/blob/main/func/wallet-v4-code.fc#L174)를 통해 지갑 'public_key'를 가져옵니다.
+  - 컨트랙트가 활성화되어 있지 않거나 이전 지갑 버전(v1-v3)에 있는 get_method가 없는 경우, 이러한 방식으로 키를 가져올 수 없습니다. 대신 프런트엔드에서 제공하는 walletStateInit을 파싱해야 합니다. 톤애드워드아이템응답.walletStateInit.hash()가 톤애드워드아이템응답.주소.hash()와 같은지 확인하여 BoC 해시를 나타냅니다.
+
+7. 프론트엔드의 '서명'이 실제로 조립된 메시지에 서명하고 주소의 '공개 키'와 일치하는지 확인합니다.
+
+## React 예제
+
+1. 앱의 루트에 토큰 공급자를 추가합니다:
+
+```tsx
+function App() {
+    const [token, setToken] = useState<string | null>(null);
+
+  return (
+      <BackendTokenContext.Provider value={{token, setToken}}>
+            { /* Your app */ }
+      </BackendTokenContext.Provider>
+  )
+}
+```
+
+2. 백엔드에서 인증을 구현합니다:
+
+<details>
+<summary>예</summary>
+
+```tsx
+import {useContext, useEffect, useRef} from "react";
+import {BackendTokenContext} from "./BackendTokenContext";
+import {useIsConnectionRestored, useTonConnectUI, useTonWallet} from "@tonconnect/ui-react";
+import {backendAuth} from "./backend-auth";
+
+const localStorageKey = 'my-dapp-auth-token';
+const payloadTTLMS = 1000 * 60 * 20;
+
+export function useBackendAuth() {
+    const { setToken } = useContext(BackendTokenContext);
+    const isConnectionRestored = useIsConnectionRestored();
+    const wallet = useTonWallet();
+    const [tonConnectUI] = useTonConnectUI();
+    const interval = useRef<ReturnType<typeof setInterval> | undefined>();
+
+    useEffect(() => {
+        if (!isConnectionRestored || !setToken) {
+            return;
+        }
+
+        clearInterval(interval.current);
+
+        if (!wallet) {
+            localStorage.removeItem(localStorageKey);
+            setToken(null);
+
+            const refreshPayload = async () => {
+                tonConnectUI.setConnectRequestParameters({ state: 'loading' });
+
+                const value = await backendAuth.generatePayload();
+                if (!value) {
+                    tonConnectUI.setConnectRequestParameters(null);
+                } else {
+                    tonConnectUI.setConnectRequestParameters({state: 'ready', value});
+                }
+            }
+
+            refreshPayload();
+            setInterval(refreshPayload, payloadTTLMS);
+            return;
+        }
+
+        const token = localStorage.getItem(localStorageKey);
+        if (token) {
+            setToken(token);
+            return;
+        }
+
+        if (wallet.connectItems?.tonProof && !('error' in wallet.connectItems.tonProof)) {
+            backendAuth.checkProof(wallet.connectItems.tonProof.proof, wallet.account).then(result => {
+                if (result) {
+                    setToken(result);
+                    localStorage.setItem(localStorageKey, result);
+                } else {
+                    alert('Please try another wallet');
+                    tonConnectUI.disconnect();
+                }
+            })
+        } else {
+            alert('Please try another wallet');
+            tonConnectUI.disconnect();
+        }
+
+    }, [wallet, isConnectionRestored, setToken])
+}
+```
+
+</details>
+
+## 개념 설명
+
+톤증명항목\`이 요청되면 지갑은 선택한 계정의 키에 대한 소유권을 증명합니다. 서명된 메시지는 바인딩됩니다:
+
+- 온체인 메시지와 메시지를 구분하기 위한 고유 접두사. (`ton-connect`)
+- 지갑 주소
+- 앱 도메인
+- 서명 타임스탬프
+- 앱의 사용자 지정 페이로드(서버가 논스, 쿠키 ID, 만료 시간을 저장할 수 있는 위치)
+
+```
+message = utf8_encode("ton-proof-item-v2/") ++
+          Address ++
+          AppDomain ++
+          Timestamp ++
+          Payload
+
+signature = Ed25519Sign(privkey, sha256(0xffff ++ utf8_encode("ton-connect") ++ sha256(message)))
+```
+
+어디에:
+
+- '주소'는 시퀀스로 인코딩된 지갑 주소입니다:
+- 워크체인\`: 32비트 부호 있는 정수 빅 엔디안;
+- 해시\`: 256비트 부호 없는 정수 빅 엔디안;
+- 앱 도메인\`은 길이 ++ 인코딩된 도메인 이름입니다.
+
+<!---->
+
+- 길이\`는 utf-8로 인코딩된 앱 도메인 이름 길이(바이트)의 32비트 값입니다.
+- 인코딩된 도메인 이름`아이디`길이\`-바이트 utf-8로 인코딩된 앱 도메인 이름
+
+<!---->
+
+- 서명 작업의 `타임스탬프` 64비트 유닉스 에포크 시간
+- 페이로드\`는 가변 길이 바이너리 문자열입니다.
+
+참고: 페이로드는 가변 길이의 신뢰할 수 없는 데이터입니다. 불필요한 길이 접두사를 사용하지 않기 위해 마지막에 넣었습니다.
+
+서명은 공개 키로 확인해야 합니다:
+
+1. 먼저, '주소'에 배포된 스마트 컨트랙트에서 `get_public_key` get-method를 통해 공개키를 가져옵니다.
+
+2. 스마트 컨트랙트가 아직 배포되지 않았거나 get 메서드가 누락된 경우입니다:
+
+   1. 톤어드레스아이템응답.walletStateInit`을 파싱하고 stateInit에서 공개키를 가져옵니다. 지갑 상태 초기화 코드`를 표준 지갑 컨트랙트의 코드와 비교하고 찾은 지갑 버전에 따라 데이터를 파싱할 수 있습니다.
+
+   2. 톤 주소 항목 회신\`이 획득한 공개 키와 동일한지 확인합니다.
+
+   3. 톤어드레스아이템리플리.지갑스테이트인잇.해시()`가 `톤어드레스아이템리플리.주소`와 같은지 확인합니다. .hash()`는 BoC 해시를 의미합니다.
+
+### 톤 증명 검증의 예
+
+- [GO 데모 앱](https://github.com/ton-connect/demo-dapp-backend/blob/master/proof.go)
+- [Rust 데모 앱](https://github.com/liketurbo/demo-dapp-backend-rs)
+- [TS 예시](https://gist.github.com/TrueCarry/cac00bfae051f7028085aa018c2a05c6)
+- [파이썬 예제](https://github.com/XaBbl4/pytonconnect/blob/main/examples/check_proof.py)
+- [PHP 예제](https://github.com/vladimirfokingithub/Ton-Connect-Proof-Php-Check)
+
+## 참고 항목
+
+- [유튜브] 톤커넥트/리액트유아이 [RU]](https://youtu.be/wIMbkJHv0Fs?list=PLyDBPwv9EPsCJ226xS5_dKmXXxWx1CKz_&t=2971)에서 톤프루프를 확인하세요.
+- [메시지 준비하기](/개발/앱/톤커넥트/메시지 작성기)
+- [메시지 보내기](/개발/앱/톤 연결/거래)

@@ -1,0 +1,571 @@
+# 쓰기 테스트 예제
+
+이 페이지는 [블루프린트 SDK](https://github.com/ton-org/blueprint)([샌드박스](https://github.com/ton-org/sandbox)로 생성한 FunC 컨트랙트에 대한 테스트를 작성하는 방법을 보여줍니다.)
+데모 컨트랙트 [불꽃놀이](https://github.com/ton-community/fireworks-func)를 위해 빌드된 테스트 스위트. 불꽃놀이는 처음에 `set_first` 메시지를 통해 실행되는 스마트 컨트랙트입니다.
+
+npm create ton@latest`를 통해 새 FunC 프로젝트가 생성되면 프로젝트 디렉터리에 컨트랙트 테스트를 위한 테스트 파일 `tests/contract.spec.ts\`가 자동 생성됩니다:
+
+```typescript
+import ...
+
+describe('Fireworks', () => {
+...
+
+
+        expect(deployResult.transactions).toHaveTransaction({
+...
+        });
+
+});
+
+it('should deploy', async () => {
+    // the check is done inside beforeEach
+    // blockchain and fireworks are ready to use
+});
+```
+
+다음 명령을 사용하여 테스트를 실행합니다:
+
+```bash
+npx blueprint test
+```
+
+추가 옵션 및 vmLog는 `blockchain.verbosity`로 지정할 수 있습니다:
+
+```typescript
+blockchain.verbosity = {
+    ...blockchain.verbosity,
+    blockchainLogs: true,
+    vmLogs: 'vm_logs_full',
+    debugLogs: true,
+    print: false,
+}
+```
+
+## 직접 단위 테스트
+
+불꽃놀이는 TON 블록체인에서 메시지 전송을 통해 다양한 작동을 시연합니다.
+
+![](/img/docs/writing-test-examples/test-examples-schemes.svg)
+
+충분한 양의 `set_first` 메시지와 함께 배포하면 기본 및 사용 가능한 전송 모드의 조합으로 자동으로 실행됩니다.
+
+파이어웍스는 자체적으로 재배포되어 결과적으로 3개의 파이어웍스 엔티티가 생성되며, 각 엔티티는 자체 ID(스토리지에 보관)를 가지며 결과적으로 다른 스마트 컨트랙트 주소를 갖게 됩니다.
+
+명확성을 위해 다음 이름을 가진 ID별 파이어웍스 인스턴스(다른 `state_init`)를 정의합니다:
+
+- 1 - 불꽃놀이 세터 - 다양한 발사 연산 코드를 퍼뜨리는 엔티티입니다. 최대 4개의 다른 옵코드로 확장할 수 있습니다.
+- 2 - 불꽃놀이 런처-1 - 첫 번째 불꽃놀이를 발사하는 불꽃놀이 인스턴스는 메시지가 런처로 전송됨을 의미합니다.
+- 3 - 불꽃놀이 발사기-2 - 두 번째 불꽃놀이를 발사하는 불꽃놀이 인스턴스는 메시지가 발사기로 전송됨을 의미합니다.
+
+<details>
+    <summary>거래 세부 정보 확장</summary>
+
+index - `launchResult` 배열에 있는 트랜잭션의 ID입니다.
+
+- 0`- 재무부(런처)에 대한 외부 요청으로 인해 2.5가 포함된 아웃바운드 메시지`op::set_first\`가 불꽃으로 전송되었습니다.
+- 1`-`op::set_first\`로 호출되고 Fireworks 런처-1과 Fireworks 런처-2로 두 개의 아웃바운드 메시지와 함께 실행되는 Fireworks 설정자 컨트랙트의 트랜잭션입니다.
+- 2`-`op::launch_first\`로 호출된 Fireworks 런처 1의 트랜잭션이 런처로 4개의 아웃바운드 메시지와 함께 실행되었습니다.
+- 3`-`op::launch_second\`로 호출된 Fireworks 런처 2의 트랜잭션이 런처에 대한 아웃바운드 메시지와 함께 실행되었습니다.
+- 4`- Fireworks 런처에서 수신 메시지가 있는 런처의 트랜잭션 1. 이 메시지는`전송 모드 = 0\`으로 전송되었습니다.
+- 5\` - Fireworks 런처에서 수신 메시지가 있는 런처의 트랜잭션 1. 이 메시지는 '보내기 모드 = 1'로 전송되었습니다.
+- 6\` - Fireworks 런처에서 수신 메시지가 있는 런처의 트랜잭션 1. 이 메시지는 '보내기 모드 = 2'로 전송되었습니다.
+- 7`- Fireworks 런처에서 수신 메시지가 있는 런처의 트랜잭션 1. 이 메시지는`전송 모드 = 128 + 32\`로 전송되었습니다.
+- 8`- Fireworks 런처 2에서 수신 메시지가 있는 런처의 트랜잭션입니다. 이 메시지는`전송 모드 = 64\`로 전송되었습니다.
+
+</details>
+
+각 '불꽃' - 고유한 메시지 본문이 있는 아웃바운드 메시지는 ID:3 및 ID:4의 트랜잭션에 나타납니다.
+
+다음은 성공적으로 실행될 것으로 예상되는 각 트랜잭션에 대한 테스트 목록입니다. 트랜잭션[ID:0] 재무부(런처)에 대한 외부 요청으로 2.5가 포함된 `op::set_first` 아웃바운드 메시지를 파이어웍스에 보냈습니다. 블록체인 런처에 불꽃놀이를 배포할 경우 지갑입니다.
+
+### 트랜잭션 ID:1 성공 테스트
+
+[이 테스트](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L75)는 2.5톤의 값을 가진 트랜잭션을 전송하여 불꽃놀이가 성공적으로 설정되었는지 확인합니다.
+가장 간단한 경우로, 트랜잭션 성공 속성의 결과를 참으로 주장하는 것이 주된 목적입니다.
+
+launhcResult.transactions\` 배열에서 특정 트랜잭션을 필터링하려면 가장 설득력 있는 필드를 사용할 수 있습니다.`from`(컨트랙트 발신자 주소), `to`(컨트랙트 수신자 주소), `op`(작업 코드 값)를 사용하면 이 조합에 대해 하나의 트랜잭션만 검색할 수 있습니다.
+
+![](/img/docs/writing-test-examples/test-examples-schemes_id1.svg)
+
+Fireworks Setter 컨트랙트의 트랜잭션[ID:1]은 `op::set_first`로 호출되고 Fireworks 런처-1과 Fireworks 런처-2로 두 개의 아웃바운드 메시지와 함께 실행됩니다.
+
+```typescript
+
+    it('first transaction[ID:1] should set fireworks successfully', async () => {
+
+        const launcher = await blockchain.treasury('launcher');
+
+        const launchResult = await fireworks.sendDeployLaunch(launcher.getSender(), toNano('2.5'));
+
+
+        expect(launchResult.transactions).toHaveTransaction({
+            from: launcher.address,
+            to: fireworks.address,
+            success: true,
+            op: Opcodes.set_first
+        })
+
+    });
+
+```
+
+### 트랜잭션 ID:2 성공 테스트
+
+[이 테스트](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L92)는 트랜잭션[ID:2]이 성공적으로 실행되었는지 확인합니다.
+
+![](/img/docs/writing-test-examples/test-examples-schemes_id2.svg)
+
+Fireworks 런처 1의 트랜잭션은 `op::launch_first`로 호출되고 런처로 4개의 아웃바운드 메시지와 함께 실행됩니다.
+
+```typescript
+    it('should exist a transaction[ID:2] which launch first fireworks successfully', async () => {
+
+        const launcher = await blockchain.treasury('launcher');
+
+        const launchResult = await fireworks.sendDeployLaunch(launcher.getSender(), toNano('2.5'));
+
+        expect(launchResult.transactions).toHaveTransaction({
+            from: fireworks.address,
+            to: launched_f1.address,
+            success: true,
+            op: Opcodes.launch_first,
+            outMessagesCount: 4,
+            destroyed: true,
+            endStatus: "non-existing",
+        })
+
+        printTransactionFees(launchResult.transactions);
+
+    });
+```
+
+트랜잭션이 컨트랙트 상태에 영향을 미쳐야 하는 경우, `destroyed`, `endStatus` 필드로 이를 지정할 수 있습니다.
+
+계정 상태 관련 필드의 전체 목록입니다:
+
+- '파괴됨' - 특정 거래 실행으로 인해 기존 계약이 파괴된 경우 '참' - '거짓'. 그렇지 않으면 - `거짓`.
+- 배포`- 이 트랜잭션 중에 컨트랙트가 배포되었는지 여부를 나타내는 사용자 정의 샌드박스 플래그입니다. 이 트랜잭션 이전의 컨트랙트가 초기화되지 않았고 이 트랜잭션이 초기화된 후이면`true`입니다. 그렇지 않으면 `false\`.
+- oldStatus\` - 트랜잭션 실행 전 계정 상태. 값: `미초기화`, `동결`, `활성`, `비존재`.
+- endStatus\` - 트랜잭션 실행 후의 계정 상태입니다. 값: `미초기화`, `동결`, `활성`, `비존재`.
+
+### 트랜잭션 ID:3 성공 테스트
+
+[이 테스트](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L113)는 트랜잭션[ID:3]이 성공적으로 실행되었는지 확인합니다.
+
+![](/img/docs/writing-test-examples/test-examples-schemes_id3.svg)
+
+트랜잭션[ID:3]은 Fireworks 런처 1에서 실행되며, `op::launch_first`로 호출하고 런처로 4개의 아웃바운드 메시지와 함께 실행됩니다.
+
+```typescript
+
+    it('should exist a transaction[ID:3] which launch second fireworks successfully', async () => {
+
+        const launcher = await blockchain.treasury('launcher');
+
+        const launchResult = await fireworks.sendDeployLaunch(launcher.getSender(), toNano('2.5'));
+
+        expect(launchResult.transactions).toHaveTransaction({
+            from: fireworks.address,
+            to: launched_f2.address,
+            success: true,
+            op: Opcodes.launch_second,
+            outMessagesCount: 1
+        })
+
+        printTransactionFees(launchResult.transactions);
+
+    });
+
+
+
+
+```
+
+### 트랜잭션 ID:4 성공 테스트
+
+[이 테스트](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L133)는 트랜잭션[ID:4]이 성공적으로 실행되었는지 확인합니다.
+
+![](/img/docs/writing-test-examples/test-examples-schemes_id4.svg)
+
+트랜잭션[ID:4]은 런처(지갑 배포)에서 파이어웍스 런처 1에서 수신된 메시지와 함께 실행됩니다. 이 메시지는 트랜잭션[ID:2]에서 `send mode = 0`으로 전송됩니다.
+
+```typescript
+ it('should exist a transaction[ID:4] with a comment send mode = 0', async() => {
+
+        const launcher = await blockchain.treasury('launcher');
+
+        const launchResult = await fireworks.sendDeployLaunch(
+            launcher.getSender(),
+            toNano('2.5'),
+        );
+
+        expect(launchResult.transactions).toHaveTransaction({
+            from: launched_f1.address,
+            to: launcher.address,
+            success: true,
+            body: beginCell().storeUint(0,32).storeStringTail("send mode = 0").endCell() // 0x00000000 comment opcode and encoded comment
+
+        });
+    })
+```
+
+### 트랜잭션 ID:5 성공 테스트
+
+[이 테스트](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L152)는 트랜잭션[ID:5]이 성공적으로 실행되었는지 확인합니다.
+
+![](/img/docs/writing-test-examples/test-examples-schemes_id5.svg)
+
+트랜잭션[ID:5]은 런처에서 Fireworks 런처 1에서 들어오는 메시지와 함께 실행됩니다. 이 메시지는 '보내기 모드 = 1'로 전송됩니다.
+
+```typescript
+     it('should exist a transaction[ID:5] with a comment send mode = 1', async() => {
+
+        const launcher = await blockchain.treasury('launcher');
+
+        const launchResult = await fireworks.sendDeployLaunch(
+            launcher.getSender(),
+            toNano('2.5'),
+        );
+
+        expect(launchResult.transactions).toHaveTransaction({
+            from: launched_f1.address,
+            to: launcher.address,
+            success: true,
+            body: beginCell().storeUint(0,32).storeStringTail("send mode = 1").endCell() // 0x00000000 comment opcode and encoded comment
+        });
+
+    })
+
+
+```
+
+### 트랜잭션 ID:6 성공 테스트
+
+[이 테스트](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L170)는 트랜잭션[ID:6]이 성공적으로 실행되었는지 확인합니다.
+
+![](/img/docs/writing-test-examples/test-examples-schemes_id6.svg)
+
+트랜잭션[ID:6]은 Fireworks 런처 1에서 들어오는 메시지와 함께 런처에서 수행됩니다. 이 메시지는 '보내기 모드 = 2'로 전송되었습니다.
+
+```typescript
+    it('should exist a transaction[ID:6] with a comment send mode = 2', async() => {
+
+        const launcher = await blockchain.treasury('launcher');
+
+        const launchResult = await fireworks.sendDeployLaunch(
+            launcher.getSender(),
+            toNano('2.5'),
+        );
+
+        expect(launchResult.transactions).toHaveTransaction({
+            from: launched_f1.address,
+            to: launcher.address,
+            success: true,
+            body: beginCell().storeUint(0,32).storeStringTail("send mode = 2").endCell() // 0x00000000 comment opcode and encoded comment
+        });
+
+    })
+```
+
+### 트랜잭션 ID:7 성공 테스트
+
+[이 테스트](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L188)는 트랜잭션[ID:7]이 성공적으로 실행되었는지 확인합니다.
+
+![](/img/docs/writing-test-examples/test-examples-schemes_id7.svg)
+
+트랜잭션[ID:7]은 Fireworks 런처 1에서 들어오는 메시지와 함께 런처에서 수행됩니다. 이 메시지는 '보내기 모드 = 128 + 32'로 전송됩니다.
+
+```typescript
+     it('should exist a transaction[ID:7] with a comment send mode = 32 + 128', async() => {
+
+        const launcher = await blockchain.treasury('launcher');
+
+        const launchResult = await fireworks.sendDeployLaunch(
+            launcher.getSender(),
+            toNano('2.5'),
+        );
+
+        expect(launchResult.transactions).toHaveTransaction({
+            from: launched_f1.address,
+            to: launcher.address,
+            success: true,
+            body: beginCell().storeUint(0,32).storeStringTail("send mode = 32 + 128").endCell() // 0x00000000 comment opcode and encoded comment
+        });
+    })
+```
+
+### 트랜잭션 ID:8 성공 테스트
+
+[이 테스트](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L188)는 트랜잭션[ID:8]이 성공적으로 실행되었는지 확인합니다.
+
+![](/img/docs/writing-test-examples/test-examples-schemes_id8.svg)
+
+트랜잭션[ID:8]은 Fireworks 런처 2에서 들어오는 메시지와 함께 런처에서 수행됩니다. 이 메시지는 '보내기 모드 = 64'로 전송되었습니다.
+
+```typescript
+  it('should exist a transaction[ID:8] with a comment send mode = 64', async() => {
+
+        const launcher = await blockchain.treasury('launcher');
+
+        const launchResult = await fireworks.sendDeployLaunch(
+            launcher.getSender(),
+            toNano('2.5'),
+        );
+
+        expect(launchResult.transactions).toHaveTransaction({
+            from: launched_f2.address,
+            to: launcher.address,
+            success: true,
+            body: beginCell().storeUint(0,32).storeStringTail("send_mode = 64").endCell() // 0x00000000 comment opcode and encoded comment
+
+        });
+
+    })
+
+```
+
+## 인쇄 및 읽기 거래 수수료
+
+테스트하는 동안 수수료에 대한 세부 정보를 읽으면 계약을 최적화하는 데 유용할 수 있습니다. 인쇄 트랜잭션 수수료 함수는 전체 트랜잭션 체인을 편리한 방식으로 인쇄합니다."
+
+```typescript
+
+    it('should be executed and print fees', async() => {
+
+        const launcher = await blockchain.treasury('launcher');
+
+        const launchResult = await fireworks.sendDeployLaunch(
+            launcher.getSender(),
+            toNano('2.5'),
+        );
+
+        console.log(printTransactionFees(launchResult.transactions));
+
+    });
+
+```
+
+예를 들어 `launchResult`의 경우 다음 표가 인쇄됩니다:
+
+| (색인) | op             | valueIn        | valueOut       | 총 수수료          | outActions  |
+| ----------------------- | -------------- | -------------- | -------------- | -------------- | ----------- |
+| 0                       | 'N/A'          | 'N/A'          | '2.5 TON'      | '0.010605 TON' | 1           |
+| 1                       | '0x5720cfeb'   | '2.5 TON'      | '2.185812 TON' | '0.015836 TON' | 2           |
+| 2                       | '0x6efe144b'   | '1.092906 TON' | '1.081142 TON' | '0.009098 TON' | 4           |
+| 3                       | '0xa2e2c2dc'   | '1.092906 TON' | '1.088638 TON' | '0.003602 TON' | 1           |
+| 4                       | '0x0'          | '0.099 TON'    | '0 TON'        | '0.000309 TON' | 0           |
+| 5                       | '0x0'          | '0.1 TON'      | '0 TON'        | '0.000309 TON' | 0           |
+| 6                       | '0x0'          | '0.099 TON'    | '0 TON'        | '0.000309 TON' | 0           |
+| 7                       | '0x0'          | '0.783142 TON' | '0 TON'        | '0.000309 TON' | 0           |
+| 8                       | '0x0'          | '1.088638 TON' | '0 TON'        | '0.000309 TON' | 0           |
+
+![](/img/docs/writing-test-examples/fireworks_trace_tonviewer.png?=RAW)
+
+index - `launchResult` 배열에 있는 트랜잭션의 ID입니다.
+
+- 0`- 재무부(런처)에 대한 외부 요청으로 인해 Fireworks에`op::set_first\` 메시지를 보냈습니다.
+- 1\` - 런처에 4개의 메시지를 전송한 Fireworks 트랜잭션입니다.
+- 2`- 실행된 불꽃놀이 트랜잭션 - 런처에서 1,`op::launch_first\` 연산 코드와 함께 전송된 메시지.
+- `2` - 런처에서 `op::launch_second` 연산 코드와 함께 전송된 2번 불꽃놀이 트랜잭션입니다.
+- `4` - 실행된 불꽃놀이에서 수신 메시지가 있는 런처의 트랜잭션 - 1, `보내기 모드 = 0`으로 전송된 메시지
+- '5\` - 실행된 불꽃놀이에서 수신 메시지가 있는 런처의 트랜잭션 - 1, '보내기 모드 = 1'로 메시지를 보냅니다.
+- '6\` - 실행된 불꽃놀이에서 수신 메시지가 있는 런처의 트랜잭션 - 1, '보내기 모드 = 2'로 전송된 메시지
+- 7`- 실행된 불꽃놀이에서 수신 메시지가 있는 런처의 트랜잭션 - 1,`보내기 모드 = 128 + 32\`로 전송된 메시지
+- `8` - 실행된 불꽃놀이에서 수신 메시지가 있는 런처의 트랜잭션 - 2, `보내기 모드 = 64`로 전송된 메시지
+
+## 거래 수수료 테스트
+
+이 테스트는 불꽃놀이를 시작하기 위한 거래 수수료가 예상과 일치하는지 확인합니다. 수수료의 여러 부분에 대한 사용자 지정 어설션을 정의할 수 있습니다.
+
+```typescript
+
+  it('should be executed with expected fees', async() => {
+
+        const launcher = await blockchain.treasury('launcher');
+
+        const launchResult = await fireworks.sendDeployLaunch(
+            launcher.getSender(),
+            toNano('2.5'),
+        );
+
+        //totalFee
+        console.log('total fees = ', launchResult.transactions[1].totalFees);
+
+        const tx1 = launchResult.transactions[1];
+        if (tx1.description.type !== 'generic') {
+            throw new Error('Generic transaction expected');
+        }
+
+        //computeFee
+        const computeFee = tx1.description.computePhase.type === 'vm' ? tx1.description.computePhase.gasFees : undefined;
+        console.log('computeFee = ', computeFee);
+
+        //actionFee
+        const actionFee = tx1.description.actionPhase?.totalActionFees;
+        console.log('actionFee = ', actionFee);
+
+
+        if ((computeFee == null || undefined) ||
+            (actionFee == null || undefined)) {
+            throw new Error('undefined fees');
+        }
+
+        //The check, if Compute Phase and Action Phase fees exceed 1 TON
+        expect(computeFee + actionFee).toBeLessThan(toNano('1'));
+
+
+    });
+
+```
+
+## 엣지 사례 테스트
+
+이 섹션에서는 트랜잭션 처리 중에 발생할 수 있는 TVM 종료 [코드](/learn/tvm-instructions/tvm-exit-codes)에 대한 테스트 사례를 제공합니다. 이러한 종료 코드는 블록체인 코드 자체에 있습니다. 동시에 [계산 단계](/learn/tvm-instructions/tvm-overview#compute-phase) 중 종료 코드와 액션 단계 중 종료 코드를 구분할 필요가 있습니다.
+
+계산 단계에서는 컨트랙트 로직(코드)이 실행됩니다. 처리하는 동안 다양한 액션이 생성될 수 있습니다. 이러한 작업은 다음 단계인 액션 단계에서 처리됩니다. 계산 단계가 실패하면 작업 단계가 시작되지 않습니다. 그러나 계산 단계가 성공했다고 해서 액션 단계도 성공적으로 종료된다는 보장은 없습니다.
+
+### 계산 단계 | 종료 코드 = 0
+
+이 종료 코드는 트랜잭션의 계산 단계가 성공적으로 완료되었음을 의미합니다.
+
+### 계산 단계 | 종료 코드 = 1
+
+컴퓨트 단계의 성공을 나타내는 대체 종료 코드는 `1`입니다. 이 종료 코드를 얻으려면 [RETALT](https://github.com/ton-community/fireworks-func/blob/ef49b4da12d287a8f6c2b6f0c19d65814c1578fc/contracts/fireworks.fc#L20)를 사용해야 합니다.
+
+이 옵코드는 메인 함수(예: recv_internal)에서 호출해야 한다는 점에 유의해야 합니다. 다른 함수에서 호출하면 해당 함수의 종료 코드는 `1`이 되지만 총 종료 코드는 `0`이 됩니다.
+
+### 계산 단계 | 종료 코드 = 2
+
+TVM은 [스택 머신]입니다(/학습/tvm-지침/tvm-개요#tvm-is-a-stack-machine). 다른 값과 상호 작용할 때 스택에 나타납니다. 갑자기 스택에 요소가 없는데 일부 연산 코드에 요소가 필요한 경우 이 오류가 발생합니다.
+
+FunC용 라이브러리인 [stdlib.fc](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/stdlib.fc)는 이러한 문제가 없을 것으로 가정하기 때문에 opcode로 직접 작업할 때 이런 문제가 발생할 수 있습니다.
+
+### 계산 단계 | 종료 코드 = 3
+
+실행 전의 모든 코드는 '연속'이 됩니다. 이것은 코드, 스택, 레지스터 및 코드 실행에 필요한 기타 데이터가 포함된 슬라이스를 포함하는 특수 데이터 유형입니다. 이러한 연속은 필요한 경우 나중에 스택의 초기 상태에 필요한 매개변수를 전달하여 실행할 수 있습니다.
+
+먼저 이러한 연속체를 [빌드](https://github.com/ton-community/fireworks-func/blob/ef49b4da12d287a8f6c2b6f0c19d65814c1578fc/contracts/fireworks.fc#L31-L32)합니다. 이 경우 이것은 아무 일도 하지 않는 빈 연속입니다. 다음으로, `0 SETNUMARGS` 연산 코드를 사용하여 실행 시작 시 스택에 값이 없어야 함을 나타냅니다. 그런 다음 `1 -1 SETCONTARGS` 연산 코드를 사용하여 1 값을 전달하면서 연속을 호출합니다. 값이 없어야 하므로 스택 오버플로 오류가 발생합니다.
+
+### 계산 단계 | 종료 코드 = 4
+
+TVM에서 `정수`는 <sup>-2256</sup> \< x \<<sup>2256</sup> 범위에 있을 수 있습니다. 계산 중 값이 이 범위를 벗어나면 4 종료 코드가 발생합니다.
+
+### 계산 단계 | 종료 코드 = 5
+
+정수` 값이 예상 범위를 벗어난 경우 5 종료 코드가 발생합니다. 예를 들어 '.store_uint()` 함수에 음수 값이 사용된 경우입니다.
+
+### 계산 단계 | 종료 코드 = 6
+
+더 낮은 수준에서는 익숙한 함수 이름 대신 [이 표](/learn/tvm-instruction/instruction)에서 HEX 형식으로 볼 수 있는 옵코드가 사용됩니다. 이 예에서는 존재하지 않는 옵코드를 추가하는 `@addop`을 [사용](https://github.com/ton-community/fireworks-func/blob/ef49b4da12d287a8f6c2b6f0c19d65814c1578fc/contracts/fireworks.fc#L25)합니다.
+
+에뮬레이터는 이 옵코드를 처리하려고 할 때 이를 인식하지 못하고 6을 던집니다.
+
+### 계산 단계 | 종료 코드 = 7
+
+잘못된 데이터 타입을 수신할 때 발생하는 매우 일반적인 오류입니다. 예시](https://github.com/ton-community/fireworks-func/blob/ef49b4da12d287a8f6c2b6f0c19d65814c1578fc/contracts/fireworks.fc#L79-L80)는 '튜플'에 3개의 요소가 포함되어 있지만 압축을 풀 때 4개를 얻으려고 시도한 경우입니다.
+
+이 오류가 발생하는 다른 많은 경우가 있습니다. 그중 몇 가지를 소개합니다:
+
+- [널이 아님](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/stack.cpp#L433)
+- [정수가 아님](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/stack.cpp#L441)
+- [셀이 아님](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/stack.cpp#L478)
+- [셀 빌더가 아님](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/stack.cpp#L500)
+- [셀 슬라이스가 아님](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/stack.cpp#L509)
+- [문자열이 아님](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/stack.cpp#L518)
+- [바이트 청크가 아님](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/stack.cpp#L527)
+- [계속되지 않음](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/stack.cpp#L536)
+- [상자가 아님](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/stack.cpp#L545)
+- [튜플이 아님](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/stack.cpp#L554)
+- [원자가 아님](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/stack.cpp#L598)
+
+### 계산 단계 | 종료 코드 = 8
+
+TON의 모든 데이터는 [셀](/개발/데이터-포맷/셀-boc#셀)에 저장됩니다. 셀에는 1023비트의 데이터와 다른 셀에 대한 4개의 참조를 저장할 수 있습니다. 1023비트를 초과하거나 참조를 4개 이상 쓰려고 하면 8개의 종료 코드가 발생합니다.
+
+### 계산 단계 | 종료 코드 = 9
+
+슬라이스에서 포함된 데이터보다 더 많은 데이터를 읽으려고 하면(셀에서 데이터를 읽을 때는 슬라이스 데이터 유형으로 변환해야 함) 9 종료 코드가 발생합니다. 예를 들어 슬라이스에 10비트가 있는데 11비트를 읽었거나 다른 참조에 대한 링크가 없는데 참조를 로드하려고 시도한 경우입니다.
+
+### 계산 단계 | 종료 코드 = 10
+
+이 오류는 [딕셔너리](/develop/func/stdlib/#dictionaries-primitives)로 작업할 때 발생합니다. 예를 들어, 키에 속하는 값이 [다른 셀에 저장되어 있는 경우](https://github.com/ton-community/fireworks-func/blob/ef49b4da12d287a8f6c2b6f0c19d65814c1578fc/contracts/fireworks.fc#L100-L110)를 참조로 사용하는 경우입니다. 이 경우 이러한 값을 가져오려면 '.udict_get_ref()\` 함수를 사용해야 합니다.
+
+단, 다른 셀로 연결되는 링크는 예시에서처럼 2가 아닌 1(https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/dict.cpp#L454)이어야 합니다:
+
+```
+root_cell
+├── key
+│   ├── value
+│   └── value - second reference for one key
+└── key
+    └── value
+```
+
+그렇기 때문에 값을 읽으려고 할 때 10개의 종료 코드가 표시됩니다.
+
+**추가:** 사전의 키 옆에 값을 저장할 수도 있습니다:
+
+```
+root_cell
+├── key-value
+└── key-value
+```
+
+\*\*참고: 실제로 사전의 구조(데이터가 셀에 위치하는 방식)는 위의 예시보다 더 복잡합니다. 따라서 예제를 이해하기 쉽도록 단순화했습니다.
+
+### 계산 단계 | 종료 코드 = 11
+
+이 오류는 알 수 없는 상황이 발생했을 때 발생합니다. 예를 들어, [SENDMSG](/learn/tvm-instruction/tvm-upgrade-2023-07#sending-messages) 연산 코드를 사용할 때 메시지와 함께 [wrong](https://github.com/ton-community/fireworks-func/blob/ef49b4da12d287a8f6c2b6f0c19d65814c1578fc/contracts/fireworks.fc#L116)(예: 빈) 셀을 전달하면 이러한 오류가 발생하게 됩니다.
+
+또한 존재하지 않는 메서드를 호출하려고 할 때도 발생합니다. 개발자는 존재하지 않는 GET 메서드를 호출할 때 종종 이 문제에 직면합니다.
+
+### 계산 단계 | 종료 코드 = -14 (13)
+
+컴퓨트 페이즈를 처리할 TON이 충분하지 않으면 이 에러가 발생합니다. 계산 단계의 다양한 오류에 대한 종료 코드가 표시되는 열거형 클래스 `Excno`에서 [값 13이 표시됨](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/vm/excno.hpp#L39).
+
+그러나 처리하는 동안 이 값에 [NOT 연산이 적용됨](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/block/transaction.cpp#L1574)이 적용되어 이 값이 `-14`로 변경됩니다. 이는 모든 함수가 종료 코드에 양수 값만 허용하기 때문에 예를 들어 `throw` 함수를 사용하여 이 종료 코드를 위조할 수 없도록 하기 위해 수행됩니다.
+
+### 작업 단계 | 종료 코드 = 32
+
+액션 단계는 계산 단계 이후에 시작되며, 계산 단계 중에 [레지스터 c5](/learn/tvm-instruction/tvm-initialization#control-register-c5)에 기록된 액션을 처리합니다. 이 레지스터의 데이터가 잘못 쓰여지면 32개의 종료 코드가 발생합니다.
+
+### 작업 단계 | 종료 코드 = 33
+
+현재 하나의 트랜잭션에 최대 `255`개의 액션이 포함될 수 있습니다. 이 값을 초과하면 액션 단계는 33개의 종료 코드로 종료됩니다.
+
+### 작업 단계 | 종료 코드 = 34
+
+이 종료 코드는 잘못된 메시지, 잘못된 작업 등 작업 시 발생하는 대부분의 오류의 원인이 됩니다.
+
+### 작업 단계 | 종료 코드 = 35
+
+메시지의 [CommonMsgInfo](/개발/스마트컨트랙트/튜토리얼/월렛#commonmsginfo) 부분을 작성하는 동안 올바른 소스 주소를 지정해야 합니다. 이 주소는 [addr_none](/개발/데이터-형식/msg-tlb#addr_none00) 또는 메시지를 보내는 계정의 주소와 같아야 합니다.
+
+블록체인 코드에서 이 작업은 [check_replace_src_addr](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/block/transaction.cpp#L1985)에서 처리합니다.
+
+### 액션 단계 | 종료 코드 = 36
+
+대상 주소가 유효하지 않은 경우 36 종료 코드가 발생합니다. 몇 가지 가능한 이유는 존재하지 않는 워크체인 또는 잘못된 주소일 수 있습니다. 모든 확인 사항은 [check_rewrite_dest_addr](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/block/transaction.cpp#L2014-L2113)에서 확인할 수 있습니다.
+
+### 작업 단계 | 종료 코드 = 37
+
+이 종료 코드는 계산 단계의 `-14`와 유사합니다. 여기서는 지정된 양의 TON을 전송하기에 잔액이 충분하지 않다는 의미입니다.
+
+### 작업 단계 | 종료 코드 = 38
+
+37\` 종료 코드와 동일하지만 잔액에 [ExtraCurrency](/개발/연구개발/마이너 플로우#추가 통화)가 없음을 나타냅니다.
+
+### 액션 단계 | 종료 코드 = 40
+
+메시지의 특정 부분(예: 5개의 셀)을 처리하기에 충분한 TON이 있고 메시지에 10개의 셀이 있는 경우 40개의 종료 코드가 던져집니다.
+
+### 작업 단계 | 종료 코드 = 43
+
+라이브러리의 최대 셀 수를 초과하거나 머클 트리의 최대 깊이를 초과하는 경우 발생할 수 있습니다.
+
+라이브러리는 [마스터체인](/학습/개요/톤블록체인#마스터체인-블록체인-오브-블록체인)에 저장되는 셀로, [공개](https://github.com/ton-blockchain/ton/blob/9728bc65b75defe4f9dcaaea0f62a22f198abe96/crypto/block/transaction.cpp#L1844)인 경우 모든 스마트 컨트랙트에서 사용할 수 있습니다.
+
+:::info
+코드를 업데이트할 때 줄의 순서가 변경될 수 있으므로 일부 링크가 무의미해질 수 있습니다. 따라서 모든 링크는 커밋 [9728bc65b75defe4f9dcaaea0f62a22f198abe96](https://github.com/ton-blockchain/ton/tree/9728bc65b75defe4f9dcaaea0f62a22f198abe96)의 코드 베이스 상태를 사용하게 됩니다.
+:::

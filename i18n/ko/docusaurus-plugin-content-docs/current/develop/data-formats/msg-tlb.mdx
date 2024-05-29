@@ -1,0 +1,347 @@
+import ThemedImage from '@theme/ThemedImage';
+
+# 메시지 TL-B 체계
+
+이 섹션에서는 메시지에 대한 TL-B 체계에 대해 자세히 설명합니다.
+
+## 메시지 TL-B
+
+### TL-B
+
+여러 중첩 구조의 조합으로 선언된 주요 메시지 TL-B 체계
+
+```tlb
+message$_ {X:Type} info:CommonMsgInfo
+init:(Maybe (Either StateInit ^StateInit))
+body:(Either X ^X) = Message X;
+
+message$_ {X:Type} info:CommonMsgInfoRelaxed
+init:(Maybe (Either StateInit ^StateInit))
+body:(Either X ^X) = MessageRelaxed X;
+
+_ (Message Any) = MessageAny;
+```
+
+여기서 `메시지 X`는 일반적인 메시지 구조, `메시지 릴랙스드 X`는 CommonMsgInfoRelaxed 본문이 있는 추가 유형, `메시지 애니`는 이 둘의 합체입니다.
+X:Type으로 통합된 메시지 구조, 즉 셀입니다.
+TL-B에 따르면 모든 데이터를 하나의 셀에 결합하거나(1023비트에 맞을 경우) 캐럿 `^`로 선언된 참조를 사용할 수 있습니다.
+
+스마트 컨트랙트가 이 액션과 메시지 전송을 실행하는 것보다 FunC 메서드 send_raw_message()를 사용하여 액션 목록에 직렬화된 `메시지 X`를 배치합니다.
+
+### 명시적 직렬화의 정의
+
+TL-B 구조에 따라 유효한 바이너리 데이터를 구축하려면 각 유형에 대해 반복적으로 정의된 직렬화를 수행해야 합니다. 즉, 메시지 X를 직렬화하려면
+`StateInit`, `CommonMsgInfo` 등을 직렬화하는 방법을 알아야 합니다.
+
+최상위 구조에 대한 직렬화가 명시적일 때까지 링크에 따라 다른 TL-B 체계에서 가져와야 하는 모든 중첩 구조는 부울 또는 비트 유사 유형(비트, uint, varuint)으로 정의된 모든 비트를 명시적으로 가져와야 합니다.
+
+현재 일반 개발에서 사용하지 않는 구조는 유형 열에 `*`로 표시합니다(예: \*애니캐스트는 일반적으로 직렬화에서 생략됨).
+
+### 메시지$\_
+
+최상위 TL-B 체계 전체 메시지 '메시지 X'가 있습니다:
+
+```tlb
+message$_ {X:Type} info:CommonMsgInfo
+init:(Maybe (Either StateInit ^StateInit))
+body:(Either X ^X) = Message X;
+```
+
+| 구조             | 유형                                                                | 필수    | 설명                                                                                                                                                                                                       |   |
+| -------------- | ----------------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | - |
+| 메시지$\_         | 생성자                                                               |       | 생성자 눈금자에 따라 정의됩니다. 빈 태그 `$_`는 처음에 비트를 추가하지 않음을 의미합니다.                                                                                                                                                    |   |
+| 정보             | [공통메시지정보](#commonmsginfo)                                         | 필수    | 상세 메시지 속성은 대상과 해당 값을 정의합니다. 항상 메시지 루트 셀에 배치됩니다.                                                                                                                                                          |   |
+| init           | [StateInit](#stateinit-tl-b)                                      | 선택 사항 | 새 계약을 초기화하기 위해 톤에서 사용하는 일반적인 구조입니다. 셀 참조 또는 루트 셀에 쓸 수 있습니다.                                                                                                                                              |   |
+| body           | X                                                                 | 필수    | 메시지 페이로드. 셀 참조 또는 루트 셀에 쓸 수 있습니다.                                                                                                                                                                        |   |
+
+```tlb
+nothing$0 {X:Type} = Maybe X;
+just$1 {X:Type} value:X = Maybe X;
+left$0 {X:Type} {Y:Type} value:X = Either X Y;
+right$1 {X:Type} {Y:Type} value:Y = Either X Y;
+```
+
+어쩌면`과 `둘 중 하나\`가 어떻게 작동하는지 기억해 두면 다양한 경우를 직렬화할 수 있습니다:
+
+- '[CommonMsgInfo][10][StateInit][0][X]`- 하나의 셀에`메시지 X\`를 입력합니다.
+
+```mdx-code-block
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+light: '/img/docs/data-formats/tl-b-docs-9.png?raw=true',
+dark: '/img/docs/data-formats/tl-b-docs-9-dark.png?raw=true',
+}}
+/>
+<br></br>
+```
+
+- '[CommonMsgInfo][11][^StateInit][1][^X]`-`메시지 X\` 참조 포함
+
+```mdx-code-block
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+light: '/img/docs/data-formats/tl-b-docs-8.png?raw=true',
+dark: '/img/docs/data-formats/tl-b-docs-8-dark.png?raw=true',
+}}
+/>
+<br></br>
+```
+
+## CommonMsgInfo TL-B
+
+### 공통메시지정보
+
+공통메시지정보\`는 TON 블록체인에서 메시지가 전달되는 방식을 정의하는 매개변수 목록입니다.
+
+```tlb
+//internal message
+int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
+  src:MsgAddressInt dest:MsgAddressInt 
+  value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+  created_lt:uint64 created_at:uint32 = CommonMsgInfo;
+  
+//external incoming message  
+ext_in_msg_info$10 src:MsgAddressExt dest:MsgAddressInt 
+  import_fee:Grams = CommonMsgInfo;
+  
+//external outgoing message
+ext_out_msg_info$11 src:MsgAddressInt dest:MsgAddressExt
+  created_lt:uint64 created_at:uint32 = CommonMsgInfo;
+```
+
+### int_msg_info$0
+
+int_msg_info\`는 내부 메시지의 경우입니다. 즉, 컨트랙트 간에, 그리고 컨트랙트 간에만 전송할 수 있습니다.
+사용 사례 - 일반적인 교차 컨트랙트 메시지.
+
+```tlb
+nanograms$_ amount:(VarUInteger 16) = Grams;
+//internal message
+int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
+  src:MsgAddressInt dest:MsgAddressInt 
+  value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+  created_lt:uint64 created_at:uint32 = CommonMsgInfo;
+```
+
+| 구조                        | 유형                                                                               | 필수 | 설명                                                                                                                                                                                                                         |
+| ------------------------- | -------------------------------------------------------------------------------- | -- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| int_msg_info$0            | 생성자                                                                              | 필수 | 0 태그는 직렬화에서 0비트로 시작하는 CommonMsgInfo가 내부 메시지를 설명한다는 의미입니다.                                                                                                                                                                  |
+| ihr_disabled              | Bool                                                                             | 필수 | 하이퍼 큐브 라우팅 플래그.                                                                                                                                                                                                            |
+| bounce                    | Bool                                                                             | 필수 | 처리 중 오류가 있는 경우 메시지를 반송해야 합니다. 메시지가 플랫 반송 = 1이면 반송 가능이라고 합니다.                                                                                                                                                               |
+| 바운스                       | Bool                                                                             | 필수 | 플래그는 해당 메시지 자체가 반송의 결과임을 설명합니다.                                                                                                                                                                                            |
+| src                       | [MsgAddressInt](#msgaddressint-tl-b)                                             | 필수 | 메시지를 보낸 스마트 컨트랙트 발신자의 주소입니다.                                                                                                                                                                                               |
+| dest                      | [MsgAddressInt](#msgaddressint-tl-b)                                             | 필수 | 메시지의 스마트 컨트랙트 대상 주소입니다.                                                                                                                                                                                                    |
+| 값                         | [통화 컬렉션](#통화 컬렉션)                                             | 필수 | 메시지에서 이체된 총 금액을 포함한 통화 정보를 설명하는 구조입니다.                                                                                                                                                                                     |
+| ihr_fee                   | [VarUInteger 16](#varuinteger-n)                                                 | 필수 | 하이퍼 라우팅 배송 수수료                                                                                                                                                                                                             |
+| fwd_fee                   | [VarUInteger 16](#varuinteger-n)                                                 | 필수 | 유효성 검사자가 지정한 메시지 전달에 대한 수수료                                                                                                                                                                                                |
+| created_lt                | uint64                                                                           | 필수 | 검증자가 지정한 메시지 전송 논리 시간입니다. 스마트 컨트랙트에서 오더링 작업에 사용합니다.                                                                                                                                                                        |
+| created_at                | uint32                                                                           | 필수 | 유닉스 시간                                                                                                                                                                                                                     |
+
+### EXT_IN_MSG_INFO$10
+
+'EXT_IN_MSG_INFO$10'은 외부에서 들어오는 메시지의 경우입니다. 이는 컨트랙트에서 오프체인 공간으로 전송되는 메시지 유형을 의미합니다.\
+사용 사례 - 지갑 컨트랙트에 대한 지갑 애플리케이션 요청.
+
+```tlb
+nanograms$_ amount:(VarUInteger 16) = Grams;
+//external incoming message  
+ext_in_msg_info$10 src:MsgAddressExt dest:MsgAddressInt 
+  import_fee:Grams = CommonMsgInfo;
+```
+
+| 구조                                  | 유형                                                                   | 필수 | 설명                                                                                                                                                                                                               |
+| ----------------------------------- | -------------------------------------------------------------------- | -- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| EXT_OUT_MSG_INFO$10                 | 생성자                                                                  | 필수 | 10`태그는 직렬화에서`10\` 비트로 시작하는 CommonMsgInfo가 외부 수신 메시지를 설명한다는 의미입니다.                                                                                                                                                |
+| ihr_disabled                        | Bool                                                                 | 필수 | 하이퍼 라우팅 플래그. (현재 항상 true)                                                                                                                                                                     |
+| src                                 | [MsgAddressExt](#msgaddressext-tl-b)                                 | 필수 | 메시지를 보낸 외부 발신자의 주소입니다.                                                                                                                                                                                           |
+| dest                                | [MsgAddressInt](#msgaddressint-tl-b)                                 | 필수 | 메시지의 스마트 컨트랙트 대상 주소입니다.                                                                                                                                                                                          |
+| import_fee                          | [VarUInteger 16](#varuinteger-n)                                     | 필수 | 메시지 실행 및 전달에 대한 수수료입니다.                                                                                                                                                                                          |
+
+### EXT_OUT_MSG_INFO$11
+
+'EXT_OUT_MSG_INFO$11'은 외부 발신 메시지의 경우입니다. 이는 컨트랙트에서 오프체인 공간으로 전송될 수 있음을 의미합니다.
+사용 사례 - 로그.
+
+```tlb
+//internal message
+ext_out_msg_info$11 src:MsgAddressInt dest:MsgAddressExt
+  created_lt:uint64 created_at:uint32 = CommonMsgInfo;
+```
+
+| 구조                                  | 유형                                                                   | 필수 | 설명                                                                                                                                                                                                                     |
+| ----------------------------------- | -------------------------------------------------------------------- | -- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| EXT_OUT_MSG_INFO$11                 | 생성자                                                                  | 필수 | 11`태그는 직렬화에서`11\` 비트로 시작하는 CommonMsgInfo가 외부 발신 메시지를 설명한다는 의미입니다.                                                                                                                                                      |
+| src                                 | [MsgAddressInt](#msgaddressint-tl-b)                                 | 필수 | 하이퍼 라우팅 플래그.                                                                                                                                                                                                           |
+| dest                                | [MsgAddressExt](#msgaddressext-tl-b)                                 | 필수 | 새 컨트랙트를 초기화하기 위해 톤에서 사용하는 일반적인 구조입니다. 셀 참조 또는 루트 셀에 쓸 수 있습니다.                                                                                                                                                          |
+| created_lt                          | uint64                                                               | 필수 | 검증자가 지정한 메시지 전송 논리 시간입니다. 스마트 컨트랙트에서 오더링 작업에 사용합니다.                                                                                                                                                                    |
+| created_at                          | uint32                                                               | 필수 | 유닉스 시간                                                                                                                                                                                                                 |
+
+## StateInit TL-B
+
+StateInit은 초기 데이터를 계약에 전달하고 계약 배포에 사용하는 역할을 합니다.
+
+```tlb
+_ split_depth:(Maybe (## 5)) special:(Maybe TickTock)
+  code:(Maybe ^Cell) data:(Maybe ^Cell)
+  library:(HashmapE 256 SimpleLib) = StateInit;
+```
+
+| 구조               | 유형                                                          | 필수    | 설명                                                                                                                                                                                                                                                                                       |
+| ---------------- | ----------------------------------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 분할\_뎁스           | (## 5)                                   | 선택 사항 | 고부하 컨트랙트에 대한 매개변수로, 다른 샤드에서 여러 인스턴스로 분할하는 동작을 정의합니다. 현재 StateInit은 이 매개변수 없이 사용됩니다.                                                                                                                                                                                                      |
+| 특별               | TickTock\*                                                  | 선택 사항 | 블록체인의 모든 새 블록에서 스마트 컨트랙트를 호출하는 데 사용됩니다. 마스터체인에서만 사용할 수 있습니다. 일반 사용자의 컨트랙트는 이 없이 사용됩니다.                                                                                                                                                                                                   |
+| 코드               | 셀                                                           | 선택 사항 | 계약의 직렬화된 코드.                                                                                                                                                                                                                                                                             |
+| 데이터              | 셀                                                           | 선택 사항 | 계약 초기 데이터.                                                                                                                                                                                                                                                                               |
+| 라이브러리            | 해시맵E 256 SimpleLib\*                                        | 선택 사항 | 라이브러리 없이 현재 사용되는 StateInit                                                                                                                                                                                                                                                               |
+
+[해시맵에 대한 일반적인 상세 설명](../데이터 형식/tl-b#해시맵)
+
+## MsgAddressExt TL-B
+
+```tlb
+addr_none$00 = MsgAddressExt;
+addr_extern$01 len:(## 9) external_address:(bits len)
+= MsgAddressExt;
+```
+
+MsgAddress\`는 주소에 대한 다양한 직렬화 체계입니다. 어떤 참여자(오프체인 또는 스마트 컨트랙트)가 메시지를 전송하느냐에 따라 다른 구조를 사용합니다.
+
+### addr_none$00
+
+`addr_none$00` - 오프체인 참가자의 널 주소를 정의할 때 사용합니다. 즉, 발신자의 고유 주소 없이 컨트랙트에 외부 메시지를 보낼 수 있습니다.
+
+```tlb
+addr_none$00 = MsgAddressExt;
+```
+
+| 구조                     | 유형                             | 필수 | 설명                                                                                                                                                                                                                         |
+| ---------------------- | ------------------------------ | -- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| addr_none$00           | 생성자                            | 필수 | 00`태그는 직렬화에서 MsgAddressExt가`00`비트로 시작한다는 의미입니다. 즉, 전체 외부 주소가`00\`이라는 뜻입니다.                                                                                                                                                 |
+
+### addr_external$01
+
+```tlb
+addr_extern$01 len:(## 9) external_address:(bits len)
+= MsgAddressExt;
+```
+
+| 구조                            | 유형                          | 필수 | 설명                                                                                                                                                                                                           |
+| ----------------------------- | --------------------------- | -- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| addr_external$01              | 생성자                         | 필수 | 01`태그는 직렬화에서`01\`로 시작하는 MsgAddressExt의 비트가 외부 주소를 설명한다는 의미입니다.                                                                                                                                               |
+| len                           | ## 9                        | 필수 | uintN과 동일 - 부호 없는 N비트 숫자를 의미합니다.                                                                                                                                                                             |
+| 외부\_주소                        | (비트 길이)  | 필수 | 주소는 이전 `len`과 동일한 렌의 비트 문자열입니다.                                                                                                                                                                              |
+
+## MsgAddressInt TL-B
+
+```tlb
+addr_std$10 anycast:(Maybe Anycast)
+workchain_id:int8 address:bits256  = MsgAddressInt;
+
+addr_var$11 anycast:(Maybe Anycast) addr_len:(## 9)
+workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
+```
+
+### addr_std$10
+
+```tlb
+addr_std$10 anycast:(Maybe Anycast)
+workchain_id:int8 address:bits256  = MsgAddressInt;
+```
+
+| 구조           | 유형                           | 필수    | 설명                                                                                                                                                                                                           |
+| ------------ | ---------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| addr_std$10  | 생성자                          | 필수    | 10`태그는 직렬화에서`10\`으로 시작하는 MsgAddressExt의 비트가 외부 주소를 설명한다는 의미입니다.                                                                                                                                              |
+| 애니캐스트        | 애니캐스트\*                      | 선택 사항 | 추가 주소 데이터, 현재 일반 내부 메시지에는 사용되지 않습니다.                                                                                                                                                                         |
+| 워크체인\_ID     | int8                         | 필수    | 대상 주소의 스마트 컨트랙트가 위치한 워크체인. 현재는 항상 0과 같습니다.                                                                                                                                                                   |
+| 주소           | (비트256)   | 필수    | 스마트 컨트랙트 계정 ID 번호                                                                                                                                                                                            |
+
+### addr_var$11
+
+```tlb
+addr_var$11 anycast:(Maybe Anycast) addr_len:(## 9)
+workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
+```
+
+| 구조           | 유형                           | 필수     | 설명                                                                                                                                                                                                                             |
+| ------------ | ---------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| addr_var$11  | 생성자                          | 필수     | 11`태그는`$11\`로 시작하는 MsgAddressInt 직렬화에서 내부 컨트랙트 주소를 설명하는 비트임을 의미합니다.                                                                                                                                                            |
+| 애니캐스트        | 애니캐스트\*                      | 선택 사항  | 추가 주소 데이터, 현재 일반 내부 메시지에는 사용되지 않습니다.                                                                                                                                                                                           |
+| addr_len     | ## 9                         | 필수     | uintN과 동일 - 부호 없는 N비트 숫자를 의미합니다.                                                                                                                                                                                               |
+| 워크체인\_ID     | int32                        | 필수     | 대상 주소의 스마트 컨트랙트가 위치한 워크체인. 현재는 항상 0과 같습니다.                                                                                                                                                                                     |
+| 주소           | (비트256)   | 필수     | 페이로드 주소(계정 ID일 수 있음)                                                                                                                                                                                        |
+
+## 기본 사용 유형
+
+### 통화 컬렉션
+
+```tlb
+nanograms$_ amount:(VarUInteger 16) = Grams;
+currencies$_ grams:Grams other:ExtraCurrencyCollection
+= CurrencyCollection;
+```
+
+| 구조               | 유형                                                | 필수    | 설명                                                                                                                                                                                                   |
+| ---------------- | ------------------------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 통화$\_            | 생성자                                               | 필수    | $\_\` 빈 태그는 직렬화 CurrencyCollection에서 처음에 비트를 추가하지 않음을 의미합니다.                                                                                                                                         |
+| 그램               | (VarUInteger 16)               | 필수    | 나노톤 단위의 메시지 값                                                                                                                                                                                        |
+| 기타               | 추가 통화 컬렉션                                         | 선택 사항 | 추가 통화 컬렉션은 일반적으로 비어 있는 추가 통화용으로 설계된 딕셔너리입니다.                                                                                                                                                         |
+
+- 일반적으로 메시지에서 빈 딕셔너리로 작성되는 ExtraCurrencyCollection 복합 유형입니다.
+
+### VarUInteger n
+
+```tlb
+var_uint$_ {n:#} len:(#< n) value:(uint (len * 8))
+= VarUInteger n;
+var_int$_ {n:#} len:(#< n) value:(int (len * 8))
+= VarInteger n;
+```
+
+| 구조                | 유형                                                      | 필수    | 설명                                                                                                                                                                                                                   |
+| ----------------- | ------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| var_uint$_        | 생성자                                                     | 필수    | `var_uint$_` 빈 태그는 직렬화 CurrencyCollection에서 처음에 비트를 추가하지 않음을 의미합니다.                                                                                                                                                  |
+| len               | uintN                                                   | 필수    | 다음 값에 대한 비트 LEN 매개변수                                                                                                                                                                                                 |
+| 값                 | (UINT (LEN \* 8)) | 선택 사항 | (len \* 8) 비트로 쓰여진 정수에 대한 uint 값                                                                                                                                                                  |
+
+## 메시지 예시
+
+### 일반 함수 내부 메시지
+
+```func
+  var msg = begin_cell()
+    .store_uint(0, 1) ;; tag
+    .store_uint(1, 1) ;; ihr_disabled
+    .store_uint(1, 1) ;; allow bounces
+    .store_uint(0, 1) ;; not bounced itself
+    .store_slice(source)
+    .store_slice(destination)
+    ;; serialize CurrencyCollection (see below)
+    .store_coins(amount)
+    .store_dict(extra_currencies)
+    .store_coins(0) ;; ihr_fee
+    .store_coins(fwd_value) ;; fwd_fee
+    .store_uint(cur_lt(), 64) ;; lt of transaction
+    .store_uint(now(), 32) ;; unixtime of transaction
+    .store_uint(0,  1) ;; no init-field flag (Maybe)
+    .store_uint(0,  1) ;; inplace message body flag (Either)
+    .store_slice(msg_body)
+  .end_cell();
+```
+
+### 짧은 형식의 일반 기능 메시지
+
+유효성 검사기에 의해 항상 덮어쓰는 메시지 부분은 건너뛸 수 있습니다(0비트로 채움). 여기서 메시지의 발신자도 건너뛰고 `addr_none$00`으로 직렬화됩니다.
+
+```func
+  cell msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(addr)
+        .store_coins(amount)
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .store_slice(message_body)
+.end_cell();
+```

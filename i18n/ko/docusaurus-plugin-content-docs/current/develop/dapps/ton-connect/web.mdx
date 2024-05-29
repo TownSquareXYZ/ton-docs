@@ -1,0 +1,159 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# JS용 톤 커넥트
+
+이 가이드는 사용자 인증 및 거래를 위해 TON Connect를 자바스크립트 애플리케이션에 통합하는 데 도움이 됩니다.
+
+디앱에 React를 사용하는 경우, [TON Connect UI React SDK](/develop/dapps/ton-connect/react)를 살펴보세요.
+
+## 구현
+
+### 1. 설치
+
+<Tabs groupId="Installation">
+  <TabItem value="CDN" label="CDN">
+웹사이트의 HEAD 요소에 스크립트를 추가합니다:
+    <br/>
+    <br/>
+
+```html
+<script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+```
+
+</TabItem>
+  <TabItem value="NPM" label="NPM">
+    TON Connect를 앱에 통합하려면 @tonconnect/ui 패키지를 설치하세요:
+
+```bash npm2yarn
+npm i @tonconnect/ui
+```
+
+</TabItem>
+</Tabs>
+
+### 2. TON 연결 시작
+
+패키지를 설치한 후 애플리케이션에 대한 `manifest.json` 파일을 생성해야 합니다. 매니페스트.json 파일을 만드는 방법에 대한 자세한 내용은 [여기](/개발/앱/톤-커넥트/매니페스트)에서 확인할 수 있습니다.
+
+지갑에 연결하려면 'ton-connect' 아이디가 있는 버튼을 추가합니다:
+
+```html
+<div id="ton-connect"></div>
+```
+
+_이 태그_ 뒤에 애플리케이션 페이지의 `<body>` 부분에 `tonConnectUI`에 대한 스크립트를 추가합니다:
+
+```html
+<script>
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl: 'https://<YOUR_APP_URL>/tonconnect-manifest.json',
+        buttonRootId: 'ton-connect'
+    });
+</script>
+```
+
+### 3. 지갑에 연결
+
+"연결" 버튼(`buttonRootId`에 추가됨)은 자동으로 클릭을 처리합니다.
+
+그러나 사용자 지정 버튼을 클릭하는 등 프로그래밍 방식으로 '모달 연결'을 열 수 있습니다:
+
+```html
+<script>
+    async function connectToWallet() {
+        const connectedWallet = await tonConnectUI.connectWallet();
+        // Do something with connectedWallet if needed
+        console.log(connectedWallet);
+    }
+
+    // Call the function
+    connectToWallet().catch(error => {
+        console.error("Error connecting to wallet:", error);
+    });
+</script>
+```
+
+### 4. 리디렉션
+
+#### 수익률 전략 사용자 지정
+
+연결 후 사용자를 특정 URL로 리디렉션하려면 [리턴 전략 사용자 지정](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-the-return-strategy)을 참조하세요.
+
+#### 텔레그램 미니 앱
+
+지갑 연결 후, 사용자를 [텔레그램 미니 앱](/개발/앱/텔레그램-앱/)으로 리다이렉트 하려면, `twaReturnUrl` 옵션을 사용하세요:
+
+```tsx
+tonConnectUI.uiOptions = {
+      twaReturnUrl: 'https://t.me/YOUR_APP_NAME'
+  };
+```
+
+[SDK 문서에서 자세히 보기](https://github.com/ton-connect/sdk/tree/main/packages/ui#use-inside-twa-telegram-web-app)
+
+### 5. UI 사용자 지정
+
+TonConnect UI는 다양한 앱을 사용할 때 사용자에게 친숙하고 인식할 수 있는 인터페이스를 제공합니다. 그러나 앱 개발자는 앱 인터페이스와 일관성을 유지하기 위해 이 인터페이스를 변경할 수 있습니다.
+
+- [TonConnect UI 문서](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)
+
+## SDK 문서
+
+- [SDK 문서](https://github.com/ton-connect/sdk/blob/main/packages/ui/README.md)
+- [최신 API 문서](https://ton-connect.github.io/sdk/modules/_tonconnect_ui.html)
+
+## 사용법
+
+애플리케이션에서 톤 커넥트 UI를 사용하는 예를 살펴보겠습니다.
+
+### 메시지 보내기
+
+다음은 TON Connect UI를 사용하여 트랜잭션을 전송하는 예시입니다:
+
+```js
+import TonConnectUI from '@tonconnect/ui';
+
+const tonConnectUI = new TonConnectUI({ //connect application
+    manifestUrl: 'https://<YOUR_APP_URL>/tonconnect-manifest.json',
+    buttonRootId: '<YOUR_CONNECT_BUTTON_ANCHOR_ID>'
+});
+
+const transaction = {
+    messages: [
+        {
+            address: "0:412410771DA82CBA306A55FA9E0D43C9D245E38133CB58F1457DFB8D5CD8892F", // destination address
+            amount: "20000000" //Toncoin in nanotons
+        }
+    ]
+}
+
+const result = await tonConnectUI.sendTransaction(transaction)
+```
+
+- 여기에서 더 많은 예제를 확인하세요: [메시지 준비하기](/개발/앱/톤 커넥트/메시지 빌더)
+
+### 해시별 트랜잭션 상태 이해하기
+
+결제 처리(톤웹 사용)에 있는 원칙입니다. [더 보기](/개발/앱/자산 처리/#확인-계약-거래)
+
+### 서명 및 인증
+
+TON Connect를 사용하여 메시지에 서명하고 확인하는 방법을 이해합니다:
+
+- [서명 및 인증](/개발/앱/톤-연결/서명)
+- [깃허브의 TON Connect UI 구현](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-connect-request-parameters-ton_proof)
+
+### 지갑 연결 해제
+
+지갑 연결을 해제하려면 전화하세요:
+
+```js
+await tonConnectUI.disconnect();
+```
+
+## 참고 항목
+
+- [UI 사용자 지정](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)
+- \[[유튜브]] 톤 커넥트 UI 리액트 [RU]](https://youtu.be/wIMbkJHv0Fs?list=PLyDBPwv9EPsCJ226xS5_dKmXXxWx1CKz_&t=1747)
+- [YouTube]] 사이트 [RU]에 TON 연결 UI 연결]](https://www.youtube.com/watch?v=HUQ1DPfFxG4&list=PLyDBPwv9EPsAIWi8vgic9kiV3KF_wvIcz&index=4)

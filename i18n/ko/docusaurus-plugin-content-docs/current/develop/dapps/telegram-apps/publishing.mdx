@@ -1,0 +1,122 @@
+import Button from '@site/src/components/button'
+
+# 미니 앱 게시
+
+개발자는 우리가 운영되는 생태계를 이해하는 것이 중요합니다. 텔레그램은 강력한 플랫폼과 방대한 사용자 기반 덕분에, 미니앱 개발자들에게 특별한 기회를 제공합니다. 이 글에서는, 텔레그램에 미니앱을 퍼블리싱 할 수 있는 채널에 대해 안내해 드립니다.
+
+## tApps 센터
+
+**티앱스 센터란 무엇인가요? ** TON 재단은 텔레그램 봇과 미니앱(TMA)을 위한 중앙 저장소를 만들기 위해, 텔레그램 앱 센터를 도입하였습니다. 이 플랫폼은, 이미 익숙한 앱스토어와 유사한 인터페이스를 제공하여 사용자 경험을 향상시키는 것을 목표로 하고 있습니다.
+
+**광범위한 생태계 지원**. 텔레그램 앱 센터는 TON 생태계에만 집중하지 않고, 다른 블록체인의 앱도 환영합니다. 이 카탈로그의 일부가 되기 위해, 웹3.0 통합이 필요하지도 않습니다. 이러한 포괄적인 접근은, 사용자가 단일 인터페이스 내에서 다양한 서비스를 이용할 수 있는 위챗과 같은 플랫폼처럼, 텔레그램을 "모든 것이 가능한 슈퍼 앱"으로 자리매김하는 것을 목표로 하고 있습니다.
+
+```mdx-code-block
+<Button href="https://www.tapps.center/" colorType={'primary'} sizeType={'sm'}>
+```
+
+tApps 센터 열기
+
+```mdx-code-block
+</Button>
+```
+
+### 왜 tApps Center에 게시해야 하나요?
+
+**더 큰 가시성**. 텔레그램 앱 센터는 개발자들이 자신의 프로젝트를 많은 사람들에게 소개할 수 있는 절호의 기회를 제공하여, 사용자와 투자자들을 더 쉽게 유치할 수 있도록 합니다.
+
+**커뮤니티 정신**. 이 플랫폼은 커뮤니티 중심의 접근 방식을 채택하여 협업과 리소스 및 지식의 공유를 장려합니다.
+
+```mdx-code-block
+<Button href="https://blog.ton.org/ton-ecosystem-evolved-introducing-telegram-apps-center-t-apps-center" colorType={'secondary'} sizeType={'sm'}>
+```
+
+TON 블로그에서 자세히 알아보기
+
+```mdx-code-block
+</Button>
+```
+
+## 텔레그램 내에서 실행
+
+키보드 버튼](https://core.telegram.org/bots/webapps#keyboard-button-web-apps), [인라인 버튼](https://core.telegram.org/bots/webapps#inline-button-web-apps), [봇 메뉴 버튼](https://core.telegram.org/bots/webapps#launching-web-apps-from-the-menu-button), [인라인 모드](https://core.telegram.org/bots/webapps#inline-mode-web-apps), [직접 링크](https://core.telegram.org/bots/webapps#direct-link-web-apps), 그리고 [첨부파일 메뉴](https://core.telegram.org/bots/webapps#launching-web-apps-from-the-attachment-menu)까지 현재 텔레그램은 미니앱을 실행하는 6가지 방법을 지원하고 있습니다.
+
+![](/img/docs/telegram-apps/publish-tg-1.jpeg)
+
+### 키보드 버튼 미니 앱
+
+**키보드 버튼](https://core.telegram.org/bots/api#keyboardbutton)으로 **웹앱\*_에서 실행된 미니앱은 [Telegram.WebApp.sendData](https://core.telegram.org/bots/webapps#initializing-web-apps)를 사용하여 _서비스 메시지\*로 봇에게 데이터를 전송할 수 있습니다. 이렇게 하면, 봇이 외부 서버와 통신하지 않고도 응답을 생성할 수 있습니다.
+
+사용자들은 [사용자 지정 키보드](https://core.telegram.org/bots#keyboards), [봇 메시지 아래 버튼](https://core.telegram.org/bots#inline-keyboards-and-on-the-fly-updating) 뿐만 아니라, 자유 형식의 **문자 메시지** 또는 텔레그램에서 지원하는 **첨부 유형** (사진 및 동영상, 파일, 위치, 연락처, 설문조사)을 전송하여 봇과 상호작용을 할 수 있습니다. 더 많은 유연성을 위해, 봇은 **HTML5**의 모든 기능을 활용하여 사용자 친화적인 입력 인터페이스를 만들 수 있습니다.
+
+지정된 URL에서 미니 앱을 여는 **웹\_앱** 유형 [키보드 버튼](https://core.telegram.org/bots/api#keyboardbutton)을 보낼 수 있습니다.
+
+사용자로부터 봇으로 데이터를 전송하기 위해, 미니앱은 [Telegram.WebApp.sendData](https://core.telegram.org/bots/webapps#initializing-web-apps) 메서드를 호출할 수 있습니다. 데이터는 서비스 메시지의 문자열로 봇에게 전송됩니다. 봇은 데이터를 받은 후 사용자와 계속 통신을 할 수 있습니다.
+
+대상: **효과: **
+
+- **사용자 지정 데이터 입력 인터페이스**(날짜 선택을 위한 맞춤형 캘린더, 고급 검색 옵션이 있는 목록에서 데이터 선택, 사용자가 '휠을 돌려' 사용 가능한 옵션 중 하나를 선택할 수 있는 랜덤라이저 등)
+- 특정 봇에 의존하지 않는 **재사용 가능한 구성 요소**.
+
+### 인라인 버튼 미니 앱
+
+설명: **TL;DR:** [@DurgerKingBot](https://t.me/durgerkingbot)과 같은 대화형 미니 앱의 경우 **web_app** 유형의 [인라인 키보드 버튼](https://core.telegram.org/bots/api#inlinekeyboardbutton)을 사용하면 기본 사용자 정보를 가져와 봇과의 채팅에 사용자를 대신하여 메시지를 보낼 수 있습니다.
+
+텍스트 데이터 수신만으로는 부족하거나 보다 고급스럽고 개인화된 인터페이스가 필요한 경우 **웹\_앱** 유형 [인라인 키보드 버튼](https://core.telegram.org/bots/api#inlinekeyboardbutton)을 사용하여 미니 앱을 열 수 있습니다.
+
+버튼에서 버튼에 지정된 URL로 미니 앱이 열립니다. 사용자의 [테마 설정](https://core.telegram.org/bots/webapps#color-schemes) 외에도 기본 사용자 정보(ID, 이름, 사용자명, 언어\_코드)와 세션의 고유 식별자 **query_id**를 수신하여 사용자 대신 메시지를 봇으로 다시 전송할 수 있습니다.
+
+봇은 봇 API 메서드 [answerWebAppQuery](https://core.telegram.org/bots/api#answerwebappquery)를 호출하여 사용자로부터 인라인 메시지를 봇으로 다시 보내고 미니 앱을 닫을 수 있습니다. 메시지를 수신한 후 봇은 사용자와 계속 커뮤니케이션할 수 있습니다.
+
+대상: **효과: **
+
+- 모든 종류의 웹 서비스 및 통합을 완벽하게 지원합니다.
+- 사용 사례는 사실상 **무제한**입니다.
+
+### 메뉴 버튼에서 미니 앱 실행하기
+
+**요약: 미니 앱은 사용자 지정 메뉴 버튼에서 실행할 수 있습니다. 이는 단순히 앱에 더 빠르게 액세스할 수 있는 방법을 제공할 뿐, [인라인 버튼에서 미니 앱 실행하기](https://core.telegram.org/bots/webapps#inline-button-web-apps)와 **동일\*\*합니다.
+
+기본적으로 봇과의 대화에는 항상 나열된 모든 [명령어](https://core.telegram.org/bots#commands)에 빠르게 액세스할 수 있는 편리한 **메뉴 버튼**이 표시됩니다. Bot API 6.0](https://core.telegram.org/bots/api-changelog#april-16-2022)에서는 이 버튼 대신 **미니 앱을 실행**하는 데 사용할 수 있습니다.
+
+메뉴 버튼을 구성하려면 메뉴 버튼에 표시할 텍스트와 미니 앱 URL을 지정해야 합니다. 이러한 매개 변수를 설정하는 방법에는 두 가지가 있습니다:
+
+- 모든 사용자\*_를 위해 버튼을 사용자 지정하려면 [@BotFather](https://t.me/botfather)(/setmenubutton 명령 또는 _봇 설정 > 메뉴 버튼\*)을 사용하세요.
+- 모든 사용자**와 **특정 사용자\*\* 모두를 위해 버튼을 사용자 지정하려면 봇 API에서 [setChatMenuButton](https://core.telegram.org/bots/api#setchatmenubutton) 메서드를 사용하세요. 예를 들어, 사용자의 언어에 따라 버튼 텍스트를 변경하거나 봇의 사용자 설정에 따라 다른 웹 앱으로 연결되는 링크를 표시할 수 있습니다.
+
+이 외에도 메뉴 버튼을 통해 열린 웹 앱은 [인라인 버튼 사용](https://core.telegram.org/bots/webapps#inline-button-web-apps) 시와 동일한 방식으로 작동합니다.
+
+(https://t.me/durgerkingbot)는 인라인 버튼과 메뉴 버튼 모두에서 미니 앱을 실행할 수 있습니다.
+
+### 인라인 모드 미니 앱
+
+**요약: **web_app\*\* 유형 [InlineQueryResultsButton](https://core.telegram.org/bots/api#inlinequeryresultsbutton)을 통해 실행된 미니 앱은 인라인 모드에서 어디서나 사용할 수 있습니다. 사용자는 웹 인터페이스에서 콘텐츠를 만든 다음 인라인 모드를 통해 현재 채팅으로 원활하게 전송할 수 있습니다.
+
+NEW [answerInlineQuery](https://core.telegram.org/bots/api#answerinlinequery) 메서드의 _button_ 매개변수를 사용하여 인라인 결과 위 또는 대신에 특별한 '미니 앱으로 전환하기' 버튼을 표시할 수 있습니다. 이 버튼을 클릭하면 지정된 URL에서 미니 앱이 **열립니다**. 완료되면, [Telegram.WebApp.switchInlineQuery](https://core.telegram.org/bots/webapps#initializing-web-apps) 메서드를 호출하여 사용자를 인라인 모드로 다시 보낼 수 있습니다.
+
+인라인 미니 앱은 채팅에 대한 **접근 권한**이 없으므로 사용자를 대신하여 메시지를 읽거나 새 메시지를 보낼 수 없습니다. 메시지를 보내려면 사용자가 **인라인 모드**로 리디렉션되어 적극적으로 결과를 선택해야 합니다.
+
+대상: **효과: **
+
+- 인라인 모드에서 완전한 웹 서비스 및 통합을 제공합니다.
+
+### 다이렉트 링크 미니 앱
+
+\*_미니 앱 봇은 모든 채팅에서 직접 링크를 통해 실행할 수 있습니다. 시작앱_ 매개변수를 지원하며 현재 채팅 컨텍스트를 인식합니다.
+
+신규 현재 채팅에서 직접 링크를 사용하여 **미니앱**을 바로 \*_열 수 있습니다. 링크에 비어 있지 않은 _startapp_ 매개변수가 포함되어 있으면 _start_param_ 필드와 GET 매개변수 _tgWebAppStartParam\*에서 미니 앱으로 전달됩니다.
+
+이 모드에서 미니 앱은 _chat_type_ 및 _chat_instance_ 매개변수를 사용하여 현재 채팅 컨텍스트를 추적할 수 있습니다. 이를 통해 여러 채팅 멤버의 **동시** 및 **공유** 사용이 지원되어 라이브 화이트보드, 그룹 주문, 멀티플레이어 게임 및 이와 유사한 앱을 만들 수 있습니다.
+
+직접 링크를 통해 열린 미니 앱은 채팅에 대한 **접근 권한**이 없으므로 메시지를 읽거나 사용자를 대신하여 새 메시지를 보낼 수 없습니다. 메시지를 보내려면 사용자가 **인라인 모드**로 리디렉션되어 적극적으로 결과를 선택해야 합니다.
+
+**예시**
+
+- https://t.me/botusername/appname
+- https://t.me/botusername/appname?startapp=command
+
+대상: **효과: **
+
+- 모든 사용자가 탭 한 번으로 열 수 있는 완전한 웹 서비스 및 통합 기능을 제공합니다.
+- 채팅 컨텍스트 내에서 협동, 멀티플레이어 또는 팀워크 중심의 서비스를 제공합니다.
+
+사용 사례는 사실상 **무제한**입니다.

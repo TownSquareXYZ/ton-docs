@@ -1,0 +1,100 @@
+import Button from '@site/src/components/button'
+
+# 토큰(FT, NFT)
+
+[분산형 TON 토큰 개요](https://telegra.ph/Scalable-DeFi-in-TON-03-30)
+
+> TON 기반 토큰과 NFT는 단일 센터가 없으며 병목 현상을 일으키지 않습니다.
+>
+> 주어진 컬렉션의 각 NFT는 별도의 스마트 컨트랙트입니다. 각 사용자의 토큰 잔액은 별도의 사용자 지갑에 저장됩니다.
+>
+> 스마트 컨트랙트는 서로 직접 상호 작용하여 전체 네트워크의 부하를 분산시킵니다.
+>
+> 사용자 및 트랜잭션 수가 증가해도 부하가 균등하게 유지되어 네트워크 확장이 가능합니다.
+
+## TON 코스: 제톤 및 NFT
+
+톤 블록체인 코스](https://stepik.org/course/176754/)는 톤 블록체인 개발을 위한 종합 가이드입니다.
+
+모듈 7은 **NFT 및 제톤** 개발을 완전히 다룹니다.
+
+```mdx-code-block
+<Button href="https://stepik.org/course/176754/" colorType={'primary'} sizeType={'sm'}>
+```
+
+TON 블록체인 코스 확인
+
+```mdx-code-block
+</Button>
+```
+
+## 튜토리얼
+
+- [웹3.0 게임 튜토리얼](/develop/dapps/tutorials/building-web3-game) - 톤 블록체인으로 웹3.0 게임을 만드는 방법에 대해 알아보세요.
+- [첫 제톤 채굴](/개발/앱/튜토리얼/젯톤 채굴자/) - 첫 제톤을 배포하고 커스터마이징하는 방법을 알아보세요.
+- [유튜브] 톤 키퍼 창립자 올레그 안드레예프와 올레그 일라리오노프의 톤 제톤](https://www.youtube.com/watch?v=oEO29KmOpv4)
+
+### TON 스피드 런
+
+NFT와 제톤 개발이 포함된 [TON 스피드 런](https://tonspeedrun.com/) 시리즈를 확인해 보세요:
+
+- [🚩 챌린지 1: 간단한 NFT 배포](https://github.com/romanovichim/TONQuest1)
+- [🚩 챌린지 2: 챗봇 계약](https://github.com/romanovichim/TONQuest2)
+- [🚩 챌린지 3: 제톤 자판기](https://github.com/romanovichim/TONQuest3)
+- [🚩 챌린지 4: 추첨/추첨](https://github.com/romanovichim/TONQuest4)
+- [🚩 챌린지 5: 5분 안에 계약과 상호작용할 수 있는 UI 만들기](https://github.com/romanovichim/TONQuest5)
+- [🚩 챌린지 6: 겟젬 마켓플레이스에서 NFT 판매 분석](https://github.com/romanovichim/TONQuest6)
+
+## 제톤(대체 가능한 토큰)
+
+### 가이드
+
+- [TON 제톤 처리](/개발/앱/자산 처리/제톤.md)
+- [TON 메타데이터 파싱](/개발/앱/자산 처리/메타데이터.md)
+
+### 표준
+
+- [제톤 표준](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md)
+
+### 스마트 계약
+
+- [스마트 컨트랙트 구현(FunC)](https://github.com/ton-blockchain/token-contract/)
+
+### 제튼 디플로이러
+
+제톤은 TON 블록체인의 맞춤형 대체 가능한 토큰입니다. 아래의 제톤 디플로이러 예시를 사용하여 TON 블록체인에서 나만의 토큰을 생성할 수 있습니다:
+
+- **[톤 민터](https://minter.ton.org/)** - 오픈 소스 Jetton 배포자 dApp
+- [제튼 디플로이러 - 계약](https://github.com/ton-defi-org/jetton-deployer-contracts) (FunC, TL-B)
+- [제튼 디플로이러 - 웹클라이언트](https://github.com/ton-defi-org/jetton-deployer-webclient) (React, 타입스크립트)
+
+### Jettons와 함께 작업할 수 있는 도구
+
+- [NFT 제톤 판매 계약](https://github.com/dvlkv/nft-jetton-sale-smc) - 제톤 지원과의 NFT 판매 계약
+- [스케일톤](http://scaleton.io) - 사용자 지정 토큰 잔액 보기
+- [@tegro/ton3-client](https://github.com/TegroTON/ton3-client#jettons-example)-SDK로 제톤에 대한 정보를 조회할 수 있습니다.
+
+## NFT
+
+### 표준
+
+- [NFT 표준](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md)
+- [SBT(소울바운드 NFT) 표준](https://github.com/ton-blockchain/TEPs/blob/master/text/0085-sbt-standard.md)
+- [NFTRoyalty 표준 확장](https://github.com/ton-blockchain/TEPs/blob/master/text/0066-nft-royalty-standard.md)
+
+### 스마트 계약
+
+- [스마트 컨트랙트 구현(FunC)](https://github.com/ton-blockchain/token-contract/)
+- [겟젬 NFT, 판매, 경매 스마트 컨트랙트(FunC)](https://github.com/getgems-io/nft-contracts)
+
+### NFT 채굴자
+
+- [NFT 디플로이러](https://github.com/tondiamonds/ton-nft-deployer) by TON Diamonds (타입스크립트, 댓글 없음)
+- [NFT 민터 예시](https://github.com/ton-foundation/token-contract/tree/main/nft/web-example) (자바스크립트, 코멘트 포함)
+- [리액트를 이용한 NFT 마이너](https://github.com/tonbuilders/tonbuilders-minter) (리액트, 댓글 없음)
+- [NFT 디플로이러](https://github.com/anomaly-guard/nft-deployer) (파이썬, 주석 포함)
+- [Golang을 사용한 NFT 마이너](https://github.com/xssnick/tonutils-go#nft) (Golang 라이브러리, 주석 및 전체 예제 포함)
+
+### 대체 불가능한 토큰으로 작업하기 위한 도구
+
+- [리버몰/tnt](https://github.com/LiberMall/tnt)-TNT는 오픈 네트워크에서 새로운 대체 불가능한 토큰을 쿼리, 편집, 발행할 수 있는 올인원 명령줄 도구입니다.

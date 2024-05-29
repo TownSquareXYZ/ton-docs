@@ -1,0 +1,309 @@
+import ThemedImage from '@theme/ThemedImage';
+
+# 셀 및 백 오브 셀(BoC)
+
+## 셀
+
+셀은 TON 블록체인의 데이터 구조를 나타냅니다. 셀은 최대 1023비트를 저장할 수 있으며 다른 셀에 대한 참조를 최대 4개까지 보유할 수 있습니다.
+
+```mdx-code-block
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+    light: '/img/docs/data-formats/tl-b-docs-5.png?raw=true',
+    dark: '/img/docs/data-formats/tl-b-docs-5-dark.png?raw=true',
+}}
+/>
+<br></br>
+```
+
+## 셀 가방
+
+백 오브 셀(BoC)은 셀을 바이트 배열로 직렬화하는 포맷으로, [TL-B 스키마](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/tl/boc.tlb#L25)에 자세히 설명되어 있습니다.
+
+```mdx-code-block
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+    light: '/img/docs/data-formats/tl-b-docs-6.png?raw=true',
+    dark: '/img/docs/data-formats/tl-b-docs-6-dark.png?raw=true',
+}}
+/>
+<br></br>
+```
+
+TON에서는 컨트랙트 코드, 저장된 데이터, 블록 등 모든 것이 셀로 구성되어 있어 프로세스를 간소화하고 강력한 유연성을 확보할 수 있습니다.
+
+```mdx-code-block
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+    light: '/img/docs/data-formats/tl-b-docs-4.png?raw=true',
+    dark: '/img/docs/data-formats/tl-b-docs-4-dark.png?raw=true',
+}}
+/>
+<br></br>
+```
+
+### 세포 직렬화
+
+첫 번째 예제인 백 오브 셀 을 분석해 보겠습니다:
+
+```mdx-code-block
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+    light: '/img/docs/data-formats/tl-b-docs-7.png?raw=true',
+    dark: '/img/docs/data-formats/tl-b-docs-7-dark.png?raw=true',
+}}
+/>
+<br></br>
+```
+
+```json
+1[8_] -> {
+  24[0AAAAA],
+  7[FE] -> {
+    24[0AAAAA]
+  }
+}
+```
+
+이 예시에서는 1비트 크기의 루트 셀에 2개의 링크가 있는데, 첫 번째 링크는 24비트 셀에 연결되고 두 번째 링크는 24비트 셀에 1개의 링크가 있는 7비트 셀에 연결됩니다.
+
+이 프레임워크가 의도한 대로 작동하려면 셀을 단일 바이트 시퀀스로 변환해야 합니다. 이를 위해 먼저 고유한 셀 유형만 활용하며, 4개 중 3개는 다음과 같습니다:
+
+```json
+1[8_]
+24[0AAAAA]
+7[FE]
+```
+
+:::note
+고유한 셀만 남기려면 셀을 비교해야 합니다. 이를 위해서는 셀의 [해시](#셀-해시)를 비교해야 합니다.
+:::
+
+```json
+1[8_]      -> index 0 (root cell)
+7[FE]      -> index 1
+24[0AAAAA] -> index 2
+```
+
+이제 위에서 살펴본 3개의 셀 각각에 대한 설명을 계산해 보겠습니다. 이러한 설명은 데이터의 길이와 데이터 연결 수에 대한 정보로 구성된 플래그를 저장하는 2바이트로 구성됩니다. 
+
+첫 번째 바이트인 **refs 설명자**는 `r+8s+32l`로 계산되며, 여기서 `0 ≤ r ≤ 4`는 셀 참조(링크)의 양, `0 ≤ s ≤ 1`은 [이색](#특별-이색-셀) 셀은 1, 일반 셀은 0, `0 ≤ l ≤ 3`은 셀의 [레벨](#셀-레벨)을 나타냅니다.
+
+두 번째인 **비트 설명자**는 `바닥(b / 8) + 천장(b / 8)`과 같으며, 여기서 `0 <= b <= 1023`은 셀의 비트 수입니다. 이 기술자는 셀 데이터의 전체 4비트 그룹의 길이를 나타냅니다(비어 있지 않은 경우 최소 1).
+
+결과는 다음과 같습니다:
+
+```json
+1[8_]      -> 0201 -> 2 refs, length 1
+7[FE]      -> 0101 -> 1 ref, length 1
+24[0AAAAA] -> 0006 -> 0 refs, length 6
+```
+
+불완전한 4비트 그룹을 가진 데이터의 경우 시퀀스 끝에 1비트가 추가됩니다. 즉, 이는 그룹의 끝 비트를 나타내며 불완전한 그룹의 실제 크기를 결정하는 데 사용됩니다. 아래에 비트를 추가해 보겠습니다:
+
+```json
+1[8_]      -> C0     -> 0b10000000->0b11000000
+7[FE]      -> FF     -> 0b11111110->0b11111111
+24[0AAAAA] -> 0AAAAA -> do not change (full groups)
+```
+
+이제 참조 인덱스를 추가해 보겠습니다:
+
+```json
+0 1[8_]      -> 0201 -> refers to 2 cells with such indexes
+1 7[FE]      -> 02 -> refers to cells with index 2
+2 24[0AAAAA] -> no refs
+```
+
+그리고 이 모든 것을 종합해 보세요:
+
+```json
+0201 C0     0201  
+0101 FF     02
+0006 0AAAAA 
+```
+
+그리고 해당 문자열을 단일 바이트 배열로 결합하여 연결합니다: 
+`0201c002010101ff0200060aaaaa`, 크기 14바이트.
+
+<details>
+  <summary><b>예제 보기</b></summary>
+
+```golang
+func (c *Cell) descriptors() []byte {
+ceilBytes := c.bitsSz / 8
+if c.bitsSz%8 ! = 0 {
+ceilBytes++
+}
+
+	// calc size
+	ln := ceilBytes + c.bitsSz/8
+
+	specBit := byte(0)
+	if c.special {
+		specBit = 8
+	}
+
+	return []byte{byte(len(c.refs)) + specBit + c.level*32, byte(ln)}
+}
+```
+
+[출처](https://github.com/xssnick/tonutils-go/blob/3d9ee052689376061bf7e4a22037ff131183afad/tvm/cell/serialize.go#L205)
+
+</details>
+
+### 셀 가방 포장하기
+
+바로 위 섹션에서 셀을 패킹해 보겠습니다. 이미 14바이트의 플랫 배열로 직렬화했습니다.
+
+따라서 [스키마](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/tl/boc.tlb#L25)에 따라 헤더를 작성합니다.
+
+```
+b5ee9c72                      -> id tl-b of the BoC structure
+01                            -> flags and size:(## 3), in our case the flags are all 0,
+                                 and the number of bytes needed to store the number of cells is 1.
+                                 we get - 0b0_0_0_00_001
+01                            -> number of bytes to store the size of the serialized cells
+03                            -> number of cells, 1 byte (defined by 3 bits size:(## 3), equal to 3.
+01                            -> number of root cells - 1
+00                            -> absent, always 0 (in current implementations)
+0e                            -> size of serialized cells, 1 byte (size defined above), equal to 14
+00                            -> root cell index, size 1 (determined by 3 size:(## 3) bits from header),
+                                 always 0
+0201c002010101ff0200060aaaaa  -> serialized cells
+```
+
+다음으로, 위의 모든 내용을 바이트 배열로 연결하여 최종 BoC를 만듭니다:
+`b5ee9c7201010301000e000201c002010101ff0200060aaaaa`.
+
+백 오브 셀 구현 예제: [직렬화](https://github.com/xssnick/tonutils-go/blob/master/tvm/cell/serialize.go), [역직렬화](https://github.com/xssnick/tonutils-go/blob/master/tvm/cell/parse.go)
+
+## 특수(이색) 세포
+
+일반적으로 TON에서 작동하는 셀은 일반 셀과 특수 셀의 두 가지 주요 유형으로 나뉩니다. 사용자가 작업하는 대부분의 셀은 정보 전달을 담당하는 일반 셀입니다. 
+
+그럼에도 불구하고 네트워크의 내부 기능을 구현하기 위해 때때로 특수 셀이 필요하며 하위 유형에 따라 다양한 용도로 사용됩니다.
+
+## 셀 레벨
+
+모든 셀에는 0에서 3 사이의 정수로 표시되는 '레벨'이라는 속성이 있습니다.
+
+### 일반 셀 수준
+
+일반 셀의 레벨은 항상 모든 참조 레벨의 최대값과 같습니다:
+
+```cpp
+Lvl(c) = max(Lvl(r_0), ..., Lvl(r_i), ..., Lvl(r_e))
+```
+
+여기서 `i`는 `c` 참조 인덱스이고, `e`는 `c` 참조 금액입니다.
+
+_참조 수준이 없는 일반 셀은 0입니다_.
+
+### 이국적인 세포 수준
+
+이색 셀에는 레벨 설정 규칙이 다르며, [이](/개발/데이터-형식/이색 셀) 문서에 설명되어 있습니다.
+
+## 셀 해시
+
+대부분의 경우 사용자는 표현 해시(또는 해시 무한대)라고 하는 해시가 하나만 있는 레벨 0의 일반 셀로 작업합니다.
+
+레벨 `Lvl(c) = l`인 셀 `c`, 여기서 `1 ≤ l ≤ 3`은 표현 해시 및 `l` **"상위"** 해시를 가집니다.
+
+### 표준 셀 표현 해시 계산
+
+먼저 셀 표현을 계산해야 합니다(위에서 설명한 셀 직렬화와 유사).
+
+1. 기술자 바이트 계산
+2. 직렬화된 셀 데이터 추가
+3. 모든 셀의 레퍼런스에 깊이를 추가합니다.
+4. 모든 셀의 레퍼런스에 대해 해당 표현 해시를 추가합니다.
+5. 결과의 SHA256 해시를 계산합니다.
+
+다음 예시를 분석해 보겠습니다:
+
+#### 참조가 없는 셀
+
+```json
+32[0000000F]
+```
+
+1. 설명자 계산
+
+참조 기술자는 `r+8s+32l = 0 + 0 + 0 = 0 = 00`과 같습니다.
+
+비트 기술자는 '바닥(b / 8) + 천장(b / 8) = 8 = 08'과 같습니다.
+
+이 바이트들을 연결하면 `0008`이 됩니다.
+
+2. 셀 데이터 직렬화
+
+이 경우 완전한 4비트 그룹이 있으므로 셀 데이터에 비트를 추가할 필요가 없습니다. 결과는 `0000000f`입니다.
+
+3. 참조 깊이
+
+셀에 참조가 없으므로 이 부분은 생략합니다.
+
+4. 참조 해시
+
+셀에 참조가 없으므로 이 부분은 생략합니다.
+
+5. SHA256 계산
+
+이전 단계의 바이트들을 연결하면 `00080000000f`가 되고 이 바이트 문자열의 SHA256은 `57b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`이며 이것이 셀 표현 해시입니다.
+
+#### 참조가 있는 셀
+
+```json
+24[00000B] -> {
+	32[0000000F],
+	32[0000000F]
+}
+```
+
+1. 설명자 계산
+
+참조 기술자는 `r+8s+32l = 2 + 0 + 0 = 0 = 02`와 같습니다.
+
+비트 기술자는 '바닥(b / 8) + 천장(b / 8) = 6 = 06'과 같습니다.
+
+이 바이트들을 연결하면 `0206`이 됩니다.
+
+2. 셀 데이터 직렬화
+
+이 경우 완전한 4비트 그룹이 있으므로 셀 데이터에 비트를 추가할 필요가 없습니다. 결과는 `00000b`입니다.
+
+3. 참조 깊이
+
+깊이는 2바이트로 표시됩니다. 셀에는 2개의 참조가 있고 각 참조의 깊이는 0이므로 이 단계의 결과는 `00000000`입니다.
+
+4. 참조 해시
+
+모든 참조에 대해 해시를 추가하므로(위에서 계산한) 결과는 `57b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f957b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`가 됩니다.
+
+5. SHA256 계산
+
+이전 단계의 바이트를 연결하면 `020600000b0000000057b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f957b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`를 얻습니다.
+그리고 이 바이트 문자열의 SHA256은 `f345277cc6cfa747f001367e1e873dcfa8a936b8492431248b7a3eeafa8030e7`입니다. 셀 표현 해시입니다.
+
+### 더 높은 해시 계산
+
+일반 셀 `c`의 상위 해시는 표현 해시(
+)와 유사하게 계산되지만, 표현 해시 대신 참조의 상위 해시를 사용합니다.
+
+이색 셀에는 상위 해시를 계산하는 자체 규칙이 있으며, 이는 [이](/개발/데이터 형식/이색 셀) 문서에 설명되어 있습니다.
+
+## 참고 항목
+
+[//]: # "* [RU 원문 기사](https://github.com/xssnick/ton-deep-doc/blob/master/Cells-BoC.md)"
+
+- [이색(특수) 셀](/개발/데이터-포맷/이색-셀)
+- [머클 증명 검증](/개발/데이터-포맷/증명)

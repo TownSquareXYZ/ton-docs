@@ -1,0 +1,63 @@
+# TMA 시작 튜토리얼
+
+텔레그램 미니앱(TMA)은 텔레그램 메신저 내에서 실행되는 웹 어플리케이션입니다. HTML, CSS, 자바스크립트 등의 웹 기술을 사용하여 제작됩니다. 텔레그램 미니앱은 텔레그램 안에서 실행 가능한 디앱, 게임, 기타 유형의 앱을 만드는데 사용할 수 있습니다.
+
+## 앱 만들기
+
+1. 미니앱을 텔레그램에 연결하려면, 다음 코드를 사용하여 SDK 스크립트 `telegram-web-app.js`를 배치합니다:
+
+```html
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+```
+
+:::tip
+It's preferable to switch off cache in the HTML. To ensure your cache is switched off, specify headers in your request according to the following:
+
+```curl
+Cache-Control: no-store, must-revalidate
+Pragma: no-cache
+Expires: 0
+```
+
+:::
+
+2. 스크립트가 연결되면, **[window.Telegram.WebApp](https://core.telegram.org/bots/webapps#initializing-web-apps)** 개체를 사용할 수 있게 됩니다. 텔레그램 웹앱\`](https://docs.ton.org/develop/dapps/telegram-apps/app-examples#basic-twa-example)을 활용한 미니앱 생성에 대한 자세한 내용은 여기에서 확인하실 수 있습니다.
+
+3. SDK를 연결하는 최신 방법은 텔레그램 미니앱 SDK용 npm 패키지입니다:
+
+```bash npm2yarn
+npm i @twa-dev/sdk
+```
+
+여기에서 [`@twa-dev/sdk`](https://docs.ton.org/develop/dapps/telegram-apps/app-examples#modern-twa-example)에 대한 가이드를 확인할 수 있습니다.
+
+5. 미니 앱이 준비되어 웹 서버에 배포되면 다음 단계로 넘어갑니다.
+
+## 앱용 봇 설정
+
+미니앱을 텔레그램에 연결하려면, 봇을 생성하고 이를 위한 미니앱을 설정해야 합니다. 새로운 텔레그램 봇을 설정하려면, 다음 단계를 따르세요:
+
+### 1. 봇파더와 채팅 시작하기
+
+- 텔레그램 앱 또는 웹 버전을 엽니다.
+- 검색창에서 '@BotFather'를 검색하거나 <https://t.me/BotFather> 링크를 따라갑니다.
+- '시작' 버튼을 클릭하여 봇파더와 채팅을 시작하세요.
+
+### 2. 새 봇 만들기
+
+- BotFather에게 `/newbot` 명령을 보냅니다.
+- BotFather에서 봇의 이름을 선택하라는 메시지가 표시됩니다. 이 이름은 표시 이름이며 공백을 포함할 수 있습니다.
+- 다음으로 봇의 사용자 아이디를 선택하라는 메시지가 표시됩니다. 이 이름은 `bot`으로 끝나야 하며(예: `sample_bot`) 고유해야 합니다.
+
+### 3. 봇 미니 앱 설정
+
+- BotFather에게 `/mybots` 명령을 보냅니다.
+- 목록에서 봇을 선택하고 **봇 설정** 옵션을 선택합니다.
+- 메뉴 버튼\*\* 옵션 선택
+- 메뉴 버튼 URL 수정\*\* 옵션을 선택하고, 텔레그램 미니앱으로 URL을 전송합니다 (예: 깃허브 페이지 배포의 링크).
+
+### 4. 봇에 액세스하기
+
+- 이제 텔레그램 검색창에서 사용자 아이디로 봇을 검색할 수 있습니다.
+- 첨부파일 선택기 옆에 있는 버튼을 눌러 메신저에서 텔레그램 미니 앱을 실행합니다.
+- 당신은 멋져요!

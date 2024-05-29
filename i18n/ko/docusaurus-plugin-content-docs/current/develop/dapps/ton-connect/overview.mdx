@@ -1,0 +1,113 @@
+import Button from '@site/src/components/button'
+
+# TON Connect 소개
+
+TON Connect는 [TON](/학습/소개) 생태계 내에서 범용 애플리케이션 인증 표준 역할을 하는 강력한 오픈소스 툴킷으로, 사용자가 기존 로그인과 비밀번호 대신 TON 지갑을 사용하여 애플리케이션과 서비스에 안전하고 편리하게 로그인할 수 있도록 지원합니다.
+
+![](/img/docs/ton-connect/ton-connect-overview.png?raw=true)
+
+애플리케이션 통합을 위해 다음 흐름 중 하나를 자유롭게 사용하세요:
+
+```mdx-code-block
+<Button href="/develop/dapps/ton-connect/react" colorType={'primary'} sizeType={'sm'}>
+```
+
+React 앱
+
+```mdx-code-block
+</Button>
+```
+
+```mdx-code-block
+<Button href="/develop/dapps/ton-connect/web"
+        colorType="secondary" sizeType={'sm'}>
+```
+
+HTML/JS 앱
+
+```mdx-code-block
+</Button>
+```
+
+```mdx-code-block
+<Button href="/develop/dapps/ton-connect/tg-bot-integration"
+        colorType="secondary" sizeType={'sm'}>
+```
+
+텔레그램 봇
+
+```mdx-code-block
+</Button>
+```
+
+## 디앱 사용 사례
+
+TON 에코시스템이 우수한 디앱 통합을 위해 제공하는 결과물을 살펴보세요.
+
+- **트래픽**. TON 커넥트를 지원하는 암호화폐 지갑을 통해 추가 사용자 방문을 유도하세요.
+- **진위성**. TON 사용자의 지갑을 기성 계정으로 활용하여 추가 인증 단계가 필요하지 않으므로 사용자 경험을 향상시킬 수 있습니다.
+- **결제**. 톤코인 또는 랩드 스테이블 코인(jUSDC/jUSDT)을 사용하여 톤 블록체인을 통해 신속하고 안전하게 거래를 처리하세요.
+- **리텐션**. 앱 내 목록 저장 기능을 통해 사용자가 최근에 열어본 앱과 즐겨찾는 앱을 추적할 수 있어 사용자 리텐션을 높일 수 있습니다.
+
+## 지갑 개발자용
+
+지갑 개발자는 지갑을 TON 커넥트에 연결하고 사용자가 안전하고 편리한 방식으로 TON 앱과 상호작용할 수 있도록 [지갑에 TON 커넥트 통합하기](/개발/dapps/ton-connect/wallet/) 방법을 읽어보세요.
+
+## 성공 사례
+
+- [겟젬스 - 오픈 네트워크 마켓플레이스](https://getgems.io/)
+- [STON.fi - TON 블록체인을 위한 AMM DEX](https://ston.fi/)
+- [톤스타터](http://tonstarter.com/)
+
+<details>
+  <summary><b>전체 목록 표시</b></summary>
+
+- [getgems.io](https://getgems.io/)
+- [fragment.com](https://fragment.com/)(톤 커넥트 v.1)
+- [ston.fi](https://ston.fi/)
+- [ton.diamonds](https://ton.diamonds/)
+- [beta.disintar.io](https://beta.disintar.io/)
+- [tegro.finance](https://tegro.finance/liquidity)
+- [minter.ton.org](https://minter.ton.org/)
+- [libermall.com](https://libermall.com/)
+- [dedust.io](https://dedust.io/swap)
+- [toncap.net](https://toncap.net/)
+- [크립토머스닷컴](https://cryptomus.com/)
+- [avanchange.com](https://avanchange.com/)
+- [wton.dev](https://wton.dev/)
+- [mint.spiroverse.io/shop](https://mint.spiroverse.io/shop)
+- [vk.com/vk_nft_hub](https://vk.com/vk_nft_hub)
+- [tonverifier.live](https://verifier.ton.org/)
+- [stickerface.io/member](https://stickerface.io/member)
+- [톤스타터닷컴](https://tonstarter.com/)
+- [cryptogas.shop/ton](https://cryptogas.shop/ton)
+- [megaton.fi](https://megaton.fi/)
+- [dns.ton.org](https://dns.ton.org/)
+- [코인페이마스터닷컴](https://coinpaymaster.com/)
+- [ton.gagarin.world/app/](https://ton.gagarin.world/app)
+- [daolama.co](https://daolama.co/)
+- [marketplace.playmuse.org](http://marketplace.playmuse.org/)
+- [ton.vote](https://ton.vote/)
+- [plane.tonfancy.io](https://plane.tonfancy.io/)
+- [pi.oberton.io](https://pi.oberton.io/)
+- [business.thetonpay.app](https://business.thetonpay.app/)
+- [bridge.orbitchchain.io](https://bridge.orbitchain.io/)
+- [connecton-web-new.vercel.app](https://connecton-web-new.vercel.app/)
+- [app.fanz.ee/staking](https://app.fanz.ee/staking)
+- [testnet.pton.fi](https://testnet.pton.fi/)
+- [tonft.app](https://tonft.app/)
+- [cardify.casino](https://cardify.casino/)
+- [4friends.org](https://4riends.org/#/)
+- [tonflex.fi](https://tonflex.fi/swap)
+- [soquest.xyz](https://soquest.xyz/)
+- [app.evaa.finance](https://app.evaa.finance/)
+
+</details>
+
+## TON 에코시스템에 참여하기
+
+서비스를 TON 에코시스템에 연결하려면 다음을 구현해야 합니다:
+
+- **TON Connect**. 애플리케이션에 톤 커넥트 프로토콜을 통합하세요.
+- **트랜잭션**. TON 라이브러리를 사용하여 지정된 트랜잭션 메시지를 생성합니다. 종합 가이드를 통해 [메시지 보내기](/개발/앱/톤-커넥트/메시지-빌더) 프로세스에 대해 자세히 알아보세요.
+- **결제**. 공개 API([tonapi](https://tonapi.io/)) 또는 자체 인덱서(예: [gobycicle](http://github.com/gobicycle/bicycle)를 통해 결제를 처리합니다. 자세한 내용은 [자산 처리](/개발/앱/자산 처리) 가이드에서 자세히 알아보세요.
