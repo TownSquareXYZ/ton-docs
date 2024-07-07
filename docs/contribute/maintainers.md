@@ -1,4 +1,4 @@
-# Maintainers
+# Maintainer
 
 ## Active Team
 
