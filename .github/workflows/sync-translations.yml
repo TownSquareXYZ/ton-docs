@@ -1,0 +1,33 @@
+name: Sync Translations
+
+on:
+  push:
+    branches: [ l10n_localization ]
+
+jobs:
+  sync-branches:
+    runs-on: ubuntu-latest
+    name: Syncing branches
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Opening pull request to ja_localization
+        id: pull_ja
+        uses: tretuna/sync-branches@1.4.0
+        with:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          FROM_BRANCH: "l10n_localization"
+          TO_BRANCH: "ja_localization"
+          PULL_REQUEST_AUTO_MERGE_METHOD: "merge"
+      - name: Opening pull request to test_localization
+        id: pull_test
+        uses: tretuna/sync-branches@1.4.0
+        with:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          FROM_BRANCH: "l10n_localization"
+          TO_BRANCH: "test_localization"
+          PULL_REQUEST_AUTO_MERGE_METHOD: "merge"
