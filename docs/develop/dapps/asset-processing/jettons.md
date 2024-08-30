@@ -116,7 +116,7 @@ the `Jetton master contract` provides the get method `get_wallet_address(slice o
 <Tabs groupId="retrieve-wallet-address">
 <TabItem value="api" label="API">
 
-> Run `get_wallet_address(slice owner_address)` through `/runGetMethod` method from the [Toncenter API](https://toncenter.com/api/v3/#/default/run_get_method_api_v3_runGetMethod_post).
+> Run `get_wallet_address(slice owner_address)` through `/runGetMethod` method from the [Toncenter API](https://toncenter.com/api/v3/#/default/run_get_method_api_v3_runGetMethod_post). In real cases (not test ones) it is important to always check that wallet indeed is attributed to desired Jetton Master. Check code example for more.
 
 </TabItem>
 <TabItem value="js" label="js">
@@ -238,6 +238,8 @@ To send **comment** you need setup `forward payload`. Set **first 32 bits to 0x0
 
 Finally, to retrieve `Excess` message you must set up `response destination`.
 
+Sometimes you may encounter a `709` error when sending jetton. It says that the value of the toncoin attached to the message is not enough to send it. Make sure that `Toncoin > to_nano(TRANSFER_CONSUMPTION) + forward_ton_amount`. `TRANSFER_CONSUMPTION` in most cases may be 0.037 if the `forward_payload` is not too large. Also don't forget to attach enough `forward_ton_amount` or you can encounter a `cskip_no_gas` error if attached value too small.
+ 
 
 :::tip
 Check [best practices](/develop/dapps/asset-processing/jettons#best-practices) for _"send jettons with comments"_ example.
