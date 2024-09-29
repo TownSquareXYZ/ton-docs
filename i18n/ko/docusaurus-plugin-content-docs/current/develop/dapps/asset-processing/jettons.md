@@ -111,26 +111,27 @@ Jetton 관리자가 Jetton 생성 제한을 원할 경우, 세 가지 방법이 
 <Tabs groupId="retrieve-wallet-address">
 <TabItem value="api" label="API">
 
-> [Toncenter API](https://toncenter.com/api/v3/#/default/run_get_method_api_v3_runGetMethod_post)의 `/runGetMethod` 메서드를 통해 `get_wallet_address(slice owner_address)`를 실행하십시오.
+> `get_wallet_address(slice owner_address)` 메서드를 [Toncenter API](https://toncenter.com/api/v3/#/default/run_get_method_api_v3_runGetMethod_post)의 `/runGetMethod` 메서드를 통해 실행하세요. 실제 상황에서는 (테스트가 아닌 경우) 지갑이 원하는 Jetton 마스터에 실제로 연결되어 있는지 항상 확인하는 것이 중요합니다. 더 많은 코드 예시를 확인하세요.
 
 </TabItem>
 <TabItem value="js" label="js">
 
 ```js
-import TonWeb from "tonweb";
+import TonWeb from 'tonweb';
 const tonweb = new TonWeb();
-const jettonMinter = new TonWeb.token.jetton.JettonMinter(tonweb.provider, {address: "<JETTON_MASTER_ADDRESS>"});
-const address = await jettonMinter.getJettonWalletAddress(new TonWeb.utils.Address("<OWNER_WALLET_ADDRESS>"));
+const jettonMinter = new TonWeb.token.jetton.JettonMinter(tonweb.provider, { address: '<JETTON_MASTER_ADDRESS>' });
+const jettonWalletAddress = await jettonMinter.getJettonWalletAddress(new TonWeb.utils.Address('<OWNER_WALLET_ADDRESS>'));
+
 // It is important to always check that wallet indeed is attributed to desired Jetton Master:
 const jettonWallet = new TonWeb.token.jetton.JettonWallet(tonweb.provider, {
   address: jettonWalletAddress
 });
 const jettonData = await jettonWallet.getData();
-if (jettonData.jettonMinterAddress.toString(false) !== new TonWeb.utils.Address(info.address).toString(false)) {
+if (jettonData.jettonMinterAddress.toString(false) !== jettonMinter.address.toString(false)) {
   throw new Error('jetton minter address from jetton wallet doesnt match config');
 }
 
-console.log('Jetton wallet address:', address.toString(true, true, true));
+console.log('Jetton wallet address:', jettonWalletAddress.toString(true, true, true));
 ```
 
 </TabItem>
@@ -233,6 +234,8 @@ Jetton을 전송할 때는 **수수료**와 선택적으로 **전송 알림 메�
 `forward payload`는 `전송 알림` 내부 메시지로 전송됩니다. 이는 `forward amount`가 0보다 큰 경우에만 생성됩니다.
 
 `Excess` 메시지를 수신하려면 `response destination`을 설정해야 합니다.
+
+Jetton을 전송할 때 `709` 오류를 만날 수 있습니다. 이 오류는 메시지에 첨부된 Toncoin의 값이 전송하기에 충분하지 않다는 의미입니다. `Toncoin > to_nano(TRANSFER_CONSUMPTION) + forward_ton_amount`를 확인해야 합니다. 대부분의 경우 `TRANSFER_CONSUMPTION`은 `forward_payload`가 너무 크지 않다면 0.037일 수 있습니다. 또한 `forward_ton_amount`를 충분히 첨부하는 것을 잊지 마세요. 첨부된 값이 너무 적으면 `cskip_no_gas` 오류가 발생할 수 있습니다.
 
 :::tip
 "주석과 함께 Jetton 전송" 예제를 보려면 [best practices](/develop/dapps/asset-processing/jettons#best-practices)를 확인하세요.
@@ -463,7 +466,7 @@ TON 거래는 한 번의 확인 후에는 되돌릴 수 없습니다. 최고의 
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```js
@@ -493,7 +496,7 @@ await wallet.methods.transfer({
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```go
@@ -559,7 +562,7 @@ log.Println("transaction confirmed, hash:", base64.StdEncoding.EncodeToString(tx
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```py
@@ -580,7 +583,7 @@ await my_wallet.transfer_jetton_by_jetton_wallet(destination_address='address', 
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```py
@@ -635,7 +638,7 @@ asyncio.run(main())
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```ts
@@ -837,7 +840,7 @@ export async function tryProcessJetton(orderId: string) : Promise<string> {
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```go
@@ -1029,7 +1032,7 @@ func GetTransferTransactions(orderId string, foundTransfer chan<- *tlb.Transacti
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```py
