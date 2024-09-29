@@ -463,7 +463,7 @@ TON 거래는 한 번의 확인 후에는 되돌릴 수 없습니다. 최고의 
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```js
@@ -493,7 +493,7 @@ await wallet.methods.transfer({
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```go
@@ -559,7 +559,7 @@ log.Println("transaction confirmed, hash:", base64.StdEncoding.EncodeToString(tx
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```py
@@ -580,7 +580,7 @@ await my_wallet.transfer_jetton_by_jetton_wallet(destination_address='address', 
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```py
@@ -635,7 +635,7 @@ asyncio.run(main())
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```ts
@@ -837,7 +837,7 @@ export async function tryProcessJetton(orderId: string) : Promise<string> {
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```go
@@ -1029,7 +1029,7 @@ func GetTransferTransactions(orderId string, foundTransfer chan<- *tlb.Transacti
 
 <details>
 <summary>
-Source code
+소스 코드
 </summary>
 
 ```py
