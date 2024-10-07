@@ -10,10 +10,10 @@
 
 - [TON Connect React](/develop/dapps/ton-connect/developers#ton-connect-react)
 - [TON Connect JS SDK](/develop/dapps/ton-connect/developers#ton-connect-js-sdk)
-- [TON Connect Python SDK](/develop/dapps/ton-connect/developers#ton-connect-python)
 - [TON Connect Dart](/develop/dapps/ton-connect/developers#ton-connect-dart)
 - [TON Connect C#](/develop/dapps/ton-connect/developers#ton-connect-c)
 - [TON Connect Unity](/develop/dapps/ton-connect/developers#ton-connect-unity)
+- [TON Connect Go](/develop/dapps/ton-connect/developers#ton-connect-go)
 - [TON Connect Go](/develop/dapps/ton-connect/developers#ton-connect-go)
 
 ## TON Connect React
@@ -79,9 +79,9 @@ TON Connect 可以通过简单的 UI 元素（如“连接钱包按钮”、“�
 
 ## TON Connect Python
 
-### pytonconnect
+### ClickoTON-Foundation tonconnect
 
-TON Connect 2.0 的 Python SDK。相当于 `@tonconnect/sdk` 库。
+用于将 TON Connect 连接到 Python 应用的库
 
 使用它可以通过 TonConnect 协议将您的应用程序连接到 TON 钱包。
 
@@ -93,7 +93,7 @@ pip3 install pytonconnect
 
 ### ClickoTON-Foundation tonconnect
 
-用于将 TON Connect 连接到 Python 应用的库
+使用它可以通过 TonConnect 协议将您的应用程序连接到 TON 钱包。
 
 ```bash
 git clone https://github.com/ClickoTON-Foundation/tonconnect.git
@@ -102,9 +102,9 @@ pip install -e tonconnect
 
 [GitHub](https://github.com/ClickoTON-Foundation/tonconnect)
 
-## TON Connect Dart
+## TON Connect C\\#
 
-TON Connect 2.0 的 Dart SDK。相当于 `@tonconnect/sdk` 库。
+TON Connect 2.0 的 C# SDK。相当于 `@tonconnect/sdk` 库。
 
 使用它可以通过 TonConnect 协议将您的应用程序连接到 TON 钱包。
 
@@ -112,11 +112,11 @@ TON Connect 2.0 的 Dart SDK。相当于 `@tonconnect/sdk` 库。
  $ dart pub add darttonconnect
 ```
 
-- [GitHub](https://github.com/romanovichim/dartTonconnect)
+- [GitHub](https://github.com/continuation-team/TonSdk.NET/tree/main/TonSDK.Connect)
 
-## TON Connect C\#
+## TON Connect Go
 
-TON Connect 2.0 的 C# SDK。相当于 `@tonconnect/sdk` 库。
+TON Connect 2.0 的 Go SDK。
 
 使用它可以通过 TonConnect 协议将您的应用程序连接到 TON 钱包。
 
@@ -124,11 +124,11 @@ TON Connect 2.0 的 C# SDK。相当于 `@tonconnect/sdk` 库。
  $ dotnet add package TonSdk.Connect
 ```
 
-- [GitHub](https://github.com/continuation-team/TonSdk.NET/tree/main/TonSDK.Connect)
+- [GitHub](https://github.com/cameo-engineering/tonconnect)
 
-## TON Connect Go
+## 常见问题和关注点
 
-TON Connect 2.0 的 Go SDK。
+如果我们的开发者或社区成员在使用 TON Connect 2.0 期间遇到任何额外问题，请联系 [Tonkeeper 开发者](https://t.me/tonkeeperdev) 频道。
 
 使用它可以通过 TonConnect 协议将您的应用程序连接到 TON 钱包。
 

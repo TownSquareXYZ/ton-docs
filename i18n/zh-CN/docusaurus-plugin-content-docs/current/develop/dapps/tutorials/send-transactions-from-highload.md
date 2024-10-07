@@ -182,4 +182,4 @@ print(f"Transactions count: {len(receive_transactions)}")
 
 ---
 
-本指南涵盖从 Highload Wallet v3 发送交易的基本步骤。请确保用实际的 API 密钥、助记符和地址替换占位符，以便成功执行脚本。祝您编码愉快！🚀
+处理外发信息。

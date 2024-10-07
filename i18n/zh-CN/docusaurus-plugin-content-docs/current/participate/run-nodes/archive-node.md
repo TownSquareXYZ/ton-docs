@@ -1,10 +1,10 @@
 # 运行归档节点
 
-## 概述
-
-:::caution 需要系统管理员
-运行节点需要具备 Linux/Ubuntu 系统管理的基本知识。
+:::info
+Read about [Full Node](/participate/run-nodes/full-node) before this article
 :::
+
+## 概述
 
 存档节点是一种[完整节点](/participate/run-nodes/fullnode)类型，存储区块链的扩展历史数据。 如果您正在创建一个需要访问历史数据的 blockchain 浏览器或类似的应用程序， 建议使用归档节点作为索引器。
 
@@ -15,8 +15,6 @@
 - Ubuntu 20.04
 - Ubuntu 22.04
 - Debian 11
-
-请使用 [具有 sudo 权限的非 root 用户](/participate/run-nodes/full-node#prerequisites-1) 安装和运行 mytonctrl。
 
 ## 硬件要求
 
@@ -31,17 +29,9 @@ __Note__注意：4 TB 假定使用启用压缩的 zfs 卷
 
 ## 安装
 
+### 安装
+
 一般来说，运行存档节点需要以下步骤：
-
-1. 安装 ZFS 并准备卷
-2. 安装 MyTonCtrl
-3. 在服务器上运行完整节点并停止验证器进程
-4. 从 https://archival-dump.ton.org 下载和恢复转储数据
-5. 运行完整节点，为存档节点配置数据库规格
-
-### 安装 ZFS 并准备卷
-
-通常，为您的节点在_专用SSD驱动器_上创建一个单独的ZFS池是个好主意，这将使您更容易管理存储空间并备份您的节点。
 
 通常，在专用 SSD 驱动器上为节点创建一个单独的 ZFS 池是个好主意，这样可以方便管理存储空间和备份节点。
 
@@ -65,11 +55,11 @@ sudo zfs set compression=lz4 data
 
 ### 安装 MyTonCtrl
 
-请使用 [Running Full Node](/participate/run-nodes/full-node) 安装 mytonctrl。
+Please, use a [Running Full Node](/participate/run-nodes/full-node) to **install** and **run** mytonctrl.
 
 ### 准备节点
 
-#### 准备节点
+#### 安装 MyTonCtrl
 
 1. 执行还原之前，必须使用 root 账户停止验证器：
 
@@ -86,7 +76,7 @@ mv /var/ton-work /var/ton-work.bak
 
 #### 下载转储
 
-1. 在 [@TONBaseChatEn](https://t.me/TONBaseChatEn) Telegram 聊天中请求`user`和`password`凭证以获得下载转储的访问权限。
+1. 备份 `ton-work` 配置文件（我们需要 `/var/ton-work/db/config.json`、`/var/ton-work/keys` 和 `/var/ton-work/db/keyring`）。
 2. 下面是一个从 ton.org 服务器下载和恢复转储的命令示例：
 
 ```shell
@@ -95,7 +85,7 @@ wget --user <usr> --password <pwd> -c https://archival-dump.ton.org/dumps/latest
 
 转储大小为__~1.5TB__，因此下载和恢复需要一些时间。
 
-准备并运行命令：
+转储大小为__~1.5TB__，因此下载和恢复需要一些时间。
 
 1. 必要时安装工具(`pv`, `plzip`)
 2. 将 `<usr>` 和 `<pwd>` 替换为您的凭据
@@ -119,7 +109,7 @@ cp -r /var/ton-work.bak/db/keyring /var/ton-work/db/keyring
 
 3. 请确保`/var/ton-work`和`/var/ton-work/keys`目录的权限提升正确：
 
-- /var/ton-work/db "目录的所有者应为 "validator "用户：
+- 请确保`/var/ton-work`和`/var/ton-work/keys`目录的权限提升正确：
 
 ```shell
 chown -R validator:validator /var/ton-work/db
@@ -194,7 +184,7 @@ systemctl start validator.service
 
 如果由于某种原因，某些程序无法运行或发生故障，你可以随时 [roll back](https://docs.oracle.com/cd/E23824_01/html/821-1448/gbciq.html#gbcxk) 到 ZFS 文件系统上的 @archstate 快照，这是转储的原始状态。
 
-1. 停止验证程序（切勿跳过！）。
+1. Stop validator process (**Never skip this!**)
 
 ```shell
 sudo -s

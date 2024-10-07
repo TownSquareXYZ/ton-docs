@@ -1,0 +1,141 @@
+# Pisanie testów za pomocą Blueprint
+
+## Przegląd
+
+Zestaw narzędzi testowych (zwykle piaskownica) jest już zawarty w TypeScript SDK o nazwie [Blueprint](/develop/smart-contracts/sdk/javascript). Mogą Państwo utworzyć projekt demonstracyjny i uruchomić domyślny test w dwóch krokach:
+
+1. Proszę utworzyć nowy projekt Blueprint:
+
+```bash
+npm create ton@latest MyProject
+```
+
+2. Proszę przeprowadzić test:
+
+```bash
+cd MyProject
+npx blueprint test
+```
+
+W rezultacie zobaczą Państwo odpowiednie dane wyjściowe w oknie terminala:
+
+```bash
+% npx blueprint test
+
+> MyProject@0.0.1 test
+> jest
+
+ PASS  tests/Main.spec.ts
+  Main
+    ✓ should deploy (127 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       1 passed, 1 total
+Snapshots:   0 total
+Time:        1.224 s, estimated 2 s
+Ran all test suites.
+```
+
+## Użycie podstawowe
+
+Testowanie inteligentnych kontraktów pozwala na pokrycie bezpieczeństwa, optymalizację wydatków na gaz i badanie przypadków brzegowych.
+Pisanie testów w Blueprint (w oparciu o [Sandbox](https://github.com/ton-org/sandbox)) polega na definiowaniu dowolnych działań z kontraktem i porównywaniu wyników testów z oczekiwanym rezultatem, na przykład:
+
+```typescript
+it('should execute with success', async () => {                              // description of the test case
+    const res = await main.sendMessage(sender.getSender(), toNano('0.05'));  // performing an action with contract main and saving result in res
+
+    expect(res.transactions).toHaveTransaction({                             // configure the expected result with expect() function
+        from: main.address,                                                  // set expected sender for transaction we want to test matcher properties from
+        success: true                                                        // set the desirable result using matcher property success
+    });
+
+    printTransactionFees(res.transactions);                                  // print table with details on spent fees
+});
+```
+
+### Pisanie testów dla złożonych twierdzeń
+
+Podstawowy proces tworzenia testu wygląda następująco:
+
+1. Proszę utworzyć konkretny opakowany podmiot `Contract` za pomocą `blockchain.openContract()`.
+2. Proszę opisać akcje, które ma wykonać `Contract` i zapisać wynik wykonania w zmiennej `res`.
+3. Proszę zweryfikować właściwości za pomocą funkcji `expect()` i matchera `toHaveTransaction()`.
+
+Matcher `toHaveTransaction` oczekuje obiektu z dowolną kombinacją pól z typu `FlatTransaction` zdefiniowanego z następującymi właściwościami
+
+| Nazwa                                  | Typ                       | Opis                                                                                                                                                                                                                                                                                                                                 |
+| -------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| z                                      | Adres?                    | Adres umowy nadawcy wiadomości                                                                                                                                                                                                                                                                                                       |
+| na                                     | Adres                     | Adres umowny miejsca docelowego wiadomości (Alternatywna nazwa właściwości `to`).                                                                                                                                                                                                                                 |
+| wartość                                | bigint?                   | Ilość toncoinów w wiadomości w nanotonach                                                                                                                                                                                                                                                                                            |
+| ciało                                  | Komórka                   | Treść wiadomości zdefiniowana jako komórka                                                                                                                                                                                                                                                                                           |
+| op                                     | numer?                    | Op code to numer identyfikatora operacji (zazwyczaj crc32 z TL-B). Oczekiwany w pierwszych 32 bitach treści wiadomości.                                                                                                                                                                                           |
+| sukces                                 | boolean?                  | Niestandardowa flaga Sandbox, która definiuje wynikowy status określonej transakcji. True - jeśli zarówno faza obliczeniowa, jak i faza działania zakończyły się powodzeniem. W przeciwnym razie - False.                                                                                                                            |
+
+Mogą Państwo pominąć pola, które Państwa nie interesują i przekazać funkcje akceptujące typy zwracające wartości logiczne (`true` oznacza dobre), aby sprawdzić np. zakresy liczb, kody operacyjne wiadomości itp. Proszę zauważyć, że jeśli pole jest opcjonalne (jak `from?: Address`), to funkcja musi również akceptować opcjonalny typ.
+
+:::tip
+Pełną listę pól matchera można znaleźć w [dokumentacji Sandbox] (https://github.com/ton-org/sandbox#test-a-transaction-with-matcher).
+:::
+
+### Konkretny zestaw testów
+
+#### Extract SendMode
+
+Aby wyodrębnić tryb wysyłania wysłanej wiadomości, można użyć następującego kodu:
+
+```ts
+
+const smc = await blockchain.getContract(addr);
+
+const re = blockchain.executor.runTransaction({
+    config: blockchain.configBase64, libs: null, verbosity: 'full',
+    now: Math. floor (Date.now) / 1000),
+    lt: BigInt(Date.now()),
+    randomSeed: null,
+    ignoreChksig: false,
+    debugEnabled: true,
+    shardAccount: beginCell()
+        .store (storeShardAccount (smc.account))
+        .endCell()
+        .toBoc()
+        .toString('base64'),
+    message: beginCell()
+        .store (storeMessageRelaxed (...))
+        .endCell(),
+});
+
+if (!re.result. success || !re.result.actions) {
+    throw new Error('fail');
+｝
+const actions = loadoutList(Cell.fromBase64(re.result.actions).beginParse());
+actions[0].type === 'sendMsg' && actions[0].mode;
+
+```
+
+## Samouczki
+
+Dowiedz się więcej o testowaniu z najbardziej wartościowych samouczków społeczności na TON:
+
+- [Lekcja 2: Testowanie FunC dla inteligentnego kontraktu](https://github.com/romanovichim/TonFunClessons_Eng/blob/main/lessons/smartcontract/2lesson/secondlesson.md)
+- [TON Hello World część 4: Przewodnik krok po kroku dotyczący testowania pierwszego inteligentnego kontraktu](https://ton-community.github.io/tutorials/04-testing/)
+- [TON Smart Contract Pipeline](https://dev.to/roma_i_m/ton-smart-contract-pipeline-write-simple-contract-and-compile-it-4pnh)
+- [YouTube]Szósta lekcja FunC & Blueprint. Gaz, opłaty, testy.](https://youtu.be/3XIpKZ6wNcg)
+
+## Przykłady
+
+Proszę sprawdzić zestawy testowe używane dla kontraktów TON Ecosystem i uczyć się na przykładach.
+
+- [liquid-staking-contract sandbox tests](https://github.com/ton-blockchain/liquid-staking-contract/tree/main/tests)
+- [governance_tests](https://github.com/Trinketer22/governance_tests/blob/master/config_tests/tests/)
+- [JettonWallet.spec.ts](https://github.com/EmelyanenkoK/modern_jetton/blob/master/tests/JettonWallet.spec.ts)
+- [governance_tests](https://github.com/Trinketer22/governance_tests/blob/master/elector_tests/tests/complaint-test.fc)
+- [MassSender.spec.ts](https://github.com/Gusarich/ton-mass-sender/blob/main/tests/MassSender.spec.ts)
+- [TonForwarder.spec.ts](https://github.com/TrueCarry/ton-contract-forwarder/blob/main/src/contracts/ton-forwarder/TonForwarder.spec.ts)
+- [Assurer.spec.ts](https://github.com/aSpite/dominant-assurance-contract/blob/main/tests/Assurer.spec.ts)
+
+## Proszę zobaczyć również
+
+- [Blueprint](/develop/smart-contracts/sdk/javascript)
+- [toncli](/develop/smart-contracts/testing/toncli)

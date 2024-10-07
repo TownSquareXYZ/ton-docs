@@ -35,13 +35,13 @@ apt update
 sudo apt install build-essential cmake clang openssl libssl-dev zlib1g-dev gperf libreadline-dev ccache libmicrohttpd-dev pkg-config libsodium-dev libsecp256k1-dev
 ```
 
-3. 假设您已将源代码树获取到目录`~/ton`，其中`~`是您的主目录，并且您已创建一个空目录`~/ton-build`：
+3. Suppose that you have fetched the source tree to directory `~/ton`, where `~` is your home directory, and that you have created an empty directory `~/ton-build`:
 
 ```bash
 mkdir ton-build
 ```
 
-然后在Linux或MacOS的终端中运行以下命令：
+Then run the following in a terminal of Linux or MacOS:
 
 ```bash
 cd ton-build

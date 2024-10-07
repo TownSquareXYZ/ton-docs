@@ -1,10 +1,12 @@
 # 教育资源
 
-## TON 区块链课程
+### TON 区块链课程
 
-:::danger
-页面正在开发中.
-:::
+- [TON Speedrun](https://tonspeedrun.com/) - A specialized platform designed for a practical approach to learning in TON development.
+
+### 参见
+
+- [TON 速成](https://tonspeedrun.com/)
 
 ## 参见
 

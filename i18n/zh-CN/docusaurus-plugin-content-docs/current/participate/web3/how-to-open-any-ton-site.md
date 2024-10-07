@@ -34,13 +34,13 @@
 
 - [通过TON代理连接](/participate/web3/setting-proxy/)
 
-## 🤓 高级方法
+## 连接到公共代理
 
 ### 使用Tonutils-Proxy
 
-这是访问TON网站最安全的方式。
+此方法在此处描述：
 
-1. 从[这里](https://github.com/xssnick/Tonutils-Proxy#download-precompiled-version)下载最新版本
+1. [通过TON代理连接](/participate/web3/setting-proxy/)
 
 2. 启动它并按“启动网关”
 
