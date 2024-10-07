@@ -527,7 +527,7 @@ const wallet = new WalletClass(tonweb.provider, {
 
 <details>
 <summary>
-Исходный код
+Source code
 </summary>
 
 ```js
@@ -557,7 +557,7 @@ await wallet.methods.transfer({
 
 <details>
 <summary>
-Исходный код
+Source code
 </summary>
 
 ```go
@@ -623,7 +623,7 @@ log.Println("transaction confirmed, hash:", base64.StdEncoding.EncodeToString(tx
 
 <details>
 <summary>
-Исходный код
+Source code
 </summary>
 
 ```py
@@ -644,7 +644,7 @@ await my_wallet.transfer_jetton_by_jetton_wallet(destination_address='address', 
 
 <details>
 <summary>
-Исходный код
+Source code
 </summary>
 
 ```py
@@ -699,7 +699,7 @@ asyncio.run(main())
 
 <details>
 <summary>
-Исходный код
+Source code
 </summary>
 
 ```ts
@@ -901,7 +901,7 @@ export async function tryProcessJetton(orderId: string) : Promise<string> {
 
 <details>
 <summary>
-Исходный код
+Source code
 </summary>
 
 ```go
@@ -1093,7 +1093,7 @@ func GetTransferTransactions(orderId string, foundTransfer chan<- *tlb.Transacti
 
 <details>
 <summary>
-Исходный код
+Source code
 </summary>
 
 ```py
