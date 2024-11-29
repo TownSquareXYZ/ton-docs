@@ -1,0 +1,169 @@
+import Player from '@site/src/components/player'
+
+# TON의 익스플로러
+
+이 글에서는 개발자 관점에서 TON 익스플로러, 그들의 기능과 특징들을 살펴보겠습니다.
+
+## 익스플로러란 무엇인가?
+
+익스플로러는 계정 잔액, 트랜잭션 내역, 블록 등과 같은 블록체인의 정보를 볼 수 있게 해주는 웹사이트입니다.
+
+<Player url="https://www.youtube.com/watch?v=i5en19kzX6M" />
+
+## 어떤 익스플로러들이 있나?
+
+TON 익스플로러들 중에서 몇 가지 카테고리를 구분할 수 있습니다:
+
+- 일상적 사용을 위한 것
+- 개발자를 위한 확장된 정보를 제공하는 것
+- 전문화된 것
+
+이 카테고리 구분은 대체로 조건적이며 하나의 익스플로러가 동시에 여러 카테고리에 속할 수 있습니다. 그러므로 이에 너무 많은 주의를 기울이지 않겠습니다.
+
+## 익스플로러의 주소 별칭
+
+주소 별칭을 사용하여 서비스 주소를 더 사용자 친화적으로 만드세요. 제공된 가이드라인에 따라 Pull Request(PR)를 생성하세요:
+
+- [tonkeeper/ton-assets](https://github.com/tonkeeper/ton-assets) - Tonviewer.com 별칭
+- [catchain/address-book](https://github.com/catchain/address-book) - Tonscan.org 별칭
+
+## 일반 기능
+
+모든 익스플로러에 존재하는 일반 기능부터 시작해보겠습니다.
+
+거의 모든 익스플로러는 잔액, 트랜잭션 내역에 대한 정보와, 주소에 스마트 컨트랙트가 배포된 경우 해당 정보를 알아볼 수 있는 기능을 제공합니다.
+
+다음으로, 이러한 각 카테고리에 속할 수 있는 여러 익스플로러들을 살펴보겠습니다.
+
+## TON Scan.org
+
+일상적 사용에 좋은 익스플로러입니다. TON 블록체인의 포괄적인 뷰를 제공하여 사용자가 트랜잭션, 주소, 블록 등을 검색할 수 있게 합니다. 모든 검색은 공개 [주소록](https://github.com/catchain/tonscan/blob/master/src/addrbook.json)(TON Foundation, OKX 등)에 대해 수행됩니다.
+
+### 특징
+
+- **일상적 사용에 편리**
+- 개발자에게 편리
+- TON DNS 지원
+- 컨트랙트 타입
+- 컨트랙트 디스어셈블러
+
+### 링크
+
+- URL: https://tonscan.org/
+- 테스트넷 URL: https://testnet.tonscan.org/
+
+## TON Scan.com
+
+### 특징
+
+- 트랜잭션 집계 분석
+- 트랜잭션 추적
+
+### 링크
+
+- URL: https://tonscan.com/
+
+## Ton Whales Explorer
+
+이 익스플로러는 일반 사용자보다 개발자 지향적입니다.
+
+### 특징
+
+- **개발자에게 편리**
+- 컨트랙트 타입
+- 컨트랙트 디스어셈블러
+
+### 링크
+
+- URL: https://tonwhales.com/explorer
+
+## Tonviewer Explorer
+
+이 익스플로러는 가장 최신이며 고유한 특징들을 가지고 있습니다.
+예를 들어, Trace 기능이 있습니다. 이 기능을 통해 후속 트랜잭션에 사용자의 주소가 포함되어 있지 않더라도 스마트 컨트랙트 간의 전체 트랜잭션 시퀀스를 볼 수 있습니다.
+
+트랜잭션 정보는 예를 들어 TON Whales만큼 상세하지는 않습니다.
+
+### 특징
+
+- 개발자에게 편리
+- 일상적 사용에 편리
+- Jetton 트랜잭션 내역
+- **Trace**
+- TON DNS 지원
+
+### 링크
+
+- URL: https://tonviewer.com/
+- 테스트넷 URL: https://testnet.tonviewer.com/
+
+## TON NFT EXPLORER
+
+이 익스플로러는 NFT에 특화되어 있지만 일반 익스플로러로도 사용될 수 있습니다.
+
+지갑 주소를 볼 때 어떤 NFT를 저장하고 있는지 알 수 있고, NFT를 볼 때는 메타데이터, 컬렉션 주소, 소유자, 트랜잭션 내역을 알 수 있습니다.
+
+### 특징
+
+- 개발자에게 편리
+- 컨트랙트 타입
+- **NFT에 특화**
+
+### 링크
+
+- URL: https://explorer.tonnft.tools/
+- 테스트넷 URL: https://testnet.explorer.tonnft.tools/
+
+## DTON
+
+DTON은 개발자를 위한 또 다른 익스플로러입니다. 편리한 형태로 트랜잭션에 대한 많은 정보를 제공합니다.
+
+또한, 트랜잭션의 계산 단계를 단계별로 볼 수 있는 기능이 있습니다.
+
+### 특징
+
+- 개발자에게 편리
+- 계산 단계에 대한 확장된 정보
+- 컨트랙트 타입
+- 컨트랙트 디스어셈블러
+
+### 링크
+
+- URL: https://dton.io/
+
+## TON NFTscan
+
+이 익스플로러는 TON 블록체인의 대체 불가능 토큰(NFT)을 위해 특별히 설계되었습니다. 사용자가 NFT 트랜잭션, 컨트랙트, 메타데이터를 탐색, 추적, 검증할 수 있게 해줍니다.
+
+### 특징
+
+- 일반 사용자에게 편리
+- 일일 거래량과 같은 트레이더를 위한 유용한 정보
+- NFT 컬렉션 순위
+
+### 링크
+
+- URL: https://ton.nftscan.com/
+
+## TonStat
+
+등록된 네트워크 주소와 지갑 수, 소각된 Toncoin 양, 스테이킹된 Toncoin 양, 발행된 NFT 양, 검증자 수 및 기타 여러 지표와 같은 다양한 통계를 표시합니다.
+
+### 특징
+
+- 일반 사용자에게 편리
+- 일일 거래량과 같은 트레이더를 위한 유용한 정보
+- DeFi 정보
+
+### 링크
+
+- URL: https://www.tonstat.com/
+
+## 이 목록에 포함되고 싶으신가요?
+
+[관리자](/v3/contribute/maintainers) 중 한 명에게 문의해 주시기 바랍니다.
+
+## 참고 자료
+
+- [ton.app/explorers](https://ton.app/explorers)
+- [Awesome TON 저장소](https://github.com/ton-community/awesome-ton)
