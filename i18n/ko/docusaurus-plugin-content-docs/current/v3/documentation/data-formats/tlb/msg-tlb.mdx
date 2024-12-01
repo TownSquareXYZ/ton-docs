@@ -1,0 +1,342 @@
+import ThemedImage from '@theme/ThemedImage';
+
+# 메시지 TL-B 스키마
+
+이 섹션에서는 메시지에 대한 TL-B 스키마를 자세히 설명합니다.
+
+## 메시지 TL-B
+
+### TL-B
+
+주요 메시지 TL-B 스키마는 여러 중첩 구조의 조합으로 선언됩니다.
+
+```tlb
+message$_ {X:Type} info:CommonMsgInfo
+init:(Maybe (Either StateInit ^StateInit))
+body:(Either X ^X) = Message X;
+
+message$_ {X:Type} info:CommonMsgInfoRelaxed
+init:(Maybe (Either StateInit ^StateInit))
+body:(Either X ^X) = MessageRelaxed X;
+
+_ (Message Any) = MessageAny;
+```
+
+여기서 `Message X`는 일반 메시지 구조, `MessageRelaxed X`는 CommonMsgInfoRelaxed 본문이 있는 추가 유형, `Message Any`는 둘의 결합입니다.
+메시지 구조는 X:Type으로 통합되며, 이는 다른 말로 하면 Cell입니다.
+TL-B에 따라 모든 데이터를 한 셀(1023 비트에 맞는 경우)에 결합하거나 캐럿 `^`로 선언된 참조를 사용할 수 있습니다.
+
+직렬화된 `Message X`는 FunC 메서드 send_raw_message()로 작업 목록에 배치되며, 스마트 계약이 이 작업을 실행하고 메시지를 보냅니다.
+
+### 명시적 직렬화 정의
+
+TL-B 구조에 따라 유효한 이진 데이터를 구축하기 위해서는 각 유형에 대해 반복적으로 정의되는 직렬화를 수행해야 합니다. 이는 Message X의 직렬화를 위해 `StateInit`, `CommonMsgInfo` 등의 직렬화 방법을 알아야 한다는 것을 의미합니다.
+
+모든 중첩 구조는 최상위 구조의 직렬화가 명시적이 될 때까지(모든 비트가 Boolean 또는 비트와 같은 유형(bits, uint, varuint)으로 정의됨) 재귀적으로 다른 TL-B 스키마에서 가져와야 합니다.
+
+일반 개발에서 현재 사용되지 않는 구조는 Type 열에 `*`로 표시됩니다. 예를 들어 \*Anycast는 일반적으로 직렬화에서 건너뜁니다.
+
+### message$_
+
+다음은 전체 메시지 `Message X`의 최상위 TL-B 스키마입니다:
+
+```tlb
+message$_ {X:Type} info:CommonMsgInfo
+init:(Maybe (Either StateInit ^StateInit))
+body:(Either X ^X) = Message X;
+```
+
+| 구조        | 유형                              | 필수 | 설명                                                      |   |
+| --------- | ------------------------------- | -- | ------------------------------------------------------- | - |
+| message$_ | 생성자                             |    | 생성자 규칙에 따라 정의됨. 비어있는 태그 `$_`는 시작 부분에 어떤 비트도 추가하지 않음을 의미 |   |
+| info      | [CommonMsgInfo](#commonmsginfo) | 필수 | 자세한 메시지 속성이 대상과 값을 정의. 항상 메시지 루트 셀에 위치                  |   |
+| init      | [StateInit](#stateinit-tl-b)    | 선택 | TON에서 새 계약 초기화에 사용되는 일반 구조. 셀 참조 또는 루트 셀에 작성될 수 있음      |   |
+| body      | X                               | 필수 | 메시지 페이로드. 셀 참조 또는 루트 셀에 작성될 수 있음                        |   |
+
+```tlb
+nothing$0 {X:Type} = Maybe X;
+just$1 {X:Type} value:X = Maybe X;
+left$0 {X:Type} {Y:Type} value:X = Either X Y;
+right$1 {X:Type} {Y:Type} value:Y = Either X Y;
+```
+
+`Maybe`와 `Either`가 어떻게 작동하는지 상기하면, 다음과 같이 다른 경우를 직렬화할 수 있습니다:
+
+- `[CommonMsgInfo][10][StateInit][0][X]` - 한 셀의 `Message X`
+
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+light: '/img/docs/data-formats/tl-b-docs-9.png?raw=true',
+dark: '/img/docs/data-formats/tl-b-docs-9-dark.png?raw=true',
+}}
+/>
+<br></br>
+
+- `[CommonMsgInfo][11][^StateInit][1][^X]` - 참조가 있는 `Message X`
+
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+light: '/img/docs/data-formats/tl-b-docs-8.png?raw=true',
+dark: '/img/docs/data-formats/tl-b-docs-8-dark.png?raw=true',
+}}
+/>
+<br></br>
+
+## CommonMsgInfo TL-B
+
+### CommonMsgInfo
+
+`CommonMsgInfo`는 TON 블록체인에서 메시지가 어떻게 전달될지 정의하는 매개변수 목록입니다.
+
+```tlb
+//internal message
+int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
+  src:MsgAddressInt dest:MsgAddressInt
+  value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+  created_lt:uint64 created_at:uint32 = CommonMsgInfo;
+
+//external incoming message
+ext_in_msg_info$10 src:MsgAddressExt dest:MsgAddressInt
+  import_fee:Grams = CommonMsgInfo;
+
+//external outgoing message
+ext_out_msg_info$11 src:MsgAddressInt dest:MsgAddressExt
+  created_lt:uint64 created_at:uint32 = CommonMsgInfo;
+```
+
+### int_msg_info$0
+
+`int_msg_info`는 내부 메시지의 경우입니다. 이는 계약 간에만, 그리고 오직 계약 간에만 보낼 수 있다는 것을 의미합니다.
+사용 사례 - 일반적인 계약 간 메시지.
+
+```tlb
+nanograms$_ amount:(VarUInteger 16) = Grams;
+//internal message
+int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
+  src:MsgAddressInt dest:MsgAddressInt
+  value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+  created_lt:uint64 created_at:uint32 = CommonMsgInfo;
+```
+
+| 구조             | 유형                                        | 필수 | 설명                                                     |
+| -------------- | ----------------------------------------- | -- | ------------------------------------------------------ |
+| int_msg_info$0 | 생성자                                       | 필수 | $0 태그는 CommonMsgInfo 직렬화가 내부 메시지를 나타내는 0 비트로 시작함을 의미   |
+| ihr_disabled   | Bool                                      | 필수 | 하이퍼큐브 라우팅 플래그                                          |
+| bounce         | Bool                                      | 필수 | 처리 중 오류 발생 시 메시지가 반송되어야 함. 메시지의 플랫 바운스가 1이면 반송 가능이라고 함 |
+| bounced        | Bool                                      | 필수 | 메시지 자체가 반송의 결과임을 나타내는 플래그                              |
+| src            | [MsgAddressInt](#msgaddressint-tl-b)      | 필수 | 메시지 발신자 스마트 계약의 주소                                     |
+| dest           | [MsgAddressInt](#msgaddressint-tl-b)      | 필수 | 메시지 수신자 스마트 계약의 주소                                     |
+| value          | [CurrencyCollection](#currencycollection) | 필수 | 메시지로 전송된 총 자금을 포함한 통화 정보를 설명하는 구조                      |
+| ihr_fee        | [VarUInteger 16](#varuinteger-n)          | 필수 | 하이퍼 라우팅 전달에 대한 수수료                                     |
+| fwd_fee        | [VarUInteger 16](#varuinteger-n)          | 필수 | 검증자가 할당한 메시지 전달 수수료                                    |
+| created_lt     | uint64                                    | 필수 | 검증자가 할당한 메시지 전송의 논리적 시간. 스마트 계약의 작업 순서를 지정하는 데 사용      |
+| created_at     | uint32                                    | 필수 | 유닉스 시간                                                 |
+
+### ext_in_msg_info$10
+
+`ext_in_msg_info$10`는 외부 수신 메시지의 경우입니다. 이는 이 유형의 메시지가 체인 외부 공간에서 계약으로 전송된다는 것을 의미합니다.
+사용 사례 - 지갑 계약에 대한 지갑 애플리케이션 요청.
+
+```tlb
+nanograms$_ amount:(VarUInteger 16) = Grams;
+//external incoming message
+ext_in_msg_info$10 src:MsgAddressExt dest:MsgAddressInt
+  import_fee:Grams = CommonMsgInfo;
+```
+
+| 구조                  | 유형                                   | 필수 | 설명                                                            |
+| ------------------- | ------------------------------------ | -- | ------------------------------------------------------------- |
+| ext_out_msg_info$10 | 생성자                                  | 필수 | `$10` 태그는 CommonMsgInfo 직렬화가 외부 수신 메시지를 나타내는 `10` 비트로 시작함을 의미 |
+| ihr_disabled        | Bool                                 | 필수 | 하이퍼 라우팅 플래그 (현재 항상 true)                                      |
+| src                 | [MsgAddressExt](#msgaddressext-tl-b) | 필수 | 메시지의 외부 발신자 주소                                                |
+| dest                | [MsgAddressInt](#msgaddressint-tl-b) | 필수 | 메시지 수신자 스마트 계약의 주소                                            |
+| import_fee          | [VarUInteger 16](#varuinteger-n)     | 필수 | 메시지 실행 및 전달에 대한 수수료                                           |
+
+### ext_out_msg_info$11
+
+`ext_out_msg_info$11`는 외부 발신 메시지의 경우입니다. 이는 계약에서 체인 외부 공간으로 보낼 수 있다는 것을 의미합니다.
+사용 사례 - 로그.
+
+```tlb
+//internal message
+ext_out_msg_info$11 src:MsgAddressInt dest:MsgAddressExt
+  created_lt:uint64 created_at:uint32 = CommonMsgInfo;
+```
+
+| 구조                  | 유형                                   | 필수 | 설명                                                            |
+| ------------------- | ------------------------------------ | -- | ------------------------------------------------------------- |
+| ext_out_msg_info$11 | 생성자                                  | 필수 | `$11` 태그는 CommonMsgInfo 직렬화가 외부 발신 메시지를 나타내는 `11` 비트로 시작함을 의미 |
+| src                 | [MsgAddressInt](#msgaddressint-tl-b) | 필수 | 하이퍼 라우팅 플래그                                                   |
+| dest                | [MsgAddressExt](#msgaddressext-tl-b) | 필수 | TON에서 새 계약 초기화에 사용되는 일반 구조. 셀 참조 또는 루트 셀에 작성될 수 있음            |
+| created_lt          | uint64                               | 필수 | 검증자가 할당한 메시지 전송의 논리적 시간. 스마트 계약의 작업 순서를 지정하는 데 사용             |
+| created_at          | uint32                               | 필수 | 유닉스 시간                                                        |
+
+## StateInit TL-B
+
+StateInit는 계약에 초기 데이터를 전달하고 계약 배포에 사용됩니다.
+
+```tlb
+_ split_depth:(Maybe (## 5)) special:(Maybe TickTock)
+  code:(Maybe ^Cell) data:(Maybe ^Cell)
+  library:(HashmapE 256 SimpleLib) = StateInit;
+```
+
+| 구조          | 유형                       | 필수 | 설명                                                                       |
+| ----------- | ------------------------ | -- | ------------------------------------------------------------------------ |
+| split_depth | (## 5)                   | 선택 | 고부하 계약을 위한 매개변수로, 여러 샤드의 여러 인스턴스로 분할하는 동작을 정의. 현재 StateInit는 이것 없이 사용됨   |
+| special     | TickTock\*               | 선택 | 블록체인의 모든 새 블록에서 스마트 계약을 호출하는 데 사용. 마스터체인에서만 사용 가능. 일반 사용자의 계약은 이것 없이 사용됨 |
+| code        | Cell                     | 선택 | 계약의 직렬화된 코드                                                              |
+| data        | Cell                     | 선택 | 계약 초기 데이터                                                                |
+| library     | HashmapE 256 SimpleLib\* | 선택 | 현재 라이브러리 없이 StateInit 사용됨                                                |
+
+[해시맵에 대한 일반적인 자세한 설명](/v3/documentation/data-formats/tlb/tl-b-types#hashmap)
+
+## MsgAddressExt TL-B
+
+```tlb
+addr_none$00 = MsgAddressExt;
+addr_extern$01 len:(## 9) external_address:(bits len)
+= MsgAddressExt;
+```
+
+`MsgAddress`는 주소에 대한 다양한 직렬화의 스키마입니다. 메시지가 어떤 참가자(체인 외부 또는 스마트계약) 간에 전송되는지에 따라 다른 구조가 사용됩니다.
+
+### addr_none$00
+
+`addr_none$00` - 체인 외부 참가자의 null 주소를 정의하는 데 사용됩니다. 이는 고유한 발신자 주소 없이 계약에 외부 메시지를 보낼 수 있음을 의미합니다.
+
+```tlb
+addr_none$00 = MsgAddressExt;
+```
+
+| 구조           | 유형  | 필수 | 설명                                                                    |
+| ------------ | --- | -- | --------------------------------------------------------------------- |
+| addr_none$00 | 생성자 | 필수 | `$00` 태그는 MsgAddressExt 직렬화가 `00` 비트로 시작함을 의미. 이는 전체 외부 주소가 `00`임을 의미 |
+
+### addr_extern$01
+
+```tlb
+addr_extern$01 len:(## 9) external_address:(bits len)
+= MsgAddressExt;
+```
+
+| 구조               | 유형         | 필수 | 설명                                                        |
+| ---------------- | ---------- | -- | --------------------------------------------------------- |
+| addr_extern$01   | 생성자        | 필수 | `$01` 태그는 MsgAddressExt 직렬화가 `01` 비트로 시작하여 외부 주소를 나타냄을 의미 |
+| len              | ## 9       | 필수 | uintN과 같음 - N비트 부호 없는 숫자를 의미                              |
+| external_address | (bits len) | 필수 | 주소는 이전 `len`과 같은 길이의 비트 문자열                               |
+
+## MsgAddressInt TL-B
+
+```tlb
+addr_std$10 anycast:(Maybe Anycast)
+workchain_id:int8 address:bits256  = MsgAddressInt;
+
+addr_var$11 anycast:(Maybe Anycast) addr_len:(## 9)
+workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
+```
+
+### addr_std$10
+
+```tlb
+addr_std$10 anycast:(Maybe Anycast)
+workchain_id:int8 address:bits256  = MsgAddressInt;
+```
+
+| 구조           | 유형        | 필수 | 설명                                                        |
+| ------------ | --------- | -- | --------------------------------------------------------- |
+| addr_std$10  | 생성자       | 필수 | `$10` 태그는 MsgAddressExt 직렬화가 `10` 비트로 시작하여 외부 주소를 나타냄을 의미 |
+| anycast      | Anycast\* | 선택 | 추가 주소 데이터, 현재 일반 내부 메시지에서 사용되지 않음                         |
+| workchain_id | int8      | 필수 | 대상 주소의 스마트 계약이 위치한 워크체인. 현재는 항상 0                         |
+| address      | (bits256) | 필수 | 스마트 계약 계정 ID 번호                                           |
+
+### addr_var$11
+
+```tlb
+addr_var$11 anycast:(Maybe Anycast) addr_len:(## 9)
+workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
+```
+
+| 구조           | 유형        | 필수 | 설명                                                           |
+| ------------ | --------- | -- | ------------------------------------------------------------ |
+| addr_var$11  | 생성자       | 필수 | `$11` 태그는 MsgAddressInt 직렬화가 `11` 비트로 시작하여 내부 계약 주소를 나타냄을 의미 |
+| anycast      | Anycast\* | 선택 | 추가 주소 데이터, 현재 일반 내부 메시지에서 사용되지 않음                            |
+| addr_len     | ## 9      | 필수 | uintN과 같음 - N비트 부호 없는 숫자를 의미                                 |
+| workchain_id | int32     | 필수 | 대상 주소의 스마트 계약이 위치한 워크체인. 현재는 항상 0                            |
+| address      | (bits256) | 필수 | 페이로드 주소(계정 ID일 수 있음)                                         |
+
+## 기본적으로 사용되는 타입
+
+### CurrencyCollection
+
+```tlb
+nanograms$_ amount:(VarUInteger 16) = Grams;
+currencies$_ grams:Grams other:ExtraCurrencyCollection
+= CurrencyCollection;
+```
+
+| 구조           | 유형                      | 필수 | 설명                                                     |
+| ------------ | ----------------------- | -- | ------------------------------------------------------ |
+| currencies$_ | 생성자                     | 필수 | `$_` 빈 태그는 CurrencyCollection 직렬화 시작 시 비트를 추가하지 않음을 의미 |
+| grams        | (VarUInteger 16)        | 필수 | 나노톤 단위의 메시지 값                                          |
+| other        | ExtraCurrencyCollection | 선택 | 일반적으로 비어 있는 추가 통화용 딕셔너리 ExtraCurrencyCollection        |
+
+- ExtraCurrencyCollection은 일반적으로 메시지에서 빈 딕셔너리로 작성되는 복잡한 타입
+
+### VarUInteger n
+
+```tlb
+var_uint$_ {n:#} len:(#< n) value:(uint (len * 8))
+= VarUInteger n;
+var_int$_ {n:#} len:(#< n) value:(int (len * 8))
+= VarInteger n;
+```
+
+| 구조         | 유형                | 필수 | 설명                                                             |
+| ---------- | ----------------- | -- | -------------------------------------------------------------- |
+| var_uint$_ | 생성자               | 필수 | `var_uint$_` 빈 태그는 CurrencyCollection 직렬화 시작 시 비트를 추가하지 않음을 의미 |
+| len        | uintN             | 필수 | 다음 값의 비트 길이 매개변수                                               |
+| value      | (uint (len \* 8)) | 선택 | (len \* 8) 비트로 작성된 정수의 uint 값                                  |
+
+## 메시지 예제
+
+### 일반적인 func 내부 메시지
+
+```func
+  var msg = begin_cell()
+    .store_uint(0, 1) ;; tag
+    .store_uint(1, 1) ;; ihr_disabled
+    .store_uint(1, 1) ;; allow bounces
+    .store_uint(0, 1) ;; not bounced itself
+    .store_slice(source)
+    .store_slice(destination)
+    ;; serialize CurrencyCollection (see below)
+    .store_coins(amount)
+    .store_dict(extra_currencies)
+    .store_coins(0) ;; ihr_fee
+    .store_coins(fwd_value) ;; fwd_fee
+    .store_uint(cur_lt(), 64) ;; lt of transaction
+    .store_uint(now(), 32) ;; unixtime of transaction
+    .store_uint(0,  1) ;; no init-field flag (Maybe)
+    .store_uint(0,  1) ;; inplace message body flag (Either)
+    .store_slice(msg_body)
+  .end_cell();
+```
+
+### 간단한 형태의 일반적인 func 메시지
+
+검증자에 의해 항상 덮어쓰이는 메시지 부분은 건너뛸 수 있습니다(0 비트로 채움). 여기서 메시지 발신자도 건너뛰어 `addr_none$00`으로 직렬화됩니다.
+
+```func
+  cell msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(addr)
+        .store_coins(amount)
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .store_slice(message_body)
+.end_cell();
+```
