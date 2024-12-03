@@ -3,7 +3,7 @@ import Button from '@site/src/components/button'
 # Telegram 机器人的 TON Connect - Python
 
 :::warning 弃用
-本指南介绍了将 TON Connect 与 Telegram 机器人集成的过时方法。如需更安全、更现代的方法，请考虑使用 [Telegram 迷你应用程序](/v3/guidelines/dapps/tma/overview)。
+本指南介绍了将 TON Connect 与 Telegram 机器人集成的过时方法。如需更安全、更现代的方法，请考虑使用 [Telegram 小程序](/v3/guidelines/dapps/tma/overview)。
 :::
 
 <Button href="https://t.me/test_tonconnect_bot" colorType={'primary'} sizeType={'sm'}>
