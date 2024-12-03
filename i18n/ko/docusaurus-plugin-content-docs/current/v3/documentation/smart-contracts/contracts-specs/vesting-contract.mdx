@@ -1,0 +1,156 @@
+# 베스팅 컨트랙트
+
+이 컨트랙트는 일정 기간 동안 특정 양의 Toncoin을 잠그고 점진적으로 잠금을 해제할 수 있게 합니다.
+
+## 베스팅 매개변수
+
+베스팅 매개변수는 배포 시 설정되며 변경할 수 없습니다.
+
+`vesting_total_amount` - nanotons 단위, 잠긴 Toncoin의 총량.
+
+`vesting_start_time` - unixtime, 베스팅 기간의 시작점, 이 시점까지 `vesting_total_amount`가 잠기고, 이후 다른 매개변수에 따라 잠금 해제 시작.
+
+`vesting_total_duration` - 총 베스팅 기간(초) (예: 1년은 `31104000`).
+
+`unlock_period` - 잠금 해제 기간(초) (예: 한 달에 한 번은 `2592000`).
+
+`cliff_duration` - 시작 cliff 기간(초) (예: 2개월은 `5184000`).
+
+`vesting_sender_address` - 언제든지 Toncoin을 반환할 수 있는 주소(잠긴 경우에도); 또한 이 주소는 화이트리스트를 추가할 수 있음.
+
+`owner_address` - 베스팅이 발행된 대상, 이 주소에서 베스팅 컨트랙트의 Toncoin 전송을 시작할 수 있음.
+
+`get_vesting_data()` get-method로 이러한 매개변수를 얻을 수 있습니다.
+
+매개변수는 다음 조건을 만족해야 합니다:
+
+```
+vesting_total_duration > 0
+vesting_total_duration <= 135 years (2^32 seconds)
+unlock_period > 0
+unlock_period <= vesting_total_duration
+cliff_duration >= 0
+cliff_duration < vesting_total_duration
+vesting_total_duration mod unlock_period == 0
+cliff_duration mod unlock_period == 0
+```
+
+스마트 컨트랙트가 이러한 조건의 준수 여부를 확인하지는 않지만, 컨트랙트 배포 후 Toncoin을 보내기 전에 사용자는 get-method로 모든 매개변수가 정상인지 확인할 수 있습니다.
+
+## 잠금
+
+`vesting_start_time` 이전에는 모든 `vesting_total_amount`가 잠깁니다.
+
+`vesting_start_time`부터 금액은 비례적으로 잠금 해제되기 시작합니다.
+
+예를 들어 `vesting_total_duration`이 10개월이고 `unlock_period`가 1개월이며 `vesting_total_amount`가 500 TON이면 매월 500\*(10/100)=50 TON이 잠금 해제되고, 10개월 후에는 모든 500 TON이 잠금 해제됩니다.
+
+cliff 기간이 있는 경우, 이 cliff 기간 동안에는 아무것도 잠금 해제되지 않으며, 기간이 지난 후에는 위 공식에 따라 금액이 잠금 해제됩니다.
+
+예를 들어 `cliff_period`가 3개월이고 다른 매개변수가 이전 예시와 같다면, 처음 3개월 동안은 아무것도 잠금 해제되지 않다가 3개월째에 150 TON이 한 번에 잠금 해제되고(그 후 매월 50 TON씩).
+
+get-method `get_locked_amount(int at_time)`로 특정 시점에 잠긴 금액을 계산할 수 있습니다.
+
+잠긴 Toncoin은 화이트리스트 주소나 `vesting_sender_address`로만 보낼 수 있습니다.
+
+잠금 해제된 Toncoin은 언제 어디로든 보낼 수 있습니다.
+
+## 화이트리스트
+
+화이트리스트는 코인이 여전히 잠겨 있더라도 Toncoin을 보낼 수 있는 주소 목록입니다.
+
+get-method `get_whitelist()`는 모든 화이트리스트 주소를 (wc, hash_part) 튜플 목록으로 반환합니다.
+
+get-method `is_whitelisted(slice address)`는 이 주소가 화이트리스트에 있는지 확인합니다.
+
+`vesting_sender_address`는 언제든지 `op::add_whitelist` 메시지로 새 주소를 화이트리스트에 추가할 수 있습니다.
+
+화이트리스트에서 주소를 제거할 수는 없습니다.
+
+또한 잠긴 코인은 항상 `vesting_sender_address`로 보낼 수 있습니다(화이트리스트에 별도로 추가할 필요 없음).
+
+## 충전
+
+어떤 주소에서든 베스팅 컨트랙트로 Toncoin을 보낼 수 있습니다.
+
+## 월렛 스마트 컨트랙트
+
+이 컨트랙트는 표준 월렛 V3 스마트 컨트랙트와 유사하게 설계되었습니다.
+
+데이터에는 `seqno`, `subwallet_id`, `public_key`를 저장하고 동일한 형식의 외부 메시지를 받습니다.
+
+get-methods `seqno()`, `get_subwallet_id()`, `get_public_key()`를 사용할 수 있습니다.
+
+표준 월렛과 달리 베스팅 컨트랙트는 한 번에 하나의 메시지만 보낼 수 있습니다.
+
+## 전송
+
+공개 키의 소유자는 표준 월렛처럼 외부 메시지로 베스팅 컨트랙트에서 Toncoin 전송을 시작할 수 있습니다.
+
+Toncoin 전송은 `owner_address`에서 보낸 `op::send` 내부 메시지로도 시작할 수 있습니다.
+
+실제로 공개 키와 `owner_address`는 동일한 사용자가 소유합니다.
+
+## 화이트리스트 제한사항
+
+`vesting_sender_address`로 보낼 수 있는 메시지에는 다음과 같은 제한이 있습니다:
+
+- `send_mode == 3`만 허용됨;
+
+대부분의 경우 잠긴 코인으로 검증하거나 풀에 잠긴 코인을 스테이킹할 수 있도록 주소를 화이트리스트에 추가합니다.
+
+Toncoin 도난을 방지하기 위해 화이트리스트로 보낼 수 있는 메시지에는 다음과 같은 제한이 있습니다:
+
+- `send_mode == 3`만 허용됨;
+
+- 바운스 가능한 메시지만 허용됨;
+
+- `state_init` 첨부 불허;
+
+대상이 시스템 elector 주소인 경우:
+
+- `op::elector_new_stake`, `op::elector_recover_stake`, `op::vote_for_complaint`, `op::vote_for_proposal` 작업만 허용됨;
+
+대상이 시스템 config 주소인 경우:
+
+- `op::vote_for_proposal` 작업만 허용됨;
+
+다른 대상의 경우:
+
+- 빈 메시지와 빈 텍스트 메시지 허용;
+- "d", "w", "D", "W"로 시작하는 텍스트 메시지만 허용;
+- `op::single_nominator_pool_withdraw`, `op::single_nominator_pool_change_validator`, `op::ton_stakers_deposit`, `op::jetton_burn`, `op::ton_stakers_vote`, `op::vote_for_proposal`, `op::vote_for_complaint` 작업 허용;
+
+화이트리스트에 포함되지 않은 주소에는 제한이 없습니다.
+
+잠금 해제된 Toncoin을 보낼 때는 화이트리스트나 `vesting_sender_address`로 보내더라도 제한이 적용되지 않습니다.
+
+## 프로젝트 구조
+
+- `contracts` - 프로젝트의 모든 스마트 컨트랙트와 종속성의 소스 코드.
+- `wrappers` - 컨트랙트용 래퍼 클래스(ton-core의 `Contract` 구현), [de]직렬화 기본형과 컴파일 함수 포함.
+- `tests` - 컨트랙트용 테스트.
+- `scripts` - 프로젝트에서 사용하는 스크립트, 주로 배포 스크립트.
+
+## 사용 방법
+
+### 빌드
+
+`npx blueprint build` 또는 `yarn blueprint build`
+
+### 테스트
+
+`npx blueprint test` 또는 `yarn blueprint test`
+
+### 배포 또는 다른 스크립트 실행
+
+`npx blueprint run` 또는 `yarn blueprint run`
+
+### 새 컨트랙트 추가
+
+`npx blueprint create ContractName` 또는 `yarn blueprint create ContractName`
+
+## 참조
+
+- [Single Nominator](/v3/documentation/smart-contracts/contracts-specs/single-nominator-pool)
+- [vesting-contract](https://github.com/ton-blockchain/vesting-contract)
