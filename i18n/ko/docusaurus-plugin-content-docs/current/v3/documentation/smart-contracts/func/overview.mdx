@@ -1,0 +1,135 @@
+import Button from '@site/src/components/button'
+
+# 개요
+
+**FunC**는 TON의 스마트 컨트랙트를 프로그래밍하는 데 사용되는 고수준 언어입니다.
+
+FunC는 도메인 특화(domain-specific), C 스타일의 정적 타입 언어입니다.
+다음은 FunC로 작성된 돈을 보내는 간단한 메서드의 예시입니다:
+
+```func
+() send_money(slice address, int amount) impure inline {
+    var msg = begin_cell()
+        .store_uint(0x10, 6) ;; nobounce
+        .store_slice(address)
+        .store_coins(amount)
+        .end_cell();
+
+    send_raw_message(msg, 64);
+}
+```
+
+FunC 프로그램은 [TON Virtual Machine](/v3/documentation/tvm/tvm-overview)용 바이트코드를 생성하는 Fift 어셈블러 코드로 컴파일됩니다.
+
+이 바이트코드(TON 블록체인의 다른 모든 데이터처럼 본질적으로 [cell의 트리](/v3/concepts/dive-into-ton/ton-blockchain/cells-as-data-storage))는 블록체인에 스마트 컨트랙트를 생성하거나 TVM의 로컬 인스턴스에서 실행하는 데 사용할 수 있습니다.
+
+<Button href="/v3/documentation/smart-contracts/func/cookbook" colorType={'primary'} sizeType={'sm'}>
+
+FunC Cookbook
+
+</Button>
+
+<Button href="/v3/documentation/smart-contracts/func/docs/types" colorType={'secondary'} sizeType={'sm'}>
+
+FunC 문서
+
+</Button>
+
+## 컴파일러
+
+### JS로 컴파일
+
+스마트 컨트랙트 개발 및 컴파일을 시작하는 가장 편리하고 빠른 방법은 Blueprint 프레임워크를 사용하는 것입니다. [Blueprint](/v3/documentation/smart-contracts/getting-started/javascript) 섹션에서 자세히 알아보세요.
+
+```bash
+npm create ton@latest
+```
+
+### 원본 바이너리로 컴파일
+
+네이티브 TON 컴파일러인 FunC를 로컬에서 사용하려면 머신에 바이너리를 설정해야 합니다. Windows, macOS (Intel/M1), Ubuntu용 FunC 컴파일러 바이너리는 다음에서 다운로드할 수 있습니다:
+
+- [환경 설정 페이지](/v3/documentation/archive/precompiled-binaries)
+
+:::info
+또는 [FunC 컴파일러 소스 코드](https://github.com/ton-blockchain/ton/tree/master/crypto/func)와 같은 소스 코드에서 바이너리를 생성할 수 있습니다(소스에서 FunC 컴파일러를 [컴파일하는 방법](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#func) 참조).
+:::
+
+## TON 코스: FunC
+
+[TON 블록체인 코스](https://stepik.org/course/176754/)는 TON 블록체인 개발에 대한 종합적인 가이드입니다.
+
+모듈 4는 FunC 언어와 스마트 컨트랙트 개발을 완벽하게 다룹니다.
+
+<Button href="https://stepik.org/course/176754/promo"
+        colorType={'primary'} sizeType={'sm'}>
+
+TON 블록체인 코스 보기
+
+</Button>
+
+<Button href="https://stepik.org/course/201638/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+CHN
+
+</Button>
+
+<Button href="https://stepik.org/course/201855/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+RU
+
+</Button>
+
+## 튜토리얼
+
+:::tip 초보자 팁
+FunC를 사용한 개발을 시작하기 가장 좋은 곳: [소개](/v3/documentation/smart-contracts/overview)
+:::
+
+커뮤니티 전문가들이 제공한 추가 자료:
+
+- [TON Speed Run 시리즈](https://tonspeedrun.com/)
+  - [🚩 챌린지 1: 간단한 NFT 배포](https://github.com/romanovichim/TONQuest1)
+  - [🚩 챌린지 2: 챗봇 컨트랙트](https://github.com/romanovichim/TONQuest2)
+  - [🚩 챌린지 3: Jetton 자판기](https://github.com/romanovichim/TONQuest3)
+  - [🚩 챌린지 4: 복권/추첨](https://github.com/romanovichim/TONQuest4)
+  - [🚩 챌린지 5: 5분 만에 컨트랙트와 상호작용하는 UI 만들기](https://github.com/romanovichim/TONQuest5)
+  - [🚩 챌린지 6: Getgems 마켓플레이스에서 NFT 판매 분석하기](https://github.com/romanovichim/TONQuest6)
+
+<!---->
+
+- **@MarcoDaTr0p0je**의 [Func & Blueprint](https://www.youtube.com/watch?v=7omBDfSqGfA&list=PLtUBO1QNEKwtO_zSyLj-axPzc9O9rkmYa)
+- [TON Hello World: 첫 스마트 컨트랙트 작성을 위한 단계별 가이드](https://ton-community.github.io/tutorials/02-contract/)
+- [TON Hello World: 첫 스마트 컨트랙트 테스트를 위한 단계별 가이드](https://ton-community.github.io/tutorials/04-testing/)
+- blueprint를 사용한 **@romanovichim**의 [10개의 FunC 강의](https://github.com/romanovichim/TonFunClessons_Eng)
+- blueprint를 사용한 **@romanovichim**의 [10개의 FunC 강의 (RU)](https://github.com/romanovichim/TonFunClessons_ru)
+- **Vadim**의 [FunC 퀴즈](https://t.me/toncontests/60)—자가 점검에 좋습니다. 10-15분이 소요됩니다. TON에 대한 일반적인 질문과 함께 주로 FunC에 대한 질문들이 있습니다
+- **Vadim**의 [FunC 퀴즈 (RU)](https://t.me/toncontests/58?comment=14888)—러시아어로 된 FunC 퀴즈
+
+## 콘테스트
+
+[콘테스트](https://t.me/toncontests)에 참여하는 것은 FunC를 배우는 좋은 방법입니다.
+
+학습 목적으로 이전 대회를 공부할 수도 있습니다.
+
+#### 콘테스트 기록
+
+| 콘테스트 설명                | 과제                                                      | 솔루션                                                                                        |
+| ---------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| TSC #5 (2023년 12월)     | [과제](https://github.com/ton-community/tsc5)             |                                                                                            |
+| TSC #4 (2023년 9월)      | [과제](https://github.com/ton-community/tsc4)             | [솔루션](/v3/documentation/smart-contracts/contracts-specs/examples#ton-smart-challenge-4)    |
+| TSC #3 (2022년 12월)     | [과제](https://github.com/ton-blockchain/func-contest3)   | [솔루션](https://github.com/nns2009/TON-FunC-contest-3)                                       |
+| TSC #2 (2022년 7월)      | [과제](https://github.com/ton-blockchain/func-contest2)   | [솔루션](https://github.com/ton-blockchain/func-contest2-solutions)                           |
+| TSC #1 (2022년 3월)      | [과제](https://github.com/ton-blockchain/func-contest1)   | [솔루션](https://github.com/ton-blockchain/func-contest1-solutions)                           |
+
+## 스마트 컨트랙트 예시
+
+월렛, 일렉터(TON의 검증을 관리), 다중 서명 월렛 등과 같은 표준 기본 스마트 컨트랙트는 학습할 때 참조로 사용될 수 있습니다.
+
+- [스마트 컨트랙트 예시](/v3/documentation/smart-contracts/contracts-specs/examples)
+
+## 변경 로그
+
+[funC 업데이트 기록](/v3/documentation/smart-contracts/func/changelog).
