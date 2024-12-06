@@ -1,0 +1,689 @@
+import ThemedImage from '@theme/ThemedImage';
+import ConceptImage from '@site/src/components/conceptImage'
+import Player from '@site/src/components/player'
+
+# TON 시작하기
+
+처음부터 TON 블록체인에서 첫 번째 애플리케이션을 설정하고 속도, 신뢰성 및 비동기 사고의 필수 개념을 알아보세요.
+
+:::tip 초보자 친화적 가이드 
+프로그래밍을 전혀 모르시는 분들에게 이 가이드가 최선의 선택입니다.
+:::
+
+이 학습 경로는 **5개의 모듈** 로 구성되어 있으며 약 **45분** 이 소요됩니다.
+
+## 🛳 배우게 될 내용
+
+이 튜토리얼에서는 JavaScript를 사용하여 블록체인 트랜잭션을 쉽게 만드는 방법을 배웁니다. 이 튜토리얼 없이도 배울 수 있지만, 이 방법이 편리하고 사용자 친화적입니다.
+
+1. Tonkeeper로 자신만의 TON 지갑을 만들게 됩니다
+2. 테스트를 위해 Testnet 토큰을 받을 것입니다 
+3. TON 스마트 컨트랙트의 필수 개념(주소, 셀)을 이해하게 됩니다
+4. TypeScript SDK와 API 제공자를 사용하여 TON과 상호작용하는 방법을 배웁니다
+5. NFT Miner 콘솔 애플리케이션을 사용하여 첫 번째 트랜잭션을 컴파일 하게 됩니다
+
+_NFT 로켓 업적을 채굴하게 됩니다!!!_
+
+TON의 첫 번째 채굴자로서, Proof-of-Work 스마트 컨트랙트를 거쳐 마침내 TON 지갑에 대한 비밀 보상을 채굴하게 됩니다. 확인해보세요:
+
+<div style={{width: '100%', maxWidth:'250pt',  textAlign: 'center', margin: '0 auto' }}>
+  <video width={'300'} style={{width: '100%', maxWidth:'250pt',  borderRadius: '10pt', margin: '15pt auto' }} muted={true} autoPlay={true} loop={true}>
+    <source src="/files/onboarding-nft.mp4" type="video/mp4" />
+브라우저가 비디오 태그를 지원하지 않습니다.
+  </video>
+</div>
+
+오늘의 목표는 NFT를 채굴하는 것입니다! 이 업적은 _영원히_ 여러분과 함께할 것입니다.
+
+마지막으로, 메인넷에서도 이 NFT 업적을 채굴할 수 있습니다. (_단 0.05 TON만 들어갑니다!_).
+
+### TON 블록체인에서의 채굴
+
+오늘, 우리는 TON 블록체인에서 채굴하는 방법을 예비 개발자들에게 가르칠 것입니다. 이 경험을 통해 여러분 모두가 채굴의 중요성과 비트코인 채굴이 산업을 혁신하는데 어떻게 도움이 되었는지 이해할 수 있을 것입니다.
+
+TON의 초기 채굴 프로세스를 정의한 PoW Giver 스마트 컨트랙트 프레임워크는 출시 시에 완성되었지만, 마지막 TON은 2022년 6월에 채굴되어 TON의 작업 증명(PoW) 토큰 분배 메커니즘이 종료되었습니다. 그렇지만 최근 지분 증명(PoS)으로의 전환으로 TON에서 스테이킹의 시대가 막 시작되었습니다.
+
+- [TON의 경제 모델과 채굴에 대해 더 자세히 알아보기](https://ton.org/mining)
+
+이제 **TON 개발자**가 되기 위한 첫 단계에 집중하고 TON에서 NFT를 채굴하는 방법을 배워봅시다! 아래는 우리가 만들고자 하는 것의 예시입니다.
+
+<div style={{ width: '100%', textAlign: 'center', margin: '0 auto' }}>
+  <video style={{ width: '100%', borderRadius: '10pt', margin: '15pt auto', maxWidth: '90%' }} muted={true} autoPlay={true}
+         loop={true}>
+    <source src="/files/onboarding.mp4" type="video/mp4" />
+
+브라우저가 비디오 태그를 지원하지 않습니다.
+
+</video>
+</div>
+
+당면한 작업에 집중한다면 약 30분 만에 채굴기를 만들 수 있습니다.
+
+## 🦄 시작하기
+
+시작하려면 모든 개발자가 다음 구성 요소를 사용해야 합니다:
+
+- **지갑**: Testnet 모드에서 NFT를 저장할 수 있는 비수탁형 지갑이 필요합니다.
+- **저장소**: 특별히 여러분을 위해 설계된 미리 만들어진 템플릿을 사용할 것입니다. 
+- **개발 환경**: 개발자는 로컬 또는 클라우드 환경에서 채굴할지 결정해야 합니다.
+
+### 지갑 다운로드 및 생성
+
+시작하려면 TON을 받고 저장할 수 있는 비수탁형 지갑이 필요합니다. 이 가이드에서는 Tonkeeper를 사용합니다. Testnet Toncoin을 받을 수 있도록 지갑에서 Testnet 모드를 활성화해야 합니다. 이 토큰들은 나중에 스마트 컨트랙트에 최종 채굴 트랜잭션을 보내는 데 사용됩니다.
+
+:::info
+비수탁형 지갑에서는 사용자가 지갑을 소유하고 개인 키를 직접 보관합니다.
+:::
+
+TON 지갑을 다운로드하고 생성하려면 다음과 같은 간단한 단계를 따르세요:
+
+1. 스마트폰에 Tonkeeper 앱을 설치하세요. [여기](https://Tonkeeper.com/)에서 다운로드할 수 있습니다.
+2. 다음으로 Tonkeeper에서 [테스트 모드를 활성화](/v3/concepts/dive-into-ton/ton-ecosystem/wallet-apps#tonkeeper-test-environment)해야 합니다.
+
+쉽죠! 이제 개발로 넘어가겠습니다.
+
+### 프로젝트 설정
+
+여러분의 삶을 더 쉽게 만들고 일상적인 저수준 작업을 건너뛰기 위해 보일러플레이트를 사용할 것입니다.
+
+:::tip
+추가 작업을 위해 GitHub에 [로그인](https://github.com/login)해야 합니다.
+:::
+
+아래와 같이 "Use this template" 버튼을 클릭하고 "Create a new repository" 탭을 선택하여 [ton-onboarding-challenge](https://github.com/ton-community/ton-onboarding-challenge) 템플릿을 사용하여 프로젝트를 만드세요:
+
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/tutorials/onboarding/1.png?raw=true',
+        dark: '/img/tutorials/onboarding/1-dark.png?raw=true',
+    }}
+/>
+<br></br>
+
+이 단계를 완료하면 채굴기의 핵심이 될 수 있는 고성능 저장소에 접근할 수 있게 됩니다. 축하합니다! ✨
+
+### 개발 환경
+
+다음 단계는 여러분의 요구사항, 경험 수준 및 전반적인 기술에 가장 적합한 개발자 환경을 선택하는 것입니다. 보시다시피 클라우드 기반 또는 로컬 환경을 사용하여 이 프로세스를 수행할 수 있습니다. 클라우드에서 개발하는 것이 종종 더 단순하고 시작하기 쉽다고 여겨집니다. 아래에서 두 가지 접근 방식에 필요한 단계를 설명하겠습니다.
+
+:::tip
+이전 단계에서 템플릿에서 생성된 GitHub 프로필의 저장소를 열었는지 확인하세요.
+:::
+
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/tutorials/onboarding/3.png?raw=true',
+        dark: '/img/tutorials/onboarding/3-dark.png?raw=true',
+    }}
+/>
+<br></br>
+
+#### 로컬 및 클라우드 개발 환경
+
+- JavaScript에 익숙하지 않은 사용자의 경우 컴퓨터와 도구 시스템이 이를 위해 구성되어 있지 않은 경우 JavaScript IDE를 사용하는 것이 어려울 수 있습니다.
+
+- 하지만 NodeJS와 Git에 익숙하고 `npm`으로 작업하는 방법을 알고 있다면 **로컬 환경**을 사용하는 것이 더 편할 수 있습니다.
+
+#### 클라우드 Codespaces
+
+클라우드 개발 환경을 선택한 경우 아래와 같이 GitHub 저장소에서 _Code_ 탭을 선택한 다음 _Create codespace on master_ 버튼을 클릭하여 쉽게 시작할 수 있습니다:
+
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/tutorials/onboarding/2.png?raw=true',
+        dark: '/img/tutorials/onboarding/2-dark.png?raw=true',
+    }}
+/>
+<br></br>
+
+이 단계를 완료하면 GitHub는 VSCode Online IDE(Visual Studio Code Online Integrated Development Environment)에 접근할 수 있는 특별한 클라우드 작업 공간을 만듭니다.
+
+접근 권한이 부여되면(코드스페이스는 일반적으로 약 30초 내에 시작됨) Git, Node.js 또는 다른 개발자 도구를 설치할 필요 없이 시작하는 데 필요한 모든 것을 갖게 됩니다.
+
+#### 로컬 개발 환경
+
+로컬 개발 환경을 설정하려면 다음 세 가지 필수 도구에 대한 접근이 필요합니다:
+
+- **Git**: Git은 모든 개발자가 저장소 작업에 필요한 필수 도구입니다. [여기](https://git-scm.com/downloads)에서 다운로드할 수 있습니다.
+- **NodeJS**: Node.js는 일반적으로 TON에서 애플리케이션 개발에 사용되는 JavaScript 및 TypeScript 런타임 환경입니다. [여기](https://nodejs.org/en/download/)에서 다운로드할 수 있습니다.
+- **JavaScript IDE**. JavaScript IDE는 일반적으로 로컬 개발 환경 내에서 개발에 사용됩니다. 이 경우의 예시는 Visual Studio Code([VSCode](https://code.visualstudio.com/download))입니다.
+
+시작하려면 GitHub 저장소 보일러플레이트를 복제하고 통합 개발 환경(IDE)에서 올바른 저장소를 열어야 합니다.
+
+#### 스크립트 실행
+
+이 가이드에서는 TypeScript 스크립트를 실행해야 합니다. 스크립트 실행이나 모듈 설치와 같은 모든 명령은 일반적으로 IDE의 하단에 있는 Terminal 작업 공간을 통해 실행됩니다.
+
+예를 들어, Cloud Codespaces에서는 Terminal 작업 공간을 열어야 합니다(아직 열려있지 않은 경우):
+
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/tutorials/onboarding/6.png?raw=true',
+        dark: '/img/tutorials/onboarding/6-dark.png?raw=true',
+    }}
+/>
+<br></br><br></br>
+
+이 창에 명령을 입력하고 _Enter_를 눌러 실행하세요:
+
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/tutorials/onboarding/4.png?raw=true',
+        dark: '/img/tutorials/onboarding/4-dark.png?raw=true',
+    }}
+/>
+<br></br><br></br>
+
+Terminal은 별도의 애플리케이션으로도 사용할 수 있습니다. IDE와 OS에 따라 적절한 버전을 선택하세요.
+
+좋습니다! 이 단계들을 거치고 나면 TON 블록체인의 비밀을 더 깊이 파헤칠 준비가 되었습니다. 👀
+
+## 🎯 TON에 연결하기
+
+좋아요, TON 블록체인에 연결하기 위해 무엇이 필요할까요?
+
+- **스마트 컨트랙트 주소**를 목적지 포인트로. 우리의 목표는 _작업 증명 스마트 컨트랙트_에서 NFT를 채굴하는 것이므로 현재 채굴 복잡도를 얻기 위한 주소가 필요합니다.
+- **API 제공자**가 TON 블록체인에 요청을 하기 위해. TON은 다양한 목적을 위한 여러 [API 유형](/v3/guidelines/dapps/apis-sdks/api-types)을 가지고 있습니다. 우리는 [toncenter.com](https://toncenter.com/)의 testnet 버전 API를 사용할 것입니다.
+- **JavaScript SDK**: API 요청을 생성하기 위해 사용되는 스마트 컨트랙트 주소를 파싱하고 준비하기 위해 JavaScript SDK(SDK는 소프트웨어 개발 키트임을 기억하세요)가 필요합니다. TON 주소와 왜 이 과정에서 파싱이 필요한지 더 잘 이해하려면 이 [리소스](/v3/documentation/smart-contracts/addresses)를 참조하세요. 이 절차를 수행하기 위해 [`@ton/ton`](https://github.com/ton-org/ton)을 사용할 것입니다.
+
+다음 섹션에서는 TONCenter API와 `@ton/ton`을 사용하여 PoW 스마트 컨트랙트에서 데이터를 수신하기 위해 TON 블록체인에 초기 요청을 보내는 방법을 설명하겠습니다.
+
+### 스마트 컨트랙트 주소
+
+채굴기가 올바르게 작동하려면 두 가지 다른 스마트 컨트랙트 주소 유형을 추가해야 합니다:
+
+1. **지갑 주소**: 채굴자가 채굴 보상을 받아야 하기 때문에 지갑 주소가 필요합니다(이 경우 [Tonkeeper Testnet 모드](/v3/concepts/dive-into-ton/ton-ecosystem/wallet-apps#tonkeeper-test-environment)를 사용해야 합니다).
+2. **컬렉션 주소**: NFT를 올바르게 채굴하기 위한 스마트 컨트랙트 역할을 하는 컬렉션 주소가 필요합니다([Getgems 웹사이트](https://testnet.getgems.io/collection/EQDk8N7xM5D669LC2YACrseBJtDyFqwtSPCNhRWXU7kjEptX)의 TON 온보딩 챌린지 컬렉션 이름 아래에서 NFT 컬렉션 주소를 복사하세요).
+
+다음으로, 채굴기에서 `./scripts/mine.ts` 파일을 열고 다음과 같이 초기 상수로 구성된 `mine()` 함수를 만들어보겠습니다:
+
+```ts title="./scripts/mine.ts"
+import {Address} from '@ton/ton';
+
+const walletAddress = Address.parse('YOUR_WALLET_ADDRESS');
+const collectionAddress = Address.parse('COLLECTION_ADDRESS');
+
+async function mine () {
+
+
+}
+
+mine();
+```
+
+#### async mine() 함수 사용하기
+
+TON NFT Miner를 만드는 과정에서 원하는 지시사항을 교환하기 위해 공개 API에 여러 요청이 실행될 것입니다. async/await 함수를 활용하면 코드의 단순성이 크게 향상됩니다.
+
+#### 주소 파싱
+
+TON에서 스마트 컨트랙트 주소는 다양한 플래그 유형을 사용하는 여러 형태로 제공됩니다. 이 컨텍스트에서는 특히 _사용자 친화적인 주소 형식_을 사용할 것입니다. 다른 스마트 컨트랙트 주소 유형에 대해 더 알고 싶다면 문서의 이 추가 [리소스](/v3/documentation/smart-contracts/addresses)를 확인해보세요.
+
+채굴기가 올바르게 작동하려면 두 가지 다른 스마트 컨트랙트 주소 유형을 추가해야 합니다:
+
+`@ton/ton` SDK에 있는 `Address.parse()` 메서드를 사용하면 개발자가 단순화된 방식으로 한 형식에서 다른 형식으로 주소를 변환할 수 있는 주소 객체를 만들 수 있습니다.
+
+### API 제공자에 연결하기
+
+이 단계에서는 스크립트에서 특정 명령을 사용하여 TONCenter(toncenter.com에서 호스팅됨) API 제공자를 통해 TON에 연결할 것입니다.
+
+가장 간단한 방법은 testnet 엔드포인트 `https://testnet.toncenter.com/api/v2/jsonRPC`를 지정하는 것입니다.
+
+<br></br>
+
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/tutorials/onboarding/5.png?raw=true',
+        dark: '/img/tutorials/onboarding/5-dark.png?raw=true',
+    }}
+/>
+
+<br></br>
+
+_TonClient_와 testnet Toncenter 엔드포인트 `https://testnet.toncenter.com/api/v2/jsonRPC`를 사용하여 `./scripts/mine.ts` 스크립트에 `client`와 `endpoint`를 추가합니다:
+
+```ts title="./scripts/mine.ts"
+import {Address, TonClient} from "@ton/ton"
+
+// ... previous code
+
+// specify endpoint for Testnet
+const endpoint = "https://testnet.toncenter.com/api/v2/jsonRPC"
+
+// initialize ton library
+const client = new TonClient({ endpoint });
+```
+
+:::info 프로덕션에서는 어떻게 해야 하나요?
+RPC 노드 제공자를 사용하거나 자체 ton-http-api 인스턴스를 실행하는 것이 좋습니다. [TonCenter API 페이지](/v3/guidelines/dapps/apis-sdks/ton-http-apis)에서 자세히 알아보세요.
+:::
+
+### TON 블록체인에서 채굴 데이터 받기
+
+마지막으로, NFT Miner를 만들기 위해 TON 블록체인에서 특정 채굴 데이터를 검색하는 다음 단계에 집중해보겠습니다.
+
+TON 온보딩 챌린지를 완료하는 데 필요한 [README 파일](https://github.com/ton-community/ton-onboarding-challenge#mining-process-deep-dive)을 참조하면 `get_mining_data` 메서드를 실행하여 최신 TON 채굴 데이터를 얻을 수 있습니다. 시작하면 결과는 다음과 같습니다:
+
+결과적으로 다음과 같은 필드가 있는 배열을 받아야 합니다:
+
+```bash
+(
+	int pow_complexity,
+	int last_success,
+	int seed,
+	int target_delta,
+	int min_cpl,
+	int max_cpl
+)
+```
+
+#### TON에서 스마트 컨트랙트 Get 메서드 실행하기
+
+`@ton/ton`을 사용하면 `client.runMethod(SMART_CONTRACT_ADDRESS, METHOD)` 함수를 실행할 수 있습니다.
+이 코드를 실행하면 다음과 같은 콘솔 출력이 생성됩니다:
+
+```ts title="./scripts/mine.ts"
+// ... previous code
+
+const miningData = await client.runMethod(collectionAddress, 'get_mining_data');
+
+console.log(miningData.stack);
+```
+
+또한 스크립트를 실행하려면 [터미널](/v3/guidelines/get-started-with-ton#running-scripts)에 다음 명령을 입력해야 합니다:
+
+```bash
+npm run start:script
+```
+
+:::tip
+예기치 않은 문제를 피하려면 컨트랙트 주소 입력을 포함하여 이전의 모든 단계를 완료했는지 확인하세요.
+:::
+
+좋습니다! 위의 프로세스가 올바르게 실행되는 한, API에 성공적으로 연결되고 필요한 데이터가 콘솔에 표시될 것입니다. 올바른 콘솔 출력은 다음과 같이 시작되어야 합니다:
+
+```bash
+TupleReader {
+  items: [
+    {
+      type: 'int',
+      value: 7237005577332262213973186563042994240829374041602535252466099000494570602496n
+    },
+    { type: 'int', value: 1730818693n },
+    { type: 'int', value: 281644526620911853868912633959724884177n },
+    { type: 'int', value: 30n },
+    { type: 'int', value: 171n },
+    { type: 'int', value: 252n }
+  ]
+}
+
+```
+
+위의 출력은 숫자(_int_) 값의 모음과 함께 프로세스 실행과 관련된 데이터를 보여줍니다. 현재 중점은 이 숫자 출력을 더 실용적인 형식으로 변환하는 것입니다.
+
+hex 출력을 _유용한_ 것으로 변환해야 합니다.
+
+:::info TON의 GAS 파라미터
+
+1. TON Virtual Machine(TVM)이 어떻게 작동하고 _TON이 트랜잭션을 어떻게 처리하는지_ 더 잘 이해하려면 [TVM 개요 섹션](/v3/documentation/tvm/tvm-overview)을 확인하세요.
+2. 트랜잭션과 가스 수수료가 TON에서 어떻게 작동하는지에 대해 더 알고 싶다면 문서의 [이 섹션](/v3/documentation/smart-contracts/transaction-fees/fees)을 살펴보세요.
+3. 마지막으로, TVM 명령을 실행하는 데 필요한 정확한 가스 값을 더 잘 이해하려면 문서의 [이 섹션](/v3/documentation/tvm/instructions#gas-prices)을 참조하세요.
+   :::
+
+이제 튜토리얼로 돌아가겠습니다!
+
+#### 사용자 친화적 형식의 수치 채굴 데이터
+
+위에서 우리는 채굴 데이터를 받는 데 필요한 숫자(_int_) 값에 대해 논의했습니다. 더 진행하기 전에 받은 데이터를 더 쉽게 이해하고 사용할 수 있는 형식으로 변환해야 합니다.
+
+주어진 출력을 검토할 때 명확하듯이, 숫자가 꽤 큰 크기가 될 수 있습니다. 이를 다루기 위해 우리는 JavaScript의 큰 숫자 구현인 `bigint`를 사용할 것입니다. `BigInt`는 최대 `number` 정수 값보다 큰 숫자를 다루는 데 사용됩니다. 이 프로세스에 필요한 _Mining Data_를 더 잘 이해하기 위해 이 예제를 사용해보겠습니다:
+
+```ts title="./scripts/mine.ts"
+// ... previous code
+
+const { stack } = miningData;
+
+const complexity = stack.readBigNumber();
+const lastSuccess = stack.readBigNumber();
+const seed = stack.readBigNumber();
+const targetDelta = stack.readBigNumber();
+const minCpl = stack.readBigNumber();
+const maxCpl = stack.readBigNumber();
+
+console.log({ complexity, lastSuccess, seed, targetDelta, minCpl, maxCpl });
+```
+
+위에서 볼 수 있듯이, _miningData_의 다른 구성 요소는 다른 매개변수(아래 섹션에서 소개될)에 대해 스택 기반 숫자를 사용합니다. 원하는 값 결과를 얻기 위해 우리는 스택에서 `bigint`를 읽기 위해 `stack.readBigNumber()` 함수를 사용했습니다.
+
+이 프로세스가 완료되면 값을 콘솔에 출력할 수 있습니다. 다음 명령을 실행하여 스크립트를 다시 실행해보세요:
+
+```bash
+npm run start:script
+```
+
+다음은 예시 출력입니다:
+
+```bash
+{
+  complexity: 7237005577332262213973186563042994240829374041602535252466099000494570602496n,
+  lastSuccess: 1730818693n,
+  seed: 281644526620911853868912633959724884177n,
+  targetDelta: 30n,
+  minCpl: 171n,
+  maxCpl: 252n
+}
+```
+
+TON 블록체인에 채굴 데이터를 프로그래밍할 때 다른 데이터 매개변수를 변환하는 데 사용되는 Mining Data 명령에 대해 알아보겠습니다:
+
+- `complexity`는 채굴자에게 가장 중요한 숫자입니다. 값이 복잡도보다 작은(_\<_) 해시를 찾으면 성공한 것입니다.
+- `lastSuccess`는 TON에서 마지막 채굴 트랜잭션을 추적하는 [유닉스 타임스탬프](https://www.unixtimestamp.com/) 날짜 및 시간 표현입니다. last_success 메트릭이 변경될 때마다 시드도 이 과정에서 변경되므로 채굴기를 다시 실행해야 합니다.
+- `seed`는 원하는 해시를 계산하기 위해 스마트 컨트랙트에서 생성한 고유한 값을 나타냅니다. 이 프로세스가 어떻게 작동하고 시드가 어떻게 변경되는지 더 잘 이해하려면 ctx_seed 키워드(Ctrl+F로 "ctx_seed" 검색)를 사용하여 프로젝트 파일 폴더를 살펴보세요.
+- `targetDelta`, `minCpl` 및 `maxCpl`은 이 튜토리얼에서는 사용하지 않습니다. 하지만 프로젝트의 컬렉션 소스 파일에서 작업 증명 복잡도를 계산하는 데 스마트 컨트랙트에서 어떻게 사용되는지 항상 자세히 읽어볼 수 있습니다.
+
+이제 위에서 논의한 다양한 매개변수를 이해했으므로 다음 장에서 NFT Miner에서 사용할 값(`complexity`, `lastSuccess`, `seed`)을 가지고 있습니다.
+
+## 🛠 NFT Miner 준비하기
+
+잘하고 있어요!
+
+TON에 연결하고 NFT Miner를 만들기 위해 블록체인에서 필요한 채굴 데이터를 검색한 후, 이제 목표를 달성하기 위한 이 프로세스의 다음 단계에 집중해보겠습니다.
+
+이 챕터에서는 _채굴 메시지를 준비_하고 메시지의 _해시를 계산_할 것입니다. 그런 다음 스마트 컨트랙트에서 얻은 복잡도보다 _작은(`<`) 해시를 찾을_ 것입니다.
+
+이게 바로 채굴기예요! 간단하죠?
+
+### 채굴 메시지 준비하기
+
+먼저, 이 프로세스의 유효성과 데이터 무결성을 보장하기 위해 올바른 매개변수를 확인하여 채굴 메시지를 준비해야 합니다.
+
+다행히도 [README 파일](https://github.com/ton-community/ton-onboarding-challenge#mining-process-deep-dive)을 통해 이 목표를 달성하는 데 필요한 올바른 지침을 검색할 수 있습니다. 보시다시피 위의 README 파일은 원하는 결과를 얻는 데 도움이 되는 특정 필드와 셀 유형("작업 증명 셀의 레이아웃"이라는 제목)이 포함된 표로 구성되어 있습니다.
+
+:::info 셀이란 무엇인가요?
+셀은 네트워크 확장성과 스마트 컨트랙트 트랜잭션 속도를 높이는 것을 포함한 다양한 목적을 수행하는 TON의 데이터 저장 구조입니다. 여기서는 자세한 내용을 다루지 않지만 셀의 복잡성과 작동 방식을 이해하는 데 관심이 있다면 문서의 [이 섹션](/v3/concepts/dive-into-ton/ton-blockchain/cells-as-data-storage)을 살펴보세요.
+:::
+
+다행히도 이 튜토리얼에서 사용되는 모든 데이터 구조는 이미 TypeScript로 작성되어 있습니다. _NftGiver.data.ts_의 `MineMessageParams` 객체를 사용하여 _Queries_로 트랜잭션을 빌드하세요:
+
+```ts title="./scripts/mine.ts"
+import { unixNow } from '../lib/utils';
+import { MineMessageParams, Queries } from '../wrappers/NftGiver';
+
+// ... previous code
+
+const mineParams: MineMessageParams = {
+    expire: unixNow() + 300, // 5 min is enough to make a transaction
+    mintTo: walletAddress, // your wallet
+    data1: 0n, // temp variable to increment in the miner
+    seed // unique seed from get_mining_data
+};
+
+let msg = Queries.mine(mineParams); // transaction builder
+```
+
+아마도 [표](https://github.com/ton-community/ton-onboarding-challenge#mining-process-deep-dive)의 _op_와 _data2_는 어디 있는지 궁금하실 것입니다.
+
+- 표에서 data1의 숫자 값은 data2의 값과 같아야 합니다. data2 값을 채우는 것을 생략하기 위해 트랜잭션 빌더가 저수준 프로세스를 수행합니다(Queries.mine() 소스 참조).
+- `op` 분류는 항상 상수이므로 이미 트랜잭션 빌더 _Queries_와 _OpCodes_에 구현되어 있습니다. `mine()` 메서드의 소스 코드에서 op 코드를 찾을 수 있습니다.
+
+:::tip
+소스 코드(`../wrappers/NftGiver.ts`)를 확인하는 것이 흥미로울 수 있지만, 필수는 아닙니다.
+:::
+
+### TON NFT 채굴기 만들기
+
+이제 TON 채굴기를 위한 메시지를 준비하는 프로세스를 완료했으니 채굴기를 실제로 만드는 초기 프로세스로 넘어가보겠습니다. 먼저 이 코드 라인을 살펴보겠습니다:
+
+```ts
+let msg = Queries.mine(mineParams);
+```
+
+위에서 우리는 `msg` 값을 컴파일했습니다. 채굴의 아이디어는 마지막으로 받은 _get_mining_data()_의 `complexity`보다 작은 `msg.hash()`를 찾는 것입니다. 필요한 만큼 `data1`을 증가시킬 수 있습니다.
+
+순수한 채굴기는 `msg.hash()`가 `complexity`보다 큰 한(메시지 해시가 PoW 채굴 복잡도보다 큰 한) 무기한으로 계속 실행됩니다.
+
+TypeScript에서 `BigInt`와 관련된 코드 실행의 예시입니다:
+
+```ts title="./scripts/mine.ts"
+let msg = Queries.mine(mineParams);
+
+const bufferToBigint = (buffer: Buffer) => BigInt('0x' + buffer.toString('hex'));
+
+while (bufferToBigint(msg.hash()) > complexity) {
+    mineParams.expire = unixNow() + 300;
+    mineParams.data1 += 1n;
+    msg = Queries.mine(mineParams);
+}
+
+console.log('Yoo-hoo, you found something!');
+```
+
+`msg.hash()`의 해시를 `bufferToBigint()` 함수로 `bigint`로 변환합니다. 이는 이 해시를 `complexity`와 비교하는 데 사용하기 위해서입니다.
+
+위의 단계들을 완료하면 채굴기가 제대로 작동하겠지만, 시각적으로 매력적이지 않은 모습을 보일 것입니다(`npm run start:script`를 시도해보세요). 따라서 이 문제를 해결해야 합니다. 살펴보겠습니다.
+
+#### TON 채굴기 외관 개선하기 ✨
+
+이제 채굴기를 멋지게 만들고 싶어요! 어떻게 할까요?
+
+따라오세요, 친구여, 따라오세요.
+
+목표를 달성하기 위해 다음 명령들을 추가하겠습니다:
+
+```ts title="./scripts/mine.ts"
+let msg = Queries.mine(mineParams); // transaction builder
+let progress = 0;
+
+const bufferToBigint = (buffer: Buffer) => BigInt('0x' + buffer.toString('hex'));
+
+while (bufferToBigint(msg.hash()) > complexity) {
+    console.clear()
+    console.log(`Mining started: please, wait for 30-60 seconds to mine your NFT!`)
+    console.log()
+    console.log(`⛏ Mined ${progress} hashes! Last: `, bufferToBigint(msg.hash()))
+
+    mineParams.expire = unixNow() + 300;
+    mineParams.data1 += 1n;
+    msg = Queries.mine(mineParams);
+}
+
+console.log()
+console.log('💎 Mission completed: msg_hash less than pow_complexity found!');
+console.log()
+console.log('msg_hash:       ', bufferToBigint(msg.hash()))
+console.log('pow_complexity: ', complexity)
+console.log('msg_hash < pow_complexity: ', bufferToBigint(msg.hash()) < complexity);
+
+return msg;
+```
+
+직접 확인해보세요! 다음 명령을 실행하세요:
+
+```bash
+npm run start:script
+```
+
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/tutorials/onboarding/7.png?raw=true',
+        dark: '/img/tutorials/onboarding/7-dark.png?raw=true',
+    }}
+/>
+<br></br>
+
+_멋지죠?_ 😏
+
+이 명령들이 올바르게 실행되면 시각적으로 매력적인 NFT 채굴기를 갖게 됩니다. 다음 섹션에서는 TON 블록체인에서 트랜잭션을 수락하고 받을 수 있는 결제 채널을 만들기 위해 채굴기에 지갑을 연결하는 데 집중하겠습니다.
+
+## 🎨 트랜잭션 준비하기
+
+다음으로, [Tonkeeper 지갑](https://Tonkeeper.com/)으로 메시지를 컴파일하고 블록체인에 보내는 단계를 설명하겠습니다.
+다음 단계들은 TON에서 **NFT를 채굴**하는 과정을 완료하는 데 도움이 될 것입니다.
+
+#### 토큰 파우셋을 통해 지갑 잔액 충전하기
+
+다음 단계로 진행하려면 TON testnet 토큰을 구해야 합니다. 이는 [여기에서 찾을 수 있는](https://t.me/testgiver_ton_bot) testnet 파우셋을 사용하여 달성할 수 있습니다.
+
+### Blueprint 트랜잭션 기회 활용하기
+
+NFT 채굴 프로세스가 올바르게 수행되고 사용자가 NFT를 적절히 저장할 수 있도록 하기 위해 [Blueprint](/v3/documentation/smart-contracts/getting-started/javascript)를 사용하여 TON 블록체인과 Tonkeeper 지갑을 동시에 상호작용할 것입니다.
+
+이 목표를 달성하기 위해 트랜잭션을 생성하고 보내기 위해 표준 `run()` 함수를 사용할 것입니다:
+
+```ts title="./scripts/mine.ts"
+import { toNano } from '@ton/ton';
+import { NetworkProvider } from '@ton/blueprint';
+
+async function mine() {
+  // code from previous steps
+}
+
+export async function run(provider: NetworkProvider) {
+    // Do not forget to return `msg` from `mine()` function
+    const msg = await mine();
+
+    await provider.sender().send({
+        to: collectionAddress,
+        value: toNano(0.05),
+        body: msg
+    });
+}
+```
+
+트랜잭션을 보내기 위해 위의 스크립트를 실행해보겠습니다:
+
+```bash
+npm start
+```
+
+`npm run start:script` 대신 `npm start`를 사용하고 있음에 주목하세요. 이는 blueprint의 장점을 활용해야 하기 때문입니다(내부적으로 `blueprint run`이 호출됩니다).
+
+이 명령을 실행한 후 아래와 같이 질문에 답하여 Tonkeeper 지갑을 연결하세요:
+
+```
+? Which network do you want to use?
+> testnet
+? Which wallet are you using?
+> TON Connect compatible mobile wallet (example: Tonkeeper)
+? Choose your wallet (Use arrow keys)
+> Tonkeeper
+```
+
+터미널에 표시된 QR 코드를 Tonkeeper 지갑으로 스캔하여 연결을 설정하세요. 아직 트랜잭션은 보내지지 않습니다.
+연결된 후 Tonkeeper에서 트랜잭션을 확인하세요.
+
+TON 개발자가 되는 _경험_이 느껴지시나요? 당신이 TON 개발자가 되어가고 있는 겁니다.
+
+## ⛏  지갑으로 NFT 채굴하기
+
+TON에서 NFT를 채굴하는 두 가지 주요 방법이 있습니다:
+
+- [간단한 방법: NFT Testnet 채굴](/v3/guidelines/get-started-with-ton#simple-nft-testnet-mining)
+- [진짜 방법: NFT Mainnet 채굴](/v3/guidelines/get-started-with-ton#genuine-nft-mainnet-mining)
+
+### 간단한 방법: NFT Testnet 채굴
+
+NFT를 채굴하기 위한 첫 Testnet 트랜잭션을 시작하는 데 필요한 단계들입니다:
+
+1. [Tonkeeper 지갑에서 Testnet 모드 활성화](/v3/concepts/dive-into-ton/ton-ecosystem/wallet-apps#tonkeeper-test-environment)
+2. Tonkeeper의 testnet 지갑 주소를 `./scripts/mine.ts`의 `walletAddress` 변수에 입력
+3. [Testnet의 NFT 컬렉션](https://testnet.getgems.io/collection/EQDk8N7xM5D669LC2YACrseBJtDyFqwtSPCNhRWXU7kjEptX) 주소를 `./scripts/mine.ts`의 `collectionAddress` 변수에 입력
+
+#### Testnet NFT 로켓 채굴하기
+
+Testnet에서 NFT 로켓을 성공적으로 채굴하려면 다음 단계들을 따라야 합니다:
+
+1. 휴대폰에서 Tonkeeper 지갑을 _엽니다_ (새로 받은 TON Testnet 토큰이 있어야 함)
+2. 지갑에서 스캔 모드를 _선택하여_ QR 코드를 스캔합니다 
+3. 올바른 해시를 얻기 위해 채굴기를 _실행합니다_ (30-60초 정도 걸립니다)
+4. Blueprint 대화상자의 단계를 _따릅니다_
+5. 채굴기에서 생성된 QR 코드를 _스캔합니다_
+6. Tonkeeper 지갑에서 트랜잭션을 _확인합니다_
+
+:::tip 마지막 팁
+다른 개발자들도 자신의 NFT를 채굴하려고 시도할 수 있기 때문에, 성공하기 위해서는 몇 번 시도해야 할 수 있습니다(다른 사용자가 바로 전에 다음 NFT를 채굴할 수 있으므로).
+:::
+
+이 프로세스를 시작한 직후 TON에서 첫 번째 NFT를 성공적으로 채굴하게 될 것입니다(Tonkeeper 지갑에 나타날 것입니다).
+
+![](/img/tutorials/onboarding/8.svg)
+
+환영합니다, **진정한 TON 개발자**님! 해내셨습니다. 🛳
+
+### 진짜 방법: NFT Mainnet 채굴
+
+안녕하세요! TON Mainnet에서 NFT를 채굴하고자 하는 분들은 다음 지침을 따르세요:
+
+1. Tonkeeper에서 _mainnet_ 모드를 활성화했습니다(최소 0.1 TON이 있어야 함)
+2. Tonkeeper의 _mainnet_ 지갑 주소를 `./scripts/mine.ts`의 `walletAddress` 변수에 입력합니다
+3. [Mainnet의 NFT 컬렉션](https://getgems.io/collection/EQDk8N7xM5D669LC2YACrseBJtDyFqwtSPCNhRWXU7kjEptX) 주소를 `./scripts/mine.ts`의 `collectionAddress` 변수에 입력합니다
+4. **endpoint**를 _Mainnet_으로 교체합니다:
+
+```ts title="./scripts/mine.ts"
+// specify endpoint for Mainnet
+const endpoint = "https://toncenter.com/api/v2/jsonRPC"
+```
+
+#### Mainnet NFT 로켓 채굴하기
+
+testnet NFT 로켓 채굴 프로세스에서 설명했듯이, mainnet에서 NFT 로켓을 성공적으로 채굴하려면 다음 단계들을 따라야 합니다:
+
+1. 휴대폰에서 Tonkeeper 지갑을 _엽니다_ (TON 토큰이 있어야 함을 기억하세요)
+2. 지갑에서 스캔 모드를 _선택하여_ QR 코드를 스캔합니다
+3. 올바른 해시를 얻기 위해 채굴기를 _실행합니다_ (30-60초 정도 걸립니다)
+4. Blueprint 대화상자의 단계를 _따릅니다_
+5. 채굴기에서 생성된 QR 코드를 _스캔합니다_
+6. Tonkeeper 지갑에서 트랜잭션을 _확인합니다_
+
+:::tip 마지막 팁
+다른 개발자들도 자신의 NFT를 채굴하려고 시도할 수 있기 때문에, 성공하기 위해서는 몇 번 시도해야 할 수 있습니다(다른 사용자가 바로 전에 다음 NFT를 채굴할 수 있으므로).
+:::
+
+잠시 후, TON 블록체인에서 **NFT를 채굴하고** TON 개발자가 될 것입니다. 의식이 완료되었습니다. Tonkeeper에서 NFT를 확인하세요.
+
+<div style={{ width: '100%', textAlign: 'center', margin: '0 auto' }}>
+  <video width={'300'} style={{ width: '100%', borderRadius: '10pt', margin: '15pt auto' }} muted={true} autoPlay={true} loop={true}>
+    <source src="/files/onboarding-nft.mp4" type="video/mp4" />
+
+브라우저가 비디오 태그를 지원하지 않습니다.
+
+</video>
+</div>
+
+환영합니다, **TON 개발자**님! 해내셨습니다. 🛳
+
+## 🧙 다음은 무엇인가요?
+
+_먼저, 휴식을 취하세요! 큰 일을 해냈습니다! 이제 당신은 TON 개발자입니다. 하지만 이것은 긴 여정의 시작일 뿐입니다._
+
+## 참고 자료
+
+NFT를 성공적으로 채굴한 TON 온보딩 챌린지를 마친 후, TON 생태계의 다양한 부분을 자세히 설명하는 다음과 같은 자료들을 살펴보세요:
+
+- [블록체인이란? 스마트 컨트랙트란? 가스란?](https://blog.ton.org/what-is-blockchain)
+- [TON Hello World: 첫 번째 스마트 컨트랙트 작성을 위한 단계별 가이드](https://ton-community.github.io/tutorials/02-contract/)
+- [스마트 컨트랙트 개발: 소개](/v3/documentation/smart-contracts/overview)
+- [[YouTube] Ton Dev Study - FunC & Blueprint](https://www.youtube.com/playlist?list=PLyDBPwv9EPsDjIMAF3XqNI2XGNwdcB3sg)
+- [지갑 스마트 컨트랙트 작업 방법](/v3/guidelines/smart-contracts/howto/wallet)
+- [FunC 여정: 파트 1](https://blog.ton.org/func-journey)
+- [만두 판매를 위한 봇](/v3/guidelines/dapps/tutorials/telegram-bot-examples/accept-payments-in-a-telegram-bot-js)
+- [첫 번째 Jetton 발행하기](/v3/guidelines/dapps/tutorials/mint-your-first-token)
+- [단계별 NFT 컬렉션 발행](/v3/guidelines/dapps/tutorials/nft-minting-guide)
+- [TON 사이트 실행 방법](/v3/guidelines/web3/ton-proxy-sites/how-to-run-ton-site)
+
+:::info 피드백이 있으신가요?
+여러분은 이곳의 첫 번째 탐험가들 중 한 명입니다. 실수를 발견하거나 막히는 부분이 있다면 [@SwiftAdviser](https://t.me/SwiftAdviser)에게 피드백을 보내주세요. 최대한 빨리 수정하겠습니다! :)
+:::
