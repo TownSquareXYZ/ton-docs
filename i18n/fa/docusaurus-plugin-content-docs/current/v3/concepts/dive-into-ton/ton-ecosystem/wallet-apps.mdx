@@ -1,0 +1,267 @@
+import Player from '@site/src/components/player'
+
+# برنامه‌های کیف پول
+
+## مرور کلی
+
+این مقاله کیف پول‌ها را از دیدگاه توسعه‌ای توضیح می‌دهد. هدف نهایی ایجاد برنامه‌های کیف پولی است که از پذیرش گسترده TON حمایت کنند.
+
+<br></br>
+<Player url="https://www.youtube.com/watch?v=OfW96enpD4Q" />
+<br></br>
+
+اگر می‌خواهید یک کیف پول برای نصب پیدا کنید، [ton.org/wallets](https://ton.org/wallets) را باز کنید.
+
+## کیف پول‌های نرم‌افزاری بدون نگهداری (گرم)
+
+:::info
+یک کیف پول نرم‌افزاری، که بیشتر به عنوان کیف پول گرم شناخته می‌شود، به عنوان نرم‌افزار روی یک دستگاه میزبان عمل می‌کند و کلیدهای خصوصی شما را در داخل رابط خود ذخیره می‌کند. بیشتر این کیف پول‌ها بدون نگهداری هستند، به این معنی که کلیدهای شما را در اختیار شما قرار می‌دهند.
+:::
+
+در اینجا چند کیف پول بدون نگهداری برای بلاکچین TON آورده شده است:
+
+- [TON Wallet](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) — کیف پول‌های کلاسیک چندپلتفرمه (iOS، اندروید، macOS، لینوکس، ویندوز) اکوسیستم TON که توسط بنیاد TON توسعه یافته است.
+- [Tonkeeper](https://tonkeeper.com/) — یک کیف پول چندپلتفرمه منبع باز (iOS، اندروید، فایرفاکس، کروم) با یک پایگاه کاربری بزرگ.
+- [Tonhub](https://tonhub.com/) — یک کیف پول تلفن همراه جایگزین منبع باز (iOS، اندروید) با ویژگی‌های پیشرفته (رابط کاربری استیکینگ TON Whales).
+- [OpenMask](https://www.openmask.app/) — یک کیف پول افزونه کروم منبع باز با احراز هویت بیومتریک.
+- [MyTonWallet](https://mytonwallet.io/) — یک کیف پول تحت وب منبع باز و یک کیف پول افزونه مرورگر برای TON.
+
+### ویژگی‌های اساسی
+
+| کیف پول     | انتقال‌های جتون و NFT        | Ton Connect 2.0                                                          | احراز هویت                                                           | قرارداد کیف پول                                                                                                |
+| ----------- | ---------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| TON Wallet  | پیاده‌سازی نشده              | -                                                                        | -                                                                    | [کیف پول v3](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/wallet3-code.fc)               |
+| Tonkeeper   | پشتیبانی شده                 | [پشتیبانی شده](https://github.com/ton-society/ton-footsteps/issues/161)  | [TON Connect 2.0](/v3/guidelines/ton-connect/overview)               | [کیف پول v4](https://github.com/ton-blockchain/wallet-contract/tree/3fd1d7ae39f1c46ec1f2be54c4040d8d87505e0f)  |
+| Tonhub      | پشتیبانی شده\*               | [پشتیبانی شده](https://github.com/ton-society/ton-footsteps/issues/108)  | [TON Connect 2.0](/v3/guidelines/ton-connect/overview)               | [کیف پول v4](https://github.com/ton-blockchain/wallet-contract/tree/3fd1d7ae39f1c46ec1f2be54c4040d8d87505e0f)  |
+| OpenMask    | پشتیبانی شده                 | [پشتیبانی شده](https://github.com/ton-society/ton-footsteps/issues/107)  | [TON Connect 2.0](/v3/guidelines/ton-connect/overview)               | [کیف پول v4](https://github.com/ton-blockchain/wallet-contract/tree/3fd1d7ae39f1c46ec1f2be54c4040d8d87505e0f)  |
+| MyTonWallet | پشتیبانی شده                 | [پشتیبانی شده](https://github.com/ton-society/ton-footsteps/issues/149)  | [TON Connect 2.0](/v3/guidelines/ton-connect/overview)               | [کیف پول v4](https://github.com/ton-blockchain/wallet-contract/tree/3fd1d7ae39f1c46ec1f2be54c4040d8d87505e0f)  |
+
+> \*افزونه Tonhub یک مرورگر داخلی باز می‌کند که امکان جایگذاری بازار NFT را فراهم می‌کند. ژتون به طور کامل پشتیبانی می‌شود.
+
+### TON Wallet
+
+TON Wallet اولین قدم در پذیرش گسترده فناوری بلاکچین برای کاربران عادی بود. این نشان می‌دهد که یک کیف پول باید چگونه در بلاکچین TON کار کند.
+
+|                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;![TON wallet](/img/docs/wallet-apps/TonWallet.png?raw=true) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
+
+#### مزایا و معایب
+
+- ✅ کیف پول اصلی توسعه یافته توسط بنیاد TON. کیف TON Wallet مطابق با دیدگاه توسعه‌دهندگان اصلی بلاکچین TON کار می‌کند.
+- ✅ پشتیبانی از معماری چندپلتفرمه. در لینوکس، ویندوز، macOS، iOS، اندروید و همچنین به عنوان یک افزونه کروم کار می‌کند.
+- ✅ [برنامه باگ باونتی](https://github.com/ton-blockchain/bug-bounty)
+- ❌ به ندرت به‌روزرسانی می‌شود. این کیف پول همه ویژگی‌های به‌روز را ندارد (آدرس‌های TON DNS و قرارداد کیف پول v4 پشتیبانی نمی‌شود).
+- ❌ رابط کاربری فعلی قدیمی است و از کیف پول‌های مشابه بدتر است.
+
+#### محیط آزمایشی Ton Wallet
+
+برای تغییر TON Wallet کلاسیک به محیط آزمایشی، باید آن را در مرورگر با پارامتر testnet باز کنید:
+
+#### پیوندها
+
+- [GitHub\*](https://github.com/ton-blockchain/wallet-ios)
+
+  > \*کلاینت‌های TON Wallet برای هر سیستم‌عامل پشتیبانی‌شده در مخازن مجاور قرار دارند.
+
+### Tonkeeper
+
+[Tonkeeper](https://tonkeeper.com/) - پر دانلودترین و محبوب‌ترین کیف پول است که توسط تیم Tonkeeper توسعه داده شده و پشتیبانی فعال از سوی کاربران و توسعه‌دهندگان دارد.
+
+|                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;![Tonkeeper](/img/docs/wallet-apps/Tonkeeper.png?raw=true) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
+
+#### مزایا و معایب
+
+- ✅ این برنامه بیشترین محبوبیت را بین کاربران دارد.
+- ✅ از تمام ویژگی‌های به‌روز پشتیبانی می‌کند، از جمله انتقال بومی NFT بین کیف پول‌های کاربران.
+- ✅ از تمامی پلتفرم‌های اصلی مانند iOS و اندروید پشتیبانی می‌کند، اما همچنین در مرورگرهای محبوبی مانند فایرفاکس و کروم کار می‌کند.
+- ❌ نیاز به مهارت‌های پیشرفته برای مشارکت در کد منبع دارد. بیشتر کارها قبلاً انجام شده و برای تازه‌واردان سخت خواهد بود که چیزی قابل توجه یا مفید اضافه کنند.
+
+#### محیط آزمایشی Tonkeeper
+
+##### افزونه مرورگر Tonkeeper
+
+1. به بخش تنظیمات بروید و چندین بار روی آیکون Tonkeeper ضربه بزنید تا صفحه جدیدی باز شود.
+2. به testnet تغییر وضعیت دهید.
+
+همین، کیف پول شما اکنون در حالت testnet است!
+
+##### برنامه موبایل Tonkeeper
+
+1. به بخش تنظیمات بروید.
+2. به پایین بروید و چندین بار سریع روی آیکون Tonkeeper ضربه بزنید تا بخش تنظیمات جدیدی باز شود.
+3. حالت توسعه‌دهنده را در بالای بخش تنظیمات جدید فعال کنید.
+4. به صفحه اصلی Tonkeeper برگردید.
+5. روی نام کیف پول خود در بالای صفحه کلیک کنید.
+6. روی کیف پول جدید کلیک کنید.
+7. گزینه حساب Testnet را انتخاب کنید.
+8. عبارت بازیابی مشابهی را که برای کیف پول mainnet خود استفاده کرده‌اید وارد کنید.
+
+اکنون کیف پول testnet شما ایجاد شده و به کیف پول mainnet شما متصل شده است.
+
+#### پیوندها
+
+- [GitHub](https://github.com/tonkeeper/wallet)
+- [Tonkeeper Wallet API](https://github.com/tonkeeper/wallet-api)
+
+### Tonhub
+
+[Tonhub](https://tonhub.com/) - یک کیف پول کامل دیگر TON است که از ویژگی‌های اساسی به‌روز پشتیبانی می‌کند. Ton Whales به سرعت قابلیت‌های این کیف پول را افزایش می‌دهد.
+
+|                                                                                                                                                                                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;![Tonhub](/img/docs/wallet-apps/Tonhub.png?raw=true) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
+
+#### مزایا و معایب
+
+- ✅ دارای قرارداد سفارشی [Ton Nominator](https://github.com/tonwhales/ton-nominators) پشتیبانی شده توسط رابط کاربری Tonhub.
+- ✅ کیف پول منبع باز از ابتدای وجود برنامه.
+- ✅ [برنامه باگ باونتی](https://tonwhales.com/bounty).
+- ❌ هیچ‌گونه پشتیبانی از پلتفرم‌های دسکتاپ ندارد.
+- ❌ نیاز به مهارت‌های پیشرفته برای مشارکت در کد منبع دارد.
+
+#### محیط آزمایشی Tonhub
+
+برای اتصال به Testnet باید برنامه جداگانه‌ای دانلود کنید.
+
+#### پیوندها
+
+- [GitHub](https://github.com/tonwhales/wallet)
+- [Sandbox iOS](https://apps.apple.com/app/ton-development-wallet/id1607857373)
+- [Sandbox Android](https://play.google.com/store/apps/details?id=com.tonhub.wallet)
+
+### OpenMask
+
+[OpenMask](https://www.openmask.app/) - یک ابزار پیشگامانه است که امکان تعاملات و تجربه کاربری در وب 3 به عنوان یک افزونه مرورگر فراهم می‌کند.
+
+|                                                                                                                                                                                                                                |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;![OpenMask](/img/docs/wallet-apps/OpenMask.png?raw=true) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
+
+#### مزایا و معایب
+
+- ✅ مناسب برای توسعه‌دهندگان برای یادگیری و ایجاد dApps از طریق دسکتاپ بدون دستگاه‌های موبایل.
+- ✅ دارای توابع منحصر به فرد مانند کیف‌های متعدد، با توضیحات و مثال‌های دقیق در مستندات آن.
+- ❌ در حال حاضر تقریباً هیچ یکپارچگی با dApps ندارد.
+- ❌ تنها از پلتفرم افزونه مرورگر پشتیبانی می‌کند.
+
+#### محیط آزمایشی OpenMask
+
+برای تغییر بین Mainnet و Testnet در OpenMask، باید روی دکمه "mainnet/testnet" در بالای صفحه اصلی OpenMask کلیک کرده و شبکه مورد نیاز خود را انتخاب کنید.
+
+#### پیوندها
+
+- [GitHub](https://github.com/OpenProduct/openmask-extension)
+- [مستندات](https://www.openmask.app/docs/introduction)
+
+### MyTonWallet
+
+[MyTonWallet](https://mytonwallet.io/) - کامل‌ترین کیف پول وب و افزونه مرورگر برای TON است - با پشتیبانی از 
+توکن‌ها،
+NFT، 
+TON DNS،
+TON Sites،
+TON Proxy،
+TON Magic.
+
+|                                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;![MyTonWallet](/img/docs/wallet-apps/MyTonWallet.png?raw=true) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
+
+#### مزایا و معایب
+
+- ✅ تمامی ویژگی‌های اساسی را دارد.
+- ✅ ویژگی منحصر به فرد - مدیریت قرارداد [استخر ناظر رسمی](https://github.com/ton-blockchain/nominator-pool) از رابط کاربری کیف پول.
+- ✅ پشتیبانی از تمامی پلتفرم‌های اصلی (مانند macOS، لینوکس و ویندوز) و همچنین در کروم به عنوان افزونه اجرا می‌شود.
+- ❌ به عنوان افزونه در فایرفاکس کار نمی‌کند.
+
+#### محیط آزمایشی MyTonWallet (مرورگر، دسکتاپ و برنامه موبایل)
+
+1. به بخش تنظیمات بروید.
+2. به پایین بروید و روی نسخه برنامه MyTonWallet کلیک کنید.
+3. در پنجره بازشو، محیط را انتخاب کنید.
+
+#### پیوندها
+
+- [GitHub](https://github.com/mytonwalletorg/mytonwallet)
+- [تلگرام MyTonWallet](https://t.me/MyTonWalletRu)
+
+## کیف پول‌های سخت‌افزاری بدون نگهداری (سرد)
+
+:::info
+یک کیف پول سخت‌افزاری یک دستگاه فیزیکی است که کلیدهای خصوصی شما را از اینترنت دور نگه می‌دارد. حتی اگر با آن تراکنش انجام دهید، کیف پول تراکنش‌ها را در محیط آفلاین تأیید می‌کند. این فرآیند به دور نگه داشتن کلیدهای خصوصی شما از خطرات اینترنت کمک می‌کند.
+:::
+
+### Ledger
+
+کیف پول‌های سخت‌افزاری [Ledger](https://www.ledger.com/) با برنامه Ledger Live.
+
+#### پیوندها
+
+- [مقاله وبلاگ Ledger TON](https://blog.ton.org/ton-is-coming-to-ledger-hardware-wallets) راهنمای کاربر برای TON در کیف پول‌های Ledger.
+- [Ledger](https://www.ledger.com/) سایت رسمی.
+
+### SafePal
+
+[SafePal](https://www.safepal.com/en/) دروازه شما به کهکشان به سرعت در حال گسترش برنامه‌های غیرمتمرکز است.
+
+#### پیوندها
+
+- [Ledger](https://www.safepal.com/en/) سایت رسمی
+
+## کیف پول‌های با نگهداری
+
+:::info
+در یک کیف پول با نگهداری، کاربر به کسی دیگر اعتماد می‌کند که کلید خصوصی کیف پول را نگه دارد.
+:::
+
+### @wallet
+
+[@wallet](https://t.me/wallet) — یک ربات برای ارسال و دریافت یا تبادل TON با پول واقعی از طریق P2P در تلگرام. از رابط کاربری تلگرام مینی اپ پشتیبانی می‌کند.
+
+|                                                                                                                                                                                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;![wallet](/img/docs/wallet-apps/Wallet.png?raw=true) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
+
+### @cryptobot
+
+[@cryptobot](https://t.me/cryptobot) — یک ربات کیف پول تلگرام برای ذخیره، ارسال و تبادل TON.
+
+|                                                                                                                                                                                                                                  |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;![CryptoBot](/img/docs/wallet-apps/CryptoBot.png?raw=true) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
+
+#### پیوندها برای یکپارچه‌سازی‌های شخص ثالث
+
+- [API پرداخت با کریپتو](https://help.crypt.bot/crypto-pay-api)
+
+### @tonRocketBot
+
+[@tonRocketBot](https://t.me/tonRocketBot) - یک ربات کیف پول تلگرام برای ذخیره، ارسال و تبادل TON. همچنین از تجارت ژتون پشتیبانی می‌کند.
+
+|                                                                                                                                                                                                                                        |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;![tonrocketbot](/img/docs/wallet-apps/tonrocketbot.png?raw=true) &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; |
+
+#### پیوندها برای یکپارچه‌سازی‌های شخص ثالث
+
+- [صرافی Rocket](https://trade.ton-rocket.com/api/)
+- [مستندات پرداخت با Rocket](https://pay.ton-rocket.com/api/)
+
+## کیف پول‌های چند امضایی
+
+### Tonkey
+
+Tonkey یک پروژه پیشرفته است که قابلیت چند امضایی را به بلاکچین TON معرفی می‌کند.
+
+### پیوندها
+
+- https://tonkey.app
+- [GitHub](https://github.com/tonkey-app)
+
+## همچنین ببینید
+
+- [بلاکچین چیست؟ قرارداد هوشمند چیست؟ گس چیست؟](https://blog.ton.org/what-is-blockchain)
+- [انواع قراردادهای کیف پول](/v3/documentation/smart-contracts/contracts-specs/wallet-contracts)
