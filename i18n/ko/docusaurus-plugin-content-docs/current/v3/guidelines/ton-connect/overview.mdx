@@ -1,0 +1,104 @@
+import Button from '@site/src/components/button'
+
+# TON Connect 소개
+
+TON Connect는 [TON](/v3/concepts/dive-into-ton/introduction) 생태계를 위한 범용 애플리케이션 인증 표준으로 기능하는 강력한 오픈소스 도구입니다. 사용자는 기존의 로그인과 비밀번호 대신 TON 지갑으로 안전하고 편리하게 애플리케이션과 서비스에 로그인할 수 있습니다.
+
+<div style={{width: '100%', textAlign:'center', margin: '10pt auto'}}>
+  <video style={{width: '100%',maxWidth: '600px', borderRadius: '10pt'}} muted={true} autoPlay={true} loop={true}>
+    <source src="/files/TonConnect.mp4" type="video/mp4" />
+    귀하의 브라우저는 비디오 태그를 지원하지 않습니다.
+  </video>
+</div>
+
+애플리케이션 통합을 위해 다음 흐름 중 하나를 선택하세요:
+
+<Button href="/v3/guidelines/ton-connect/frameworks/react" colorType={'primary'} sizeType={'sm'}>
+React 앱
+</Button>
+<Button href="/v3/guidelines/ton-connect/frameworks/web"
+        colorType="secondary" sizeType={'sm'}>
+HTML/JS 앱
+</Button>
+<Button href="https://github.com/ton-community/tma-usdt-payments-demo"
+        colorType="secondary" sizeType={'sm'}>
+TMA USDT 결제 데모
+</Button>
+
+## 개요
+
+TonConnect는 사용자가 지갑을 사용하여 다양한 dApp과 쉽게 상호작용할 수 있게 하여 TON 생태계를 향상시킵니다. 이 프로토콜은 안전하고 사용자 친화적이며 효율적인 연결 방식을 제공하여 TON 기반 애플리케이션과 서비스의 채택을 촉진합니다.
+
+### TonConnect의 주요 기능:
+
+- **원활한 통합**. TonConnect는 TON 지갑과 dApp에 매끄럽게 통합되도록 설계되었습니다. 사용자는 몇 번의 클릭만으로 지갑을 dApp에 연결할 수 있어 원활한 경험을 제공합니다.
+
+- **향상된 보안**. 보안은 TON 생태계의 최우선 관심사입니다. TonConnect는 강력한 암호화와 안전한 통신 방식을 사용하여 사용자 데이터와 거래가 항상 보호되도록 합니다.
+
+- **사용자 친화적 경험**. 단순성에 중점을 두어, TonConnect는 사용자가 광범위한 기술 지식 없이도 dApp과 쉽게 상호작용할 수 있게 합니다. 직관적인 인터페이스로 연결부터 거래 완료까지 원활한 사용자 여정을 보장합니다.
+
+- **크로스 플랫폼 호환성**. TonConnect는 웹, 모바일, 데스크톱 애플리케이션을 포함한 다양한 플랫폼을 지원합니다. 이러한 폭넓은 호환성으로 사용자는 선호하는 기기에 상관없이 지갑을 dApp에 연결할 수 있습니다.
+
+- **개발자 친화적 도구**. TonConnect는 개발자에게 프로토콜을 dApp에 원활하게 통합할 수 있는 도구와 API를 제공합니다. 이러한 리소스를 통해 개발자는 다양한 애플리케이션에서 일관되고 안전한 연결 경험을 제공할 수 있습니다.
+
+- **커뮤니티 주도 개발**. TON 생태계는 활발한 개발자 커뮤니티의 혜택을 받고 있습니다. TonConnect는 이러한 커뮤니티 주도 방식을 활용하여 개발자들이 혁신을 공유하고 기여하도록 장려함으로써 전반적인 생태계를 풍부하게 만듭니다.
+
+## DApp을 위한 활용 사례
+
+TON 생태계가 제공하는 우수한 DApp 통합을 위한 이러한 결과물들을 살펴보세요.
+
+- **트래픽**. TON Connect를 지원하는 암호화폐 지갑을 통해 추가 사용자 방문을 유도합니다.
+- **진정성**. TON 사용자의 지갑을 기존 계정으로 활용하여 추가 인증 단계를 제거하고 사용자 경험을 향상시킵니다.
+- **결제**. Toncoin이나 USD₮를 사용하여 TON 블록체인을 통해 신속하고 안전하게 거래를 처리합니다.
+- **유지**. 사용자가 최근 열어본 앱과 즐겨찾는 앱을 추적할 수 있는 인앱 목록 저장 기능으로 사용자 유지율을 높입니다.
+
+## 지갑 개발자를 위한 정보
+
+지갑 개발자라면, TON Connect에 지갑을 연결하여 사용자가 안전하고 편리하게 TON 앱과 상호작용할 수 있게 할 수 있습니다. [지갑에 TON Connect 통합하기](/v3/guidelines/ton-connect/wallet/)에서 방법을 확인하세요.
+
+## 성공 사례
+
+- [GetGems — The Open Network Marketplace](https://getgems.io/)
+- [STON.fi — AMM DEX for TON blockchain](https://ston.fi/)
+- [Tonstarter](http://tonstarter.com/)
+
+<details>
+  <summary><b>전체 목록 보기</b></summary>
+
+- [getgems.io](https://getgems.io/)
+- [fragment.com](https://fragment.com/) (Ton Connect v.1)
+- [ston.fi](https://ston.fi/)
+- [ton.diamonds](https://ton.diamonds/)
+- [tegro.finance](https://tegro.finance/liquidity)
+- [minter.ton.org](https://minter.ton.org/)
+- [libermall.com](https://libermall.com/)
+- [dedust.io](https://dedust.io/swap)
+- [toncap.net](https://toncap.net/)
+- [cryptomus.com](https://cryptomus.com/)
+- [avanchange.com](https://avanchange.com/)
+- [wton.dev](https://wton.dev/)
+- [vk.com/vk_nft_hub](https://vk.com/vk_nft_hub)
+- [tonverifier.live](https://verifier.ton.org/)
+- [tonstarter.com](https://tonstarter.com/)
+- [megaton.fi](https://megaton.fi/)
+- [dns.ton.org](https://dns.ton.org/)
+- [coinpaymaster.com](https://coinpaymaster.com/)
+- [daolama.co](https://daolama.co/)
+- [ton.vote](https://ton.vote/)
+- [business.thetonpay.app](https://business.thetonpay.app/)
+- [bridge.orbitchain.io](https://bridge.orbitchain.io/)
+- [app.fanz.ee/staking](https://app.fanz.ee/staking)
+- [testnet.pton.fi](https://testnet.pton.fi/)
+- [cardify.casino](https://cardify.casino/)
+- [soquest.xyz](https://soquest.xyz/)
+- [app.evaa.finance](https://app.evaa.finance/)
+
+</details>
+
+## TON 생태계 참여하기
+
+서비스를 TON 생태계와 연결하려면 다음을 구현해야 합니다:
+
+- **TON Connect**. 애플리케이션에 TON Connect 프로토콜을 통합하세요.
+- **트랜잭션**. TON 라이브러리를 사용하여 지정된 트랜잭션 메시지를 생성하세요. [메시지 보내기](/v3/guidelines/ton-connect/guidelines/preparing-messages) 가이드에서 자세한 과정을 확인하세요.
+- **결제**. 공개 API([tonapi](https://tonapi.io/))나 [gobycicle](http://github.com/gobicycle/bicycle)과 같은 자체 인덱서를 통해 결제를 처리하세요. [자산 처리](/v3/guidelines/dapps/asset-processing/payments-processing)에 대한 자세한 가이드에서 더 많은 정보를 확인하세요.
