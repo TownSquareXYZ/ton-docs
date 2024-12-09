@@ -1,0 +1,158 @@
+# 성능 모니터링
+
+## TON 서버 성능 모니터링
+
+`htop`, `iotop`, `iftop`, `dstat`, `nmon` 등의 도구는 실시간 성능 측정에는 좋지만 과거 성능 문제를 해결할 때는 기능이 부족합니다.
+
+이 가이드에서는 TON 서버 성능 모니터링을 위한 Linux sar(System Activity Report) 유틸리티 사용법을 설명합니다.
+
+:::tip
+이 가이드라인은 validator-engine의 성능이 아닌 서버의 리소스 부족 여부를 확인하는 데 도움이 됩니다.
+:::
+
+### 설치
+
+#### SAR 설치
+
+```bash
+sudo apt-get install sysstat
+```
+
+#### 자동 통계 수집 활성화
+
+```bash
+sudo sed -i 's/false/true/g' /etc/default/sysstat
+```
+
+#### 서비스 활성화
+
+```bash
+sudo systemctl enable sysstat sysstat-collect.timer sysstat-summary.timer
+```
+
+#### 서비스 시작
+
+```bash
+sudo systemctl start sysstat sysstat-collect.timer sysstat-summary.timer
+```
+
+### 사용법
+
+기본적으로 sar는 10분마다 통계를 수집하고 자정부터 시작하는 현재 날짜의 통계를 보여줍니다. 매개변수 없이 sar를 실행하여 확인할 수 있습니다:
+
+```bash
+sar
+```
+
+전날이나 이틀 전의 통계를 보려면 숫자를 옵션으로 전달하세요:
+
+```bash
+sar -1   # previous day
+sar -2   # two days ago
+```
+
+정확한 날짜를 보려면 f 옵션을 사용하여 해당 월의 특정 날짜의 sa 파일을 지정해야 합니다. 9월 23일의 경우:
+
+```bash
+sar -f /var/log/sysstat/sa23
+```
+
+성능 문제를 식별하기 위해 sar 보고서를 실행하고 읽는 방법은 무엇일까요?
+
+아래는 다양한 시스템 통계를 수집하는 데 사용할 수 있는 sar 명령어 목록입니다. 위의 옵션들과 함께 사용하여 필요한 날짜의 보고서를 빠르게 얻을 수 있습니다.
+
+### 메모리 보고서
+
+```bash
+sar -rh
+```
+
+TON validator-engine는 jemalloc 기능을 사용하여 많은 데이터를 캐시하기 때문에, sar -rh 명령은 대부분 `%memused` 열에서 낮은 수치를 반환합니다.
+
+동시에 `kbcached` 열에는 항상 높은 수치가 표시됩니다. 같은 이유로 `kbmemfree` 열에 표시되는 낮은 여유 RAM에 대해 걱정할 필요가 없습니다. 중요한 지표는 `%memused` 열의 수치입니다.
+
+90% 이상으로 올라가면 RAM을 추가하는 것을 고려해야 하며, validator engine이 OOM(메모리 부족) 이유로 비정상적으로 중지되지 않는지 주의해서 확인해야 합니다 - 이를 확인하는 가장 좋은 방법은 `/var/ton-work/log` 파일에서 Signal 메시지를 grep하는 것입니다.
+
+스왑 사용량
+
+```bash
+sar -Sh
+```
+
+스왑이 사용되는 것이 확인되면 RAM을 추가하는 것을 고려해야 합니다. TON Core 팀의 일반적인 권장사항은 스왑을 비활성화하는 것입니다.
+
+### CPU 보고서
+
+```bash
+sar -u
+```
+
+서버가 평균적으로 CPU를 70%까지 사용하는 경우('%user' 열 참조), 이는 좋은 상태로 간주됩니다.
+
+### 디스크 사용량 보고서
+
+```bash
+sar -dh
+```
+
+'%util' 열을 확인하고 특정 디스크에서 90% 이상 지속되는 경우 적절히 대응하세요.
+
+### 네트워크 보고서
+
+```bash
+sar -n DEV -h
+```
+
+또는
+
+```bash
+sar -n DEV -h --iface=<interface name>
+```
+
+네트워크 인터페이스 이름으로 결과를 필터링하려는 경우.
+
+`%ifutil` 열의 결과를 확인하세요 - 최대 링크 속도를 고려한 인터페이스 사용량을 보여줍니다.
+
+아래 명령을 실행하여 NIC가 지원하는 속도를 확인할 수 있습니다:
+
+```bash
+cat /sys/class/net/<interface>/speed
+```
+
+:::info
+이는 제공업체가 제공한 링크 속도가 아닙니다.
+:::
+
+`%ifutil`이 70% 이상의 사용량을 보이거나, rxkB/s와 txkB/s 열이 제공업체가 제공한 대역폭에 가까운 값을 보고하는 경우 링크 속도 업그레이드를 고려하세요.
+
+### 성능 문제 보고
+
+성능 문제를 보고하기 전에 노드의 최소 요구사항을 충족하고 있는지 확인하세요. 그런 다음 다음 명령을 실행하세요:
+
+```bash
+sar -rudh | cat && sar -n DEV -h --iface=eno1 | cat > report_today.txt
+```
+
+어제의 보고서를 위해 실행:
+
+```bash
+sar -rudh -1 | cat && sar -n DEV -h --iface=eno1 -1 | cat > report_yesterday.txt
+```
+
+또한 TON 노드를 중지하고 디스크 IO와 네트워크 속도를 측정하세요.
+
+```bash
+sudo fio --randrepeat=1 --ioengine=io_uring --direct=1 --gtod_reduce=1 --name=test --filename=/var/ton-work/testfile --bs=4096 --iodepth=1 --size=40G --readwrite=randread --numjobs=1 --group_reporting
+```
+
+`read: IOPS=` 값을 확인하고 보고서와 함께 보내세요. 10k IOPS 이상의 값이 좋은 것으로 간주됩니다.
+
+```bash
+curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -
+```
+
+700 Mbit/s 이상의 다운로드 및 업로드 속도가 좋은 것으로 간주됩니다.
+
+보고할 때는 SAR 보고서와 IOPS 및 네트워크 속도 결과를 [@mytonctrl_help_bot](https://t.me/mytonctrl_help_bot)에 보내주세요.
+
+초기 버전 작성: [@neodix](https://t.me/neodix) - Ton Core 팀, 2024년 9월 23일
