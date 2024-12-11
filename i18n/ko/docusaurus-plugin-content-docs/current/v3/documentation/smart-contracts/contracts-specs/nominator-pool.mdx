@@ -1,0 +1,235 @@
+# 노미네이터 풀
+
+노미네이터 풀은 하나 이상의 노미네이터가 검증자 스테이크에 Toncoin을 빌려주고, 검증자가 그 Toncoin을 검증 용도로만 사용할 수 있도록 하는 스마트 컨트랙트입니다. 또한 보상 분배를 보장합니다.
+
+## 아키텍처
+
+![image](/img/nominator-pool/nominator-pool.png)
+
+## 제한사항
+
+이 풀은 대량의 코인을 위해 설계되었습니다.
+
+개발 과정에서 주요 기준은 코드의 안전성과 단순성이었습니다.
+
+풀은 소액 예치금이나 하나의 풀에 많은 수의 노미네이터를 지원하지 않습니다.
+
+테스트된 목표 구성은 최소 10k TON의 노미네이터 스테이크와 풀당 최대 40명의 노미네이터입니다.
+
+40명을 초과하는 노미네이터 수는 테스트되지 않았으며, 이러한 테스트가 수행될 때까지 40명을 초과하여 설정하지 않을 것을 강력히 권장합니다.
+
+## 수수료
+
+풀은 수수료가 높은 마스터체인에 위치하기 때문에 풀 운영에는 검증 라운드당 약 **5 TON**이 들어갑니다.
+
+운영 수수료는 검증자가 지불합니다.
+
+:::info
+풀 잔액에는 항상 **10 TON**이 있어야 합니다 - 이는 네트워크 저장 수수료를 위한 최소 잔액입니다. 10 TON은 인출할 수 없습니다.
+:::
+
+## 보상 분배
+
+각 검증 라운드마다 풀은 elector 스마트 컨트랙트에 스테이크를 보냅니다.
+
+검증 라운드가 완료되면 풀은 elector로부터 자금을 회수합니다.
+
+일반적으로 받은 금액이 보낸 금액보다 크며, 그 차이가 검증 보상입니다.
+
+검증자는 변경 불가능한 풀 매개변수 `validator_reward_share`에 따라 보상의 일부를 받습니다.
+
+```
+validator_reward = (reward * validator_reward_share) / 10000;
+nominators_reward = reward - validator_reward;
+```
+
+노미네이터는 스테이크 크기에 따라 남은 보상을 공유합니다.
+
+예를 들어, 풀에 100k와 300k TON의 스테이크를 가진 두 노미네이터가 있다면, 첫 번째는 `nominators_reward`의 25%, 두 번째는 75%를 가져갑니다.
+
+### 노미네이터 풀 슬래싱
+
+큰 검증 벌금의 경우, 받은 금액이 보낸 금액보다 적을 때 손실은 검증자의 자금에서 차감됩니다.
+
+검증자의 자금이 충분하지 않으면 남은 손실은 스테이크에 비례하여 노미네이터에서 차감됩니다.
+
+풀은 검증자 자금이 항상 최대 벌금을 커버할 수 있을 만큼 충분하도록 설계되었습니다.
+
+## 검증자의 책임
+
+검증자 자금이 변경 불가능한 풀 매개변수 `min_validator_stake`를 초과하는 경우에만 풀이 검증에 참여할 수 있습니다.
+
+또한 검증자의 자금은 잘못된 검증에 대한 최대 가능한 벌금을 초과해야 합니다. 권장 벌금은 네트워크 구성을 기반으로 계산됩니다.
+
+그렇지 않으면 풀은 검증 라운드 참여 요청을 보내지 않습니다.
+
+## 노미네이터의 메시지
+
+노미네이터 풀과 상호작용하기 위해, 노미네이터는 텍스트 댓글이 있는 간단한 메시지를 풀 스마트 컨트랙트에 보냅니다(모든 월렛 애플리케이션에서 보낼 수 있음).
+
+**메시지는 바운스 가능 모드로 보내야 합니다!**
+
+오타나 잘못된 메시지의 경우, 메시지는 발신자에게 반송됩니다.
+
+바운스 불가능 모드에서 잘못 입력된 메시지나 잘못된 메시지를 보내면 코인을 잃게 됩니다.
+
+## 노미네이터의 예치
+
+노미네이터가 예치하려면 Toncoin과 텍스트 댓글 "d"가 포함된 메시지를 노미네이터-풀 스마트 컨트랙트에 보내야 합니다.
+
+노미네이터는 베이스체인에 위치한 월렛(raw 주소 `0:...`)에서만 메시지를 보낼 수 있습니다.
+
+Toncoin의 금액은 `min_nominator_stake + 1 TON` 이상이어야 합니다.
+
+예치 시 1 TON이 예치 처리 수수료로 차감됩니다.
+
+풀이 현재 검증에 참여하지 않는 경우(`state == 0`), 예치금은 즉시 처리됩니다.
+
+풀이 현재 검증에 참여하고 있는 경우(`state != 0`), 금액은 노미네이터의 `pending_deposit_amount`에 추가되며, 현재 검증 라운드가 완료된 후 처리됩니다.
+
+노미네이터는 이후에 예치금을 늘리기 위해 더 많은 Toncoin을 보낼 수 있습니다.
+
+노미네이터-풀이 이미 `max_nominators_count`와 동일한 수의 노미네이터에 도달한 경우, 새로운 노미네이터의 예치는 거부됩니다(발신자에게 반송됨).
+
+## 노미네이터의 인출
+
+노미네이터가 인출하려면 텍스트 댓글 "w"와 네트워크 수수료용 Toncoin(1 TON이면 충분)이 포함된 메시지를 노미네이터-풀 스마트 컨트랙트에 보내야 합니다. 메시지에 첨부된 미사용 TON은 매우 드문 경우를 제외하고 반환됩니다.
+
+노미네이터-풀 잔액에 충분한 Toncoin이 있으면 인출은 즉시 이루어집니다. 검증 라운드 참여를 완료했지만 아직 새로운 라운드 참여 요청을 제출하지 않은 경우 모든 자금이 노미네이터-풀 잔액에 있게 됩니다.
+
+노미네이터-풀 잔액에 충분한 Toncoin이 없으면 노미네이터에 대한 `withdraw_request`가 이루어지고, 현재 검증 라운드가 끝난 후 Toncoin이 인출됩니다.
+
+노미네이터는 자신의 자금을 한 번에 모두 인출할 수만 있습니다. 부분 인출은 지원되지 않습니다.
+
+## 검증자 인출
+
+검증자는 노미네이터에게 속하지 않은 모든 Toncoin을 풀에서 인출할 수 있습니다.
+
+## 참가자는 개인키를 보관해야 함
+
+노미네이터가 예치한 월렛에 대한 접근 권한을 잃으면 풀에서 자금을 인출할 수 없습니다.
+
+검증자가 월렛에 대한 접근 권한을 잃으면 풀에서 자신의(검증자의) 자금을 인출할 수 없습니다.
+
+한 풀 참가자의 월렛 개인키 분실은 다른 참가자에게 영향을 미치지 않습니다.
+
+## 긴급 인출
+
+정상적인 운영 시, 검증자는 `process withdraw requests`, `update current validator set`, `new_stake`, `recover_stake`와 같은 운영 메시지를 노미네이터 풀에 주기적으로 보내야 합니다.
+
+검증자 소프트웨어 mytonctrl이 이를 자동으로 수행합니다.
+
+긴급 상황에서, 예를 들어 검증자가 사라지고 의무를 수행하지 않는 경우, 이러한 운영 메시지는 누구나 보낼 수 있으며 따라서 노미네이터는 자금을 인출할 수 있습니다.
+
+## 네트워크 구성 제안에 대한 투표
+
+TON에서 네트워크 구성 변경은 [검증자의 투표](/v3/documentation/smart-contracts/contracts-specs/governance#proposalvoting-mechanism)로 이루어집니다.
+
+노미네이터 풀의 경우, 모든 참가자가 투표할 수 있고 최종 결과가 풀을 대신하여 전송되는 것이 합리적입니다.
+
+따라서 노미네이터 풀 스마트 컨트랙트에는 검증자와 노미네이터가 특정 제안에 대한 찬성/반대 투표를 표시할 수 있는 내장 기능이 있습니다.
+
+이러한 투표를 기반으로 검증자는 검증자 소프트웨어를 통해 최종 투표를 네트워크 구성 스마트 컨트랙트에 보냅니다.
+
+검증자가 네트워크 구성 스마트 컨트랙트에 최종 투표를 보냈고, 그 투표가 풀 내 다수의 의견과 일치하지 않는 경우, 노미네이터는 이 풀을 떠나(그리고 떠날 것이며) 다른 풀로 이동할 수 있습니다.
+
+모든 것이 온체인 트랜잭션을 통해 이루어지므로, 이러한 불일치는 블록체인에 저장되어 모든 사람이 볼 수 있습니다.
+
+## 노미네이터의 투표
+
+각각의 새로운 네트워크 구성 변경 제안은 처음에 TON Foundation 채널 [@tonblockchain](https://t.me/tonblockchain) 또는 [@tonstatus](https://t.me/tonstatus)에 게시됩니다.
+
+이 게시물에는 제안 설명 외에도 HEX 형식의 제안 해시가 표시됩니다(예: `D855FFBCF813E50E10BEAB902D1177529CE79785CAE913EB96A72AE8EFBCBF47`).
+
+노미네이터가 제안에 찬성 투표하려면 텍스트 댓글 `y<HASH>`가 포함된 메시지를 노미네이터 풀 스마트 컨트랙트에 보내야 합니다.
+
+노미네이터가 제안에 반대 투표하려면 텍스트 댓글 `n<HASH>`가 포함된 메시지를 노미네이터 풀 스마트 컨트랙트에 보내야 합니다.
+
+네트워크 수수료를 지불하기 위해 이 메시지에 일정 금액의 토큰을 첨부해야 합니다(1 TON이면 충분). 메시지에 첨부된 미사용 TON은 반환됩니다.
+
+투표는 풀 컨트랙트에 30일 동안 저장됩니다.
+
+풀에 활성 스테이크가 있는 검증자와 현재 노미네이터만 투표할 수 있습니다.
+
+## Get-method `get_pool_data`
+
+반환값:
+
+1. state - uint - 노미네이터 풀의 현재 상태. 0 - 검증에 참여하지 않음, 1 - 검증 라운드 참여를 위한 `new_stake` 요청을 보냄, 2 - 검증 라운드 참여에 대한 성공적인 확인을 받음.
+2. nominators_count - uint - 풀의 현재 노미네이터 수.
+3. stake_amount_sent - nanotons - 이러한 스테이크 금액으로 풀이 현재 검증 라운드에 참여.
+4. validator_amount - nanotons - 검증자가 소유한 코인의 양.
+5. validator_address - immutable - uint - 검증자 월렛 주소. 주소를 얻으려면 `"-1:" + dec_to_hex(validator_address)` 수행.
+6. validator_reward_share - immutable - uint - 검증으로부터의 보상 중 검증자에게 가는 비율. `validator_reward = (reward * validator_reward_share) / 10000`. 예를 들어 40%를 얻으려면 4000 설정.
+7. max_nominators_count - immutable - uint - 이 풀의 최대 노미네이터 수.
+8. min_validator_stake - immutable - nanotons - 이 풀의 검증자를 위한 최소 스테이크.
+9. min_nominator_stake - immutable - nanotons - 이 풀의 노미네이터를 위한 최소 스테이크.
+10. nominators - Cell - 노미네이터가 있는 raw 딕셔너리.
+11. withdraw_requests - Cell - 노미네이터의 인출 요청이 있는 raw 딕셔너리.
+12. stake_at - uint - 우리가 참여하고 있거나 참여할 예정인 검증 라운드의 ID. 다음 검증 라운드의 예상 시작(`utime_since`).
+13. saved_validator_set_hash - uint - 기술적 정보.
+14. validator_set_changes_count - uint - 기술적 정보.
+15. validator_set_change_time - uint - 기술적 정보.
+16. stake_held_for - uint - 기술적 정보.
+17. config_proposal_votings - Cell - 구성 제안 투표가 있는 raw 딕셔너리.
+
+## Get-method `list_nominators`
+
+현재 풀의 노미네이터 목록을 반환합니다.
+
+각 항목은 다음을 포함합니다:
+
+1. address - uint - 노미네이터 월렛 주소. 주소를 얻으려면 `"0:" + dec_to_hex(address)` 수행.
+2. amount - nanotons - 노미네이터의 현재 활성 스테이크.
+3. pending_deposit_amount - nanotons - 다음 검증 라운드에서 노미네이터의 활성 스테이크에 추가될 예치 금액.
+4. withdraw_request - int - `-1`이면 이 노미네이터가 모든 자금을 인출하는 요청을 보냈음.
+
+## Get-method `get_nominator_data`
+
+노미네이터의 주소를 인자로 받아 다음을 반환합니다:
+
+1. amount - nanotons - 노미네이터의 현재 활성 스테이크.
+2. pending_deposit_amount - nanotons - 다음 검증 라운드에서 노미네이터의 활성 스테이크에 추가될 예치 금액.
+3. withdraw_request - int - `-1`이면 이 노미네이터가 모든 자금을 인출하는 요청을 보냈음.
+
+풀에 해당 노미네이터가 없으면 `86` 오류를 발생시킵니다.
+
+주소가 `EQA0i8-CdGnF_DhUHHf92R1ONH6sIA9vLZ_WLcCIhfBBXwtG`인 노미네이터를 얻으려면 주소를 raw 형식 `0:348bcf827469c5fc38541c77fdd91d4e347eac200f6f2d9fd62dc08885f0415f`로 변환하고, `0:`를 제거하고 `get_nominator_data 0x348bcf827469c5fc38541c77fdd91d4e347eac200f6f2d9fd62dc08885f0415f`를 호출해야 합니다.
+
+## Get-method `list_votes`
+
+투표 목록을 반환합니다.
+
+각 항목은 다음을 포함합니다:
+
+1. proposal_hash - uint - 제안의 해시. 해시를 HEX 형식으로 변환하려면 `dec_to_hex(proposal_hash)` 사용.
+2. votes_create_time - uint - 이 투표가 생성된 unixtime.
+
+## Get-method `list_voters`
+
+제안의 해시를 인자로 받아 투표자 목록을 반환합니다:
+
+각 항목은 다음을 포함합니다:
+
+1. address - 투표자의 주소. 노미네이터 주소를 얻으려면 `"0:" + dec_to_hex(address)`, `address = validator_address`인 경우 `"-1:" + dec_to_hex(address)` 수행.
+2. support - int - `-1`이면 "찬성 투표", 그렇지 않으면 "반대 투표".
+3. vote_time - uint - 투표한 unixtime.
+
+투표 결과는 오프체인에서 계산됩니다.
+
+## 월렛 애플리케이션 통합
+
+예치, 인출 및 투표를 위해 위에서 설명한 대로 원하는 텍스트 댓글이 포함된 간단한 메시지를 풀에 보냅니다.
+
+예치금을 보낼 때 보낸 금액을 로컬 스토리지에 저장할 수 있습니다.
+
+재예치를 보낼 때도 이 금액에 추가합니다.
+
+현재 수익을 알아내려면 get 메서드 `get_nominator_data(your_address)`를 호출합니다. 수익은 (`amount + pending_deposit_amount - sent_amount_stored_in_local_storage`)입니다.
+
+풀 정보를 얻으려면 `get_pool_data`와 `list_nominators` get-메서드를 호출합니다.
+
+## 참조
+
+- [Nominator Pool contract](https://github.com/ton-blockchain/nominator-pool)
+- [How to use Nominator Pool](/v3/guidelines/smart-contracts/howto/nominator-pool)
