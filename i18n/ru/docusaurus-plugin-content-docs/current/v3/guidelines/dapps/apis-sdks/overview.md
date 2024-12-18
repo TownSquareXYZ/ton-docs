@@ -20,8 +20,8 @@
 
 Вам может понадобиться быстрое взаимодействие с блокчейном TON или сбор и анализ его данных. Для этих целей может быть полезно запустить свой собственный [Ton Node] (/v3/documentation/infra/nodes/node-types).
 
-- [Liteserver Node](/v3/guidelines/nodes/running-nodes/liteserver-node) - только для взаимодействия с блокчейном.
-- [Archive Node](/v3/guidelines/nodes/running-nodes/archive-node) - сбор расширенных исторических данных блокчейна.
+- [Liteserver узел](/v3/guidelines/nodes/running-nodes/liteserver-node) - только для взаимодействия с блокчейном.
+- [Архивный узел](/v3/guidelines/nodes/running-nodes/archive-node) - сбор расширенных исторических данных блокчейна.
 
 Используйте SDK с встроенной поддержкой [ADNL](/v3/documentation/network/protocols/adnl/adnl-tcp):
 
