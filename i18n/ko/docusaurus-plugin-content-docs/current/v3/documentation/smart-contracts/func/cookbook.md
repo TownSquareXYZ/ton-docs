@@ -1146,7 +1146,7 @@ send_raw_message(msg, 128); ;; mode = 128 is used for messages that are to carry
 
 ### 긴 텍스트 코멘트가 있는 메시지를 보내는 방법
 
-단일 `cell`에는 127개의 문자(<1023 비트)만 들어갈 수 있다는 것을 알고 있습니다. 더 많이 필요한 경우 - snake cells를 구성해야 합니다.
+단일 `cell`에는 127개의 문자(\<1023 비트)만 들어갈 수 있다는 것을 알고 있습니다. 더 많이 필요한 경우 - snake cells를 구성해야 합니다.
 
 ```func
 {-

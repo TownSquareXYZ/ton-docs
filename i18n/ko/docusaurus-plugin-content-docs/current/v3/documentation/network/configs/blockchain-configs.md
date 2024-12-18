@@ -465,12 +465,12 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 
 - `max_size` = 65535
 - `max_depth` = 512
-- `max_msg_bits` = 1 << 21
-- `max_msg_cells` = 1 << 13
+- `max_msg_bits` = 1 \<\< 21
+- `max_msg_cells` = 1 \<\< 13
 - `max_library_cells` = 1000
 - `max_vm_data_depth` = 512
-- `max_acc_state_cells` = 1 << 16
-- `max_acc_state_bits` = (1 << 16) \* 1023
+- `max_acc_state_cells` = 1 \<\< 16
+- `max_acc_state_bits` = (1 \<\< 16) \* 1023
 
 :::info
 소스 코드에서 [여기](https://github.com/ton-blockchain/ton/blob/fc9542f5e223140fcca833c189f77b1a5ae2e184/crypto/block/mc-config.h#L379)에서 표준 매개변수에 대해 자세히 볼 수 있습니다.
