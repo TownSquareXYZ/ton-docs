@@ -177,7 +177,7 @@ Jettons（代币）：
 
 对于**Jettons**合约必须实现[标准的接口](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md)并在_get_wallet_data()_或_get_jetton_data()_方法上返回数据。
 
-- https://docs.tonconsole.com/tonapi/rest-api
+- https://tonapi.io/swagger-ui
 
 TON内有一个特殊的主链叫做Masterchain。它由网络范围内的合约组成，包括网络配置、与验证者相关的合约等：
 

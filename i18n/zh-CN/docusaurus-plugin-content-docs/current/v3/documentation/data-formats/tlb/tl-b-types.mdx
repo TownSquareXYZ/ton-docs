@@ -17,13 +17,11 @@ import ThemedImage from '@theme/ThemedImage';
 left$0 {X:Type} {Y:Type} value:X = Either X Y;
 right$1 {X:Type} {Y:Type} value:Y = Either X Y;
 ```
-
 Either类型用于可能出现两种结果类型之一的情况。在这种情况下，类型选择取决于所示的前缀位。如果前缀位是0，则序列化左类型，而如果使用1前缀位，则序列化右类型。
 
 例如，在序列化消息时使用它，当消息体要么是主cell的一部分，要么链接到另一个cell。
 
 ## Maybe
-
 ```tlb
 nothing$0 {X:Type} = Maybe X;
 just$1 {X:Type} value:X = Maybe X;
@@ -49,7 +47,6 @@ Unary提供两个主要选项：
 unary_zero$0 = Unary ~0;
 unary_succ$1 {n:#} x:(Unary ~n) = Unary ~(n + 1);
 ```
-
 ### Unary序列化
 
 通常，使用`unary_zero`变体相当简单：如果第一位是0，则Unary反序列化的结果为0。
@@ -59,7 +56,6 @@ unary_succ$1 {n:#} x:(Unary ~n) = Unary ~(n + 1);
 例如，让我们分析位串`110`的序列化。
 
 调用链如下：
-
 ```tlb
 unary_succ$1 -> unary_succ$1 -> unary_zero$0
 ```
@@ -73,7 +69,6 @@ unary_succ$1 -> unary_succ$1 -> unary_zero$0
 ### Unary反序列化
 
 假设我们有`Foo`类型：
-
 ```tlb
 foo$_  u:(Unary 2) = Foo;
 ```
@@ -124,7 +119,6 @@ hme_root$1 {n:#} {X:Type} root:^(Hashmap n X) = HashmapE n X;
 ### Hashmap解析示例
 
 例如，考虑以下以二进制形式给出的Cell。
-
 ```json
 1[1] -> {
   2[00] -> {
@@ -163,7 +157,6 @@ hme_root$1 {n:#} {X:Type} root:^(Hashmap n X) = HashmapE n X;
     28[1011100000000000001100001001]
   }
 ```
-
 #### 初始化分支解析
 
 根据我们的架构，这是正确的`Hashmap 8 uint16`结构。接下来，我们用已知的值填充它，并得到如下结果：
@@ -202,7 +195,6 @@ hml_short$0 {m:#} {n:#} len:(Unary ~n) {n <= 8} s:(n * Bit) = HmLabel ~n 8
 ```tlb
 hml_short$0 {m:#} {n:#} len:0 {n <= 8} s:(0 * Bit) = HmLabel 0 8
 ```
-
 结果我们得到一个空的`HmLabel`，表示为s = 0，因此没有什么可以下载的。
 
 接下来，我们用计算出的`l`值补充我们的结构，如下所示：
@@ -217,7 +209,6 @@ hm_edge#_ {n:#} {X:Type} {l:0} {m:#} label:(HmLabel 0 8)
 确定所有未知值后，现在可以加载`node:(HashmapNode 8 uint16)`。
 
 至于HashmapNode，我们有以下选项：
-
 ```tlb
 hmn_leaf#_ {X:Type} value:X = HashmapNode 0 X;
 hmn_fork#_ {n:#} {X:Type} left:^(Hashmap n X)

@@ -69,6 +69,23 @@ module.exports = [
     ],
   },
   {
+    type: 'link',
+    label: 'Tact Language',
+    href: 'https://docs.tact-lang.org',
+  },
+  {
+    type: 'category',
+    label: 'Tolk Language',
+    items: [
+      'v3/documentation/smart-contracts/tolk/overview',
+      'v3/documentation/smart-contracts/tolk/tolk-vs-func/in-short',
+      'v3/documentation/smart-contracts/tolk/tolk-vs-func/in-detail',
+      'v3/documentation/smart-contracts/tolk/tolk-vs-func/mutability',
+      'v3/documentation/smart-contracts/tolk/tolk-vs-func/stdlib',
+      'v3/documentation/smart-contracts/tolk/changelog',
+    ],
+  },
+  {
     type: 'category',
     label: 'FunC Language',
     items: [
@@ -98,18 +115,6 @@ module.exports = [
       },
       'v3/documentation/smart-contracts/func/libraries',
       'v3/documentation/smart-contracts/func/changelog',
-    ],
-  },
-  {
-    type: 'category',
-    label: 'Tolk Language',
-    items: [
-      'v3/documentation/smart-contracts/tolk/overview',
-      'v3/documentation/smart-contracts/tolk/tolk-vs-func/in-short',
-      'v3/documentation/smart-contracts/tolk/tolk-vs-func/in-detail',
-      'v3/documentation/smart-contracts/tolk/tolk-vs-func/mutability',
-      'v3/documentation/smart-contracts/tolk/tolk-vs-func/stdlib',
-      'v3/documentation/smart-contracts/tolk/changelog',
     ],
   },
   {
@@ -165,6 +170,7 @@ module.exports = [
         type: 'category',
         label: 'Oracles in TON',
         items: [
+          'v3/documentation/dapps/oracles/pyth',
           'v3/documentation/dapps/oracles/red_stone',
         ],
       },
@@ -183,23 +189,6 @@ module.exports = [
     'type': 'html',
     'value': '<span class=\'menu__link\'><b><small> Infrastructure Documentation </small></b></span>',
   },
-  'v3/documentation/infra/minter-flow',
-  {
-    type: 'category',
-    label: 'Cross-chain Bridges',
-    items: [
-      {
-        type: 'doc',
-        label: 'Overview',
-        id: 'v3/documentation/infra/crosschain/overview',
-      },
-      {
-        type: 'doc',
-        label: 'Bridges Addresses',
-        id: 'v3/documentation/infra/crosschain/bridge-addresses',
-      },
-    ],
-  },
   {
     type: 'category',
     label: 'Blockchain Nodes',
@@ -212,6 +201,7 @@ module.exports = [
           'v3/documentation/infra/nodes/mytonctrl/mytonctrl-overview',
           'v3/documentation/infra/nodes/mytonctrl/mytonctrl-alerting',
           'v3/documentation/infra/nodes/mytonctrl/mytonctrl-status',
+          'v3/documentation/infra/nodes/mytonctrl/mytonctrl-errors',
         ],
       },
       'v3/documentation/infra/nodes/node-commands',
@@ -226,6 +216,23 @@ module.exports = [
           },
           'v3/documentation/infra/nodes/validation/collators',
         ],
+      },
+    ],
+  },
+  'v3/documentation/infra/minter-flow',
+  {
+    type: 'category',
+    label: 'Cross-chain Bridges',
+    items: [
+      {
+        type: 'doc',
+        label: 'Overview',
+        id: 'v3/documentation/infra/crosschain/overview',
+      },
+      {
+        type: 'doc',
+        label: 'Bridges Addresses',
+        id: 'v3/documentation/infra/crosschain/bridge-addresses',
       },
     ],
   },
