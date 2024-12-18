@@ -26,6 +26,7 @@ import TabItem from'@theme/TabItem';
 :::
 
 ## 源代码
+
 本教程中使用的所有代码示例都可以在以下 [GitHub 存储库](https://github.com/aSpite/wallet-tutorial) 中找到。
 
 ## ✍️ 您开始所需的内容
@@ -125,6 +126,7 @@ TON 社区创建了一个优秀的工具来自动化所有开发过程（部署�
 
 1. 安装 GoLand IDE。
 2. 使用以下内容创建项目文件夹和 `go.mod` 文件（如果使用的当前版本已过时，则可能需要更改 Go 版本）：
+
 ```
 module main
 
@@ -150,6 +152,7 @@ func main() {
 	log.Println("Hello, TON!")
 }
 ```
+
 5. 将 `go.mod` 中的模块名称更改为 `main`。
 6. 运行上述代码，直到在终端中显示输出。
 
