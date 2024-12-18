@@ -27,6 +27,7 @@ _ (Message Any) = MessageAny;
 序列化的 `Message X` 通过 FunC 方法 send_raw_message() 放置到动作列表中，然后智能合约执行此动作并发送消息。
 
 ### 显式序列化的定义
+
 根据 TL-B 结构构建有效的二进制数据，我们应该进行序列化，这对每种类型都是递归定义的。这意味着，要序列化 Message X，我们需要知道如何序列化 `StateInit`、`CommonMsgInfo` 等。
 
 我们应该根据递归链接从另一个 TL-B 方案中获取每个嵌套结构，直到顶层结构的序列化是显式的 - 每个位由布尔或类似位的类型（比特，uint，varuint）定义。
