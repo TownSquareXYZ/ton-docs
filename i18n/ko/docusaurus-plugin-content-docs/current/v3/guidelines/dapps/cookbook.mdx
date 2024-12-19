@@ -10,7 +10,7 @@ import TabItem from '@theme/TabItem';
 
 ## 컨트랙트 주소 작업하기
 
-### 주소를 변환하고(사용자 친화적 <-> raw), 조립하고, 문자열에서 추출하는 방법은?
+### 주소를 변환하고(사용자 친화적 \<-> raw), 조립하고, 문자열에서 추출하는 방법은?
 
 TON 주소는 블록체인에서 컨트랙트를 고유하게 식별하며, 워크체인과 원래 상태 해시를 나타냅니다. [두 가지 일반적인 형식](/v3/documentation/smart-contracts/addresses#raw-and-user-friendly-addresses)이 사용됩니다: **raw**(":"로 구분된 워크체인과 HEX로 인코딩된 해시)와 **사용자 친화적**(특정 플래그가 있는 base64로 인코딩된) 형식입니다.
 
@@ -1221,7 +1221,7 @@ DEX는 작업을 위해 다른 프로토콜을 사용합니다. 이 예제에서
 
 - [DeDust 문서](https://docs.dedust.io/).
 
-DeDust에는 두 가지 교환 경로가 있습니다: jetton <-> jetton 또는 TON <-> jetton입니다. 각각 다른 구조를 가지고 있습니다. 스왑하려면 특정 **vault**에 jettons(또는 toncoin)을 보내고 특별한 페이로드를 제공해야 합니다. 다음은 jetton을 jetton으로 또는 jetton을 toncoin으로 스왑하기 위한 구조입니다:
+DeDust에는 두 가지 교환 경로가 있습니다: jetton \<-> jetton 또는 TON \<-> jetton입니다. 각각 다른 구조를 가지고 있습니다. 스왑하려면 특정 **vault**에 jettons(또는 toncoin)을 보내고 특별한 페이로드를 제공해야 합니다. 다음은 jetton을 jetton으로 또는 jetton을 toncoin으로 스왑하기 위한 구조입니다:
 
 ```tlb
 swap#e3a0d482 _:SwapStep swap_params:^SwapParams = ForwardPayload;
@@ -1243,7 +1243,7 @@ swap#ea06185d query_id:uint64 amount:Coins _:SwapStep swap_params:^SwapParams = 
                     fulfill_payload:(Maybe ^Cell) reject_payload:(Maybe ^Cell) = SwapParams;
 ```
 
-이는 toncoin **vault**로의 전송 본문을 위한 구조입니다.
+이는 toncoin **vault** 로의 전송 본문을 위한 구조입니다.
 
 먼저 스왑할 jettons의 **vault** 주소나 toncoin **vault** 주소를 알아야 합니다. 이는 [**Factory**](https://docs.dedust.io/reference/factory) 컨트랙트의 `get_vault_address` get 메소드를 사용하여 할 수 있습니다. 인수로는 다음 구조에 따른 슬라이스를 전달해야 합니다:
 
