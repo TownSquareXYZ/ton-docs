@@ -203,7 +203,6 @@ builder payload_encoding(int a, int b, int c) {
 (int a, int b, int c) = some_f();
 return (c, b, a);
 ```
-
 将被翻译成几个指令，这些指令改变堆栈上元素的顺序。
 
 当堆栈条目数量大（10+），并且它们以不同的顺序被积极使用时，堆栈操作费用可能变得不可忽视。

@@ -8,7 +8,7 @@ Before proceeding, it is recommended that readers have a basic understanding of 
 
 Get methods are special functions in smart contracts that are made for querying specific data from them. Their execution doesn't cost any fees and happens outside of the blockchain.
 
-These functions are very common for most smart contracts. For example, the default [Wallet contract](/v3/documentation/smart-contracts/contracts-specs/wallet-contracts) has several get methods, such as `seqno()`, `get_subwallet_id()` and `get_public_key()`. They are used by wallets, SDKs and APIs to fetch data about wallets.
+These functions are very common in most smart contracts. For example, the default [Wallet contract](/v3/documentation/smart-contracts/contracts-specs/wallet-contracts) has several get methods, such as `seqno()`, `get_subwallet_id()` and `get_public_key()`. They are used by wallets, SDKs, and APIs to fetch data about wallets.
 
 ## Design patterns for get methods
 
@@ -47,7 +47,7 @@ These functions are very common for most smart contracts. For example, the defau
     }
     ```
 
-2. **Conditional data retrieval**: Sometimes, the data that needs to be retrieved depends on certain conditions, such as current time.
+2. **Conditional data retrieval**: Sometimes, the data that needs to be retrieved depends on certain conditions, such as the current time.
 
     Example:
 
@@ -207,7 +207,7 @@ Given an index and [individual NFT content](#get_nft_data), this method fetches 
 
 You can call get methods on the bottom of the page in the "Methods" tab.
 
--   https://tonviewer.com/EQAWrNGl875lXA6Fff7nIOwTIYuwiJMq0SmtJ5Txhgnz4tXI?section=Methods
+-   https://tonviewer.com/EQAWrNGl875lXA6Fff7nIOwTIYuwiJMq0SmtJ5Txhgnz4tXI?section=method
 
 #### Ton.cx
 
@@ -219,7 +219,7 @@ You can call get methods on the "Get methods" tab.
 
 We will use Javascript libraries and tools for the examples below:
 
--   [ton](https://github.com/ton-core/ton) library
+-   [ton](https://github.com/ton-org/ton) library
 -   [Blueprint](/v3/documentation/smart-contracts/getting-started/javascript) SDK
 
 Let's say there is some contract with the following get method:
@@ -235,7 +235,8 @@ This method returns a single number loaded from the contract data.
 The code snippet below can be used to call this get method on some contract deployed at the known address:
 
 ```ts
-import { Address, TonClient } from 'ton';
+import { TonClient } from '@ton/ton';
+import { Address } from '@ton/core';
 
 async function main() {
     // Create Client
@@ -261,7 +262,7 @@ This code will result `Total: 123` output. The number can be different, this is 
 
 For testing smart contracts created we can use the [Sandbox](https://github.com/ton-community/sandbox) which is installed by default in new Blueprint projects.
 
-At first, you need to add a special method in contract wrapper that will execute the get method and return the typed result. Let's say your contract is called _Counter_ and you have already implemented the method that updates the stored number. Open `wrappers/Counter.ts` and add the following method:
+First, you need to add a special method in the contract wrapper that will execute the get method and return the typed result. Let's say your contract is called _Counter_ and you have already implemented the method that updates the stored number. Open `wrappers/Counter.ts` and add the following method:
 
 ```ts
 async getTotal(provider: ContractProvider) {
@@ -354,7 +355,7 @@ In this example, the contract receives and processes internal messages by interp
 -   Op-code `2` signifies a request to query the number from the contract's data.
 -   Op-code `3` is used in the response message, which the calling smart contract must handle in order to receive the result.
 
-For the simplicity, we used just simple little numbers 1, 2 and 3 for the operation codes. But for real projects, consider setting them according to the standard:
+For simplicity, we used just simple little numbers 1, 2, and 3 for the operation codes. But for real projects, consider setting them according to the standard:
 
 -   [CRC32 Hashes for op-codes](/v3/documentation/data-formats/tlb/crc32)
 
