@@ -1,0 +1,610 @@
+import ThemedImage from '@theme/ThemedImage';
+
+# TL-B 언어
+
+TL-B(Type Language - Binary)는 타입 시스템, 생성자 및 기존 함수를 설명하는 데 사용됩니다. 예를 들어,
+TON 블록체인과 관련된 이진 구조를 구축하기 위해 TL-B 스키마를 사용할 수 있습니다. 특별한 TL-B 파서는 스키마를 읽어
+이진 데이터를 다양한 객체로 역직렬화할 수 있습니다. TL-B는 `Cell` 객체에 대한 데이터 스키마를 설명합니다. `Cells`에 대해
+잘 모른다면, [Cell & Bag of Cells(BOC)](/v3/documentation/data-formats/tlb/cell-boc#cell) 문서를 읽어보세요.
+
+## 개요
+
+TL-B 구조의 모든 집합을 TL-B 문서라고 합니다. TL-B 문서는 일반적으로 타입 선언(즉, 타입의 생성자)과 함수 결합자로 구성됩니다. 각 결합자의 선언은 세미콜론(`;`)으로 끝납니다.
+
+가능한 결합자 선언의 예시입니다:
+
+<br></br>
+<ThemedImage
+  alt=""
+  sources={{
+    light: '/img/docs/data-formats/tl-b-docs-2.png?raw=true',
+    dark: '/img/docs/data-formats/tl-b-docs-2-dark.png?raw=true',
+  }}
+/>
+<br></br>
+
+## 생성자
+
+각 방정식의 왼쪽은 오른쪽에 표시된 타입의 값을 정의하거나 직렬화하는 방법을 설명합니다. 이러한 설명은 생성자의 이름으로 시작합니다.
+
+<br></br>
+<ThemedImage
+  alt=""
+  sources={{
+    light: '/img/docs/data-formats/tl-b-docs-3.png?raw=true',
+    dark: '/img/docs/data-formats/tl-b-docs-3-dark.png?raw=true',
+  }}
+/>
+<br></br>
+
+생성자는 직렬화 상태를 포함하여 결합자의 타입을 지정하는 데 사용됩니다. 예를 들어, TON의 스마트 계약에 대한 쿼리에서 `op`(작업 코드)를 지정하고 싶을 때도 생성자를 사용할 수 있습니다.
+
+```tlb
+// ....
+transfer#5fcc3d14 <...> = InternalMsgBody;
+// ....
+```
+
+- 생성자 이름: `transfer` 
+- 생성자 접두사 코드: `#5fcc3d14`
+
+모든 생성자 이름 바로 뒤에는 `#_` 또는 `$10`과 같은 선택적 생성자 태그가 따라오며, 이는 해당 생성자를 인코딩(직렬화)하는 데 사용되는 비트열을 설명합니다.
+
+```tlb
+message#3f5476ca value:# = CoolMessage;
+bool_true$0 = Bool;
+bool_false$1 = Bool;
+```
+
+각 방정식의 왼쪽은 오른쪽에 표시된 타입의 값을 정의하거나 직렬화하는 방법을 설명합니다. 이러한 설명은 `message` 또는 `bool_true`와 같은 생성자 이름으로 시작하고, 바로 뒤에 `#3f5476ca` 또는 `$0`과 같은 선택적 생성자 태그가 따라오며, 이는 해당 생성자를 인코딩(직렬화)하는 데 사용되는 비트를 설명합니다.
+
+| 생성자                         | 직렬화                                 |
+| --------------------------- | ----------------------------------- |
+| `some#3f5476ca`             | 32비트 uint를 16진수 값에서 직렬화             |
+| `some#5fe`                  | 12비트 uint를 16진수 값에서 직렬화             |
+| `some$0101`                 | `0101` 원시 비트 직렬화                    |
+| `some` 또는 `some#`           | `crc32(equation) \| 0x80000000` 직렬화 |
+| `some#_` 또는 `some$_` 또는 `_` | 아무것도 직렬화하지 않음                       |
+
+생성자 이름(`some` 이 예시에서)은 코드생성에서 변수로 사용됩니다. 예:
+
+```tlb
+bool_true$1 = Bool;
+bool_false$0 = Bool;
+```
+
+`Bool` 타입은 `0`과 `1` 두 개의 태그를 가집니다. 코드생성 의사코드는 다음과 같을 수 있습니다:
+
+```python3
+
+class Bool:
+    tags = [1, 0]
+    tags_names = ['bool_true', 'bool_false']
+```
+
+현재 생성자에 대한 이름을 정의하지 않으려면 `_`를 전달하면 됩니다. 예: `_ a:(## 32) = 32Int;`
+
+생성자 태그는 달러 기호 다음에 이진수로, 또는 해시 기호 다음에 16진수로 제공될 수 있습니다. 태그가 명시적으로 제공되지 않은 경우, TL-B 파서는 특정 방식으로 이 생성자를 정의하는 "방정식" 텍스트를 `| 0x80000000`와 함께 CRC32 알고리즘으로 해싱하여 기본 32비트 생성자 태그를 계산해야 합니다. 따라서 빈 태그는 `#_` 또는 `$_`로 명시적으로 제공되어야 합니다.
+
+이 태그는 역직렬화 과정에서 비트열의 현재 타입을 추측하는 데 사용됩니다. 예를 들어 1비트 비트열 `0`이 있다면, 이 비트열을 `Bool` 타입으로 파싱하도록 TLB에 지시하면 `Bool.bool_false`로 파싱됩니다.
+
+더 복잡한 예를 보겠습니다:
+
+```tbl
+tag_a$10 val:(## 32) = A;
+tag_b$00 val(## 64) = A;
+```
+
+TLB 타입 `A`에서 `1000000000000000000000000000000001`(1과 32개의 0과 1)을 파싱하면 - 먼저 태그를 정의하기 위해 처음 두 비트를 가져와야 합니다. 이 예제에서 `10`은 첫 두 비트이고 이는 `tag_a`를 나타냅니다. 그래서 이제 다음 32비트가 `val` 변수라는 것을 알고, 우리 예제에서는 `1`입니다. 일부 "파싱된" 의사코드 변수는 다음과 같을 수 있습니다:
+
+```python3
+A.tag = 'tag_a'
+A.tag_bits = '10'
+A.val = 1
+```
+
+모든 생성자 이름은 서로 달라야 하며 같은 타입에 대한 생성자 태그는 접두사 코드를 구성해야 합니다(그렇지 않으면 역직렬화가 고유하지 않을 것입니다). 즉, 어떤 태그도 같은 타입의 다른 태그의 접두사가 될 수 없습니다.
+
+한 타입당 최대 생성자 수: `64`
+태그의 최대 비트 수: `63`
+
+<b>이진 예시:</b>
+
+```tlb
+example_a$10 = A;
+example_b$01 = A;
+example_c$11 = A;
+example_d$00 = A;
+```
+
+코드생성 의사코드는 다음과 같을 수 있습니다:
+
+```python3
+
+class A:
+    tags = [2, 1, 3, 0]
+    tags_names = ['example_a', 'example_b', 'example_c', 'example_d']
+```
+
+<b>16진수 태그 예시:</b>
+
+```tlb
+example_a#0 = A;
+example_b#1 = A;
+example_c#f = A;
+```
+
+코드생성 의사코드는 다음과 같을 수 있습니다:
+
+```python3
+
+class A:
+    tags = [0, 1, 15]
+    tags_names = ['example_a', 'example_b', 'example_c']
+```
+
+16진수 태그를 사용하는 경우, 각 16진수 기호마다 4비트로 직렬화된다는 점을 기억하세요. 최대값은 63비트 부호 없는 정수입니다. 이는 다음을 의미합니다:
+
+```tlb
+a#32 a:(## 32) = AMultiTagInt;
+b#1111 a:(## 32) = AMultiTagInt;
+c#5FE a:(## 32) = AMultiTagInt;
+d#3F5476CA a:(## 32) = AMultiTagInt;
+```
+
+| 생성자          | 직렬화                     |
+| ------------ | ----------------------- |
+| `a#32`       | 8비트 uint를 16진수 값에서 직렬화  |
+| `b#1111`     | 16비트 uint를 16진수 값에서 직렬화 |
+| `c#5FE`      | 12비트 uint를 16진수 값에서 직렬화 |
+| `d#3F5476CA` | 32비트 uint를 16진수 값에서 직렬화 |
+
+또한 16진수 값은 대소문자를 모두 허용합니다.
+
+#### 16진수 태그에 대한 추가 정보
+
+고전적인 16진수 태그 정의 외에도, 16진수 숫자 뒤에 밑줄 문자가 올 수 있습니다.
+이는 태그가 지정된 16진수 숫자에서 최하위 비트를 제거한 값과 같다는 것을 의미합니다.
+예를 들어 다음과 같은 스키마가 있습니다:
+
+```tlb
+vm_stk_int#0201_ value:int257 = VmStackValue;
+```
+
+그리고 태그는 실제로 `0x0201`과 같지 않습니다. 이를 계산하려면 `0x0201`의 이진 표현에서 LSb를 제거해야 합니다:
+
+```
+0000001000000001 -> 000000100000000
+```
+
+따라서 태그는 15비트 이진수 `0b000000100000000`과 같습니다.
+
+## 필드 정의
+
+생성자와 그의 선택적 태그 뒤에는 필드 정의가 따라옵니다. 각 필드 정의는
+`ident:type-expr` 형식을 가지며, 여기서 ident는 필드의 이름을 가진 식별자(익명 필드의 경우 밑줄로 대체)이고, type-expr은 필드의 타입입니다. 여기에 제공되는 타입은 타입 표현식으로, 단순 타입,
+적절한 매개변수가 있는 매개변수화된 타입 또는 복잡한 표현식을 포함할 수 있습니다.
+
+<b>모든 타입에 정의된 필드의 합은 Cell(`1023` 비트 및 `4` 참조)보다 크면 안 됩니다</b>
+
+### 단순 타입
+
+- `_ a:# = Type;` - 여기서 `Type.a`는 32비트 정수
+- `_ a:(## 64) = Type;` - 여기서 `Type.a`는 64비트 정수
+- `_ a:Owner = NFT;` - 여기서 `NFT.a`는 `Owner` 타입
+- `_ a:^Owner = NFT;` - 여기서 `NFT.a`는 `Owner` 타입에 대한 셀 참조이며 `Owner`는 다음 셀 참조에 저장됨을 의미
+
+### 익명 필드
+
+- `_ _:# = A;` - 첫 번째 필드는 익명 32비트 정수
+
+### 참조로 셀 확장
+
+```tlb
+_ a:(##32) ^[ b:(##32) c:(## 32) d:(## 32)] = A;
+```
+
+- 어떤 이유로 일부 필드를 다른 셀로 분리하고 싶다면 `^[ ... ]` 구문을 사용할 수 있습니다.
+  이 예제에서 `A.a` / `A.b` / `A.c` / `A.d`는 32비트 부호 없는 정수이지만, `A.a`는 첫 번째 셀에 저장되고,
+  `A.b` / `A.c` / `A.d`는 다음 셀(1 참조)에 저장됩니다
+
+```tlb
+_ ^[ a:(## 32) ^[ b:(## 32) ^[ c:(## 32) ] ] ] = A;
+```
+
+- 참조 체인도 허용됩니다. 이 예제에서 각
+  변수(`a`, `b`, `c`)는 분리된 셀에 저장됩니다
+
+### 매개변수화된 타입
+
+`IntWithObj` 타입이 있다고 가정해보겠습니다:
+
+```tlb
+_ {X:Type} a:# b:X = IntWithObj X;
+```
+
+이제 다른 타입에서 이를 사용할 수 있습니다:
+
+```tlb
+_ a:(IntWithObj uint32) = IntWithUint32;
+```
+
+### 복잡한 표현식
+
+- 조건부 필드(`Nat`에만 해당)(`E?T`는 표현식 `E`가 True이면 필드가 타입 `T`를 가짐을 의미)
+  ```tlb
+  _ a:(## 1) b:a?(## 32) = Example;
+  ```
+  `Example` 타입에서 변수 `b`는 `a`가 `1`인 경우에만 직렬화됩니다
+
+- 튜플 생성을 위한 곱셈 표현식(`x * T`는 타입 `T`의 길이 `x` 튜플 생성을 의미):
+
+  ```tlb
+  a$_ a:(## 32) = A;
+  b$_ b:(2 * A) = B;
+  ```
+
+  ```tlb
+  _ (## 1) = Bit;
+  _ 2bits:(2 * Bit) = 2Bits;
+  ```
+
+- 비트 선택(`Nat`에만 해당)(`E . B`는 `Nat` `E`의 비트 `B`를 가져옴을 의미)
+  ```tlb
+  _ a:(## 2) b:(a . 1)?(## 32) = Example;
+  ```
+  `Example` 타입에서 변수 `b`는 `a`의 두 번째 비트가 `1`인 경우에만 직렬화됩니다
+
+- 다른 `Nat` 연산자도 허용됨(`허용되는 제약조건` 참조)
+
+참고: 여러 복잡한 표현을 결합할 수 있습니다:
+
+```tlb
+_ a:(## 1) b:(## 1) c:(## 2) d:(a?(b?((c . 1)?(## 64)))) = A;
+```
+
+## 내장 타입
+
+- `#` - `Nat` 32비트 부호 없는 정수
+- `## x` - `x` 비트의 `Nat`
+- `#< x` - `x` 비트보다 작은 `Nat` 부호 없는 정수로 `lenBits(x - 1)` 비트로 저장, 최대 31비트까지
+- `#<= x` - `x` 비트보다 작거나 같은 `Nat` 부호 없는 정수로 `lenBits(x)` 비트로 저장, 최대 32비트까지
+- `Any` / `Cell` - 셀의 나머지 비트&참조
+- `Int` - 257비트
+- `UInt` - 256비트
+- `Bits` - 1023비트
+- `uint1` - `uint256` - 1 - 256비트
+- `int1` - `int257` - 1 - 257비트
+- `bits1` - `bits1023` - 1 - 1023비트
+- `uint X` / `int X` / `bits X` - `uintX`와 동일하지만 이 타입에서 매개변수화된 `X`를 사용할 수 있음
+
+## 제약조건
+
+```tlb
+_ flags:(## 10) { flags <= 100 } = Flag;
+```
+
+`Nat` 필드는 제약조건에서 허용됩니다. 이 예제에서 `{ flags <= 100 }` 제약조건은 `flags` 변수가 `100`보다 작거나 같다는 것을 의미합니다.
+
+허용되는 제약조건: `E` | `E = E` | `E <= E` | `E < E` | `E >= E` | `E > E` | `E + E` | `E * E` | `E ? E`
+
+## 암시적 필드
+
+일부 필드는 암시적일 수 있습니다. 이러한 필드의 정의는 중괄호(`{`, `}`)로 둘러싸여 있으며, 이는 필드가 실제로 직렬화에 존재하지 않지만 다른 데이터(일반적으로 직렬화되는 타입의 매개변수)에서 값을 추론해야 한다는 것을 나타냅니다. 예:
+
+```tlb
+nothing$0 {X:Type} = Maybe X;
+just$1 {X:Type} value:X = Maybe X;
+```
+
+```tlb
+_ {x:#} a:(## 32) { ~x = a + 1 } = Example;
+```
+
+## 매개변수화된 타입
+
+변수 — 즉, `#`(자연수) 또는 `Type`(타입의 타입) 타입의 이전에 정의된 필드의 (식별자) — 는 매개변수화된 타입의 매개변수로 사용될 수 있습니다. 직렬화 과정은 각 필드를 해당 타입에 따라 재귀적으로 직렬화하며 값의 직렬화는 궁극적으로 생성자(즉, 생성자 태그)와 필드 값을 나타내는 비트의 연결로 구성됩니다.
+
+### 자연수(`Nat`)
+
+```tlb
+_ {x:#} my_val:(## x) = A x;
+```
+
+`A`가 `x` `Nat`로 매개변수화된다는 것을 의미합니다. 역직렬화 과정에서 `x`비트 부호 없는 정수를 가져올 것입니다. 예:
+
+```tlb
+_ value:(A 32) = My32UintValue;
+```
+
+`My32UintValue` 타입의 역직렬화 과정에서 32비트 부호 없는 정수를 가져올 것임을 의미합니다(`A` 타입에 대한 매개변수 `32` 때문에)
+
+### 타입
+
+```tlb
+_ {X:Type} my_val:(## 32) next_val:X = A X;
+```
+
+`A`가 `X` 타입으로 매개변수화된다는 것을 의미합니다. 역직렬화 과정에서 32비트 부호 없는 정수를 가져온 다음
+타입 `X`의 비트&참조를 파싱할 것입니다.
+
+이러한 매개변수화된 타입의 사용 예는 다음과 같을 수 있습니다:
+
+```tlb
+_ bit:(## 1) = Bit;
+_ 32intwbit:(A Bit) = 32IntWithBit;
+```
+
+이 예제에서는 `Bit` 타입을 매개변수로 `A`에 전달합니다.
+
+타입을 정의하지 않지만 이 스키마로 역직렬화하려면 `Any` 단어를 사용할 수 있습니다:
+
+```tlb
+_ my_val:(A Any) = Example;
+```
+
+`Example` 타입을 역직렬화할 때 32비트 정수를 가져온 다음 셀의 나머지(비트&참조)를 `my_val`에 가져올 것임을 의미합니다.
+
+여러 매개변수를 가진 복잡한 타입을 만들 수 있습니다:
+
+```tlb
+_ {X:Type} {Y:Type} my_val:(## 32) next_val:X next_next_val:Y = A X Y;
+_ bit:(## 1) = Bit;
+_ a_with_two_bits:(A Bit Bit) = AWithTwoBits;
+```
+
+또한 이러한 매개변수화된 타입에 부분 적용도 할 수 있습니다:
+
+```tlb
+_ {X:Type} {Y:Type} v1:X v2:Y = A X Y;
+_ bit:(## 1) = Bit;
+_ {X:Type} bits:(A Bit X) = BitA X;
+```
+
+또는 매개변수화된 타입 자체도:
+
+```tlb
+_ {X:Type} v1:X = A X;
+_ {X:Type} d1:X = B X;
+_ {X:Type} bits:(A (B X)) = AB X;
+```
+
+### 매개변수화된 타입에 대한 NAT 필드 사용
+
+이전에 정의된 필드를 타입의 매개변수로 사용할 수 있습니다. 직렬화는 런타임에 결정됩니다.
+
+간단한 예:
+
+```tlb
+_ a:(## 8) b:(## a) = A;
+```
+
+`b` 필드의 크기를 `a` 필드 안에 저장한다는 것을 의미합니다. 따라서 타입 `A`를 직렬화하려면 `a` 필드의 8비트 부호 없는 정수를 로드하고 이 숫자를 사용하여 `b` 필드의 크기를 결정해야 합니다.
+
+이 전략은 매개변수화된 타입에서도 작동합니다:
+
+```tlb
+_ {input:#} c:(## input) = B input;
+_ a:(## 8) c_in_b:(B a) = A;
+```
+
+### 매개변수화된 타입의 표현식
+
+```tlb
+_ {x:#} value:(## x) = Example (x * 2);
+_ _:(Example 4) = 2BitInteger;
+```
+
+이 예제에서 `Example.value` 타입은 런타임에 결정됩니다.
+
+`2BitInteger` 정의에서 `Example 4` 타입을 값으로 설정합니다. 이 타입을 결정하기 위해 `Example (x * 2)` 정의를 사용하고 공식으로 `x`를 계산합니다(`y = 2`, `z = 4`):
+
+```c++
+static inline bool mul_r1(int& x, int y, int z) {
+  return y && !(z % y) && (x = z / y) >= 0;
+}
+```
+
+또한 덧셈 연산자도 사용할 수 있습니다:
+
+```tlb
+_ {x:#} value:(## x) = ExampleSum (x + 3);
+_ _:(ExampleSum 4) = 1BitInteger;
+```
+
+`1BitInteger` 정의에서 `ExampleSum 4` 타입을 값으로 설정합니다. 이 타입을 결정하기 위해 `ExampleSum (x + 3)` 정의를 사용하고 공식으로 `x`를 계산합니다(`y = 3`, `z = 4`):
+
+```c++
+static inline bool add_r1(int& x, int y, int z) {
+  return z >= y && (x = z - y) >= 0;
+}
+```
+
+## 부정 연산자(`~`)
+
+"변수"(즉, 이미 정의된 필드)의 일부 출현은 물결표(`~`)가 접두사로 붙습니다. 이는 변수의 출현이 기본 동작과 반대 방식으로 사용됨을 나타냅니다: 방정식의 왼쪽에서는 이전에 계산된 값을 대체하는 대신 이 출현을 기반으로 변수가 추론(계산)될 것임을 의미합니다; 반대로 오른쪽에서는 변수가 직렬화되는 타입에서 추론되지 않고 오히려 역직렬화 과정 중에 계산될 것임을 의미합니다. 다시 말해, 물결표는 "입력 인수"를 "출력 인수"로 변환하거나 그 반대로 변환합니다.
+
+부정 연산자의 간단한 예는 다른 변수를 기반으로 한 새 변수의 정의입니다:
+
+```tlb
+_ a:(## 32) { b:# } { ~b = a + 100 } = B_Calc_Example;
+```
+
+정의 후, 새 변수를 `Nat` 타입에 전달하는 데 사용할 수 있습니다:
+
+```tlb
+_ a:(## 8) { b:# } { ~b = a + 10 }
+  example_dynamic_var:(## b) = B_Calc_Example;
+```
+
+`example_dynamic_var`의 크기는 런타임에 계산되며, `a` 변수를 로드하고 그 값을 사용하여 `example_dynamic_var`의 크기를 결정할 때 계산됩니다.
+
+또는 다른 타입에도:
+
+```tlb
+_ {X:Type} a:^X = PutToRef X;
+_ a:(## 32) { b:# } { ~b = a + 100 }
+  my_ref: (PutToRef b) = B_Calc_Example;
+```
+
+또한 덧셈이나 곱셈 복잡한 표현식에서 부정 연산자로 변수를 정의할 수 있습니다:
+
+```tlb
+_ a:(## 32) { b:# } { ~b + 100 = a }  = B_Calc_Example;
+```
+
+```tlb
+_ a:(## 32) { b:# } { ~b * 5 = a }  = B_Calc_Example;
+```
+
+### 타입 정의에서 부정 연산자(`~`)
+
+```tlb
+_ {m:#} n:(## m) = Define ~n m;
+_ {n_from_define:#} defined_val:(Define ~n_from_define 8) real_value:(## n_from_define) = Example;
+```
+
+`Define ~n m` 클래스가 `m`을 받아서 `m` 비트 부호 없는 정수에서 로드하여 `n`을 계산한다고 가정합니다.
+
+`Example` 타입에서는 `Define` 타입에 의해 계산된 변수를 `n_from_define`에 저장하고, `Define ~n_from_define 8`을 적용했기 때문에 8비트 부호 없는 정수라는 것도 알고 있습니다. 이제 직렬화 과정을 결정하기 위해 다른 타입에서 `n_from_define` 변수를 사용할 수 있습니다.
+
+이 기법은 더 복잡한 타입 정의(예: 유니온, 해시맵)로 이어집니다.
+
+```tlb
+unary_zero$0 = Unary ~0;
+unary_succ$1 {n:#} x:(Unary ~n) = Unary ~(n + 1);
+_ u:(Unary Any) = UnaryChain;
+```
+
+이 예제는 [TL-B Types](/v3/documentation/data-formats/tlb/tl-b-types#unary) 문서에 잘 설명되어 있습니다. 주요 아이디어는 `UnaryChain`이 `unary_zero$0`에 도달할 때까지 재귀적으로 역직렬화한다는 것입니다(정의 `unary_zero$0 = Unary ~0;`에 의해 `Unary X` 타입의 마지막 요소를 알고 있고 `X`는 `Unary ~(n + 1)` 정의로 인해 런타임에 계산되기 때문입니다).
+
+참고: `x:(Unary ~n)`은 `n`이 `Unary` 클래스의 직렬화 과정에서 정의된다는 것을 의미합니다.
+
+## 특수 타입
+
+현재, TVM은 다음과 같은 셀 타입을 허용합니다:
+
+- 일반
+- PrunnedBranch
+- Library
+- MerkleProof
+- MerkleUpdate
+
+기본적으로 모든 셀은 `일반`이며, tlb에 설명된 모든 셀은 `일반`입니다.
+
+생성자에서 특수 타입의 로드를 허용하려면 생성자 앞에 `!`를 추가해야 합니다.
+
+예:
+
+```tlb
+!merkle_update#02 {X:Type} old_hash:bits256 new_hash:bits256
+  old:^X new:^X = MERKLE_UPDATE X;
+
+!merkle_proof#03 {X:Type} virtual_hash:bits256 depth:uint16 virtual_root:^X = MERKLE_PROOF X;
+```
+
+이 기법은 코드생성 코드가 구조를 출력하려고 할 때 `SPECIAL` 셀을 표시할 수 있게 하고, 특수 셀이 있는 구조를 올바르게 검증할 수 있게 합니다.
+
+## 생성자 고유성 태그 검사 없이 한 타입에 대한 여러 인스턴스
+
+타입 매개변수에만 의존하여 한 타입의 여러 인스턴스를 만들 수 있습니다.
+이러한 정의 방식에서는 생성자 태그 고유성 검사가 적용되지 않습니다.
+
+예:
+
+```tlb
+_ = A 1;
+a$01 = A 2;
+b$01 = A 3;
+_ test:# = A 4;
+```
+
+실제 태그가 `A` 타입 매개변수에 의해 결정된다는 것을 의미합니다:
+
+```python3
+# class for type `A`
+class A(TLBComplex):
+    class Tag(Enum):
+        a = 0
+        b = 1
+        cons1 = 2
+        cons4 = 3
+
+    cons_len = [2, 2, 0, 0]
+    cons_tag = [1, 1, 0, 0]
+
+    m_: int = None
+
+    def __init__(self, m: int):
+        self.m_ = m
+
+    def get_tag(self, cs: CellSlice) -> Optional["A.Tag"]:
+        tag = self.m_
+
+        if tag == 1:
+            return A.Tag.cons1
+
+        if tag == 2:
+            return A.Tag.a
+
+        if tag == 3:
+            return A.Tag.b
+
+        if tag == 4:
+            return A.Tag.cons4
+
+        return None
+```
+
+여러 매개변수에도 동일하게 적용됩니다:
+
+```tlb
+_ = A 1 1;
+a$01 = A 2 1;
+b$01 = A 3 3;
+_ test:# = A 4 2;
+```
+
+매개변수화된 타입 정의를 추가할 때 미리 정의된 타입 정의(`a`와 `b`(우리 예제에서))와 매개변수화된 타입 정의(`c`(우리 예제에서)) 사이의 태그는 고유해야 한다는 점을 기억하세요:
+
+_유효하지 않은 예:_
+
+```
+a$01 = A 2 1;
+b$11 = A 3 3;
+c$11 {X:#} {Y:#} = A X Y;
+```
+
+_유효한 예:_
+
+```tlb
+a$01 = A 2 1;
+b$01 = A 3 3;
+c$11 {X:#} {Y:#} = A X Y;
+```
+
+## 주석
+
+주석은 C++와 동일합니다
+
+```tlb
+/*
+This is
+a comment
+*/
+
+// This is one line comment
+```
+
+## 유용한 자료
+
+- [TL의 이전 버전에 대한 설명](https://core.telegram.org/mtproto/TL)
+- [block.tlb](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb)
+- [tlbc tool](https://github.com/ton-blockchain/ton/blob/master/crypto/tl/tlbc.cpp)
+- [CPP Codegen](https://github.com/ton-blockchain/ton/blob/master/crypto/tl/tlbc-gen-cpp.cpp)
+- [tonpy tlb tests](https://github.com/disintar/tonpy/blob/main/src/tonpy/tests/test_tlb.py)
+- [tonpy py codegen](https://github.com/disintar/ton/blob/master/crypto/tl/tlbc-gen-py.cpp)
+
+<hr/>
+
+문서는 [Disintar](https://dton.io/) 팀이 제공했습니다.

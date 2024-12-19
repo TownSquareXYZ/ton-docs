@@ -1,0 +1,106 @@
+# 자주 묻는 질문
+
+## MyTonCtrl 디렉토리 사용
+
+MyTonCtrl은 파일을 두 곳에 저장하는 래퍼입니다:
+
+1. `~/.local/share/mytonctrl/` - 로그와 같은 장기 파일이 여기에 저장됩니다.
+2. `/tmp/mytonctrl/` - 임시 파일이 여기에 저장됩니다.
+
+MyTonCtrl은 다음 위치에 파일을 저장하는 mytoncore라는 다른 스크립트도 포함합니다:
+
+1. `~/.local/share/mytoncore/` - 주요 설정이 저장될 영구 파일.
+2. `/tmp/mytoncore/` - 선거에 사용되는 매개변수가 저장될 임시 파일.
+
+MyTonCtrl은 자신과 validator의 소스 코드를 다음 디렉토리에 다운로드합니다:
+
+1. `/usr/src/mytonctrl/`
+2. `/usr/src/ton/`
+
+MyTonCtrl은 다음 디렉토리에 validator 구성요소를 컴파일합니다:
+
+1. `/usr/bin/ton/`
+
+MyTonCtrl은 validator를 위한 작업 디렉토리를 여기에 생성합니다:
+
+1. `/var/ton/`
+
+---
+
+## MyTonCtrl이 root로 설치된 경우
+
+설정은 다르게 저장됩니다:
+
+1. `/usr/local/bin/mytonctrl/`
+2. `/usr/local/bin/mytoncore/`
+
+---
+
+## MyTonCtrl 제거 방법
+
+관리자로 스크립트를 실행하고 컴파일된 TON 구성요소를 제거하세요:
+
+```bash
+sudo bash /usr/src/mytonctrl/scripts/uninstall.sh
+sudo rm -rf /usr/bin/ton
+```
+
+이 과정에서 이러한 파일이나 디렉토리를 삭제하거나 수정할 수 있는 충분한 권한이 있는지 확인하세요.
+
+## MyTonCtrl의 디렉토리 변경
+
+### 설치 전 Validator 작업 디렉토리 변경
+
+설치 전에 validator의 작업 디렉토리를 변경하려면 두 가지 방법이 있습니다:
+
+1. **프로젝트 포크** - 프로젝트를 포크하고 거기서 변경할 수 있습니다. `man git-fork`로 프로젝트 포크 방법을 알아보세요.
+2. **심볼릭 링크 생성** - 다음 명령으로 심볼릭 링크를 생성할 수도 있습니다:
+
+   ````
+   ```bash
+   ln -s /opt/ton/var/ton
+   ```
+   ````
+
+   이 명령은 `/opt/ton`을 가리키는 `/var/ton` 링크를 생성합니다.
+
+### 설치 후 Validator 작업 디렉토리 변경
+
+설치 후에 validator의 작업 디렉토리를 `/var/ton/`에서 변경하려면 다음 단계를 수행하세요:
+
+1. **서비스 중지** - 다음 명령으로 서비스를 중지해야 합니다:
+
+   ```bash
+   systemctl stop validator.service
+   systemctl stop mytoncore.service
+   ```
+
+2. **validator 파일 이동** - 다음 명령으로 validator 파일을 이동해야 합니다:
+
+   ```bash
+   mv /var/ton/* /opt/ton/
+   ```
+
+3. **설정 경로 업데이트** - `~/.local/share/mytoncore/mytoncore.db`에 있는 설정의 경로를 교체하세요.
+
+4. **경험에 대한 참고** - 이러한 이전에 대한 사전 경험이 없으므로 진행할 때 이를 고려하세요.
+
+이러한 변경을 하거나 명령을 실행할 수 있는 충분한 권한이 있는지 확인하세요.
+
+## MyTonCtrl에서 Validator 상태 이해 및 Validator 재시작
+
+이 문서는 MyTonCtrl이 전체 validator가 되었는지 확인하는 방법과 validator를 재시작하는 방법을 이해하는 데 도움이 될 것입니다.
+
+## Validator 재시작
+
+validator를 재시작해야 하는 경우 다음 명령을 실행하여 수행할 수 있습니다:
+
+```bash
+systemctl restart validator.service
+```
+
+이러한 명령을 실행할 충분한 권한이 있는지 확인하고 필요한 조정을 하세요. validator에 영향을 미칠 수 있는 작업을 수행하기 전에 항상 중요한 데이터를 백업하는 것을 잊지 마세요.
+
+## 참고 자료
+
+- [문제 해결](/v3/guidelines/nodes/nodes-troubleshooting)
