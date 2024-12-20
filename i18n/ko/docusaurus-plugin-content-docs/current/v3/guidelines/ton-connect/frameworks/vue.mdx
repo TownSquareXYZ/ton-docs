@@ -1,0 +1,488 @@
+# TON Connect for Vue
+
+Vue 앱을 위한 권장 SDK는 [UI Vue SDK](/v3/guidelines/ton-connect/guidelines/developers#ton-connect-vue)입니다. TON Connect와 상호작용하기 위한 고수준 Vue 컴포넌트를 제공합니다.
+
+## 구현
+
+### 설치
+
+TON Connect를 DApp에 통합하기 위해 `@townsquarelabs/ui-vue` 패키지를 설치해야 합니다:
+
+```bash npm2yarn
+npm i @townsquarelabs/ui-vue
+```
+
+### TON Connect 초기화
+
+앱의 루트에 TonConnectUIProvider를 추가하세요. props를 통해 UI 옵션을 지정할 수 있습니다.
+
+<!-- [See all available options](https://github.com/TownSquareXYZ/tonconnect-ui-vue/blob/aa7439073dae5f7ccda3ab10291fc4658f5d3588/src/utils/UIProvider.ts#L11) -->
+
+모든 TonConnect UI 훅 호출과 `<TonConnectButton />` 컴포넌트는 `<TonConnectUIProvider>` 내부에 위치해야 합니다.
+
+```html
+<template>
+  <TonConnectUIProvider :options="options">
+    <!-- Your app -->
+  </TonConnectUIProvider>
+</template>
+
+<script>
+import { TonConnectUIProvider } from '@townsquarelabs/ui-vue';
+
+export default {
+  components: {
+    TonConnectUIProvider
+  },
+  setup(){
+    const options = {
+      manifestUrl:"https://<YOUR_APP_URL>/tonconnect-manifest.json",
+    };
+    return {
+      options
+    }
+  }
+}
+</script>
+```
+
+### 지갑 연결
+
+TonConnect Button은 연결을 초기화하기 위한 범용 UI 컴포넌트입니다. 지갑이 연결되면 지갑 메뉴로 변환됩니다.
+앱의 우측 상단에 배치하는 것을 권장합니다.
+
+```html
+<template>
+  <header>
+    <span>My App with Vue UI</span>
+    <TonConnectButton/>
+  </header>
+</template>
+
+<script>
+import { TonConnectButton } from '@townsquarelabs/ui-vue';
+
+export default {
+  components: {
+    TonConnectButton
+  }
+}
+</script>
+```
+
+`class`와 `:style` props를 버튼에 추가할 수 있습니다. TonConnectButton에는 자식 요소를 전달할 수 없습니다.
+`<TonConnectButton class="my-button-class" :style="{ float: 'right' }"/>`
+
+### 리다이렉트
+
+지갑 연결 후 특정 페이지로 사용자를 리다이렉트하려면 `useTonConnectUI` 훅을 사용하고 [리턴 전략을 커스터마이즈](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-the-return-strategy)할 수 있습니다.
+
+#### 텔레그램 미니 앱
+
+지갑 연결 후 [텔레그램 미니 앱](/v3/guidelines/dapps/tma/overview)으로 사용자를 리다이렉트하려면 `TonConnectUIProvider` 요소를 커스터마이즈할 수 있습니다:
+
+```html
+<template>
+  <TonConnectUIProvider :options="options">
+    <!-- Your app -->
+  </TonConnectUIProvider>
+</template>
+
+<script>
+import { TonConnectUIProvider } from '@townsquarelabs/ui-vue';
+
+export default {
+  components: {
+    TonConnectUIProvider,
+  },
+  setup() {
+    const options = {
+      actionsConfiguration: { twaReturnUrl: 'https://t.me/<YOUR_APP_NAME>' },
+    };
+    return {
+      options,
+    };
+  },
+};
+</script>
+```
+
+[SDK 문서에서 자세히 알아보기](https://github.com/ton-connect/sdk/tree/main/packages/ui#use-inside-twa-telegram-web-app)
+
+### UI 커스터마이즈
+
+모달의 [UI를 커스터마이즈](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)하려면 `useTonConnectUI` 훅과 `setOptions` 함수를 사용할 수 있습니다. useTonConnectUI 훅에 대해 자세히 알아보려면 [Hooks](#usetonconnectui) 섹션을 참조하세요.
+
+## 훅
+
+### useTonAddress
+
+현재 사용자의 ton 지갑 주소를 가져오는 데 사용합니다. isUserFriendly 불리언 매개변수를 전달하여 주소 형식을 선택할 수 있습니다. 지갑이 연결되지 않은 경우 빈 문자열을 반환합니다.
+
+```html
+<template>
+  <div v-if="address">
+    <span>User-friendly address: {{ userFriendlyAddress }}</span>
+    <span>Raw address: {{ rawAddress }}</span>
+  </div>
+</template>
+
+<script>
+import { useTonAddress } from '@townsquarelabs/ui-vue';
+
+export default {
+  setup() {
+    const userFriendlyAddress = useTonAddress();
+    const rawAddress = useTonAddress(false);
+
+    return {
+      userFriendlyAddress,
+      rawAddress
+    }
+  }
+}
+</script>
+```
+
+### useTonWallet
+
+현재 사용자의 ton 지갑을 가져오는 데 사용합니다. 지갑이 연결되지 않은 경우 null을 반환합니다.
+
+지갑의 모든 속성을 확인하세요.
+
+<!-- [Wallet interface](https://ton-connect.github.io/sdk/interfaces/_tonconnect_sdk.Wallet.html) -->
+
+<!-- [WalletInfo interface](https://ton-connect.github.io/sdk/types/_tonconnect_sdk.WalletInfo.html) -->
+
+```html
+<template>
+  <div v-if="wallet">
+    <span>Connected wallet: {{ wallet.name }}</span>
+    <span>Device: {{ wallet.device.appName }}</span>
+  </div>
+</template>
+
+<script>
+import { useTonWallet } from '@townsquarelabs/ui-vue';
+
+export default {
+  setup() {
+    const wallet = useTonWallet();
+
+    return {
+      wallet
+    }
+  }
+
+}
+</script>
+```
+
+### useTonConnectModal
+
+모달 창을 열고 닫는 기능에 접근하는 데 이 훅을 사용합니다. 이 훅은 현재 모달 상태와 모달을 열고 닫는 메서드가 포함된 객체를 반환합니다.
+
+```html
+<template>
+  <div>
+    <div>Modal state: {{ state?.status }}</div>
+    <button @click="open">Open modal</button>
+    <button @click="close">Close modal</button>
+  </div>
+</template>
+
+<script>
+import { useTonConnectModal } from '@townsquarelabs/ui-vue';
+
+export default {
+  setup() {
+    const { state, open, close } = useTonConnectModal();
+    return { state, open, close };
+  }
+};
+</script>
+```
+
+### useTonConnectUI
+
+`TonConnectUI` 인스턴스와 UI 옵션 업데이트 함수에 접근하는 데 사용합니다.
+
+[TonConnectUI 인스턴스 메서드에 대해 자세히 알아보기](https://github.com/ton-connect/sdk/tree/main/packages/ui#send-transaction)
+
+[setOptions 함수에 대해 자세히 알아보기](https://github.com/ton-connect/sdk/tree/main/packages/ui#change-options-if-needed)
+
+```html
+<template>
+  <div>
+    <button @click="sendTransaction">Send transaction</button>
+    <div>
+      <label>language</label>
+      <select @change="onLanguageChange($event.target.value)">
+        <option value="en">en</option>
+        <option value="ru">ru</option>
+        <option value="zh">zh</option>
+      </select>
+    </div>
+  </div>
+</template>
+
+<script>
+import { Locales, useTonConnectUI } from '@townsquarelabs/ui-vue';
+
+export default {
+  name: 'Settings',
+  setup() {
+    const [tonConnectUI, setOptions] = useTonConnectUI();
+
+    const onLanguageChange = (lang) => {
+      setOptions({ language: lang as Locales });
+    };
+
+    const myTransaction = {
+      validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
+      messages: [
+        {
+          address: "EQBBJBB3HagsujBqVfqeDUPJ0kXjgTPLWPFFffuNXNiJL0aA",
+          amount: "20000000",
+          // stateInit: "base64bocblahblahblah==" // just for instance. Replace with your transaction initState or remove
+        },
+        {
+          address: "EQDmnxDMhId6v1Ofg_h5KR5coWlFG6e86Ro3pc7Tq4CA0-Jn",
+          amount: "60000000",
+          // payload: "base64bocblahblahblah==" // just for instance. Replace with your transaction payload or remove
+        }
+      ]
+    }
+
+    const sendTransaction = () => {
+      tonConnectUI.sendTransaction(myTransaction);
+    };
+
+    return { onLanguageChange, sendTransaction };
+  }
+};
+</script>
+```
+
+### useIsConnectionRestored
+
+연결 복원 프로세스의 현재 상태를 나타냅니다.
+연결 복원 프로세스가 완료되었는지 감지하는 데 사용할 수 있습니다.
+
+```html
+<template>
+  <div>
+    <div v-if="!connectionRestored">Please wait...</div>
+    <MainPage v-else />
+  </div>
+</template>
+
+<script>
+import { useIsConnectionRestored } from '@townsquarelabs/ui-vue';
+
+export default {
+  name: 'EntrypointPage',
+  setup() {
+    const connectionRestored = useIsConnectionRestored();
+    return { connectionRestored };
+  }
+};
+</script>
+```
+
+## 사용법
+
+Vue UI SDK를 실제로 어떻게 사용하는지 살펴보겠습니다.
+
+### 트랜잭션 전송
+
+특정 주소로 TON 코인(나노톤 단위)을 전송:
+
+```html
+<template>
+  <div>
+    <button @click="sendTransaction">Send transaction</button>
+  </div>
+</template>
+
+<script>
+import { useTonConnectUI } from '@townsquarelabs/ui-vue';
+
+export default {
+  name: 'Settings',
+  setup() {
+    const [tonConnectUI, setOptions] = useTonConnectUI();
+
+
+    const myTransaction = {
+      validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
+      messages: [
+        {
+          address: "EQBBJBB3HagsujBqVfqeDUPJ0kXjgTPLWPFFffuNXNiJL0aA",
+          amount: "20000000",
+          // stateInit: "base64bocblahblahblah==" // just for instance. Replace with your transaction initState or remove
+        },
+        {
+          address: "EQDmnxDMhId6v1Ofg_h5KR5coWlFG6e86Ro3pc7Tq4CA0-Jn",
+          amount: "60000000",
+          // payload: "base64bocblahblahblah==" // just for instance. Replace with your transaction payload or remove
+        }
+      ]
+    }
+
+    const sendTransaction = () => {
+      tonConnectUI.sendTransaction(myTransaction);
+    };
+
+    return { sendTransaction };
+  }
+};
+</script>
+```
+
+### 해시로 트랜잭션 상태 이해하기
+
+Payment Processing(tonweb 사용)에 있는 원칙입니다. [자세히 알아보기](/v3/guidelines/dapps/asset-processing/payments-processing#check-contracts-transactions)
+
+### 연결 요청 매개변수 추가(ton_proof)
+
+:::tip
+메시지 서명 및 확인 방법 이해하기: [서명 및 확인](/v3/guidelines/ton-connect/guidelines/verifying-signed-in-users)
+:::
+
+`tonConnectUI.setConnectRequestParameters` 함수를 사용하여 연결 요청 매개변수를 전달합니다.
+
+이 함수는 하나의 매개변수를 받습니다:
+
+백엔드에서 응답을 기다리는 동안 상태를 'loading'으로 설정합니다. 이 때 사용자가 지갑 연결 모달을 열면 로더가 표시됩니다.
+
+```ts
+import { ref } from 'vue';
+import { useTonConnectUI } from '@townsquarelabs/ui-vue';
+
+const tonConnectUI = useTonConnectUI();
+
+tonConnectUI.setConnectRequestParameters({
+    state: 'loading'
+});
+```
+
+또는
+
+상태를 'ready'로 설정하고 `tonProof` 값을 정의합니다. 전달된 매개변수는 연결 요청(QR 및 범용 링크)에 적용됩니다.
+
+```ts
+import { ref } from 'vue';
+import { useTonConnectUI } from '@townsquarelabs/ui-vue';
+
+const tonConnectUI = useTonConnectUI();
+
+tonConnectUI.setConnectRequestParameters({
+    state: 'ready',
+    value: {
+        tonProof: '<your-proof-payload>'
+    }
+});
+```
+
+또는
+
+`state: 'loading'`을 통해 활성화된 로더를 제거합니다(예: 백엔드에서 응답 대신 오류를 받은 경우). 연결 요청은 추가 매개변수 없이 생성됩니다.
+
+```ts
+import { ref } from 'vue';
+import { useTonConnectUI } from '@townsquarelabs/ui-vue';
+
+const tonConnectUI = useTonConnectUI();
+
+tonConnectUI.setConnectRequestParameters(null);
+```
+
+tonProof 페이로드의 수명이 제한된 경우 `tonConnectUI.setConnectRequestParameters`를 여러 번 호출할 수 있습니다(예: 10분마다 연결 요청 매개변수를 새로 고침할 수 있습니다).
+
+```ts
+import { ref } from 'vue';
+import { useTonConnectUI } from '@townsquarelabs/ui-vue';
+
+const tonConnectUI = useTonConnectUI();
+
+// enable ui loader
+tonConnectUI.setConnectRequestParameters({ state: 'loading' });
+
+// fetch you tonProofPayload from the backend
+const tonProofPayload: string | null = await fetchTonProofPayloadFromBackend();
+
+if (!tonProofPayload) {
+    // remove loader, connect request will be without any additional parameters
+    tonConnectUI.setConnectRequestParameters(null);
+} else {
+    // add tonProof to the connect request
+    tonConnectUI.setConnectRequestParameters({
+        state: "ready",
+        value: { tonProof: tonProofPayload }
+    });
+}
+
+```
+
+지갑이 연결되면 `wallet` 객체에서 `ton_proof` 결과를 찾을 수 있습니다:
+
+```ts
+import { ref, onMounted } from 'vue';
+import { useTonConnectUI } from '@townsquarelabs/ui-vue';
+
+const tonConnectUI = useTonConnectUI();
+
+onMounted(() =>
+    tonConnectUI.onStatusChange(wallet => {
+        if (wallet.connectItems?.tonProof && 'proof' in wallet.connectItems.tonProof) {
+            checkProofInYourBackend(wallet.connectItems.tonProof.proof, wallet.account);
+        }
+}));
+```
+
+### 지갑 연결 해제
+
+지갑 연결을 해제하려면:
+
+```js
+import { useTonConnectUI } from '@townsquarelabs/ui-vue';
+
+const [tonConnectUI] = useTonConnectUI();
+
+await tonConnectUI.disconnect();
+```
+
+## 문제 해결
+
+### 애니메이션이 작동하지 않는 경우
+
+환경에서 애니메이션이 작동하지 않는 문제가 발생하는 경우 Web Animations API 지원이 부족하기 때문일 수 있습니다. 이 문제를 해결하려면 `web-animations-js` 폴리필을 사용할 수 있습니다.
+
+#### npm 사용
+
+폴리필을 설치하려면 다음 명령을 실행하세요:
+
+```shell
+npm install web-animations-js
+```
+
+그런 다음 프로젝트에 폴리필을 가져오세요:
+
+```typescript
+import 'web-animations-js';
+```
+
+#### CDN 사용
+
+또는 HTML에 다음 스크립트 태그를 추가하여 CDN을 통해 폴리필을 포함할 수 있습니다:
+
+```html
+<script src="https://www.unpkg.com/web-animations-js@latest/web-animations.min.js"></script>
+```
+
+두 방법 모두 Web Animations API의 폴백 구현을 제공하므로 발생하는 애니메이션 문제를 해결할 수 있습니다.
+
+## 예제
+
+- [데모 dApp](https://github.com/TownSquareXYZ/demo-dapp-with-vue-ui) - `@townsquarelabs/ui-vue`를 사용한 DApp 예제.

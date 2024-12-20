@@ -1,0 +1,157 @@
+import Button from '@site/src/components/button'
+
+# Огляд
+
+Для програмування смарт-контрактів на TON використовується мова високого рівня FunC.
+
+FunC - це специфічна для домену C-подібна мова зі статичною типізацією.
+Ось простий приклад методу для переказу грошей, написаний на FunC:
+
+```func
+() send_money(slice address, int amount) impure inline {
+    var msg = begin_cell()
+        .store_uint(0x10, 6) ;; nobounce
+        .store_slice(address)
+        .store_coins(amount)
+        .end_cell();
+
+    send_raw_message(msg, 64);
+}
+```
+
+FunC програми компілюються в асемблерний код Fift, який генерує відповідний байт-код для [TON Virtual Machine] (/learn/tvm-instructions/tvm-overview).
+
+Далі цей байт-код (фактично [дерево комірок] (/learn/overviews/cells), як і будь-які інші дані в TON Blockchain) може бути використаний для створення смарт-контрактів в блокчейні або може бути запущений на локальному екземплярі TVM.
+
+```mdx-code-block
+<Button href="/develop/func/cookbook" colorType={'primary'} sizeType={'sm'}>
+```
+
+Кулінарна книга FunC
+
+```mdx-code-block
+</Button>
+```
+
+```mdx-code-block
+<Button href="/develop/func/types" colorType={'secondary'} sizeType={'sm'}>
+```
+
+Документація FunC
+
+```mdx-code-block
+</Button>
+```
+
+## Компілятор
+
+### Компіляція з JS
+
+Найзручніший і найшвидший спосіб почати розробляти і компілювати смарт-контракти - це використовувати фреймворк Blueprint. Детальніше читайте в розділі [Blueprint](/develop/smart-contracts/sdk/javascript).
+
+```bash
+npm create ton@latest
+```
+
+### Компіляція з оригінальними двійковими файлами
+
+Якщо ви хочете використовувати рідний TON-компілятор FunC локально, вам потрібно встановити двійкові файли на вашому комп'ютері. Двійкові файли компілятора FunC для Windows, MacOS (Intel/M1) та Ubuntu можна завантажити за посиланням:
+
+- [Сторінка налаштування середовища](/develop/smart-contracts/environment/installation)
+
+:::info
+У той же час, ви завжди можете створити двійкові файли з таких джерел, як:\
+[Вихідний код компілятора FunC](https://github.com/ton-blockchain/ton/tree/master/crypto/func) (читайте [як скомпілювати](/develop/howto/compile#func) компілятор FunC з вихідних текстів).
+:::
+
+## Курс TON: FunC
+
+Курс [TON Blockchain Course] (https://stepik.org/course/176754/) - це вичерпний посібник з розробки TON Blockchain.
+
+Модуль 4 повністю присвячений мові FunC та розробці смарт-контрактів.
+
+```mdx-code-block
+<Button href="https://stepik.org/course/176754/promo" 
+        colorType={'primary'} sizeType={'sm'}>
+```
+
+Перевірте курс TON Blockchain
+
+```mdx-code-block
+</Button>
+```
+
+```mdx-code-block
+<Button href="https://stepik.org/course/201638/promo" 
+        colorType={'secondary'} sizeType={'sm'}>
+```
+
+CHN
+
+```mdx-code-block
+</Button>
+```
+
+```mdx-code-block
+<Button href="https://stepik.org/course/201855/promo" 
+        colorType={'secondary'} sizeType={'sm'}>
+```
+
+RU
+
+```mdx-code-block
+</Button>
+```
+
+## Навчальні посібники
+
+:::tip наконечник стартера
+Найкраще почати розробку з використанням FunC: [ВСТУП](/develop/smart-contracts/)
+:::
+
+Інші матеріали люб'язно надані експертами спільноти:
+
+- [Серія TON Speed Run](https://tonspeedrun.com/)
+  - [🚩 Виклик 1: Просте розгортання NFT] (https://github.com/romanovichim/TONQuest1)
+  - [🚩 Виклик 2: Контракт з чат-ботом] (https://github.com/romanovichim/TONQuest2)
+  - [🚩 Виклик 3: Торговий автомат Jetton] (https://github.com/romanovichim/TONQuest3)
+  - [🚩 Виклик 4: Лотерея/розіграш] (https://github.com/romanovichim/TONQuest4)
+  - [🚩 Виклик 5: Створіть UI для взаємодії з договором за 5 хвилин] (https://github.com/romanovichim/TONQuest5)
+  - [🚩 Виклик 6: Аналіз продажів NFT на маркетплейсі Getgems] (https://github.com/romanovichim/TONQuest6)
+
+<!---->
+
+- [Func & Blueprint](https://www.youtube.com/watch?v=7omBDfSqGfA&list=PLtUBO1QNEKwtO_zSyLj-axPzc9O9rkmYa) by **@MarcoDaTr0p0je**
+- [Learn FunC in Y Minutes](https://learnxinyminutes.com/docs/func/) by **@romanovichim**
+- [TON Hello World: Покрокове керівництво для написання вашого першого смарт-контракту] (https://ton-community.github.io/tutorials/02-contract/)
+- [TON Hello World: Покрокове керівництво для тестування вашого першого смарт-контракту] (https://ton-community.github.io/tutorials/04-testing/)
+- [10 FunC уроків](https://github.com/romanovichim/TonFunClessons_Eng) від **@romanovichim**, з використанням blueprint
+- [10 уроків FunC (RU)](https://github.com/romanovichim/TonFunClessons_ru) by **@romanovichim**, using blueprint
+- [FunC Quiz](https://t.me/toncontests/60) від **Vadim** - добре підходить для самоперевірки. Займе 10-15 хвилин. Питання переважно про FunС з кількома загальними питаннями про TON
+- [FunC Quiz (RU)](https://t.me/toncontests/58?comment=14888) by **Vadim**-FunC Quiz російською мовою
+
+## Конкурси
+
+Участь у [конкурсах](https://t.me/toncontests) - чудовий спосіб вивчити FunC.
+
+Ви також можете вивчити попередні конкурси з навчальною метою.
+
+#### Конкурси Спадщина
+
+| Опис конкурсу               | Завдання                                                                                                       | Рішення                                                                                                                           |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| TSC #5 (грудень, 2023)      | [Завдання](https://github.com/ton-community/tsc5)                                                              |                                                                                                                                   |
+| TSC #4 (вересень, 2023)     | [Завдання](https://github.com/ton-community/tsc4)                                                              | [Рішення](/develop/smart-contracts/examples#ton-smart-challenge-4)                                                                |
+| TSC #3 (грудень, 2022)      | [Завдання](https://github.com/ton-blockchain/func-contest3)                                                    | [Рішення] (https://github.com/nns2009/TON-FunC-contest-3)                                                                         |
+| TSC #2 (липень, 2022)       | [Завдання](https://github.com/ton-blockchain/func-contest2)                                                    | [Рішення] (https://github.com/ton-blockchain/func-contest2-solutions)                                                             |
+| TSC #1 (березень, 2022)     | [Завдання](https://github.com/ton-blockchain/func-contest1)                                                    | [Рішення] (https://github.com/ton-blockchain/func-contest1-solutions)                                                             |
+
+## Приклади смарт-контрактів
+
+Стандартні базові смарт-контракти, такі як гаманці, електорат (управляє валідацією на TON), гаманці з декількома підписами і т.д., можуть бути орієнтиром при вивченні.
+
+- [Приклади смарт-контрактів](/develop/smart-contracts/examples)
+
+## Журнал змін
+
+[Історія оновлень funC](/develop/func/changelog).

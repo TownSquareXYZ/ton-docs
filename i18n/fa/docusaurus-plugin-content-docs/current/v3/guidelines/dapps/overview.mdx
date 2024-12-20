@@ -1,0 +1,134 @@
+import Button from '@site/src/components/button'
+
+# شروع به کار
+
+قبل از ورود به DAppها، مطمئن شوید که اصول ابتدایی بلاکچین را درک می‌کنید. شما ممکن است مقالات [The Open Network](/v3/concepts/dive-into-ton/introduction) و [بلاکچینی از بلاکچین‌ها](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains) ما را مفید بیابید.
+
+TON DApps برنامه‌های بدون بک‌اند هستند که با بلاکچین تعامل دارند. در اکثر موارد، آن‌ها با [قراردادهای هوشمند](/v3/documentation/smart-contracts/overview) سفارشی تعامل دارند؛ این مستندات روش‌هایی برای پردازش دارایی‌های استاندارد موجود در TON را ارائه می‌دهد، هم به عنوان نمونه و هم برای توسعه سریع‌تر DAppها مفید است.
+
+DApps معمولاً می‌توانند به هر زبان برنامه‌نویسی که برای TON SDK وجود دارد نوشته شوند. در واقع، گزینه متداول یک وب‌سایت است و با مینی-اپ های تلگرام دنبال میشود.
+
+<Button href="/v3/guidelines/dapps/tma/overview" colorType={'primary'} sizeType={'sm'}>
+
+ساخت TMA
+
+</Button>
+
+<Button href="/v3/guidelines/dapps/apis-sdks/sdk" colorType="secondary" sizeType={'sm'}>
+
+انتخاب یک SDK
+
+</Button>
+
+## دوره TON: برنامه های غیرمتمرکز (DApps)
+
+:::tip
+قبل از شروع دوره، مطمئن شوید که درک خوبی از اصول پایه فناوری بلاکچین دارید. اگر در دانش خود ضعفی میبینید، ما توصیه می‌کنیم دوره [اصول پایه بلاکچین با TON](https://stepik.org/course/201294/promo) ([نسخه RU](https://stepik.org/course/202221/)، [نسخه CHN](https://stepik.org/course/200976/)) را بگذرانید.
+ماژول <b>۳</b> شامل دانش پایه درباره Dapp است.
+:::
+
+[دوره بلاکچین TON](https://stepik.org/course/176754/) راهنمای کاملی برای توسعه بلاکچین TON است.
+
+ماژول <b>۵</b> و <b>۶</b> به طور کامل توسعه DApps را پوشش می‌دهند. شما یاد خواهید گرفت که چگونه یک DApp بسازید، چگونه با TON Connect کار کنید، چگونه از SDKها استفاده کنید و چگونه با بلاکچین تعامل کنید.
+
+<Button href="https://stepik.org/course/176754/promo"
+        colorType={'primary'} sizeType={'sm'}>
+
+بررسی دوره بلاکچین TON
+
+</Button>
+
+<Button href="https://stepik.org/course/201638/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+چینی
+
+</Button>
+
+<Button href="https://stepik.org/course/201855/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+روسی
+
+</Button>
+
+## ابزارها و منابع پایه
+
+اینجا منابع کلیدی هستند که در طول مسیر توسعه DApp خود به آن‌ها نیاز خواهید داشت:
+
+1. [کیف پول‌های توسعه‌دهنده](/v3/concepts/dive-into-ton/ton-ecosystem/wallet-apps)
+2. [اکسپلوررهای بلاکچین](/v3/concepts/dive-into-ton/ton-ecosystem/explorers-in-ton)
+3. [مستندات API](/v3/guidelines/dapps/apis-sdks/api-types)
+4. [SDKها برای زبان‌های مختلف](/v3/guidelines/dapps/apis-sdks/sdk)
+5. [استفاده از Testnet](/v3/documentation/smart-contracts/getting-started/testnet)
+6. [TON Unfreezer](https://unfreezer.ton.org/)
+
+### مدیریت دارایی‌ها
+
+آیا با دارایی‌ها کار می‌کنید؟ این راهنماها اصول را پوشش می‌دهند:
+
+- [فرآیند پرداخت‌ها](/v3/guidelines/dapps/asset-processing/payments-processing)
+- [پردازش ژتون (Jetton)](/v3/guidelines/dapps/asset-processing/jettons)
+- [پردازش NFTها](/v3/guidelines/dapps/asset-processing/nft-processing/nfts)
+- [تحلیل متادیتا](/v3/guidelines/dapps/asset-processing/nft-processing/metadata-parsing)
+
+### آشنایی با DeFi
+
+به امور مالی غیرمتمرکز (DeFi) علاقه‌مندید؟ اینجا نحوه مدیریت انواع مختلف دارایی‌ها است:
+
+- [درک Toncoin](/v3/documentation/dapps/defi/coins)
+- [توکن‌ها: ژتون ها و NFTها](/v3/documentation/dapps/defi/tokens)
+- [پرداخت‌های TON](/v3/documentation/dapps/defi/ton-payments)
+- [راه‌اندازی اشتراک‌ها](/v3/documentation/dapps/defi/subscriptions)
+
+## آموزش‌ها و مثال‌ها
+
+### اصول DeFi
+
+- اولین Token خود را بسازید: [اولین Jetton خود را ضرب کنید](/v3/guidelines/dapps/tutorials/mint-your-first-token)
+- گام به گام: [راهنمای ساخت کلکسیون NFT](/v3/guidelines/dapps/tutorials/nft-minting-guide)
+
+### راهنمایی‌های خاص زبان
+
+#### JavaScript
+
+- [فرآیند پرداخت](https://github.com/toncenter/examples)
+- [TON Bridge](https://github.com/ton-blockchain/bridge)
+- [کیف پول وب](https://github.com/toncenter/ton-wallet)
+- [ربات فروش پیراشکی](/v3/guidelines/dapps/tutorials/telegram-bot-examples/accept-payments-in-a-telegram-bot-js)
+
+#### Python
+
+- [پروژه‌های نمونه](https://github.com/psylopunk/pytonlib/tree/main/examples)
+- [ربات ویترین فروشگاهی](/v3/guidelines/dapps/tutorials/telegram-bot-examples/accept-payments-in-a-telegram-bot)
+
+#### Go
+
+- [مثال‌ها](https://github.com/xssnick/tonutils-go/tree/master/example)
+
+### موضوعات پیشرفته
+
+- [اثبات‌های بدون دانش](/v3/guidelines/dapps/tutorials/zero-knowledge-proofs)
+
+### نمونه‌های کیف پول
+
+- [کیف پول استاندارد دسکتاپ (C++ و Qt)](https://github.com/ton-blockchain/wallet-desktop)
+- [کیف پول استاندارد اندروید (Java)](https://github.com/ton-blockchain/wallet-android)
+- [کیف پول استاندارد iOS (Swift)](https://github.com/ton-blockchain/wallet-ios)
+- [TonLib CLI (C++)](https://github.com/ton-blockchain/ton/blob/master/tonlib/tonlib/tonlib-cli.cpp)
+
+## 👨‍💻 مشارکت
+
+برخی متریال اساسی فراموش شده؟ شما می‌توانید خودتان یک آموزش بنویسید یا مشکل را برای اجتماع توصیف کنید.
+
+<Button href="/v3/contribute/participate" colorType="primary" sizeType={'sm'}>
+
+مشارکت
+
+</Button>
+
+<Button href="https://github.com/ton-community/ton-docs/issues/new?assignees=&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A&template=suggest_tutorial.yaml&title=Suggest+a+tutorial" colorType={'secondary'} sizeType={'sm'}>
+
+پیشنهاد یک آموزش
+
+</Button>
