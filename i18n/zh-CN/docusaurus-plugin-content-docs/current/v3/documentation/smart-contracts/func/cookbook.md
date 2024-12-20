@@ -13,19 +13,19 @@
 int flag = 0; ;; false
 
 if (flag) { 
-    ;; 做一些事情
+    ;; do something
 }
 else {
-    ;; 拒绝交易
+    ;; reject the transaction
 }
 ```
 
 > 💡 注意
-> 
+>
 > 我们不需要使用 `==` 操作符，因为 `0` 的值是 `false`，所以任何其他值都将是 `true`。
 
 > 💡 有用的链接
->  
+>
 > [文档中的“If statement”](/develop/func/statements#if-statements)
 
 ### 如何编写 repeat 循环
@@ -44,7 +44,7 @@ repeat(degree - 1) {
 ```
 
 > 💡 有用的链接
-> 
+>
 > [文档中的“Repeat loop”](/develop/func/statements#repeat-loop)
 
 ### 如何编写 while 循环
@@ -52,24 +52,24 @@ repeat(degree - 1) {
 当我们不知道要执行特定操作多少次时，while 循环很有用。例如，取一个 `cell`，我们知道它可以存储最多四个对其他 cell 的引用。
 
 ```func
-cell inner_cell = begin_cell() ;; 创建一个新的空构建器
-        .store_uint(123, 16) ;; 存储值为 123 且长度为 16 位的 uint
-        .end_cell(); ;; 将构建器转换为 cell
+cell inner_cell = begin_cell() ;; create a new empty builder
+        .store_uint(123, 16) ;; store uint with value 123 and length 16 bits
+        .end_cell(); ;; convert builder to a cell
 
 cell message = begin_cell()
-        .store_ref(inner_cell) ;; 将 cell 作为引用存储
+        .store_ref(inner_cell) ;; store cell as reference
         .store_ref(inner_cell)
         .end_cell();
 
-slice msg = message.begin_parse(); ;; 将 cell 转换为 slice
-while (msg.slice_refs_empty?() != -1) { ;; 我们应该记住 -1 是 true
-    cell inner_cell = msg~load_ref(); ;; 从 slice msg 中加载 cell
-    ;; 做一些事情
+slice msg = message.begin_parse(); ;; convert cell to slice
+while (msg.slice_refs_empty?() != -1) { ;; we should remind that -1 is true
+    cell inner_cell = msg~load_ref(); ;; load cell from slice msg
+    ;; do something
 }
 ```
 
 > 💡 有用的链接
-> 
+>
 > [文档中的“While loop”](/develop/func/statements#while-loop)
 >
 > [文档中的“Cell”](/learn/overviews/cells)
@@ -77,27 +77,27 @@ while (msg.slice_refs_empty?() != -1) { ;; 我们应该记住 -1 是 true
 > [文档中的“slice_refs_empty?()”](/develop/func/stdlib#slice_refs_empty)
 >
 > [文档中的“store_ref()”](/develop/func/stdlib#store_ref)
-> 
+>
 > [文档中的“begin_cell()”](/develop/func/stdlib#begin_cell)
-> 
+>
 > [文档中的“end_cell()”](/develop/func/stdlib#end_cell)
-> 
+>
 > [文档中的“begin_parse()”](/develop/func/stdlib#begin_parse)
 
 ### 如何编写 do until 循环
 
 当我们需要循环至少运行一次时，我们使用 `do until`。
 
-```func 
+```func
 int flag = 0;
 
 do {
-    ;; 即使 flag 是 false (0) 也做一些事情
-} until (flag == -1); ;; -1 是 true
+    ;; do something even flag is false (0) 
+} until (flag == -1); ;; -1 is true
 ```
 
 > 💡 有用的链接
-> 
+>
 > [文档中的“Until loop”](/develop/func/statements#until-loop)
 
 ### 如何确定 slice 是否为空
@@ -105,140 +105,140 @@ do {
 在处理 `slice` 之前，需要检查它是否有数据以便正确处理。我们可以使用 `slice_empty?()` 来做到这一点，但我们必须考虑到，如果有至少一个 `bit` 的数据或一个 `ref`，它将返回 `-1`（`true`）。
 
 ```func
-;; 创建空 slice
+;; creating empty slice
 slice empty_slice = "";
-;; `slice_empty?()` 返回 `true`，因为 slice 没有任何 `bits` 和 `refs`
+;; `slice_empty?()` returns `true`, because slice doesn't have any `bits` and `refs`
 empty_slice.slice_empty?();
 
-;; 创建仅包含 bits 的 slice
+;; creating slice which contains bits only
 slice slice_with_bits_only = "Hello, world!";
-;; `slice_empty?()` 返回 `false`，因为 slice 有 `bits`
+;; `slice_empty?()` returns `false`, because slice have any `bits`
 slice_with_bits_only.slice_empty?();
 
-;; 创建仅包含 refs 的 slice
+;; creating slice which contains refs only
 slice slice_with_refs_only = begin_cell()
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_empty?()` 返回 `false`，因为 slice 有 `refs`
+;; `slice_empty?()` returns `false`, because slice have any `refs`
 slice_with_refs_only.slice_empty?();
 
-;; 创建包含 bits 和 refs 的 slice
+;; creating slice which contains bits and refs
 slice slice_with_bits_and_refs = begin_cell()
     .store_slice("Hello, world!")
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_empty?()` 返回 `false`，因为 slice 有 `bits` 和 `refs`
+;; `slice_empty?()` returns `false`, because slice have any `bits` and `refs`
 slice_with_bits_and_refs.slice_empty?();
 ```
+
 > 💡 有用的链接
 >
 > [文档中的“slice_empty?()”](/develop/func/stdlib#slice_empty)
-> 
+>
 > [文档中的“store_slice()”](/develop/func/stdlib#store_slice)
-> 
+>
 > [文档中的“store_ref()”](/develop/func/stdlib#store_ref)
-> 
+>
 > [文档中的“begin_cell()”](/develop/func/stdlib#begin_cell)
-> 
+>
 > [文档中的“end_cell()”](/develop/func/stdlib#end_cell)
-> 
+>
 > [文档中的“begin_parse()”](/develop/func/stdlib#begin_parse)
-
 
 ### 如何确定 slice 是否为空（不含任何 bits，但可能包含 refs）
 
 如果我们只需要检查 `bits`，不关心 `slice` 中是否有任何 `refs`，那么我们应该使用 `slice_data_empty?()`。
 
-```func 
-;; 创建空 slice
+```func
+;; creating empty slice
 slice empty_slice = "";
-;; `slice_data_empty?()` 返回 `true`，因为 slice 没有任何 `bits`
+;; `slice_data_empty?()` returns `true`, because slice doesn't have any `bits`
 empty_slice.slice_data_empty?();
 
-;; 创建仅包含 bits 的 slice
+;; creating slice which contains bits only
 slice slice_with_bits_only = "Hello, world!";
-;; `slice_data_empty?()` 返回 `false`，因为 slice 有 `bits`
+;; `slice_data_empty?()` returns `false`, because slice have any `bits`
 slice_with_bits_only.slice_data_empty?();
 
-;; 创建仅包含 refs 的 slice
+;; creating slice which contains refs only
 slice slice_with_refs_only = begin_cell()
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_data_empty?()` 返回 `true`，因为 slice 没有 `bits`
+;; `slice_data_empty?()` returns `true`, because slice doesn't have any `bits`
 slice_with_refs_only.slice_data_empty?();
 
-;; 创建包含 bits 和 refs 的 slice
+;; creating slice which contains bits and refs
 slice slice_with_bits_and_refs = begin_cell()
     .store_slice("Hello, world!")
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_data_empty?()` 返回 `false`，因为 slice 有 `bits`
+;; `slice_data_empty?()` returns `false`, because slice have any `bits`
 slice_with_bits_and_refs.slice_data_empty?();
 ```
 
 > 💡 有用的链接
 >
 > [文档中的“slice_data_empty?()”](/develop/func/stdlib#slice_data_empty)
-> 
+>
 > [文档中的“store_slice()”](/develop/func/stdlib#store_slice)
-> 
+>
 > [文档中的“store_ref()”](/develop/func/stdlib#store_ref)
-> 
+>
 > [文档中的“begin_cell()”](/develop/func/stdlib#begin_cell)
-> 
+>
 > [文档中的“end_cell()”](/develop/func/stdlib#end_cell)
-> 
+>
 > [文档中的“begin_parse()”](/develop/func/stdlib#begin_parse)
 
 ### 如何确定 slice 是否为空（没有任何 refs，但可能有 bits）
 
 如果我们只对 `refs` 感兴趣，我们应该使用 `slice_refs_empty?()` 来检查它们的存在。
 
-```func 
-;; 创建空 slice
+```func
+;; creating empty slice
 slice empty_slice = "";
-;; `slice_refs_empty?()` 返回 `true`，因为 slice 没有任何 `refs`
+;; `slice_refs_empty?()` returns `true`, because slice doesn't have any `refs`
 empty_slice.slice_refs_empty?();
 
-;; 创建只包含 bits 的 slice
+;; creating slice which contains bits only
 slice slice_with_bits_only = "Hello, world!";
-;; `slice_refs_empty?()` 返回 `true`，因为 slice 没有任何 `refs`
+;; `slice_refs_empty?()` returns `true`, because slice doesn't have any `refs`
 slice_with_bits_only.slice_refs_empty?();
 
-;; 创建只包含 refs 的 slice
+;; creating slice which contains refs only
 slice slice_with_refs_only = begin_cell()
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_refs_empty?()` 返回 `false`，因为 slice 有 `refs`
+;; `slice_refs_empty?()` returns `false`, because slice have any `refs`
 slice_with_refs_only.slice_refs_empty?();
 
-;; 创建包含 bits 和 refs 的 slice
+;; creating slice which contains bits and refs
 slice slice_with_bits_and_refs = begin_cell()
     .store_slice("Hello, world!")
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_refs_empty?()` 返回 `false`，因为 slice 有 `refs`
+;; `slice_refs_empty?()` returns `false`, because slice have any `refs`
 slice_with_bits_and_refs.slice_refs_empty?();
 ```
 
 > 💡 有用的链接
-> 
+>
 > [文档中的“slice_refs_empty?()”](/develop/func/stdlib#slice_refs_empty)
-> 
+>
 > [文档中的“store_slice()”](/develop/func/stdlib#store_slice)
-> 
+>
 > [文档中的“store_ref()”](/develop/func/stdlib#store_ref)
-> 
+>
 > [文档中的“begin_cell()”](/develop/func/stdlib#begin_cell)
-> 
+>
 > [文档中的“end_cell()”](/develop/func/stdlib#end_cell)
-> 
+>
 > [文档中的“begin_parse()”](/develop/func/stdlib#begin_parse)
 
 ### 如何确定 cell 是否为空
@@ -251,15 +251,15 @@ cell cell_with_bits_and_refs = begin_cell()
     .store_ref(null())
     .end_cell();
 
-;; 将 `cell` 类型更改为 slice，使用 `begin_parse()`
+;; Change `cell` type to slice with `begin_parse()`
 slice cs = cell_with_bits_and_refs.begin_parse();
 
-;; 确定 slice 是否为空
+;; determine if slice is empty
 if (cs.slice_empty?()) {
-    ;; cell 为空
+    ;; cell is empty
 }
 else {
-    ;; cell 不为空
+    ;; cell is not empty
 }
 ```
 
@@ -284,11 +284,11 @@ cell d = new_dict();
 d~udict_set(256, 0, "hello");
 d~udict_set(256, 1, "world");
 
-if (d.dict_empty?()) { ;; 确定 dict 是否为空
-    ;; dict 为空
+if (d.dict_empty?()) { ;; Determine if dict is empty
+    ;; dict is empty
 }
 else {
-    ;; dict 不为空
+    ;; dict is not empty
 }
 ```
 
@@ -300,14 +300,12 @@ else {
 >
 > [文档中的“dict_set()”](/develop/
 
-func/stdlib/#dict_set) 为 dict d 添加一些元素，所以它不为空
-
 ### 如何确定 tuple 是否为空
 
-在处理 `tuples` 时，始终知道内部是否有值以供提取是很重要的。如果我们尝试从空的 `tuple` 中提取值，将会得到一个错误：“not a tuple of valid size”，exit code 7。
+在处理 `tuple` 时，重要的是始终知道里面是否有任何值可供提取。如果我们试图从一个空的 "元组 "中提取值，就会出现错误：不是有效大小的元组"，并显示 "退出代码 7"。
 
 ```func
-;; 声明 tlen 函数，因为它在 stdlib 中没有提供
+;; Declare tlen function because it's not presented in stdlib
 (int) tlen (tuple t) asm "TLEN";
 
 () main () {
@@ -316,98 +314,103 @@ func/stdlib/#dict_set) 为 dict d 添加一些元素，所以它不为空
     t~tpush(37);
 
     if (t.tlen() == 0) {
-        ;; tuple 为空
+        ;; tuple is empty
     }
     else {
-        ;; tuple 不为空
+        ;; tuple is not empty
     }
 }
 ```
 
+> 💡 Noted
+>
+> 我们正在声明 tlen 汇编函数。你可以在 [此处](/v3/documentation/smart-contracts/func/docs/functions#assembler-function-body-definition) 和 [list of all assembler commands](/v3/documentation/tvm/instructions) 阅读更多内容。
+
 > 💡 注意
-> 
+>
 > 我们声明了 tlen 汇编函数。你可以在[这里](/develop/func/functions#assembler-function-body-definition)阅读更多，并查看[所有汇编指令列表](/learn/tvm-instructions/instructions)。
+>
+> 文档中的["tpush()"](/v3/documentation/smart-contracts/func/docs/stdlib/#tpush)
+>
+> [文档中的 "退出代码"](/v3/documentation/tvm/tvm-exit-codes)
 
-> 💡 有用的链接
->
-> [文档中的“empty_tuple?()”](/develop/func/stdlib#empty_tuple)
->
-> [文档中的“tpush()”](/develop/func/stdlib/#tpush)
->
-> [文档中的“Exit codes”](/learn/tvm-instructions/tvm-exit-codes)
-
-### 如何确定 Lisp 类型的列表是否为空
+### 如何判断 lisp 风格列表是否为空
 
 ```func
 tuple numbers = null();
 numbers = cons(100, numbers);
 
 if (numbers.null?()) {
-    ;; Lisp 类型的列表为空
+    ;; list-style list is empty
 } else {
-    ;; Lisp 类型的列表不为空
+    ;; list-style list is not empty
 }
 ```
 
-我们使用 [cons](/develop/func/stdlib/#cons) 函数将数字 100 添加到我们的 Lisp 类型列表中，所以它不为空。
+我们使用 [cons](/v3/documentation/smart-contracts/func/docs/stdlib/#cons)函数将数字 100 添加到列表样式的列表中，因此它不是空的。
 
-### 如何确定合约的状态是否为空
+### 如何确定合约状态为空
 
-假设我们有一个 `counter`，用于存储交易次数。在智能合约状态的第一次交易中，这个变量不可用，因为状态为空，因此需要处理这种情况。如果状态为空，我们创建一个变量 `counter` 并保存它。
+假设我们有一个存储交易数量的 `counter`。在智能合约状态下的第一笔交易中，这个变量是不可用的，因为状态是空的，所以有必要处理这种情况。如果状态为空，我们就创建一个变量 `counter` 并保存它。
 
 ```func
-;; `get_data()` 将从合约状态返回数据 cell
+;; `get_data()` will return the data cell from contract state
 cell contract_data = get_data();
 slice cs = contract_data.begin_parse();
 
 if (cs.slice_empty?()) {
-    ;; 合约数据为空，所以我们创建 counter 并保存
+    ;; contract data is empty, so we create counter and save it
     int counter = 1;
-    ;; 创建 cell，添加 counter 并保存在合约状态中
+    ;; create cell, add counter and save in contract state
     set_data(begin_cell().store_uint(counter, 32).end_cell());
 }
 else {
-    ;; 合约数据不为空，所以我们获取我们的 counter，增加它并保存
-    ;; 我们应该指定 counter 的正确的位长度
+    ;; contract data is not empty, so we get our counter, increase it and save
+    ;; we should specify correct length of our counter in bits
     int counter = cs~load_uint(32) + 1;
     set_data(begin_cell().store_uint(counter, 32).end_cell());
 }
 ```
 
+> 💡 Noted
+>
+> 我们可以通过判断 [cell is empty](/v3/documentation/smart-contracts/func/cookbook#how-to-determine-if-cell-is-empty) 来确定合约状态为空。
+
 > 💡 注意
-> 
+>
 > 我们可以通过确定 [cell 是否为空](/develop/func/cookbook#how-to-determine-if-cell-is-empty) 来确定合约的状态是否为空。
+>
+> 文档中的["begin_parse()"](/v3/documentation/smart-contracts/func/docs/stdlib/#begin_parse)
+>
+> 文档中的 ["slice_empty?()"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_empty)
+>
+> 文档中的 ["set_data?()"](/v3/documentation/smart-contracts/func/docs/stdlib#set_data)
 
-> 💡 有用的链接
->
-> [文档中的“get_data()”](/develop/func/stdlib#get_data)
->
-> [文档中的“begin_parse()”](/develop/func/stdlib/#begin_parse)
->
-> [文档中的“slice_empty?()”](/develop/func/stdlib/#slice_empty)
->
-> [文档中的“set_data?()”](/develop/func/stdlib#set_data)
+### 如何建立内部信息 cell
 
-### 如何构建内部消息 cell
-
-如果我们希望合约发送一个内部消息，我们应该首先正确地创建它为一个 cell，指定技术标志位、接收地址和其余数据。
+如果我们想让合约发送内部邮件，首先应将其创建为 cell ，并指定技术标志、收件人地址和其他数据。
 
 ```func
-;; 我们使用字面量 `a` 从包含地址的字符串中获取有效地址的 slice
+;; We use literal `a` to get valid address inside slice from string containing address 
 slice addr = "EQArzP5prfRJtDM5WrMNWyr9yUTAi0c9o6PfR4hkWy9UQXHx"a;
 int amount = 1000000000;
-;; 我们使用 `op` 来识别操作
+;; we use `op` for identifying operations
 int op = 0;
+
 cell msg = begin_cell()
     .store_uint(0x18, 6)
     .store_slice(addr)
     .store_coins(amount)
-    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; 默认消息 header 部（参见发送消息页面）
+    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; default message headers (see sending messages page)
     .store_uint(op, 32)
 .end_cell();
 
-send_raw_message(msg, 3); ;; 模式 3 - 分别支付费用并忽略错误
+send_raw_message(msg, 3); ;; mode 3 - pay fees separately and ignore errors 
 ```
+
+> 💡 Noted
+>
+> 在本例中，我们使用字面量 `a` 来获取地址。有关字符串字面量的更多信息，请参阅 [docs](/v3/documentation/smart-contracts/func/docs/literals_identifiers#string-literals)
 
 > 💡 注意
 >
@@ -416,33 +419,29 @@ send_raw_message(msg, 3); ;; 模式 3 - 分别支付费用并忽略错误
 > 💡 注意
 >
 > 你可以在[文档](/develop/smart-contracts/messages)中找到更多信息。也可以通过这个链接跳转到[布局](/develop/smart-contracts/messages#message-layout)。
+>
+> [文档中的 "store_uint() "](/v3/documentation/smart-contracts/func/docs/stdlib#store_uint)
+>
+> [文档中的 "store_slice() "](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
+>
+> [文档中的 "store_coins()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_coins)
+>
+> [文档中的 "end_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib/#end_cell)
+>
+> [文档中的 "send_raw_message() "](/v3/documentation/smart-contracts/func/docs/stdlib/#send_raw_message)
 
-> 💡 有用的链接
->
-> [文档中的“begin_cell()”](/develop/func/stdlib#begin_cell)
-> 
-> [文档中的“store_uint()”](/develop/func/stdlib#store_uint)
->
-> [文档中的“store_slice()”](/develop/func/stdlib#store_slice)
->
-> [文档中的“store_coins()”](/develop/func/stdlib#store_coins)
->
-> [文档中的“end_cell()”](/develop/func/stdlib/#end_cell)
->
-> [文档中的“send_raw_message()”](/develop/func/stdlib/#send_raw_message)
+### 如何将正文作为内部报文 cell 的 ref 来包含
 
-### 如何在内部消息 cell 中包含 body 作为 ref
+在标志和其他技术数据之后的报文正文中，我们可以发送 `int`, `slice` 和 `cell`。对于后者，有必要在 `store_ref()` 之前将位设置为 `1`，以表示 `cell` 将继续。
 
 在跟着标志位和其他技术数据的消息体中，我们可以发送 `int`、`slice` 和 `cell`。在后者的情况下，在 `store_ref()` 之前必须将位设置为 `1`，以表明 `cell` 将继续传输。
 
-如果我们确信有足够的空间，我们也可以在与 header 相同的 `cell` 中发送消息体。在这种情况下，我们需要将位设置为 `0`。
-
 ```func
-;; 我们使用字面量 `a` 从包含地址的字符串中获取有效地址的 slice 
+;; We use literal `a` to get valid address inside slice from string containing address 
 slice addr = "EQArzP5prfRJtDM5WrMNWyr9yUTAi0c9o6PfR4hkWy9UQXHx"a;
 int amount = 1000000000;
 int op = 0;
-cell message_body = begin_cell() ;; 创建包含消息的 cell
+cell message_body = begin_cell() ;; Creating a cell with message
     .store_uint(op, 32)
     .store_slice("❤")
 .end_cell();
@@ -451,13 +450,17 @@ cell msg = begin_cell()
     .store_uint(0x18, 6)
     .store_slice(addr)
     .store_coins(amount)
-    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1) ;; 默认消息 header 部（参见发送消息页面）
-    .store_uint(1, 1) ;; 设置位为 1，表明 cell 将继续传输
+    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1) ;; default message headers (see sending messages page)
+    .store_uint(1, 1) ;; set bit to 1 to indicate that the cell will go on
     .store_ref(message_body)
 .end_cell();
 
-send_raw_message(msg, 3); ;; mode 3 - 分别支付费用并忽略错误 
+send_raw_message(msg, 3); ;; mode 3 - pay fees separately and ignore errors 
 ```
+
+> 💡 Noted
+>
+> 在本例中，我们使用字面量 `a` 来获取地址。有关字符串字面量的更多信息，请参阅 [docs](/v3/documentation/smart-contracts/func/docs/literals_identifiers#string-literals)
 
 > 💡 注意
 >
@@ -470,27 +473,23 @@ send_raw_message(msg, 3); ;; mode 3 - 分别支付费用并忽略错误
 > 💡 注意
 >
 > 我们正在[构建消息](/develop/func/cookbook#how-to-build-an-internal-message-cell)，但单独添加消息体。
+>
+> [文档中的 "store_uint() "](/v3/documentation/smart-contracts/func/docs/stdlib#store_uint)
+>
+> [文档中的 "store_slice() "](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
+>
+> [文档中的 "store_coins()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_coins)
+>
+> [文档中的 "end_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib/#end_cell)
+>
+> [文档中的 "send_raw_message() "](/v3/documentation/smart-contracts/func/docs/stdlib/#send_raw_message)
 
-> 💡 有用的链接
->
-> [文档中的“begin_cell()”](/develop/func/stdlib#begin_cell)
-> 
-> [文档中的“store_uint()”](/develop/func/stdlib#store_uint)
->
-> [文档中的“store_slice()”](/develop/func/stdlib#store_slice)
->
-> [文档中的“store_coins()”](/develop/func/stdlib#store_coins)
->
-> [文档中的“end_cell()”](/develop/func/stdlib/#end_cell)
->
-> [文档中的“send_raw_message()”](/develop/func/stdlib/#send_raw_message)
+### 如何将正文作为片段包含在内部报文 cell 中
 
-### 如何在内部消息 cell 中包含 body 作为 slice
+发送信息时，信息正文可以作为 `cell` 或 `slice` 发送。在本例中，我们在 `slice` 内发送正文信息。
 
-发送消息时，消息体可以作为 `cell` 或 `slice` 发送。在这个例子中，我们将消息体放在 `slice` 内部发送。
-
-```func 
-;; 我们使用字面量 `a` 从包含地址的字符串中获取有效地址的 slice 
+```func
+;; We use literal `a` to get valid address inside slice from string containing address 
 slice addr = "EQArzP5prfRJtDM5WrMNWyr9yUTAi0c9o6PfR4hkWy9UQXHx"a;
 int amount = 1000000000;
 int op = 0;
@@ -500,15 +499,17 @@ cell msg = begin_cell()
     .store_uint(0x18, 6)
     .store_slice(addr)
     .store_coins(amount)
-    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; 默认消息 header 部（参见发送消息页面）
+    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; default message headers (see sending messages page)
     .store_uint(op, 32)
     .store_slice(message_body)
 .end_cell();
 
-send_raw_message(msg, 3); ;;
-
- mode 3 - 分别支付费用并忽略错误 
+send_raw_message(msg, 3); ;; mode 3 - pay fees separately and ignore errors 
 ```
+
+> 💡 Noted
+>
+> 在本例中，我们使用字面量 `a` 来获取地址。有关字符串字面量的更多信息，请参阅 [docs](/v3/documentation/smart-contracts/func/docs/literals_identifiers#string-literals)
 
 > 💡 注意
 >
@@ -518,13 +519,9 @@ send_raw_message(msg, 3); ;;
 >
 > 在这个例子中，我们使用 mode 3 接收进来的 tons 并发送确切的指定金额（amount），同时从合约余额中支付佣金并忽略错误。mode 64 用于返回所有接收到的 tons，扣除佣金，mode 128 将发送整个余额。
 
-> 💡 注意
->
-> 我们正在[构建消息](/develop/func/cookbook#how-to-build-an-internal-message-cell)，但将消息作为 slice 添加。
-
 ### 如何迭代 tuples（双向）
 
-如果我们想在 FunC 中处理数组或栈，那么 tuple 是必需的。首先我们需要能够迭代值来处理它们。
+如果我们想在 FunC 中处理数组或堆栈，那么 tuple 就是必要的。首先，我们需要能够遍历值来处理它们。
 
 ```func
 (int) tlen (tuple t) asm "TLEN";
@@ -537,54 +534,57 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
     int i = 0;
     while (i < len) {
         int x = t.at(i);
-        ;; 使用 x 做一些事情
+        ;; do something with x
         i = i + 1;
     }
 
     i = len - 1;
     while (i >= 0) {
         int x = t.at(i);
-        ;; 使用 x 做一些事情
+        ;; do something with x
         i = i - 1;
     }
 }
 ```
 
-> 💡 注意
+> 💡 Noted
 >
-> 我们声明了 `tlen` 汇编函数。你可以在[这里](/develop/func/functions#assembler-function-body-definition)阅读更多，并查看[所有汇编指令列表](/learn/tvm-instructions/instructions)。
+> 我们正在声明 `tlen` 汇编函数。您可以 [在此](/v3/documentation/smart-contracts/func/docs/functions#assembler-function-body-definition) 阅读更多内容，也可以查看 [所有汇编命令列表](/v3/documentation/tvm/instructions)。
 >
-> 我们还声明了 `to_tuple` 函数。它只是改变任何输入的数据类型为 tuple，因此在使用时要小心。
+> 我们还声明了 `to_tuple` 函数。它只是将任何输入的数据类型更改为元组，因此使用时要小心。
 
 ### 如何使用 `asm` 关键字编写自己的函数
 
+在使用任何功能时，我们实际上使用的是 `stdlib.fc` 内为我们预先准备好的方法。但事实上，我们还有更多的机会，我们需要学会自己编写。
+
 当使用任何功能时，实际上我们使用的是为我们预先准备好的 `stdlib.fc` 中的方法。但事实上，我们有更多的机会可以使用，我们需要学会自己编写它们。
 
-例如，我们有 `tpush` 方法，它可以向 `tuple` 中添加元素，但没有 `tpop`。在这种情况下，我们应该这样做：
 ```func
-;; ~ 表示它是修改方法
+;; ~ means it is modifying method
 forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP"; 
 ```
 
-如果我们想知道 `tuple` 的长度以进行迭代，我们应该使用 `TLEN` 汇编指令编写一个新函数：
+如果我们想知道用于迭代的 "元组 "的长度，则应使用 `TLEN` asm 指令编写一个新函数：
+
 ```func
 int tuple_length (tuple t) asm "TLEN";
 ```
 
-stdlib.fc 中我们已知的一些函数示例：
+一些我们已经从 stdlib.fc 中了解到的函数示例：
+
 ```func
 slice begin_parse(cell c) asm "CTOS";
 builder begin_cell() asm "NEWC";
 cell end_cell(builder b) asm "ENDC";
 ```
 
-> 💡 有用的链接：
+> 💡 Useful links:
 >
-> [文档中的“modifying method”](/develop/func/statements#modifying-methods)
+> [文档中的 "修改方法"](/v3/documentation/smart-contracts/func/docs/statements#modifying-methods)
 >
-> [文档中的“stdlib”](/develop/func/stdlib)
+> [文档中的 "stdlib"](/v3/documentation/smart-contracts/func/docs/stdlib)
 >
-> [文档中的“TVM instructions”](/learn/tvm-instructions/instructions)
+> [文档中的 "TVM 说明"](/v3/documentation/tvm/instructions)
 
 ### 迭代嵌套的 n 个 tuples
 
@@ -594,13 +594,11 @@ cell end_cell(builder b) asm "ENDC";
 int tuple_length (tuple t) asm "TLEN";
 forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP";
 forall X -> int is_tuple (X x) asm "ISTUPLE";
-forall X -> tuple cast_to_tuple (X x)
-
- asm "NOP";
+forall X -> tuple cast_to_tuple (X x) asm "NOP";
 forall X -> int cast_to_int (X x) asm "NOP";
 forall X -> (tuple) to_tuple (X x) asm "NOP";
 
-;; 定义全局变量
+;; define global variable
 global int max_value;
 
 () iterate_tuple (tuple t) impure {
@@ -621,19 +619,19 @@ global int max_value;
 () main () {
     tuple t = to_tuple([[2,6], [1, [3, [3, 5]]], 3]);
     int len = t.tuple_length();
-    max_value = 0; ;; 重置 max_value;
-    iterate_tuple(t); ;; 迭代 tuple 并找到最大值
+    max_value = 0; ;; reset max_value;
+    iterate_tuple(t); ;; iterate tuple and find max value
     ~dump(max_value); ;; 6
 }
 ```
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> [文档中的“Global variables”](/develop/func/global_variables)
+> [文档中的 "全局变量"](/v3/documentation/smart-contracts/func/docs/global_variables)
 >
-> [文档中的“~dump”](/develop/func/builtins#dump-variable)
+> [文档中的"~dump"](/v3/documentation/smart-contracts/func/docs/builtins#dump-variable)
 >
-> [文档中的“TVM instructions”](/learn/tvm-instructions/instructions) 
+> [文档中的 "TVM 说明"](/v3/documentation/tvm/instructions)
 
 ### 基本的 tuple 操作
 
@@ -642,32 +640,32 @@ global int max_value;
 forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP";
 
 () main () {
-    ;; 创建一个空的 tuple
+    ;; creating an empty tuple
     tuple names = empty_tuple(); 
     
-    ;; 添加新项目
+    ;; push new items
     names~tpush("Naito Narihira");
     names~tpush("Shiraki Shinichi");
     names~tpush("Akamatsu Hachemon");
     names~tpush("Takaki Yuichi");
     
-    ;; 弹出最后一项
+    ;; pop last item
     slice last_name = names~tpop();
 
-    ;; 获取第一项
+    ;; get first item
     slice first_name = names.first();
 
-    ;; 按索引获取项
+    ;; get an item by index
     slice best_name = names.at(2);
 
-    ;; 获取列表长度
+    ;; getting the length of the list 
     int number_names = names.tlen();
 }
 ```
 
-### 解析类型 X
+### 解决 X 类问题
 
-下面的示例检查 tuple 中是否包含某个值，但 tuple 包含值 X（cell, slice, int, tuple, int）。我们需要检查值并相应地转换。
+下面的示例检查元组中是否包含某些值，但元组包含值 X（ cell 、slice、int、tuple、int）。我们需要检查值并进行相应的转换。
 
 ```func
 forall X -> int is_null (X x) asm "ISNULL";
@@ -682,45 +680,44 @@ forall X -> tuple cast_to_tuple (X x) asm "NOP";
 forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP";
 
 forall X -> () resolve_type (X value) impure {
-    ;; value 是类型 X，由于我们不知道确切的值是什么 - 我们需要检查值然后转换它
+    ;; value here is of type X, since we dont know what is the exact value - we would need to check what is the value and then cast it
     
     if (is_null(value)) {
-        ;; 对 null 做一些事情
+        ;; do something with the null
     }
     elseif (is_int(value)) {
         int valueAsInt = cast_to_int(value);
-        ;; 对 int 做一些事情
+        ;; do something with the int
     }
     elseif (is_slice(value)) {
         slice valueAsSlice = cast_to_slice(value);
-        ;; 对 slice 做一些事情
+        ;; do something with the slice
     }
     elseif (is_cell(value)) {
         cell valueAsCell = cast_to_cell(value);
-        ;; 对 cell 做一些事情
+        ;; do something with the cell
     }
     elseif (is_tuple(value)) {
         tuple valueAsTuple = cast_to_tuple(value);
-        ;; 对 tuple 做一些事情
+        ;; do something with the tuple
     }
 }
 
 () main () {
-    ;; 创建一个空的 tuple
+    ;; creating an empty tuple
     tuple stack = empty_tuple();
-    ;; 假设我们有一个 tuple 并且不知道它们的确切类型
+    ;; let's say we have tuple and do not know the exact types of them
     stack~tpush("Some text");
     stack~tpush(4);
-    ;; 我们使用 var 因为我们不知道值的类型
+    ;; we use var because we do not know type of value
     var value = stack~tpop();
     resolve_type(value);
 }
 ```
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> [文档中的“TVM 指令”](/learn/tvm-instructions/instructions) 
-
+> [文档中的 "TVM 说明"](/v3/documentation/tvm/instructions)
 
 ### 如何获取当前时间
 
@@ -728,36 +725,36 @@ forall X -> () resolve_type (X value) impure {
 int current_time = now();
   
 if (current_time > 1672080143) {
-    ;; 做一些事情 
+    ;; do some stuff 
 }
 ```
 
 ### 如何生成随机数
 
-:::caution 草稿
-请注意，这种生成随机数的方法不安全。
+:::caution 草案
 
-待办事项：添加关于生成随机数的文章链接
+更多信息请查阅 [随机数生成](/v3/guidelines/smart-contracts/security/random-number-generation)。
 :::
 
 ```func
-randomize_lt(); ;; 只需做一次
+randomize_lt(); ;; do this once
 
 int a = rand(10);
 int b = rand(1000000);
 int c = random();
 ```
 
-### 模运算
+### 模数运算
 
-例如，假设我们想对所有 256 个数字运行以下计算：`(xp + zp)*(xp-zp)`。由于这些操作大多用于密码学，在下面的示例中，我们使用模运算符进行蒙哥马利曲线(montogomery curves)。注意 xp+zp 是一个有效的变量名（没有空格）。
+例如，我们要对所有 256 个数字进行如下计算：`(xp + zp)*(xp-zp)` 。由于这些运算大多用于密码学，因此在下面的示例中，我们将使用蒙托哥马利曲线的模运算符。
+请注意，xp+zp 是一个有效的变量名（中间没有空格）。
 
 ```func
 (int) modulo_operations (int xp, int zp) {  
-   ;; 2^255 - 19 是蒙哥马利曲线的素数，意味着所有操作都应该对其素数进行
+   ;; 2^255 - 19 is a prime number for montgomery curves, meaning all operations should be done against its prime
    int prime = 57896044618658097711785492504343953926634992332820282019728792003956564819949; 
 
-   ;; muldivmod 自身处理以下两行
+   ;; muldivmod handles the next two lines itself
    ;; int xp+zp = (xp + zp) % prime;
    ;; int xp-zp = (xp - zp + prime) % prime;
    (_, int xp+zp*xp-zp) = muldivmod(xp + zp, xp - zp, prime);
@@ -765,28 +762,27 @@ int c = random();
 }
 ```
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> [文档中的“muldivmod”](/learn/tvm-instructions/instructions#52-division)
-
+> [文档中的 "muldivmod"](/v3/documentation/tvm/instructions#A98C)
 
 ### 如何抛出错误
 
 ```func
 int number = 198;
 
-throw_if(35, number > 50); ;; 只有当数字大于 50 时才会触发错误
+throw_if(35, number > 50); ;; the error will be triggered only if the number is greater than 50
 
-throw_unless(39, number == 198); ;; 只有当数字不等于 198 时才会触发错误
+throw_unless(39, number == 198); ;; the error will be triggered only if the number is NOT EQUAL to 198
 
-throw(36); ;; 无论如何都会触发错误
+throw(36); ;; the error will be triggered anyway
 ```
 
-[标准 TVM 异常代码](/learn/tvm-instructions/tvm-exit-codes.md)
+[标准 tvm 异常代码](/v3/documentation/tvm/tvm-exit-codes)
 
 ### 反转 tuples
 
-因为 tuple 以堆栈的方式存储数据，有时我们必须反转 tuple 以从另一端读取数据。
+由于 tuple 以堆栈的形式存储数据，有时我们必须反转 tuple 才能从另一端读取数据。
 
 ```func
 forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP";
@@ -809,12 +805,11 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 }
 ```
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> [文档中的“tpush()”](/develop/func/stdlib/#tpush)
+> 文档中的["tpush()"](/v3/documentation/smart-contracts/func/docs/stdlib/#tpush)
 
-
-### 如何从列表中移除特定索引的项
+### 如何从列表中删除具有特定索引的项目
 
 ```func
 int tlen (tuple t) asm "TLEN";
@@ -846,10 +841,11 @@ int tlen (tuple t) asm "TLEN";
 
     ~dump(numbers); ;; [19 54]
 }
+```
 
-### 判断切片是否相等
+### 确定 slice 是否相等
 
-我们有两种不同的方法可以判断切片是否相等。一种是基于切片哈希，另一种则是使用 SDEQ 汇编指令。
+我们有两种不同的方法来确定相等性。一种是基于 slice 散列，另一种是使用 SDEQ asm 指令。
 
 ```func
 int are_slices_equal_1? (slice a, slice b) {
@@ -864,20 +860,20 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
     ~dump(are_slices_equal_1?(a, b)); ;; -1 = true
 
     a = "Text";
-    ;; 我们使用字面量 `a` 来从包含地址的字符串中获取切片的有效地址
+    ;; We use literal `a` to get valid address inside slice from string containing address
     b = "EQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPrHF"a;
     ~dump(are_slices_equal_2?(a, b)); ;; 0 = false
 }
 ```
 
-#### 💡 有用的链接
+#### 判断cell是否相等
 
- * ["slice_hash()" in docs](/develop/func/stdlib/#slice_hash)
- * ["SDEQ" in docs](/learn/tvm-instructions/instructions#62-other-comparison)
+- 文档中的["slice_hash()"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_hash)
+- [文档中的 "SDEQ"](/v3/documentation/tvm/instructions#C705)
 
-### 判断cell是否相等
+### 确定 cell 是否相等
 
-我们可以根据它们的哈希轻松确定cell的相等性。
+我们可以根据哈希值轻松确定 cell 是否相等。
 
 ```func
 int are_cells_equal? (cell a, cell b) {
@@ -897,13 +893,13 @@ int are_cells_equal? (cell a, cell b) {
 }
 ```
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> ["cell_hash()" in docs](/develop/func/stdlib/#cell_hash)
+> docs 中的["cell_hash()"](/v3/documentation/smart-contracts/func/docs/stdlib/#cell_hash)
 
-### 判断元组是否相等
+### 确定 tuples 是否相等
 
-一个更高级的示例是迭代并比较每个元组的值。由于它们是 X，我们需要检查并转换为相应的类型，并且如果它是元组，则递归地迭代它。
+更高级的示例是遍历和比较每个 tuple 值。由于它们都是 X，因此我们需要检查并转换为相应的类型，如果是tuple，则进行递归遍历。
 
 ```func
 int tuple_length (tuple t) asm "TLEN";
@@ -924,10 +920,10 @@ int are_cells_equal? (cell a, cell b) {
 }
 
 (int) are_tuples_equal? (tuple t1, tuple t2) {
-    int equal? = -1; ;; 初始值为 true
+    int equal? = -1; ;; initial value to true
     
     if (t1.tuple_length() != t2.tuple_length()) {
-        ;; 如果元组长度不同，它们就不能相等
+        ;; if tuples are differ in length they cannot be equal
         return 0;
     }
 
@@ -942,9 +938,7 @@ int are_cells_equal? (cell a, cell b) {
         }
         elseif (is_int(v1) & is_int(v2)) {
             if (cast_to_int(v1) != cast_to_int(v2)) {
-               
-
- equal? = 0;
+                equal? = 0;
             }
         }
         elseif (is_slice(v1) & is_slice(v2)) {
@@ -958,7 +952,7 @@ int are_cells_equal? (cell a, cell b) {
             }
         }
         elseif (is_tuple(v1) & is_tuple(v2)) {
-            ;; 递归地判断嵌套元组
+            ;; recursively determine nested tuples
             if (~ are_tuples_equal?(cast_to_tuple(v1), cast_to_tuple(v2))) {
                 equal? = 0;
             }
@@ -981,15 +975,15 @@ int are_cells_equal? (cell a, cell b) {
 }
 ```
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> ["cell_hash()" in docs](/develop/func/stdlib/#cell_hash)
+> docs 中的["cell_hash()"](/v3/documentation/smart-contracts/func/docs/stdlib/#cell_hash)
 >
-> ["TVM instructions" in docs](/learn/tvm-instructions/instructions)
+> [文档中的 "TVM 说明"](/v3/documentation/tvm/instructions)
 
 ### 生成内部地址
 
-当我们的合约需要部署新合约但不知道其地址时，我们需要生成一个内部地址。假设我们已经有了 `state_init` - 新合约的代码和数据。
+当我们的合约需要部署一个新合约，但不知道他的地址时，我们需要生成一个内部地址。假设我们已经有了 `state_init` - 新合约的代码和数据。
 
 为相应的 MsgAddressInt TLB 创建内部地址。
 
@@ -1011,17 +1005,17 @@ int are_cells_equal? (cell a, cell b) {
 }
 ```
 
-> 💡 注意
-> 
-> 在这个示例中，我们使用 `workchain()` 来获取工作链 ID。你可以在[文档](/learn/overviews/addresses#workchain-id)中找到更多关于工作链 ID 的信息。
-
-> 💡 有用的链接
+> 💡 Noted
 >
-> ["cell_hash()" in docs](/develop/func/stdlib/#cell_hash)
+> 在本例中，我们使用 `workchain()` 获取工作链的 ID。有关工作链 ID 的更多信息，请参阅 [docs](/v3/documentation/smart-contracts/addresses#workchain-id) 。
+
+> 💡 Useful links
+>
+> docs 中的["cell_hash()"](/v3/documentation/smart-contracts/func/docs/stdlib/#cell_hash)
 
 ### 生成外部地址
 
-我们使用 [block.tlb](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/block/block.tlb#L101C1-L101C12) 中的 TL-B 方案来理解我们如何以这种格式创建一个地址。
+由于我们需要确定地址占用的位数，因此还需要[声明一个使用 `UBITSIZE` 操作码的 asm 函数](#how-to-write-own-functions-using-asm-keyword)，该函数将返回存储数字所需的最小位数。
 
 ```func
 (int) ubitsize (int a) asm "UBITSIZE";
@@ -1039,15 +1033,15 @@ slice generate_external_address (int address) {
 }
 ```
 
-由于我们需要确定地址占用的位数，因此还需要[声明一个使用 `UBITSIZE` 操作码的 asm 函数](#how-to-write-own-functions-using-asm-keyword)，该函数将返回存储数字所需的最小位数。
+由于我们需要确定地址所占的位数，因此还需要 [声明一个 asm 函数](#how-to-write-own-functions-using-asm-keyword)，并使用操作码 `UBITSIZE` 返回存储数字所需的最小位数。
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> ["TVM Instructions" in docs](/learn/tvm-instructions/instructions#53-shifts-logical-operations)
+> [文档中的 "TVM 说明"](/v3/documentation/tvm/instructions#B603)
 
 ### 如何在本地存储中存储和加载字典
 
-加载字典的逻辑
+而存储字典的逻辑如下所示：
 
 ```func
 slice local_storage = get_data().begin_parse();
@@ -1057,112 +1051,111 @@ if (~ slice_empty?(local_storage)) {
 }
 ```
 
-而存储字典的逻辑如下所示：
+而存储字典的逻辑就像下面的例子一样：
 
 ```func
 set_data(begin_cell().store_dict(dictionary_cell).end_cell());
 ```
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> ["get_data()" in docs](/develop/func/stdlib/#get_data)
+> [文档中的 "get_data()"](/v3/documentation/smart-contracts/func/docs/stdlib/#get_data)
 >
-> ["new_dict()" in docs](/develop/func/stdlib/#new_dict)
+> 文档中的["new_dict()"](/v3/documentation/smart-contracts/func/docs/stdlib/#new_dict)
 >
-> ["slice_empty?()" in docs](/develop/func/stdlib/#slice_empty)
+> 文档中的 ["slice_empty?()"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_empty)
 >
-> ["load_dict()" in docs](/develop/func/stdlib/#load_dict)
+> 文档中的["load_dict()"](/v3/documentation/smart-contracts/func/docs/stdlib/#load_dict)
 >
-> ["~" in docs](/develop/func/statements#unary-operators)
+> [文档中的 "~"](/v3/documentation/smart-contracts/func/docs/statements#unary-operators)
 
+### 如何发送简单信息
 
-### 如何发送简单消息
-
-我们通常发送附带评论的方式实际上是一种简单消息。要指定消息正文为 `comment`，我们应在消息文本前设置 `32 bits` 为 0。
+我们发送带有注释的 TON 的通常方式实际上是发送一条简单的消息。要指定信息正文为 "注释"，我们应将信息文本前的 "32 位 "设置为 0。
 
 ```func
 cell msg = begin_cell()
-    .store_uint(0x18, 6) ;; 标志位
-    .store_slice("EQBIhPuWmjT7fP-VomuTWseE8JNWv2q7QYfsVQ1IZwnMk8wL"a) ;; 目的地址
-    .store_coins(100) ;; 发送的nanoTons数量
-    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; 默认消息header（参见发送消息页面）
-    .store_uint(0, 32) ;; 零操作码 - 表示带评论的简单转账消息
-    .store_slice("Hello from FunC!") ;; 评论
+    .store_uint(0x18, 6) ;; flags
+    .store_slice("EQBIhPuWmjT7fP-VomuTWseE8JNWv2q7QYfsVQ1IZwnMk8wL"a) ;; destination address
+    .store_coins(100) ;; amount of nanoTons to send
+    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; default message headers (see sending messages page)
+    .store_uint(0, 32) ;; zero opcode - means simple transfer message with comment
+    .store_slice("Hello from FunC!") ;; comment
 .end_cell();
-send_raw_message(msg, 3); ;; mode 3 - 分开支付费用，忽略错误
+send_raw_message(msg, 3); ;; mode 3 - pay fees separately, ignore errors
 ```
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> [文档中的“消息布局”](/develop/smart-contracts/messages)
+> [文档中的 "消息布局"](/v3/documentation/smart-contracts/message-management/sending-messages)
 
-### 如何发送带有入账的消息
+### 如何用接收帐户发送信息
 
-以下合约示例对我们有用，如果我们需要在用户和主合约之间执行一些操作，那我们就需要一个代理合约。
+如果我们需要在用户和主合约之间执行任何操作，即我们需要一个代理合约，那么下面的合约示例对我们很有用。
 
 ```func
 () recv_internal (slice in_msg_body) {
     {-
-        这是一个代理合约的简单示例。
-        它将期望 in_msg_body 包含消息 mode、body 和要发送到的目的地址。
+        This is a simple example of a proxy-contract.
+        It will expect in_msg_body to contain message mode, body and destination address to be sent to.
     -}
 
-    int mode = in_msg_body~load_uint(8); ;; 第一个字节将包含消息 mode
-    slice addr = in_msg_body~load_msg_addr(); ;; 然后我们解析目的地址
-    slice body = in_msg_body; ;; in_msg_body 中剩余的所有内容将是我们新消息的 body
+    int mode = in_msg_body~load_uint(8); ;; first byte will contain msg mode
+    slice addr = in_msg_body~load_msg_addr(); ;; then we parse the destination address
+    slice body = in_msg_body; ;; everything that is left in in_msg_body will be our new message's body
 
     cell msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(addr)
-        .store_coins(100) ;; 仅作示例
-        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; 默认消息 header （参见发送消息页面）
+        .store_coins(100) ;; just for example
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; default message headers (see sending messages page)
         .store_slice(body)
     .end_cell();
     send_raw_message(msg, mode);
 }
 ```
 
-> 💡 有用的链接
-> 
-> [文档中的“消息布局”](/develop/smart-contracts/messages)
+> 💡 Useful links
 >
-> [文档中的“load_msg_addr()”](/develop/func/stdlib/#load_msg_addr)
+> [文档中的 "消息布局"](/v3/documentation/smart-contracts/message-management/sending-messages)
+>
+> [文档中的"load_msg_addr() "](/v3/documentation/smart-contracts/func/docs/stdlib/#load_msg_addr)
 
-### 如何发送携带全部余额的消息
+### 如何发送包含全部余额的信息
 
-如果我们需要发送智能合约的全部余额，那么在这种情况下，我们需要使用发送 `mode 128`。这样的例子可能是一个接受付款并转发给主合约的代理合约。
+如果我们需要发送智能合约的全部余额，那么在这种情况下，我们需要使用发送 "mode 128"。这种情况的一个例子是代理合约，它接受付款并转发给主合约。
 
 ```func
 cell msg = begin_cell()
-    .store_uint(0x18, 6) ;; 标志位
-    .store_slice("EQBIhPuWmjT7fP-VomuTWseE8JNWv2q7QYfsVQ1IZwnMk8wL"a) ;; 目的地址
-    .store_coins(0) ;; 我们现在不关心这个值
-    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; 默认消息 header （参见发送消息页面）
-    .store_uint(0, 32) ;; 零操作码 - 表示带评论的简单转账消息
-    .store_slice("Hello from FunC!") ;; 评论
+    .store_uint(0x18, 6) ;; flags
+    .store_slice("EQBIhPuWmjT7fP-VomuTWseE8JNWv2q7QYfsVQ1IZwnMk8wL"a) ;; destination address
+    .store_coins(0) ;; we don't care about this value right now
+    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1) ;; default message headers (see sending messages page)
+    .store_uint(0, 32) ;; zero opcode - means simple transfer message with comment
+    .store_slice("Hello from FunC!") ;; comment
 .end_cell();
-send_raw_message(msg, 128); ;; 模式=128 用于携带当前智能合约剩余全部余额的消息
+send_raw_message(msg, 128); ;; mode = 128 is used for messages that are to carry all the remaining balance of the current smart contract
 ```
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> [文档中的“消息布局”](/develop/smart-contracts/messages)
-> 
-> [文档中的“消息模式”](/develop/func/stdlib/#send_raw_message)
+> [文档中的 "消息布局"](/v3/documentation/smart-contracts/message-management/sending-messages)
+>
+> [文档中的 "消息模式"](/v3/documentation/smart-contracts/func/docs/stdlib/#send_raw_message)
 
-### 如何发送带有长文本评论的消息
+### 如何发送带有长文本注释的信息
 
-我们知道，单个 `cell` (< 1023 bits) 中只能容纳 127 个字符。如果我们需要更多 - 我们需要组织蛇形cell。
+我们知道，一个 " cell "（< 1023 位）只能容纳 127 个字符。如果我们需要更多，就需要组织 snake cells 。
 
 ```func
 {-
-    如果我们想发送带有非常长的评论的消息，我们应该将评论分成几个片段。
-    每个片段应包含 <1023 位数据（127个字符）。
-    每个片段应该有一个引用指向下一个，形成蛇形结构。
+    If we want to send a message with really long comment, we should split the comment to several slices.
+    Each slice should have <1023 bits of data (127 chars).
+    Each slice should have a reference to the next one, forming a snake-like structure.
 -}
 
 cell body = begin_cell()
-    .store_uint(0, 32) ;; 零操作码 - 带评论的简单消息
+    .store_uint(0, 32) ;; zero opcode - simple message with comment
     .store_slice("long long long message...")
     .store_ref(begin_cell()
         .store_slice(" you can store string of almost any length here.")
@@ -1173,52 +1166,52 @@ cell body = begin_cell()
 .end_cell();
 
 cell msg = begin_cell()
-    .store_uint(0x18, 6) ;; 标志位
-    ;; 我们使用字面量 `a` 从包含地址的字符串中获取片段内的有效地址
-    .store_slice("EQBIhPuWmjT7fP-VomuTWseE8JNWv2q7QYfsVQ1IZwnMk8wL"a) ;; 目的地址
-    .store_coins(100) ;; 发送的nanoTons数量
-    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1) ;; 默认消息 header （参见发送消息页面）
-    .store_uint(1, 1) ;; 我们希望将 body 存储为引用
+    .store_uint(0x18, 6) ;; flags
+    ;; We use literal `a` to get valid address inside slice from string containing address 
+    .store_slice("EQBIhPuWmjT7fP-VomuTWseE8JNWv2q7QYfsVQ1IZwnMk8wL"a) ;; destination address
+    .store_coins(100) ;; amount of nanoTons to send
+    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1) ;; default message headers (see sending messages page)
+    .store_uint(1, 1) ;; we want to store body as a ref
     .store_ref(body)
 .end_cell();
-send_raw_message(msg, 3); ;; mode 3 - 分开支付费用，忽略错误
+send_raw_message(msg, 3); ;; mode 3 - pay fees separately, ignore errors
 ```
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> [文档中的“内部消息”](/develop/smart-contracts/guidelines/internal-messages)
+> [文档中的 "内部信息"](/v3/documentation/smart-contracts/message-management/internal-messages)
 
-### 如何仅从片段中获取数据位（不包括引用）
+### 如何从片段中只获取数据位（无参考文献）
 
-如果我们对 `slice` 内的 `refs` 不感兴趣，那么我们可以获取单独的数据并使用它。
+如果我们对 "片断 "中的 "引用 "不感兴趣，那么我们可以获取一个单独的日期并使用它。
 
 ```func
 slice s = begin_cell()
     .store_slice("Some data bits...")
-    .store_ref(begin_cell().end_cell()) ;; 一些引用
-    .store_ref(begin_cell().end_cell()) ;; 一些引用
+    .store_ref(begin_cell().end_cell()) ;; some references
+    .store_ref(begin_cell().end_cell()) ;; some references
 .end_cell().begin_parse();
 
 slice s_only_data = s.preload_bits(s.slice_bits());
 ```
 
-> 💡 有用的链接
-> 
-> [文档中的“Slice原语”](/develop/func/stdlib/#slice-primitives)
+> 💡 Useful links
 >
-> [文档中的“preload_bits()”](/develop/func/stdlib/#preload_bits)
+> [文档中的 " slice 原语"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice-primitives)
 >
-> [文档中的“slice_bits()”](/develop/func/stdlib/#slice_bits)
+> 文档中的["preload_bits()"](/v3/documentation/smart-contracts/func/docs/stdlib/#preload_bits)
+>
+> 文档中的["slice_bits()"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_bits)
 
 ### 如何定义自己的修改方法
 
-修改方法允许在同一个变量内修改数据。这可以与其他编程语言中的引用进行比较。
+修改方法允许在同一变量内修改数据。这可以与其他编程语言中的引用相比较。
 
 ```func
 (slice, (int)) load_digit (slice s) {
-    int x = s~load_uint(8); ;; 从片段中加载 8 位（一个字符）
-    x -= 48; ;; 字符 '0' 的代码为 48，所以我们减去它以得到数字
-    return (s, (x)); ;; 返回我们修改的片段和加载的数字
+    int x = s~load_uint(8); ;; load 8 bits (one char) from slice
+    x -= 48; ;; char '0' has code of 48, so we substract it to get the digit as a number
+    return (s, (x)); ;; return our modified slice and loaded digit
 }
 
 () main () {
@@ -1226,18 +1219,18 @@ slice s_only_data = s.preload_bits(s.slice_bits());
     int c1 = s~load_digit();
     int c2 = s~load_digit();
     int c3 = s~load_digit();
-    ;; 这里 s 等于 ""，c1 = 2，c2 = 5，c3 = 8
+    ;; here s is equal to "", and c1 = 2, c2 = 5, c3 = 8
 }
 ```
 
-> 💡 有用的链接
-> 
-> [文档中的“修改方法”](/develop/func/statements#modifying-methods)
+> 💡 Useful links
+>
+> [文档中的 "修改方法"](/v3/documentation/smart-contracts/func/docs/statements#modifying-methods)
 
-### 如何计算 n 的幂
+### 如何将字符串转换为 int
 
 ```func
-;; 未优化版本
+;; Unoptimized variant
 int pow (int a, int n) {
     int i = 0;
     int value = a;
@@ -1245,12 +1238,10 @@ int pow (int a, int n) {
         a *= value;
         i += 1;
     }
-    return a
-
-;
+    return a;
 }
 
-;; 优化版本
+;; Optimized variant
 (int) binpow (int n, int e) {
     if (e == 0) {
         return 1;
@@ -1272,7 +1263,7 @@ int pow (int a, int n) {
 }
 ```
 
-### 如何将字符串转换为 int
+### 如何将 int 转换为 string
 
 ```func
 slice string_number = "26052021";
@@ -1280,13 +1271,13 @@ int number = 0;
 
 while (~ string_number.slice_empty?()) {
     int char = string_number~load_uint(8);
-    number = (number * 10) + (char - 48); ;; 我们使用 ASCII 表
+    number = (number * 10) + (char - 48); ;; we use ASCII table
 }
 
 ~dump(number);
 ```
 
-### 如何将 int 转换为 string
+### 如何遍历字典
 
 ```func
 int n = 261119911;
@@ -1305,9 +1296,9 @@ slice result = string.end_cell().begin_parse();
 ~dump(result);
 ```
 
-### 如何遍历字典
+### 如何迭代字典
 
-字典在处理大量数据时非常有用。我们可以使用内置方法 `dict_get_min?` 和 `dict_get_max?` 分别获取最小和最大键值。此外，我们可以使用 `dict_get_next?` 遍历字典。
+字典在处理大量数据时非常有用。我们可以使用内置方法 `dict_get_min?` 和 `dict_get_max?` 分别获取键值的最小值和最大值。此外，我们还可以使用 `dict_get_next?` 遍历字典。
 
 ```func
 cell d = new_dict();
@@ -1315,28 +1306,28 @@ d~udict_set(256, 1, "value 1");
 d~udict_set(256, 5, "value 2");
 d~udict_set(256, 12, "value 3");
 
-;; 从小到大遍历键
+;; iterate keys from small to big
 (int key, slice val, int flag) = d.udict_get_min?(256);
 while (flag) {
-    ;; 使用 key->val 对，做某些事情
+    ;; do something with pair key->val
     
     (key, val, flag) = d.udict_get_next?(256, key);
 }
 ```
 
-> 💡 有用的链接
+> 💡 Useful links
 >
-> [文档中的“字典原语”](/develop/func/stdlib/#dictionaries-primitives)
+> [文档中的 "字典原语"](/v3/documentation/smart-contracts/func/docs/stdlib/#dictionaries-primitives)
 >
-> [文档中的“dict_get_max?()”](/develop/func/stdlib/#dict_get_max)
+> [文档中的 "dict_get_max?() "](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_get_max)
 >
-> [文档中的“dict_get_min?()”](/develop/func/stdlib/#dict_get_min)
+> [文档中的 "dict_get_min?() "](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_get_min)
 >
-> [文档中的“dict_get_next?()”](/develop/func/stdlib/#dict_get_next)
+> [文档中的"dict_get_next?() "](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_get_next)
 >
-> [文档中的“dict_set()”](/develop/func/stdlib/#dict_set)
+> [文档中的 "dict_set() "](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_set)
 
-### 如何从字典中删除值
+### 如何递归遍历cell树
 
 ```func
 cell names = new_dict();
@@ -1346,12 +1337,12 @@ names~udict_set(256, 25, "Bob");
 names~udict_delete?(256, 27);
 
 (slice val, int key) = names.udict_get?(256, 27);
-~dump(val); ;; null() -> 表示在字典中未找到该键
+~dump(val); ;; null() -> means that key was not found in a dictionary
 ```
 
-### 如何递归遍历cell树
+### 如何递归遍历 cell 树
 
-我们知道，一个 `cell` 可以存储多达 `1023 bits` 的数据和最多 `4 refs`。要绕过这个限制，我们可以使用cell树，但为此我们需要能够迭代它，以便正确处理数据。
+我们知道，一个 " cell  "最多可以存储 1023 位数据和 4 个引用。为了绕过这一限制，我们可以使用 cell 树，但要做到这一点，我们需要能够遍历 cell 树，以便进行适当的数据处理。
 
 ```func
 forall X -> int is_null (X x) asm "ISNULL";
@@ -1359,7 +1350,7 @@ forall X -> (tuple, ()) push_back (tuple tail, X head) asm "CONS";
 forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 
 () main () {
-    ;; 仅作为示例的一些cell
+    ;; just some cell for example
     cell c = begin_cell()
         .store_uint(1, 16)
         .store_ref(begin_cell()
@@ -1376,18 +1367,18 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
         .end_cell())
     .end_cell();
 
-    ;; 创建一个没有数据的元组，充当栈的角色
+    ;; creating tuple with no data, which plays the role of stack
     tuple stack = null();
-    ;; 将主cell放入栈中以便在循环中处理
+    ;; bring the main cell into the stack to process it in the loop
     stack~push_back(c);
-    ;; 在栈不为空时执行
+    ;; do it until stack is not null
     while (~ stack.is_null()) {
-        ;; 从栈中获取cell，并将其转换为 slice 以便处理
+        ;; get the cell from the stack and convert it to a slice to be able to process it
         slice s = stack~pop_back().begin_parse();
 
-        ;; 对 s 数据做一些操作
+        ;; do something with s data
 
-        ;; 如果当前 slice 有任何 refs，将它们添加到栈中
+        ;; if the current slice has any refs, add them to stack
         repeat (s.slice_refs()) {
             stack~push_back(s~load_ref());
         }
@@ -1395,15 +1386,13 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 }
 ```
 
-> 💡 有用的链接
-> 
->
-
- [文档中的“Lisp类型列表”](/develop/func/stdlib/#lisp-style-lists)
->
 > [文档中的“null()”](/develop/func/stdlib/#null)
 >
 > [文档中的“slice_refs()”](/develop/func/stdlib/#slice_refs)
+>
+> [文档中的 "null() "](/v3/documentation/smart-contracts/func/docs/stdlib/#null)
+>
+> [文档中的 "slice_refs()"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_refs)
 
 ### 如何遍历 Lisp 类型列表
 
@@ -1415,24 +1404,24 @@ forall X -> (tuple, ()) push_back (tuple tail, X head) asm "CONS";
 forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 
 () main () {
-    ;; 一些示例列表
+    ;; some example list
     tuple l = null();
     l~push_back(1);
     l~push_back(2);
     l~push_back(3);
 
-    ;; 遍历元素
-    ;; 注意这种迭代是倒序的
+    ;; iterating through elements
+    ;; note that this iteration is in reversed order
     while (~ l.is_null()) {
         var x = l~pop_back();
 
-        ;; 对 x 做一些操作
+        ;; do something with x
     }
 }
 ```
 
 > 💡 有用的链接
-> 
+>
 > [文档中的“Lisp风格列表”](/develop/func/stdlib/#lisp-style-lists)
 >
 > [文档中的“null()”](/develop/func/stdlib/#null)
@@ -1448,7 +1437,7 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
     .store_ref(state_init)
     .end_cell();
 
-  ;; mode 64 - 在新消息中携带剩余值
+  ;; mode 64 - carry the remaining value in the new message
   send_raw_message(msg, 64); 
 }
 
@@ -1461,7 +1450,7 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
     .store_ref(body)
     .end_cell();
 
-  ;; mode 64 - 在新消息中携带剩余值
+  ;; mode 64 - carry the remaining value in the new message
   send_raw_message(msg, 64); 
 }
 ```
@@ -1493,3 +1482,70 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
     .store_uint(cell_hash(state_init), 256) ;; address:bits256
     .end_cell();
 }
+```
+
+### 如何更新智能合约逻辑
+
+下面是一个简单的 `СounterV1` 智能合约，它具有递增计数器和更新智能合约逻辑的功能。
+
+```func
+() recv_internal (slice in_msg_body) {
+    int op = in_msg_body~load_uint(32);
+    
+    if (op == op::increase) {
+        int increase_by = in_msg_body~load_uint(32);
+        ctx_counter += increase_by;
+        save_data();
+        return ();
+    }
+
+    if (op == op::upgrade) {
+        cell code = in_msg_body~load_ref();
+        set_code(code);
+        return ();
+    }
+}
+```
+
+在操作智能合约后，您发现缺少了减表功能。您必须复制智能合约 "CounterV1 "的代码，并在 "增加 "函数旁边添加一个新的 "减少 "函数。现在您的代码如下
+
+```func
+() recv_internal (slice in_msg_body) {
+    int op = in_msg_body~load_uint(32);
+    
+    if (op == op::increase) {
+        int increase_by = in_msg_body~load_uint(32);
+        ctx_counter += increase_by;
+        save_data();
+        return ();
+    }
+
+    if (op == op::decrease) {
+        int decrease_by = in_msg_body~load_uint(32);
+        ctx_counter -= increase_by;
+        save_data();
+        return ();
+    }
+
+    if (op == op::upgrade) {
+        cell code = in_msg_body~load_ref();
+        set_code(code);
+        return ();
+    }
+}
+```
+
+一旦智能合约 "CounterV2 "准备就绪，你必须将其编译到链外的 "cell "中，并向 "CounterV1 "智能合约发送升级消息。
+
+```javascript
+await contractV1.sendUpgrade(provider.sender(), {
+    code: await compile('ContractV2'),
+    value: toNano('0.05'),
+});
+```
+
+> 💡 Useful links
+>
+> [是否可以将代码重新部署到现有地址，还是必须将其作为新合约部署？](/v3/documentation/faq#is-it-possible-to-re-deploy-code-to-an-existing-address-or-does-it-have-to-be-deployed-as-a-new-contract)
+>
+> [文档中的 "set_code()"](/v3/documentation/smart-contracts/func/docs/stdlib#set_code)
