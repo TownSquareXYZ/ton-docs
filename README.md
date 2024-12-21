@@ -36,7 +36,7 @@ If you are a developer and faced some difficulties, successfully overcoming them
 — Have an idea? [Submit a Feature Request](https://github.com/ton-community/ton-docs/issues/new/choose).  
 — Want to contribute? [Setup your environment](https://github.com/ton-community/ton-docs#set-up-your-environment-%EF%B8%8F).
 
-Contributing best practices:  [docs/contribute](https://ton.org/docs/contribute)
+Contributing best practices:  [docs/contribute](/v3/contribute)
 
 ---
 
@@ -54,7 +54,12 @@ Use Gitpod (a free, online VS code-like IDE) for contributing. It will launch a 
 
 ### Local (default way)
 
-1. Download repository from GitHub
+1. Download repository from GitHub with its submodules
+
+    ```
+    git clone --recursive https://github.com/ton-community/ton-docs.git 
+    ```
+
 2. Install last version [NodeJS LTS](https://nodejs.org/en/download/) to run local build
 3. Open Terminal in project directory
 4. Install dependencies with command:
@@ -76,6 +81,16 @@ Use Gitpod (a free, online VS code-like IDE) for contributing. It will launch a 
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
 
+## Contributors Wall
+<a href="https://github.com/ton-community/ton-docs/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ton-community/ton-docs&max=204" />
+</a>
+
+<p align="right" style="font-size: 14px; color: #555; margin-top: 20px;">
+  <a href="#readme-top" style="text-decoration: none; color: blue; font-weight: bold;">
+    ↑ Back to Top ↑
+  </a>
+</p>
 ## License
 
 [GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/)
