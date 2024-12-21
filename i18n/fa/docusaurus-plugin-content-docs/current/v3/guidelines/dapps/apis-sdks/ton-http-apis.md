@@ -43,7 +43,7 @@
 
 ### ایندکسر Toncenter برای TON
 
-ایندکسرها، نه فقط بازیابی موارد خاص، امکان لیست کردن کیف‌های ژتون‌ها، NFTها و تراکنش‌ها بر اساس فیلترهای خاص را فراهم می‌کنند.
+ایندکسرها، نه فقط بازیابی موارد خاص، امکان لیست کردن کیف‌های Jettonها، NFTها و تراکنش‌ها بر اساس فیلترهای خاص را فراهم می‌کنند.
 
 - می‌توان از TON Index عمومی استفاده کرد: تست‌ها و توسعه رایگان هستند، [پریمیوم](https://t.me/tonapibot) برای تولید - [toncenter.com/api/v3/](https://toncenter.com/api/v3/).
 - TON Index خود را با استفاده از [ورکر](https://github.com/toncenter/ton-index-worker/tree/36134e7376986c5517ee65e6a1ddd54b1c76cdba) و [TON Index API wrapper](https://github.com/toncenter/ton-indexer) اجرا کنید.
