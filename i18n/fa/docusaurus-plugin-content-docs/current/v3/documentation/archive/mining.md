@@ -16,8 +16,8 @@
 2. توزیع نسخه دسکتاپ یا سرور [اوبونتو](https://ubuntu.com) ۲۰٫۰۴ را نصب کنید.
 3. [mytonctrl](https://github.com/igroman787/mytonctrl#installation-ubuntu) را در حالت `lite` نصب کنید.
 4. سخت‌افزار خود را بررسی کرده و [درآمد تخمینی استخراج](/v3/documentation/archive/mining#income-estimates) خود را با اجرای دستور `emi` در `mytonctrl` چک کنید.
-5. اگر هنوز ندارید، یک `آدرس کیف‌پول` با استفاده از یکی از [کیف‌پول‌ها](https://www.ton.org/wallets) ایجاد کنید.
-6. آدرس کیف‌پول خود را به‌عنوان هدف استخراج با اجرای `set minerAddr "..."` در `mytonctrl` تعریف کنید.
+5. اگر هنوز ندارید، یک `wallet address` با استفاده از یکی از [کیف‌پول‌ها](https://www.ton.org/wallets) ایجاد کنید.
+6. `wallet address` خود را به‌عنوان هدف استخراج با اجرای `set minerAddr "..."` در `mytonctrl` تعریف کنید.
 7. یک قرارداد ارائه‌دهنده از لیست موجود در [ton.org/mining](https://ton.org/mining) انتخاب کنید و با اجرای `set powAddr "..."` در `mytonctrl`، ماینر خود را برای استخراج آن تنظیم کنید.
 8. با اجرای `mon` در `mytonctrl` استخراج را شروع کنید
 9. بارگذاری CPU در کامپیوتر خود را بررسی کنید؛ فرآیندی به‌نام `pow-miner` باید تقریباً بیشتر CPU شما را استفاده کند.
