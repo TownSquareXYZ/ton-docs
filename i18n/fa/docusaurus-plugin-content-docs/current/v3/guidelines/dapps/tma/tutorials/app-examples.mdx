@@ -1,0 +1,310 @@
+import Button from '@site/src/components/button'
+
+# مثال‌های TMA
+
+نمونه‌های زیر را بررسی کنید تا ببینید چگونه می‌توانید Telegram Mini App خود را ایجاد کنید.
+
+## مثال TMA پایه
+
+<p align="center">
+  <br />
+    <img width="240" src="/img/docs/telegram-apps/tapps.png" alt="logo of telegram mini apps" />
+      <br />
+</p>
+
+این یک Telegram Mini App (TMA) ساده و مستقیم است که با استفاده از JavaScript، HTML و CSS ساده پیاده‌سازی شده است. هدف این پروژه ارائه یک مثال حداقلی از چگونگی ایجاد یک TMA ساده و اجرای آن در تلگرام بدون نیاز به ابزارهای پیچیده ساخت یا کتابخانه‌های پیشرفته است.
+
+- برنامه از طریق لینک مستقیم در دسترس است: [t.me/simple_telegram_mini_app_bot/app](https://t.me/simple_telegram_mini_app_bot/app)
+- یا می‌توانید برنامه را با دکمه منوی ربات راه‌اندازی کنید: [t.me/simple_telegram_mini_app_bot](https://t.me/simple_telegram_mini_app_bot)
+- URL استقرار: [https://telegram-mini-apps-dev.github.io/vanilla-js-boilerplate/](https://telegram-mini-apps-dev.github.io/vanilla-js-boilerplate/)
+
+<Button href="https://t.me/simple_telegram_mini_app_bot/app" colorType={'primary'} sizeType={'sm'}>
+
+دمو را باز کنید
+
+</Button>
+
+<Button href="https://github.com/Telegram-Mini-Apps-Dev/vanilla-js-boilerplate.git" colorType={'secondary'} sizeType={'sm'}>
+
+GitHub
+
+</Button>
+
+### ویژگی‌ها
+
+- رابط کاربری ساده و حداقلی.
+- بدون استفاده از کتابخانه‌ها یا چارچوب‌های خارجی.
+- به راحتی قابل درک و تغییر است.
+
+### شروع به کار
+
+#### پیش‌نیازها
+
+برای اجرای این مثال، به یک مرورگر وب مدرن با JavaScript فعال نیاز دارید.
+
+#### نصب
+
+1. این مخزن را به ماشین محلی خود کلون کنید:
+
+```bash
+git clone https://github.com/Telegram-Mini-Apps-Dev/vanilla-js-boilerplate.git
+```
+
+2. به دایرکتوری پروژه بروید:
+
+```bash
+cd vanilla-js-boilerplate
+```
+
+index.html را در ویرایشگر کد یا IDE مورد نظر خود باز کنید.
+
+### استفاده
+
+1. index.html را در ویرایشگر کد یا IDE مورد نظر خود باز کنید.
+2. تغییرات خود را اعمال کنید.
+3. مخزن GitHub خود را ایجاد کنید، تغییرات خود را commit کرده و push کنید.
+4. به صفحه GitHub مخزن خود بروید و Settings را باز کنید. تب Pages و قسمت Build and deployment را بررسی کنید. اگر گزینه Actions GitHub انتخاب شده بود، دارایی‌ها باید در Pages مستقر شوند و یک URL مانند `https://<username>.github.io/vanilla-js-boilerplate/` وجود خواهد داشت. می‌توانید این URL را کپی کنید و در ربات [BotFather](https://tg.me/BotFather) از آن استفاده کنید تا TWA خود را ایجاد نمایید.
+
+## نمونه TMA مدرن
+
+### معرفی
+
+Vite (که به معنای "سریع" در زبان فرانسوی است) یک ابزار ساخت و سرور توسعه فرانت‌اند است که به عملکرد سریع‌تر و تجربه توسعه بهتری برای پروژه‌های وب مدرن می‌پردازد. ما از Vite برای ایجاد این نمونه Telegram Mini App استفاده خواهیم کرد.
+
+شما می‌توانید پروژه مثال را در اینجا پیدا کنید [https://github.com/Telegram-Mini-Apps-Dev/vite-boilerplate](https://github.com/Telegram-Mini-Apps-Dev/vite-boilerplate) یا می‌توانید از دستورالعمل‌های زیر استفاده کنید.
+
+### پیش‌نیازها
+
+ما با راه‌اندازی پروژه Vite شما شروع خواهیم کرد.
+
+با NPM:
+
+```bash
+$ npm create vite@latest
+```
+
+با Yarn:
+
+```bash
+$ yarn create vite
+```
+
+سپس دستورات را دنبال کنید!
+
+یا می‌توانید به سادگی این فرمان را اجرا کنید تا پروژه React با پشتیبانی TypeScript ایجاد کنید:
+
+```bash
+# npm 7+, extra double-dash is needed:
+npm create vite my-react-telegram-web-app -- --template react-ts
+
+# or yarn
+yarn create vite my-react-telegram-web-app --template react-ts
+
+# this will change the directory to recently created project
+cd my-react-telegram-web-app
+```
+
+### توسعه مینی اپ
+
+اکنون باید حالت توسعه پروژه را شروع کنیم، دستورات زیر را در ترمینال اجرا کنید:
+
+```bash
+# npm
+npm install
+npm run dev --host
+
+# or yarn
+yarn
+yarn dev --host
+```
+
+گزینه `--host` به شما امکان می‌دهد URL با آدرس IP دریافت کنید که می‌توانید در طول فرآیند توسعه برای اهداف تست استفاده کنید. توجه مهم: در حالت توسعه، ما از یک گواهینامه SSL خودامضاء استفاده خواهیم کرد که این امکان را به ما می‌دهد که تنها در نسخه وب تلگرام [https://web.telegram.org](https://web.telegram.org/a/#6549734463)، به‌دلیل سیاست‌های دیگر پلتفرم‌ها (iOS, Android, MacOS) با بارگذاری مجدد حین اجرا، برنامه خود را تست کنیم.
+
+ما نیاز داریم که پلاگین `@vitejs/plugin-basic-ssl` را اضافه کنیم:
+
+```bash npm2yarn
+npm install @vitejs/plugin-basic-ssl
+```
+
+اکنون باید `vite.config.ts` را تغییر دهیم. این را اضافه کنید:
+
+```jsx
+import basicSsl from '@vitejs/plugin-basic-ssl';
+```
+
+و افزونه را اضافه کنید
+
+```jsx
+export default defineConfig({
+   plugins: [react(), basicSsl()]
+});
+```
+
+شما می‌توانید از `ngrok` برای افشای سرور محلی خود به اینترنت با گواهینامه SSL استفاده کنید. شما قادر خواهید بود با جایگزینی ماژول داغ در تمامی پلتفرم‌های تلگرام توسعه دهید. یک پنجره ترمینال جدید باز کنید و اجرا کنید:
+
+```bash
+# where 5173 is the port number from npm/yarn dev --host
+ngrok http 5173
+```
+
+همچنین، ما پروژه خود را برای استقرار در GitHub Pages آماده خواهیم کرد:
+
+```jsx
+export default defineConfig({
+   plugins: [react(), basicSsl()],
+	 build: {
+	   outDir: './docs'
+	 },
+   base: './'
+});
+```
+
+ما از اسکریپت استقرار برای GitHub Actions استفاده خواهیم کرد که بر روی push هایی که به شاخه master هستند، اجرا می‌شود. از ریشه پروژه خود:
+
+```bash
+# we are going to create GitHub Actions config for deployment
+mkdir .github
+cd .github
+mkdir workflows
+cd workflows
+touch static.yml
+```
+
+اکنون این پیکربندی را به `static.yml` اضافه کنید:
+
+```yaml
+# Simple workflow for deploying static content to GitHub Pages
+name: Deploy static content to Pages
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ['master']
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  # Single deploy job since we're just deploying
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: './'
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload dist repository
+          path: './docs'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+```
+
+فراموش نکنید که گزینه GitHub Actions را برای Build and Deployment در Settings→Pages مخزن GitHub خود انتخاب کنید. اکنون پس از هر push، کد شما به Pages مستقر خواهد شد.
+
+![Screenshot 2023-09-11 at 22.07.44.png](/img/docs/telegram-apps/modern-1.png)
+
+حالا می‌خواهیم `@twa-dev/sdk` را اضافه کنیم. تلگرام SDK را از طریق [لینک](https://core.telegram.org/bots/webapps#initializing-web-apps) توزیع می‌کند. این روش کمی قدیمی برای کار با یک کتابخانه است. بسته `@twa-dev/sdk` این امکان را می‌دهد که با SDK به عنوان یک بسته npm کار کنید و از TypeScript پشتیبانی می‌کند.
+
+```bash npm2yarn
+npm install @twa-dev/sdk
+```
+
+فایل `/src/main.tsx` را باز کنید و موارد زیر را اضافه کنید:
+
+```tsx
+import WebApp from '@twa-dev/sdk'
+
+WebApp.ready();
+
+ReactDOM.createRoot...
+```
+
+`WebApp.ready()` - یک روش است که به برنامه تلگرام اعلام می‌کند که مینی‌اپ آماده نمایش است. توصیه می‌شود این روش را در اولین فرصت ممکن، پس از بارگذاری همه عناصر ضروری واسط کاربری، فراخوانی کنید. هنگامی که این روش فراخوانی شد، جایگزین بارگذاری پنهان می‌شود و مینی‌اپ نمایش داده می‌شود.
+
+سپس مقداری تعامل با کاربر اضافه می‌کنیم. به `src/App.tsx` بروید و دکمه‌ای با هشدار اضافه می‌کنیم.
+
+```tsx
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+
+import WebApp from '@twa-dev/sdk'
+
+function App() {
+  const [count, setCount] = useState(0)
+
+  return (
+    <>
+      <div>
+        <a href="https://vitejs.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+      </div>
+		{/* Here we add our button with alert callback */}
+      <div className="card">
+        <button onClick={() => WebApp.showAlert(`Hello World! Current count is ${count}`)}>
+            Show Alert
+        </button>
+      </div>
+    </>
+  )
+}
+
+export default App
+```
+
+حالا باید یک ربات تلگرام ایجاد کنیم تا بتوانیم مینی‌اپ تلگرام را درون برنامه پیام‌رسان اجرا کنیم.
+
+### تنظیم یک ربات برای برنامه
+
+برای اتصال مینی‌اپ خود به تلگرام، باید یک ربات ایجاد کرده و برای آن مینی‌اپ راه‌اندازی کنید. این مراحل را دنبال کنید تا یک ربات تلگرام جدید تنظیم کنید:
+
+<Button href="/v3/guidelines/dapps/tma/tutorials/step-by-step-guide#setting-up-a-bot-for-the-app" colorType={'primary'} sizeType={'sm'}>
+
+تنظیم یک ربات
+
+</Button>
+
+### نکات
+
+با گواهینامه SSL خودامضا ممکن است با این نوع هشدارها مواجه شوید. بر روی دکمه "Advanced" کلیک کنید و سپس بر روی `Proceed <local dev server address here>` کلیک کنید. بدون این مراحل، قادر به دیباگ نسخه وب تلگرام نخواهید بود.
+
+![Screenshot 2023-09-11 at 18.58.24.png](/img/docs/telegram-apps/modern-2.png)
