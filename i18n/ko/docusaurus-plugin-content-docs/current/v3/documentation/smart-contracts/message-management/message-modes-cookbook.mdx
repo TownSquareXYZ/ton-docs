@@ -1,0 +1,139 @@
+# 메시지 모드 활용 가이드
+
+메시지를 보낼 때 사용할 수 있는 다양한 모드와 플래그를 이해하는 것은 스마트 컨트랙트가 올바르게 동작하도록 하는데 중요합니다.
+[메시지-모드](/v3/documentation/smart-contracts/message-management/sending-messages#message-modes) 섹션에서 이러한 모드와 플래그에 대한 자세한 설명을 제공했지만, 이 섹션에서는 구체적인 예시를 통해 실제 적용 방법을 설명하겠습니다.
+
+:::info 중요
+
+**참고**: 이 예시들에서 사용된 트랜잭션 수수료(예: 3 Toncoin)는 가상의 값이며 설명을 위해서만 사용됩니다. 실제 트랜잭션 수수료는 네트워크 상태와 기타 요인에 따라 다릅니다.
+:::
+
+## 1. 일반 메시지 보내기
+
+현재 우리 스마트 컨트랙트의 잔액은 100 Toncoin입니다. 50 Toncoin이 포함된 내부 메시지를 받은 후, 20 Toncoin이 포함된 일반 메시지를 보내며, 트랜잭션 수수료는 3 Toncoin이고 메시지에서 차감됩니다.
+
+![](/img/docs/message-modes-cookbook/send_regular_message.svg)
+
+| 모드와 플래그               | 코드                         |
+| :-------------------- | :------------------------- |
+| `mode` = 0, `flag` 없음 | `send_raw_message(msg, 0)` |
+
+## 2. 일반 메시지를 보내고, 오류 시 메시지를 반송하지 않고 무시
+
+현재 우리 스마트 컨트랙트의 잔액은 100 Toncoin입니다. 50 Toncoin이 포함된 내부 메시지를 받은 후, 20 Toncoin이 포함된 일반 메시지를 보내며, 트랜잭션 수수료는 3 Toncoin이고 메시지에서 차감됩니다.
+트랜잭션 처리 중 오류가 발생할 경우, 메시지는 반송되지 않고 무시됩니다.
+
+![](/img/docs/message-modes-cookbook/send_regular_message_and_ignore_errors.svg)
+
+| 모드와 플래그                | 코드                         |
+| :--------------------- | :------------------------- |
+| `mode` = 0, `flag` = 2 | `send_raw_message(msg, 2)` |
+
+## 3. 일반 메시지를 보내고 오류 시 메시지 반송
+
+현재 우리 스마트 컨트랙트의 잔액은 100 Toncoin입니다. 50 Toncoin이 포함된 내부 메시지를 받은 후, 20 Toncoin이 포함된 일반 메시지를 보내며, 트랜잭션 수수료는 3 Toncoin이고 메시지에서 차감됩니다.
+작업 처리 중 오류가 발생하면 트랜잭션 롤백과 함께 메시지가 반송됩니다.
+
+![](/img/docs/message-modes-cookbook/send_regular_message_and_bounce_if_error.svg)
+
+| 모드와 플래그                 | 코드                          |
+| :---------------------- | :-------------------------- |
+| `mode` = 0, `flag` = 16 | `send_raw_message(msg, 16)` |
+
+## 4. 별도의 수수료로 일반 메시지 보내기
+
+우리 스마트 컨트랙트 잔액에 100 Toncoin이 있고, 50 Toncoin이 포함된 내부 메시지를 받아 20 Toncoin이 포함된 일반 메시지를 보냅니다. 총 수수료는 3 Toncoin이며 이체 수수료는 별도로(컨트랙트 잔액에서) 지불합니다.
+
+![](/img/docs/message-modes-cookbook/send_regular_and_pay_fees_separately.svg)
+
+| 모드와 플래그                | 코드                         |
+| :--------------------- | :------------------------- |
+| `mode` = 0, `flag` = 1 | `send_raw_message(msg, 1)` |
+
+## 5. 별도의 수수료로 일반 메시지를 보내고 오류 시 메시지 반송
+
+우리 스마트 컨트랙트 잔액에 100 Toncoin이 있고 50 Toncoin이 포함된 내부 메시지를 받아 20 Toncoin이 포함된 일반 메시지를 보냅니다. 총 수수료는 3 Toncoin이며 이체 수수료는 별도로(컨트랙트 잔액에서) 지불합니다.
+작업 처리 중 오류가 발생하면 트랜잭션 롤백과 함께 메시지가 반송됩니다.
+
+![](/img/docs/message-modes-cookbook/send_regular_message_pay_fee_separately_bounce_if_error.svg)
+
+| 모드와 플래그                          | 코드                          |
+| :------------------------------- | :-------------------------- |
+| `mode` = 0, `flag` = 1 + 16 = 17 | `send_raw_message(msg, 17)` |
+
+## 6. 남은 값을 새 메시지와 함께 전달
+
+현재 우리 스마트 컨트랙트의 잔액은 100 Toncoin입니다. 50 Toncoin이 포함된 내부 메시지를 받은 후, 새 메시지에 원래 표시된 값 외에도 수신 메시지의 남은 모든 값을 전달합니다.
+트랜잭션 수수료는 3 Toncoin이며 메시지에서 차감됩니다.
+
+![](/img/docs/message-modes-cookbook/carry_all_the_remaining_value.svg)
+
+| 모드와 플래그                | 코드                          |
+| :--------------------- | :-------------------------- |
+| `mode` = 64, `flag` 없음 | `send_raw_message(msg, 64)` |
+
+## 7. 별도의 수수료로 남은 값을 새 메시지와 함께 전달
+
+현재 우리 스마트 컨트랙트의 잔액은 100 Toncoin입니다. 50 Toncoin이 포함된 내부 메시지를 받은 후, 새 메시지에 원래 표시된 값 외에도 수신 메시지의 남은 모든 값을 전달합니다.
+트랜잭션 수수료는 3 Toncoin이며 별도로(스마트 컨트랙트 잔액에서) 지불됩니다.
+
+![](/img/docs/message-modes-cookbook/carry_all_the_remaining_value_and_pay_fees_separately.svg)
+
+| 모드와 플래그                 | 코드                          |
+| :---------------------- | :-------------------------- |
+| `mode` = 64, `flag` = 1 | `send_raw_message(msg, 65)` |
+
+## 8. 남은 값을 전달하고 오류 시 메시지 반송
+
+현재 우리 스마트 컨트랙트의 잔액은 100 Toncoin입니다. 50 Toncoin이 포함된 내부 메시지를 받은 후, 새 메시지에 원래 표시된 값 외에도 수신 메시지의 남은 모든 값을 전달합니다.
+트랜잭션 수수료는 3 Toncoin이며 메시지에서 차감됩니다. 작업 처리 중 오류가 발생하면 트랜잭션 롤백과 함께 메시지가 반송됩니다.
+
+![](/img/docs/message-modes-cookbook/carry_all_the_remaining_value_and_if_error_bounce.svg)
+
+| 모드와 플래그                  | 코드                          |
+| :----------------------- | :-------------------------- |
+| `mode` = 64, `flag` = 16 | `send_raw_message(msg, 80)` |
+
+## 9. 별도의 수수료로 남은 값을 새 메시지와 함께 전달하고 오류 시 메시지 반송
+
+현재 우리 스마트 컨트랙트의 잔액은 100 Toncoin입니다. 50 Toncoin이 포함된 내부 메시지를 받은 후 메시지를 보냅니다. 받은 원래 금액 외에도 전체 컨트랙트 잔액을 이체하며, 트랜잭션 수수료는 3 Toncoin이고 별도로(스마트 컨트랙트 잔액에서) 지불됩니다.
+작업 처리 중 오류가 발생하면 트랜잭션 롤백과 함께 메시지가 반송됩니다.
+
+![](/img/docs/message-modes-cookbook/carry_all_the_remaining_value_and_pay_fees_separately_and_if_error_bounce.svg)
+
+| 모드와 플래그                      | 코드                          |
+| :--------------------------- | :-------------------------- |
+| `mode` = 64, `flag` = 16 + 1 | `send_raw_message(msg, 81)` |
+
+## 10. 받은 모든 토큰을 컨트랙트 잔액과 함께 보내기
+
+현재 우리 스마트 컨트랙트의 잔액은 100 Toncoin입니다. 50 Toncoin이 포함된 내부 메시지를 받은 후 메시지를 보냅니다. 받은 원래 금액 외에도 전체 컨트랙트 잔액을 이체하며,
+트랜잭션 수수료는 3 Toncoin이고 메시지에서 차감됩니다.
+
+![](/img/docs/message-modes-cookbook/send_all_received_tokens_with_balance.svg)
+
+| 모드와 플래그                 | 코드                           |
+| :---------------------- | :--------------------------- |
+| `mode` = 128, `flag` 없음 | `send_raw_message(msg, 128)` |
+
+## 11. 받은 모든 토큰을 컨트랙트 잔액과 함께 보내고 오류 시 메시지 반송
+
+현재 우리 스마트 컨트랙트의 잔액은 100 Toncoin입니다. 50 Toncoin이 포함된 내부 메시지를 받은 후 메시지를 보냅니다. 받은 원래 금액 외에도 전체 컨트랙트 잔액을 이체하며, 트랜잭션 수수료는 3 Toncoin이고 메시지에서 차감됩니다.
+작업 처리 중 오류가 발생한 경우에는 트랜잭션 롤백과 함께 메시지가 반송됩니다.
+
+![](/img/docs/message-modes-cookbook/send_all_received_tokens_with_balance_and_if_error_bounce.svg)
+
+| 모드와 플래그                   | 코드                           |
+| :------------------------ | :--------------------------- |
+| `mode` = 128, `flag` = 16 | `send_raw_message(msg, 144)` |
+
+## 12. 받은 모든 토큰을 컨트랙트 잔액과 함께 보내고 스마트 컨트랙트 파기
+
+현재 우리 스마트 컨트랙트의 잔액은 100 Toncoin입니다. 50 Toncoin이 포함된 내부 메시지를 받은 후, 받은 원래 금액 외에도 전체 컨트랙트 잔액을 이체하고 컨트랙트를 파기하는 메시지를 보냅니다.
+트랜잭션 수수료는 3 Toncoin이고 메시지에서 차감됩니다.
+
+![](/img/docs/message-modes-cookbook/send_all_received_tokens_with_balance_and_destroy_sc.svg)
+
+| 모드와 플래그                   | 코드                           |
+| :------------------------ | :--------------------------- |
+| `mode` = 128, `flag` = 32 | `send_raw_message(msg, 160)` |

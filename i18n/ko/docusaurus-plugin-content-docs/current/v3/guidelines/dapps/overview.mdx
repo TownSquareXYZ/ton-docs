@@ -1,0 +1,136 @@
+import Button from '@site/src/components/button'
+
+# 시작하기
+
+DApp 개발을 시작하기 전에 기본적인 블록체인 원리를 이해해야 합니다. [The Open Network](/v3/concepts/dive-into-ton/introduction)와 [Blockchain of Blockchains](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains) 문서가 도움이 될 것입니다.
+
+TON DApp은 백엔드 없이 블록체인과 상호작용하는 애플리케이션입니다. 대부분의 경우 커스텀 [스마트 컨트랙트](/v3/documentation/smart-contracts/overview)와 상호작용합니다. 이 문서는 예시와 빠른 DApp 개발을 위해 TON에서 사용 가능한 표준 자산을 처리하는 방법을 제공합니다.
+
+DApp은 일반적으로 TON용 SDK가 있는 모든 프로그래밍 언어로 작성할 수 있습니다. 실제로 가장 일반적인 선택은 웹사이트이며, 그 다음으로 텔레그램 미니 앱입니다.
+
+<Button href="/v3/guidelines/dapps/tma/overview" colorType={'primary'} sizeType={'sm'}>
+TMA 만들기
+</Button>
+
+TMA 구축
+
+</Button>
+
+<Button href="/v3/guidelines/dapps/apis-sdks/sdk" colorType="secondary" sizeType={'sm'}>
+
+SDK 선택
+
+</Button>
+
+## TON 코스: DApps
+
+:::tip
+과정을 시작하기 전에 블록체인 기술의 기초를 잘 이해하고 있어야 합니다. 지식에 부족한 부분이 있다면 [TON으로 배우는 블록체인 기초](https://stepik.org/course/201294/promo) ([RU 버전](https://stepik.org/course/202221/), [CHN 버전](https://stepik.org/course/200976/)) 과정을 수강하는 것을 추천합니다.
+모듈 3에서 DApp의 기본 지식을 다룹니다.
+:::
+
+[TON 블록체인 과정](https://stepik.org/course/176754/)은 TON 블록체인 개발에 대한 포괄적인 가이드입니다.
+
+모듈 5와 6은 DApp 개발을 완벽하게 다룹니다. DApp 생성 방법, TON Connect 사용법, SDK 사용법, 블록체인 작업 방법을 배울 수 있습니다.
+
+<Button href="https://stepik.org/course/176754/promo"
+        colorType={'primary'} sizeType={'sm'}>
+
+TON 블록체인 과정 확인
+
+</Button>
+
+<Button href="https://stepik.org/course/201638/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+CHN
+
+</Button>
+
+<Button href="https://stepik.org/course/201855/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+RU
+
+</Button>
+
+## 기본 도구 및 리소스
+
+DApp 개발 과정에서 필요한 주요 리소스는 다음과 같습니다:
+
+1. [개발자 지갑](/v3/concepts/dive-into-ton/ton-ecosystem/wallet-apps)
+2. [블록체인 탐색기](/v3/concepts/dive-into-ton/ton-ecosystem/explorers-in-ton)
+3. [API 문서](/v3/guidelines/dapps/apis-sdks/api-types)
+4. [다양한 언어용 SDK](/v3/guidelines/dapps/apis-sdks/sdk)
+5. [테스트넷 사용하기](/v3/documentation/smart-contracts/getting-started/testnet)
+6. [TON Unfreezer](https://unfreezer.ton.org/)
+
+### 자산 관리
+
+자산 작업을 하시나요? 이 가이드에서 필수사항을 다룹니다:
+
+- [결제 처리](/v3/guidelines/dapps/asset-processing/payments-processing)
+- [토큰(Jetton) 처리](/v3/guidelines/dapps/asset-processing/jettons) 
+- [NFT 다루기](/v3/guidelines/dapps/asset-processing/nft-processing/nfts)
+- [메타데이터 파싱](/v3/guidelines/dapps/asset-processing/nft-processing/metadata-parsing)
+
+### DeFi 소개
+
+분산 금융(DeFi)에 관심이 있으신가요? 다음은 다양한 유형의 자산을 다루는 방법입니다:
+
+- [Toncoin 이해하기](/v3/documentation/dapps/defi/coins)
+- [토큰: Jetton & NFT](/v3/documentation/dapps/defi/tokens)
+- [TON 결제](/v3/documentation/dapps/defi/ton-payments)
+- [구독 설정하기](/v3/documentation/dapps/defi/subscriptions)
+
+## 튜토리얼과 예제
+
+### DeFi 기초
+
+- 첫 토큰 만들기: [첫 Jetton 발행하기](/v3/guidelines/dapps/tutorials/mint-your-first-token)
+- 단계별 가이드: [NFT 컬렉션 발행](/v3/guidelines/dapps/tutorials/nft-minting-guide)
+
+### 언어별 가이드
+
+#### JavaScript
+
+- [결제 처리](https://github.com/toncenter/examples)
+- [TON 브릿지](https://github.com/ton-blockchain/bridge)
+- [웹 지갑](https://github.com/toncenter/ton-wallet)
+- [만두 판매 봇](/v3/guidelines/dapps/tutorials/telegram-bot-examples/accept-payments-in-a-telegram-bot-js)
+
+#### Python
+
+- [예제 프로젝트](https://github.com/psylopunk/pytonlib/tree/main/examples)
+- [상점 프론트 봇](/v3/guidelines/dapps/tutorials/telegram-bot-examples/accept-payments-in-a-telegram-bot)
+
+#### Go
+
+- [예제](https://github.com/xssnick/tonutils-go/tree/master/example)
+
+### 고급 주제
+
+- [영지식 증명](/v3/guidelines/dapps/tutorials/zero-knowledge-proofs)
+
+### 지갑 예시
+
+- [데스크톱 표준 지갑(C++와 Qt)](https://github.com/ton-blockchain/wallet-desktop)
+- [안드로이드 표준 지갑(Java)](https://github.com/ton-blockchain/wallet-android)
+- [iOS 표준 지갑(Swift)](https://github.com/ton-blockchain/wallet-ios)
+- [TonLib CLI(C++)](https://github.com/ton-blockchain/ton/blob/master/tonlib/tonlib/tonlib-cli.cpp)
+
+## 👨‍💻 기여
+
+중요한 자료가 없나요? 직접 튜토리얼을 작성하거나 커뮤니티에 문제를 설명할 수 있습니다.
+
+<Button href="/v3/contribute/participate" colorType="primary" sizeType={'sm'}>
+
+기여하기
+
+</Button>
+
+<Button href="https://github.com/ton-community/ton-docs/issues/new?assignees=&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A&template=suggest_tutorial.yaml&title=Suggest+a+tutorial" colorType={'secondary'} sizeType={'sm'}>
+
+튜토리얼 제안하기
+
+</Button>

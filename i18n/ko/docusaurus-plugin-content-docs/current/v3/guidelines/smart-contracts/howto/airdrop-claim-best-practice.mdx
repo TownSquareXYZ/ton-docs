@@ -1,0 +1,185 @@
+# 에어드롭 청구 가이드라인
+
+이 글에서는 가상의 청구 솔루션을 연구하고, 성능 문제를 파악하여 해결해보겠습니다.
+이 글은 컨트랙트 상호작용과 전반적인 성능에 미치는 영향에 초점을 맞춥니다.
+코드, 보안 측면 및 기타 세부사항은 제외합니다.
+
+## 청구 기계
+
+:::info
+청구 솔루션은 어떻게 작동하나요?
+생각해봅시다.
+:::
+
+사용자가 청구 자격이 있다는 증명을 보내면 
+솔루션이 이를 확인하고 jetton을 돌려보냅니다.
+이 경우 `증명`은 [머클 증명](/v3/documentation/data-formats/tlb/exotic-cells#merkle-proof)을 의미하지만 서명된 데이터나 다른 인증 방법일 수도 있습니다.
+jetton을 보내기 위해서는 jetton 지갑과 민터가 있어야 합니다.
+그리고 교활한 사용자가 두 번 청구하지 못하도록 해야 합니다 - 이중 지출 방지 컨트랙트.
+아, 그리고 우리도 돈을 벌고 싶겠죠?
+그래서 최소한 하나의 청구 지갑이 필요합니다.
+정리해보면:
+
+### Distributor (분배자)
+
+사용자로부터 증명을 받고, 확인하고, jetton을 방출합니다.
+State init: `(merkle_root, admin, fee_wallet_address)`.
+
+### Double spend (이중 지출)
+
+메시지를 받고, 이미 사용된 경우 바운스하고, 그렇지 않으면 메시지를 전달합니다.
+
+### Jetton
+
+_distributor_가 토큰을 보낼 jetton 지갑입니다.
+Jetton 민터는 이 글의 범위를 벗어납니다.
+
+### Fee wallet (수수료 지갑)
+
+모든 종류의 지갑 컨트랙트
+
+## 아키텍처
+
+### V1
+
+가장 먼저 떠오르는 디자인은 다음과 같습니다:
+
+- 사용자가 distributor에 증명을 보냅니다
+- Distributor가 증명을 확인하고 `double spend` 컨트랙트를 배포합니다
+- Distributor가 메시지를 double spend로 전달합니다
+- Double spend가 이전에 배포되지 않았다면 distributor에 `claim_ok`를 보냅니다
+- Distributor가 수수료 지갑에 청구 수수료를 보냅니다
+- Distributor가 사용자에게 jetton을 방출합니다
+
+**단순한 설계입니다!**
+
+무엇이 잘못되었나요?
+루프가 여기서는 불필요해 보입니다.
+
+### V2
+
+선형 디자인이 훨씬 낫습니다:
+
+- 사용자가 `double spend`를 배포하고 이것이 증명을 distributor로 전달합니다
+- Distributor가 state init `(distributor_address, user_address?)`로 보내는 `double spend` 주소를 확인합니다
+- Distributor가 증명을 확인하고(이 경우 사용자 인덱스가 증명의 일부여야 함) jetton을 방출합니다
+- Distributor가 수수료 지갑에 수수료를 보냅니다
+  **더 단순한 설계**
+
+## 샤드 최적화
+
+좋습니다, 뭔가 진행되고 있지만 샤드 최적화는 어떻습니까?
+
+### 이게 뭔가요?
+
+기본적인 이해를 위해 [다른 샤드를 위한 지갑 생성](/v3/guidelines/dapps/asset-processing/payments-processing/#wallet-creation-for-different-shards)을 살펴보세요.
+간단히 말해서 - 샤드는 4비트 주소 접두사입니다. 네트워킹과 비슷합니다.
+컨트랙트가 같은 네트워크 세그먼트에 있을 때, 메시지는 라우팅 없이 처리되므로 - 훨씬 빠릅니다.
+
+### 제어할 수 있는 주소 식별하기
+
+#### Distributor 주소
+
+distributor 데이터를 완전히 제어할 수 있으므로 원하는 샤드에 넣을 수 있어야 합니다.
+어떻게 할까요?
+컨트랙트 주소는 [상태로 정의](/v3/documentation/smart-contracts/addresses#account-id)된다는 것을 기억하세요.
+컨트랙트의 데이터 필드 중 하나를 nonce로 사용하고 원하는 결과를 얻을 때까지 계속 시도해야 합니다.
+실제 컨트랙트에서 좋은 nonce의 예는 지갑 컨트랙트의 (subwalletId/publicKey)가 될 수 있습니다.
+배포 후 수정할 수 있거나 컨트랙트 로직에 영향을 미치지 않는(subwalletId와 같은) 모든 필드가 적합합니다.
+[vanity-contract](https://github.com/ton-community/vanity-contract)처럼 명시적으로 이 목적을 위한 사용하지 않는 필드를 만들 수도 있습니다.
+
+#### Distributor jetton 지갑
+
+결과 jetton 지갑 주소를 직접 제어할 수는 없습니다.
+하지만 distributor 주소를 제어한다면, 결과 jetton 지갑이 같은 샤드에 있도록 선택할 수 있습니다.
+그러나 어떻게 할까요? 이를 위한 [라이브러리](https://github.com/Trinketer22/turbo-wallet)가 있습니다!
+현재는 지갑만 지원하지만 임의의 컨트랙트 지원을 추가하는 것은 상대적으로 쉽습니다.
+[HighloadV3](https://github.com/Trinketer22/turbo-wallet/blob/44fe7ee4300e37e052871275be8dd41035d45c3a/src/lib/contracts/HighloadWalletV3.ts#L20)가 어떻게 하는지 보세요.
+
+### Double spend 컨트랙트
+
+double spend 컨트랙트는 증명당 고유해야 하므로 샤드 튜닝이 어렵지 않을까요?
+잠시 생각해보죠.
+생각해보면 증명 구조에 따라 다릅니다.
+가장 먼저 떠오르는 것은 [mintless jettons](https://github.com/tonkeeper/TEPs2/blob/mintles/text/0177-mintless-jetton-standard.md#handlers)와 같은 구조입니다.
+
+```
+_ amount:Coins start_from:uint48 expired_at:uint48 = AirdropItem;
+
+_ _(HashMap 267 AirdropItem) = Airdrop;
+
+```
+
+이 경우에는 물론 튜닝이 불가능합니다. 주소 배포가 무작위이고 모든 데이터 필드가 의미가 있기 때문입니다.
+하지만 단순히 이렇게 하는 것을 막을 수는 없습니다:
+
+```
+_ amount:Coins start_from:uint48 expired_at:uint48 nonce:uint64 = AirdropItem;
+
+_ _(HashMap 267 AirdropItem) = Airdrop;
+```
+
+또는
+
+```
+_ amount:Coins start_from:uint48 expired_at:uint48 addr_hash: uint256 = AirdropItem;
+
+_ _(HashMap 64 AirdropItem) = Airdrop;
+
+```
+
+여기서 64비트 인덱스를 nonce로 사용할 수 있고 주소는 확인을 위한 데이터 페이로드의 일부가 됩니다.
+따라서 double spend 데이터가 데이터의 일부인 인덱스가 있는 `(distributor_address, index)`로 구성된다면, 여전히 초기 신뢰성을 유지할 수 있지만 이제 주소 샤드는 인덱스 매개변수를 통해 튜닝 가능합니다.
+
+#### 사용자 주소
+
+분명히 우리는 사용자 주소를 제어할 수 없죠?
+맞습니다, **하지만** 사용자 주소 샤드가 distributor 샤드와 일치하도록 그룹화할 수 있습니다.
+이 경우 각 distributor는 해당 샤드에서 발생하는 사용자로만 구성된 _merkle root_를 처리합니다.
+
+#### 요약
+
+`double_spend->dist->dist_jetton` 체인 부분을 같은 샤드에 넣을 수 있습니다.
+다른 샤드에 남는 것은 `dist_jetton->user_jetton->user_wallet`입니다.
+
+### 이러한 설정을 실제로 어떻게 배포하나요?
+
+단계별로 살펴보겠습니다.
+_distributor_ 컨트랙트는 업데이트 가능한 _merkle root_가 있어야 한다는 요구 사항이 있습니다.
+
+- jetton 지갑과 같은 샤드에 nonce로 초기 `merkle_root`를 사용하여 각 샤드(0-15)에 distributor를 배포합니다
+- 사용자를 dist 샤드별로 그룹화합니다
+- 각 사용자에 대해 _double spend_ 컨트랙트 `(distributor, index)`가 사용자 주소와 같은 샤드에 있도록 하는 인덱스를 찾습니다
+- 위 단계의 인덱스로 _merkle root_를 생성합니다
+- 해당 _merkle root_로 _distributor_를 업데이트합니다
+
+이제 준비가 되었어야 합니다!
+
+### V3
+
+- 사용자가 인덱스 튜닝을 사용하여 같은 샤드에 _double spend_ 컨트랙트를 배포합니다
+- 사용자 샤드의 distributor가 state init `(distributor_address, index)`로 보내는 `double spend` 주소를 확인합니다
+- Distributor가 수수료 지갑에 수수료를 보냅니다
+- Distributor가 증명을 확인하고(이 경우 사용자 인덱스가 증명의 일부여야 함) 같은 샤드에 있는 jetton 지갑을 통해 jetton을 방출합니다
+
+**더 단순한 설계**
+뭔가 잘못된 점이 있나요? 자세히 살펴보죠.
+....
+맞습니다! 수수료 지갑이 하나밖에 없어서 수수료가 단일 샤드에 대기열을 만듭니다. 재앙이 될 수 있었습니다! (실제로 발생한 적이 있는지 궁금하네요?).
+
+### V4
+
+- V3와 동일하지만 이제 16개의 지갑이 있고, 각각 _distributor_와 같은 샤드에 있습니다
+- _fee wallet_ 주소를 업데이트 가능하게 만들어야 합니다
+
+**약간 더 설계**
+
+이제는 어떻습니까? 좋아 보입니다.
+
+## 다음은 무엇인가요?
+
+항상 더 나아갈 수 있습니다.
+내장된 샤드 최적화가 있는 사용자 정의 [jetton 지갑](https://github.com/ton-community/mintless-jetton/blob/main/contracts/jetton-utils.fc#L142)을 살펴보세요.
+결과적으로 사용자의 jetton 지갑이 87% 확률로 사용자와 같은 샤드에 있게 됩니다.
+하지만 이것은 아직 잘 알려지지 않은 영역이므로 스스로 해결해야 합니다.
+TGE 행운을 빕니다!

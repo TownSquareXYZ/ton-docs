@@ -1,0 +1,780 @@
+# MyTonCtrl
+
+## 개요
+
+TON Foundation이 개발한 오픈소스 도구 **MyTonCtrl**을 사용하여 자체 노드를 설치하고 관리할 수 있습니다. 대부분의 TON 노드는 **MyTonCtrl**로 테스트되어 신뢰성이 검증되었습니다.
+
+[MyTonCtrl](https://github.com/ton-blockchain/mytonctrl)은 fift, lite-client, validator-engine-console를 위한 편리한 래퍼인 콘솔 애플리케이션입니다. Linux 운영 체제에서 지갑, 도메인, 검증자 관리 작업을 간소화하기 위해 특별히 개발되었습니다.
+
+설치 과정에 대한 피드백을 적극적으로 받고 있습니다. 질문이나 제안사항이 있다면 [연락주세요](https://t.me/Alexgton).
+
+## 일반 명령어
+
+### help
+
+인자 없음, 도움말 텍스트 출력
+
+### clear
+
+인자 없음, 콘솔 지우기
+
+### exit
+
+인자 없음, 콘솔 종료
+
+### update
+
+mytonctrl 업데이트. 매개변수 조합:
+
+| 형식 이름    | 형식                                                                         | 예시                                                                    | 설명                               |
+| :------- | :------------------------------------------------------------------------- | :-------------------------------------------------------------------- | -------------------------------- |
+| 인자 없음    | `update`                                                                   | `update`                                                              | 현재 저장소에서 업데이트                    |
+| URL 형식   | `update [https://github.com/author/repo/tree/branch]`                      | `update https://github.com/ton-blockchain/mytonctrl/tree/test`        | 지정된 URL에서 업데이트                   |
+| 브랜치만     | `update [BRANCH]`                                                          | `update test`                                                         | 현재 저장소의 지정된 브랜치에서 업데이트           |
+| 브랜치 덮어쓰기 | `update [https://github.com/authorName/repoName/tree/branchName] [BRANCH]` | `update https://github.com/ton-blockchain/mytonctrl/tree/master test` | 지정된 저장소의 두 번째 인자로 지정된 브랜치에서 업데이트 |
+
+### upgrade
+
+노드 업데이트. 매개변수 조합:
+
+| 형식 이름    | 형식                                                                          | 예시                                                                  | 설명                                |
+| :------- | :-------------------------------------------------------------------------- | :------------------------------------------------------------------ | --------------------------------- |
+| 인자 없음    | `upgrade`                                                                   | `upgrade`                                                           | 현재 저장소에서 업그레이드                    |
+| URL 형식   | `upgrade [https://github.com/author/repo/tree/branch]`                      | `upgrade https://github.com/ton-blockchain/ton/tree/master`         | 지정된 URL에서 업그레이드                   |
+| 브랜치만     | `upgrade [BRANCH]`                                                          | `upgrade master`                                                    | 현재 저장소의 지정된 브랜치에서 업그레이드           |
+| 브랜치 덮어쓰기 | `upgrade [https://github.com/authorName/repoName/tree/branchName] [BRANCH]` | `upgrade https://github.com/ton-blockchain/ton/tree/master testnet` | 지정된 저장소의 두 번째 인자로 지정된 브랜치에서 업그레이드 |
+
+### status
+
+현재 mytonctrl과 노드 상태 확인. 매개변수 조합:
+
+| 형식 이름 | 형식            | 예시            | 설명                                                |
+| ----- | ------------- | ------------- | ------------------------------------------------- |
+| 인자 없음 | `status`      | `status`      | 검증자 효율성과 온라인 검증자를 포함한 전체 상태 보고서                   |
+| Fast  | `status fast` | `status fast` | TestNet에서 사용해야 함. 검증자 효율성과 온라인 검증자 수 없이 상태 보고서 표시 |
+
+[상태 출력에 대해 자세히 보기](/v3/documentation/infra/nodes/mytonctrl/mytonctrl-status)
+
+### installer
+
+인자 없음, TON 모듈의 인스톨러 실행 (스크립트 /usr/src/mytonctrl/mytoninstaller.py)
+
+### status_modes
+
+인자 없음, MTC 모드 표시
+
+### status_settings
+
+인자 없음, 설명과 값이 포함된 모든 사용 가능한 설정 표시
+
+### enable_mode
+
+특정 모드 활성화
+
+```bash
+MyTonCtrl> enable_mode <mode_name>
+```
+
+예시:
+
+```bash
+MyTonCtrl> enable_mode validator
+```
+
+### disable_mode
+
+특정 모드 비활성화
+
+```bash
+MyTonCtrl> disable_mode <mode_name>
+```
+
+예시:
+
+```bash
+MyTonCtrl> disable_mode validator
+```
+
+### about
+
+지정된 모드에 대한 설명 제공
+
+```bash
+MyTonCtrl> about <mode_name>
+```
+
+예시:
+
+```bash
+MyTonCtrl> about validator
+```
+
+### get
+
+특정 설정의 값을 JSON 형식으로 가져오기
+
+```bash
+MyTonCtrl> get <setting_name>
+```
+
+예시:
+
+```bash
+MyTonCtrl> get stake
+```
+
+### set
+
+특정 설정에 지정된 값 설정. `--force` 활성화시 설정 존재 확인 건너뛰기
+
+```bash
+MyTonCtrl> set <setting> <value> [--force]
+```
+
+예시:
+
+```bash
+MyTonCtrl> set stake 9000
+```
+
+### rollback
+
+인자 없음, mytonctrl 1.0으로 롤백. mytonctrl 1.0은 어떤 경우에도 사용하지 말아야 합니다.
+
+### getconfig
+
+`<config-id>`로 지정된 설정의 JSON 표현을 가져와 출력
+
+```bash
+MyTonCtrl> getconfig <config_id> # config id can be omitted
+```
+
+예시:
+
+```bash
+MyTonCtrl> getconfig 0
+```
+
+### get_pool_data
+
+`<pool-name>` 또는 `<pool-addr>`로 지정된 풀 데이터의 JSON 표현을 가져와 출력
+
+```bash
+MyTonCtrl> get_pool_data <<pool-name> | <pool-addr>>
+```
+
+예시:
+
+```bash
+get_pool_data pool_name # you can check possible pool names using ls /home/install_mytonctrl/.local/share/mytoncore/pools
+```
+
+## 오버레이
+
+[오버레이에 대해 여기에서 자세히 읽기](/v3/guidelines/nodes/custom-overlays).
+
+### add_custom_overlay
+
+`<path_to_config>`로 지정된 설정을 사용하여 주어진 `<name>`으로 커스텀 오버레이 추가
+
+```bash
+MyTonCtrl> add_custom_overlay <name> <path_to_config>
+```
+
+예시:
+
+```bash
+add_custom_overlay custom /config.json # check link from above to know what config this command requires (/v3/guidelines/nodes/custom-overlays)
+```
+
+### list_custom_overlays
+
+인자 없음, 커스텀 오버레이 출력
+
+### delete_custom_overlay
+
+지정된 `<name>`의 커스텀 오버레이 삭제
+
+```bash
+MyTonCtrl> delete_custom_overlay <name>
+```
+
+## 검증자
+
+### vo
+
+`<offer-hash>`로 지정된 제안에 투표
+
+```bash
+MyTonCtrl> vo <offer-hash> # use `ol` to get offers
+```
+
+### ve
+
+인자 없음, 선거에 투표
+
+### vc
+
+`<election-id>`로 지정된 선거에서 `<complaint-hash>`로 지정된 불만사항에 투표
+
+```bash
+MyTonCtrl> vc <election-id> <complaint-hash>
+```
+
+실제로는 이것도 작동하지만, 현재 mytonctrl 상태의 데이터를 사용해야 합니다:
+
+```bash
+MyTonCtrl> vc 0 0
+```
+
+### check_ef
+
+현재 및 이전 라운드의 검증자 효율성 데이터를 출력합니다.
+
+**참고**: 현재 라운드의 효율성 데이터는 라운드가 진행됨에 따라 더 정확해집니다.
+
+`validator index` (`status` 명령으로 받을 수 있음)에 따라 세 가지 시나리오가 있습니다:
+
+- **검증자 인덱스가 [0, `max_main_validators`) 범위에 있는 경우**:
+  `validator efficiency`는 전체 라운드 동안 90% 이상이어야 합니다(향후 통계에 따라 숫자가 변경될 수 있음). 그렇지 않으면 페널티(벌금)가 부과될 수 있습니다.
+
+- **검증자 인덱스가 [`max_main_validators`, `max_validators`) 범위에 있는 경우**:
+  `validator efficiency`는 여전히 전체 라운드 동안 90% 이상이어야 합니다(향후 통계에 따라 숫자가 변경될 수 있음). 현재는 페널티가 적용되지 않지만, 향후 업데이트에서 변경될 수 있습니다.
+
+- **사용자가 검증자가 아닌 경우**:
+  페널티가 적용되지 않지만, 보상도 받을 수 없습니다. 확인할 `validator efficiency`가 없습니다. 이는 낮은 스테이크나 잘못된 노드 구성으로 인해 발생할 수 있습니다. 또한 `mytonctrl`이 지속적으로 실행되고 있는지 확인하세요.
+
+`max_validators`와 `max_main_validators`에 대해 [설정 매개변수 페이지](/v3/documentation/network/configs/blockchain-configs#configuration-parameters-for-the-number-of-validators-for-elections)에서 자세히 읽어보세요. 실제 값은 [메인넷](https://tonviewer.com/config#16)과 [테스트넷](https://testnet.tonviewer.com/config#16)에서 확인할 수 있습니다.
+
+## 풀 명령어
+
+[노미네이터 풀 페이지](/v3/documentation/smart-contracts/contracts-specs/nominator-pool)에서 자세한 정보를 얻으세요.
+
+### deposit_to_pool
+
+`<pool-addr>`로 지정된 풀에 `<amount>` 금액을 예치
+
+```bash
+MyTonCtrl> deposit_to_pool <pool-addr> <amount>
+```
+
+예시:
+
+```bash
+MyTonCtrl> deposit_to_pool kf_JcC5pn3etTAdwOnc16_tyMmKE8-ftNUnf0OnUjAIdDJpX 1
+```
+
+### withdraw_from_pool
+
+`<pool-addr>`로 지정된 풀에서 `<amount>` 금액을 인출
+
+```bash
+MyTonCtrl> withdraw_from_pool <pool-addr> <amount>
+```
+
+예시:
+
+```bash
+MyTonCtrl> withdraw_from_pool kf_JcC5pn3etTAdwOnc16_tyMmKE8-ftNUnf0OnUjAIdDJpX 1
+```
+
+### cleanup
+
+인자 없음, 검증자 데이터베이스 정리
+
+### benchmark
+
+인자 없음, 여러 테스트가 포함된 표 출력
+
+## 단일 풀
+
+[단일 노미네이터 풀 페이지](/v3/documentation/smart-contracts/contracts-specs/nominator-pool)에서 자세한 정보를 얻으세요.
+
+### new_single_pool
+
+지정된 `<pool-name>`과 `<owner-address>`로 새 단일 풀 생성
+
+```bash
+MyTonCtrl> new_single_pool <pool-name> <owner-address>
+```
+
+예시:
+
+```bash
+MyTonCtrl> new_single_pool name kf9tZrL46Xjux3ZqvQFSgQkOIlteJK52slSYWbasqtOjrKUT
+```
+
+### activate_single_pool
+
+`<pool-name>`으로 지정된 단일 풀 활성화
+
+```bash
+MyTonCtrl> activate_single_pool <pool-name> # pool name from above
+```
+
+## 지갑 관리
+
+### 지갑 가져오기
+
+MyTonCtrl은 wallet-v1, wallet-v3, [lockup-wallet](https://github.com/ton-blockchain/lockup-wallet-contract/tree/main/universal) 등 다양한 유형의 지갑형 컨트랙트를 지원합니다. 대부분의 경우 이러한 컨트랙트와 상호 작용하는 간단한 방법을 제공합니다.
+
+#### 개인 키를 사용하여 가져오기
+
+개인 키에 접근할 수 있다면 쉽게 지갑을 가져올 수 있습니다:
+
+```bash
+MyTonCtrl> iw <wallet-addr> <wallet-secret-key>
+```
+
+여기서 `<wallet-secret-key>`는 base64 형식의 개인 키입니다.
+
+예시:
+
+```bash
+MyTonCtrl> iw kf9tZrL46Xjux3ZqvQFSgQkOIlteJK52slSYWbasqtOjrKUT AAAH++/ve+/vXrvv73vv73vv73vv71DWu+/vWcpA1E777+92Ijvv73vv70iV++/ve+/vUTvv70d77+9UFjvv71277+9bO+/ve+/vXgzdzzvv71i77+977+9CjLvv73vv73vv71i77+9Bu+/vV0oJe+/ve+/vUPvv73vv73vv70=
+```
+
+#### 니모닉 구문을 사용하여 가져오기
+
+니모닉 구문(예: `tattoo during ...`과 같은 24개 단어 시퀀스)이 있는 경우 다음 단계를 따르세요:
+
+1. Node.js 설치
+2. [mnemonic2key](https://github.com/ton-blockchain/mnemonic2key) 클론 및 설치:
+   ```
+   git clone https://github.com/ton-blockchain/mnemonic2key.git
+   cd mnemonic2key
+   npm install
+   ```
+3. 다음 명령어를 실행하고, `word1`, `word2`...를 니모닉 구문으로, `address`를 지갑 컨트랙트 주소로 대체하세요:
+   ```
+   node index.js word1 word2 ... word24 [address]
+   ```
+4. 스크립트가 `wallet.pk`와 `wallet.addr`을 생성합니다. 이들을 `imported_wallet.pk`와 `imported_wallet.addr`로 이름을 변경하세요.
+5. 두 파일을 `~/.local/share/mytoncore/wallets/` 디렉토리에 복사하세요.
+6. mytonctrl 콘솔을 열고 `wl` 명령을 사용하여 지갑 목록을 확인하세요.
+7. 지갑이 가져와졌고 올바른 잔액이 표시되는지 확인하세요.
+8. 이제 `mg` 명령을 사용하여 자금을 보낼 수 있습니다. `mg`를 입력하여 도움말 문서를 확인하세요.
+   명령어를 실행할 때 플레이스홀더(`< >` 안의 단어)를 실제 값으로 대체하는 것을 잊지 마세요.
+
+### 지갑 목록 보기
+
+```bash
+MyTonCtrl> wl
+```
+
+![](/img/docs/mytonctrl/wl.png)
+
+### 새 로컬 지갑 생성
+
+또한 새로운 빈 지갑을 생성할 수 있습니다:
+
+```bash
+MyTonCtrl> nw <workchain-id> <wallet-name> [<version> <subwallet>]
+```
+
+예시:
+
+```bash
+MyTonCtrl> nw 0 name v3 # by default subwallet is 0x29A9A317 + workchain
+```
+
+### 로컬 지갑 활성화
+
+지갑을 사용하려면 활성화해야 합니다:
+
+```bash
+MyTonCtrl> aw <wallet-name>
+```
+
+하지만 활성화하기 전에 지갑으로 1 Toncoin을 보내세요:
+
+```bash
+MyTonCtrl> wl
+Name                  Status  Balance           Ver  Wch  Address
+validator_wallet_001  active  994.776032511     v1   -1   kf_dctjwS4tqWdeG4GcCLJ53rkgxZOGGrdDzHJ_mxPkm_Xct
+wallet_004            uninit  0.0               v1   0    0QBxnZJq4oHVFs4ban3kJ5qllM1IQo57lIx8QP69Ue9A6Kbs
+
+MyTonCtrl> mg validator_wallet_001 0QBxnZJq4oHVFs4ban3kJ5qllM1IQo57lIx8QP69Ue9A6Kbs 1
+```
+
+그런 다음 활성화:
+
+```bash
+MyTonCtrl> aw wallet_004
+ActivateWallet - OK
+
+MyTonCtrl> wl
+Name                  Status  Balance           Ver  Wch  Address
+validator_wallet_001  active  994.776032511     v1   -1   kf_dctjwS4tqWdeG4GcCLJ53rkgxZOGGrdDzHJ_mxPkm_Xct
+wallet_004            active  0.998256399       v1   0    kQBxnZJq4oHVFs4ban3kJ5qllM1IQo57lIx8QP69Ue9A6Psp
+```
+
+### 지갑의 시퀀스 번호 가져오기
+
+```bash
+MyTonCtrl> seqno <wallet-name>
+```
+
+![](/img/docs/mytonctrl/nw.png)
+
+### 지갑 버전 설정
+
+이 명령은 일반 지갑과 유사한 상호작용 메서드를 가진 수정된 지갑을 사용할 때 필요합니다.
+
+```bash
+MyTonCtrl> swv <wallet-addr> <wallet-version>
+```
+
+예시:
+
+```bash
+MyTonCtrl> swv kf9tZrL46Xjux3ZqvQFSgQkOIlteJK52slSYWbasqtOjrKUT v3
+```
+
+### 지갑 내보내기
+
+특정 지갑 주소와 비밀 키를 얻을 수 있습니다.
+
+```bash
+MyTonCtrl> ew <wallet-name>
+```
+
+![](/img/docs/mytonctrl/ew.png)
+
+### 로컬 지갑 삭제
+
+```bash
+MyTonCtrl> dw <wallet-name>
+```
+
+![](/img/docs/mytonctrl/dw.png)
+
+## 계정 및 트랜잭션 명령어
+
+### 계정 상태
+
+계정 상태와 트랜잭션 내역을 확인하려면 다음 명령어를 사용:
+
+```bash
+MyTonCtrl> vas <account-addr> # for example you can get address of validator wallet by wl command and use vas to get more information
+```
+
+![](/img/docs/mytonctrl/vas.png)
+
+### 계정 내역
+
+`limit`를 작업 수로 사용하여 계정 트랜잭션 내역을 확인하려면 다음 명령어 사용:
+
+```bash
+MyTonCtrl> vah <account-addr> <limit> # limit is just unsigned integer number
+```
+
+![](/img/docs/mytonctrl/vah.png)
+
+### 코인 전송
+
+로컬 지갑에서 계정으로 코인 전송:
+
+```bash
+MyTonCtrl> mg <wallet-name> <account-addr | bookmark-name> <amount>
+```
+
+예시:
+
+```bash
+MyTonCtrl> mg wallet_004 kQBxnZJq4oHVFs4ban3kJ5qllM1IQo57lIx8QP69Ue9A6Psp 1
+```
+
+:::caution
+'v4' 버전 지갑은 전송을 지원하지 않습니다
+:::
+
+### 프록시를 통한 코인 전송
+
+프록시를 통해 로컬 지갑에서 계정으로 코인 전송:
+
+```bash
+MyTonCtrl> mgtp <wallet-name> <account-addr | bookmark-name> <amount>
+```
+
+예시:
+
+```bash
+MyTonCtrl> mgtp wallet_004 kQBxnZJq4oHVFs4ban3kJ5qllM1IQo57lIx8QP69Ue9A6Psp 1
+```
+
+## 일반 풀 명령어
+
+**MyTonCtrl**에는 두 가지 유형의 풀이 있습니다:
+
+1. [노미네이터 풀](/v3/documentation/smart-contracts/contracts-specs/nominator-pool)
+2. [단일 노미네이터 풀](/v3/documentation/smart-contracts/contracts-specs/single-nominator-pool)
+
+이들은 모두 다음 명령어 세트로 관리됩니다:
+
+### 풀 목록
+
+```bash
+MyTonCtrl> pools_list
+```
+
+![](/img/docs/mytonctrl/test-pools-list.png)
+
+### 풀 삭제
+
+```bash
+MyTonCtrl> delete_pool <pool-name>
+```
+
+### 풀 가져오기
+
+이미 생성된 풀을 로컬 풀 목록에 추가할 수 있습니다:
+
+```bash
+MyTonCtrl> import_pool <pool-name> <pool-addr>
+```
+
+예시:
+
+```bash
+MyTonCtrl> import_pool name kf_JcC5pn3etTAdwOnc16_tyMmKE8-ftNUnf0OnUjAIdDJpX
+```
+
+## 북마크
+
+계정 주소에 대한 별칭(북마크)을 생성하여 사용을 단순화할 수 있습니다.
+
+### 새 북마크 생성
+
+```bash
+MyTonCtrl> nb <bookmark-name> <account-addr | domain-name>
+```
+
+![](/img/docs/mytonctrl/nb.png)
+
+### 북마크 목록 보기
+
+```bash
+MyTonCtrl> bl
+```
+
+![](/img/docs/mytonctrl/bl.png)
+
+### 북마크 삭제
+
+```bash
+MyTonCtrl> db <bookmark-name> <bookmark-type>
+```
+
+![](/img/docs/mytonctrl/db.png)
+
+## 기타 mytonctrl 명령어
+
+### ol
+
+제안 목록 보기
+
+| 형식 이름          | 형식               | 설명                                          |
+| -------------- | ---------------- | ------------------------------------------- |
+| 인자 없음          | `ol`             | 해시가 축약된 테이블 출력                              |
+| JSON 출력        | `ol --json`      | `data`의 JSON 표현 출력                          |
+| 전체 해시 출력       | `ol hash`        | 전체 해시가 있는 테이블 출력                            |
+| 전체 해시가 있는 JSON | `ol --json hash` | `data`의 JSON 표현 출력. 이 경우 `"hash"` 인자는 영향 없음 |
+
+### od
+
+제안 차이점 가져오기
+
+```bash
+MyTonCtrl> od [offer-hash]
+```
+
+### el
+
+선거 항목 목록 보기
+
+| 형식 이름     | 형식                                  | 설명                                           |
+| --------- | ----------------------------------- | -------------------------------------------- |
+| 인자 없음     | `el`                                | ADNL, Pubkey, Wallet이 축약된 테이블 출력             |
+| 다음 인자의 조합 | `el --json adnl pubkey wallet past` | JSON 표현으로 전체 ADNL, Pubkey, Wallet 및 과거 선거 항목 |
+
+각 인자 설명:
+
+- \--json: data의 JSON 표현 출력
+- past: 과거 선거 항목 포함
+- adnl: 전체 ADNL 출력
+- pubkey: 전체 Pubkey 출력
+- wallet: 전체 Wallet 출력
+
+### vl
+
+활성 검증자 보기
+
+| 형식 이름     | 형식                                  | 설명                                            |
+| --------- | ----------------------------------- | --------------------------------------------- |
+| 인자 없음     | `vl`                                | ADNL, Pubkey, Wallet이 축약된 테이블 출력              |
+| 다음 인자의 조합 | `vl --json adnl pubkey wallet past` | JSON 표현으로 전체 ADNL, Pubkey, Wallet 및 과거 검증자 항목 |
+
+각 인자 설명:
+
+- \--json: data의 JSON 표현 출력
+- past: 과거 검증자 항목 포함
+- adnl: 전체 ADNL 출력
+- pubkey: 전체 Pubkey 출력
+- wallet: 전체 Wallet 출력
+- offline: 온라인 검증자 제외
+
+### cl
+
+불만사항 목록 보기
+
+| 형식 이름     | 형식                    | 설명                         |
+| --------- | --------------------- | -------------------------- |
+| 인자 없음     | `cl`                  | ADNL이 축약된 테이블 출력           |
+| 다음 인자의 조합 | `cl --json adnl past` | JSON 표현으로 전체 ADNL과 과거 불만사항 |
+
+각 매개변수 설명:
+
+- \--json: data의 JSON 표현 출력
+- past: 과거 불만사항 포함
+- adnl: 전체 ADNL 출력
+
+## 인스톨러
+
+이 섹션은 다음 명령어로 열 수 있는 `installer` 하위 콘솔에 대해 설명합니다
+
+```bash
+MyTonCtrl> installer
+```
+
+예시:
+
+![img.png](/img/docs/mytonctrl/installer.png)
+
+모든 명령어는 MyTonCtrl 콘솔에서 직접 호출할 수 있습니다
+
+```bash
+MyTonCtrl> installer [command] [args]
+```
+
+### help
+
+사용 가능한 모든 명령어 출력
+
+### clear
+
+터미널 지우기
+
+### exit
+
+mytoninstaller 터미널 종료
+
+### status
+
+서비스 상태(Full node, Mytoncore, V.console, Liteserver) 및 노드 인자 출력
+
+### set_node_argument
+
+| 형식 이름       | 형식                                          | 설명                                                        |
+| ----------- | ------------------------------------------- | --------------------------------------------------------- |
+| 인자 추가 또는 대체 | `set_node_argument [-ARG_NAME] [ARG_VALUE]` | 인자 추가 또는 존재하는 경우 값 대체. `-ARG_NAME`은 시작 부분에 `-` 또는 `--` 필요 |
+| 인자 삭제       | `set_node_argument [-ARG_NAME] -d`          | 목록에서 인자 삭제                                                |
+
+가능한 인자:
+
+| 노드 인자 이름        | 설명                                                         | 기본값                                                   |
+| --------------- | ---------------------------------------------------------- | ----------------------------------------------------- |
+| `threads`       | 스레드 수                                                      | `CPU 수 - 1`                                           |
+| `daemonize`     |                                                            | 값 없음                                                  |
+| `global-config` | 전역 설정 경로                                                   | `/usr/bin/ton/global.config.json`                     |
+| `db`            | 데이터베이스 경로                                                  | `/var/ton-work/db/`                                   |
+| `logname`       | 로그 경로                                                      | `/var/ton-work/log`                                   |
+| `state-ttl`     | 노드가 유지하는 블록체인 상태의 TTL                                      | 3600                                                  |
+| `archive-ttl`   | 노드가 저장하는 블록의 TTL. _노드가 아카이브 블록을 저장하지 않도록 하려면 `86400` 값 사용_ | 설치 과정에서 liteserver 모드가 활성화된 경우 2592000, 그렇지 않으면 86400 |
+
+예시:
+
+```bash
+MyTonInstaller> set_node_argument --state-ttl 3601
+```
+
+예시:
+
+```bash
+MyTonInstaller> set_node_argument --state-ttl 3601
+```
+
+### enable
+
+모드는 다음과 같은 이름을 가질 수 있습니다:
+
+```bash
+MyTonInstaller> enable <MODE_NAME>
+```
+
+예시:
+
+- FN - Full Node
+- VC - Validator Console
+- LS - Lite Server
+- DS - DHT Server
+- JR - Jsonrpc
+- THA - TON HTTP API
+- LSP - ls proxy
+- TSP - TON storage + TON storage provider
+
+예시:
+
+```bash
+MyTonInstaller> enable FN
+```
+
+### update
+
+mytoninstaller의 `enable`과 동일
+
+```bash
+MyTonInstaller> update FN
+```
+
+### plsc
+
+liteserver 설정 출력
+
+예시:
+
+```json
+{
+    "ip": 1111111111,
+    "port": 11111,
+    "id": {
+        "@type": "pub.ed25519",
+        "key": "UURGaaZZjsBbKHvnrBqslHerXYbMCVDKdswKNJvAHkc="
+    }
+}
+```
+
+### clcf
+
+로컬 설정 파일 생성(기본적으로 `/usr/bin/ton/local.config.json`에)
+
+### print_ls_proxy_config
+
+ls 프록시 설정 출력
+
+### create_ls_proxy_config_file
+
+현재는 아무것도 하지 않음, 개발 단계
+
+### drvcf
+
+위험한 검증자 설정 파일 복구
+
+### setwebpass
+
+인자 없음. 웹 관리자 인터페이스 비밀번호 설정, `python3 /usr/src/mtc-jsonrpc/mtc-jsonrpc.py -p` 실행.
+
+## 참고
+
+- [FAQ](/v3/guidelines/nodes/faq)
+- [문제해결](/v3/guidelines/nodes/nodes-troubleshooting)
