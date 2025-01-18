@@ -11,7 +11,7 @@ import TabItem from '@theme/TabItem';
 
 - использование [горячего кошелька](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/wallet3-code.fc) (небезопасно, поскольку холодный кошелек необходим для предотвращения кражи в случае взлома узла валидатора)
 - использование [restricted-wallet](https://github.com/EmelyanenkoK/nomination-contract/blob/master/restricted-wallet/wallet.fc) (который не поддерживается и имеет нерешенные векторы атак, например, атаки на слив газа)
-- Использование [Пула номинантов](https://github.com/ton-blockchain/nominator-pool) с max_nominators_count = 1 (излишне сложно при большей площади атаки)
+- Использование [Пула номинаторов](https://github.com/ton-blockchain/nominator-pool) с max_nominators_count = 1 (излишне сложно при большей площади атаки)
 
 Смотрите более подробное [сравнение существующих альтернатив](#comparison-of-existing-alternatives).
 
@@ -52,7 +52,7 @@ zA05WJ6ywM/g/eKEVmV6O909lTlVrj+Y8lZkqzyQT70=
 6. Избирательный цикл закончился, и ставка может быть восстановлена.
 7. *MyTonCtrl* использует кошелек *Валидатор*, чтобы дать указание *Single Nominator* восстановить ставку в следующем избирательном цикле.
 8. *Single Nominator* восстанавливает ставку (\$$$) из предыдущего цикла у *Избирателя*.
-9. Шаги 4-8 повторяются до тех пор, пока *Владелец* будет рад продолжать валидацию.
+9. Шаги 4-8 повторяются до тех пор, пока *Владелец* будет готов продолжать валидацию.
 10. *Владелец* выводит средства (\$$$) из контракта *Single Nominator* и забирает их.
 
 ## Ослабление векторов атак
