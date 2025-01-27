@@ -1,3 +1,6 @@
+import ConceptImage from '@site/src/components/conceptImage';
+import ThemedImage from '@theme/ThemedImage';
+
 # Ячейки как хранилище данных
 
 Все в TON хранится в ячейках. Ячейка — это структура данных, содержащая:
@@ -9,7 +12,14 @@
 
 Таким образом, все ячейки составляют направленный ациклический граф (DAG). Вот хорошая картинка для иллюстрации:
 
-![Направленный ациклический граф](/img/docs/dag.png)
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+light: '/img/docs/cells-as-data-storage/dag.png?raw=true',
+dark: '/img/docs/cells-as-data-storage/Cells-as-data-storage_1_dark.png?raw=true',
+}}
+/> <br></br>
 
 ## Типы ячеек
 
