@@ -15,7 +15,7 @@ TON – это асинхронный блокчейн со сложной ст�
   alt=""
   sources={{
     light: '/img/docs/message-delivery/message_delivery_1.svg?raw=true',
-    dark: '/img/docs/message-delivery/message_delivery_1.svg?raw=true',
+    dark: '/img/docs/message-delivery/message_delivery_1_dark.svg?raw=true',
   }}
 />
 </div>
@@ -37,11 +37,11 @@ TON – это асинхронный блокчейн со сложной ст�
 
 <br></br>
 <ThemedImage
-    alt=""
-    sources={{
-        light: '/img/tutorials/onboarding/4.png?raw=true',
-        dark: '/img/tutorials/onboarding/4-dark.png?raw=true',
-    }}
+  alt=""
+  sources={{
+    light: '/img/docs/message-delivery/message_delivery_2.svg?raw=true',
+    dark: '/img/docs/message-delivery/message_delivery_2_dark.svg?raw=true',
+  }}
 />
 <br></br>
 
@@ -100,11 +100,11 @@ TON – это асинхронный блокчейн со сложной ст�
 
 <br></br>
 <ThemedImage
-    alt=""
-    sources={{
-        light: '/img/tutorials/onboarding/4.png?raw=true',
-        dark: '/img/tutorials/onboarding/4-dark.png?raw=true',
-    }}
+  alt=""
+  sources={{
+    light: '/img/docs/message-delivery/message_delivery_3.svg?raw=true',
+    dark: '/img/docs/message-delivery/message_delivery_3_dark.svg?raw=true',
+  }}
 />
 <br></br>
 
@@ -121,9 +121,9 @@ TON – это асинхронный блокчейн со сложной ст�
 <ThemedImage
   alt=""
   sources={{
-    light: '/img/docs/ecosystem-messages-layout/ecosystem_messages_layout_1.svg?raw=true',
-    dark: '/img/docs/ecosystem-messages-layout/ecosystem_messages_layout_1_dark.svg?raw=true',
-  }}.
+    light: '/img/docs/message-delivery/message_delivery_5.svg?raw=true',
+    dark: '/img/docs/message-delivery/message_delivery_5_dark.svg?raw=true',
+  }}
 />
 </div>
 <br></br>
@@ -142,7 +142,17 @@ TON – это асинхронный блокчейн со сложной ст�
 
 Предположим, что существует два контракта – _A_ и _B_. _A_ получает внешнее сообщение, которое запускает отправку двух внутренних сообщений контракту _B_, назовем их сообщения _1_ и _2_. В этом простом случае мы можем на 100% быть уверены, что сообщение _1_ будет обработано _B_ раньше, чем _2_ поскольку оно имеет меньшее _lt_.
 
-<ConceptImage src="/img/docs/msg-delivery-1.png" />
+<br></br>
+<div class="text--center">
+<ThemedImage
+  alt=""
+  sources={{
+    light: '/img/docs/message-delivery/msg-delivery-1.png?raw=true',
+    dark: '/img/docs/message-delivery/msg-delivery-1_dark.svg?raw=true',
+  }}
+/>
+</div>
+<br></br>
 
 Это простой случай, когда у нас только два контракта. Как наша система работает в более сложных случаях?
 
@@ -160,9 +170,9 @@ TON – это асинхронный блокчейн со сложной ст�
 <ThemedImage
   alt=""
   sources={{
-    light: '/img/docs/ecosystem-messages-layout/ecosystem_messages_layout_1.svg?raw=true',
-    dark: '/img/docs/ecosystem-messages-layout/ecosystem_messages_layout_1_dark.svg?raw=true',
-  }}.
+    light: '/img/docs/message-delivery/message_delivery_6.svg?raw=true',
+    dark: '/img/docs/message-delivery/message_delivery_6_dark.svg?raw=true',
+  }}
 />
 </div>
 <br></br>
@@ -174,22 +184,64 @@ TON – это асинхронный блокчейн со сложной ст�
 <ThemedImage
   alt=""
   sources={{
-    light: '/img/docs/ecosystem-messages-layout/ecosystem_messages_layout_1.svg?raw=true',
-    dark: '/img/docs/ecosystem-messages-layout/ecosystem_messages_layout_1_dark.svg?raw=true',
-  }}.
+    light: '/img/docs/message-delivery/message_delivery_7.svg?raw=true',
+    dark: '/img/docs/message-delivery/message_delivery_7_dark.svg?raw=true',
+  }}
 />
 </div>
 <br></br>
 
 Тоже самое происходит и в обратном случае, когда два контракта _B_ и _C_ отправляют сообщение одному контракту _A_. Даже если сообщение `B -> A` было отправлено раньше, чем `C -> A`, мы не можем знать какое из них будет доставлено первым. Маршрут `B -> A` может потребовать большего количества переходов по цепочке шардов.
 
-<ConceptImage src="/img/docs/msg-delivery-3.png" />
+<br></br>
+<div class="text--center">
+<ThemedImage
+  alt=""
+  sources={{
+    light: '/img/docs/message-delivery/msg-delivery-3.png?raw=true',
+    dark: '/img/docs/message-delivery/msg-delivery-3_dark.svg?raw=true',
+  }}
+/>
+</div>
+<br></br>
 
 Возможных сценариев взаимодействия смарт-контрактов может быть множество и в любом сценарии с более чем 2 контрактами порядок доставки сообщений может быть произвольным. Единственная гарантия заключается в том, что сообщения от любого контракта _A_ к любому контракту _B_ будут обрабатываться в порядке их логического времени. Некоторые примеры приведены ниже.
 
-<ConceptImage src="/img/docs/msg-delivery-4.png" />
-<ConceptImage src="/img/docs/msg-delivery-5.png" />
-<ConceptImage src="/img/docs/msg-delivery-6.png" />
+<br></br>
+<div class="text--center">
+<ThemedImage
+  alt=""
+  sources={{
+    light: '/img/docs/message-delivery/msg-delivery-4.png?raw=true',
+    dark: '/img/docs/message-delivery/msg-delivery-4_dark.svg?raw=true',
+   }}
+/>
+</div>
+<br></br>
+
+<br></br>
+<div class="text--center">
+<ThemedImage
+  alt=""
+  sources={{
+    light: '/img/docs/message-delivery/msg-delivery-5.png?raw=true',
+    dark: '/img/docs/message-delivery/msg-delivery-5_dark.svg?raw=true',
+  }}
+/>
+</div>
+<br></br>
+
+<br></br>
+<div class="text--center">
+<ThemedImage
+  alt=""
+  sources={{
+    light: '/img/docs/message-delivery/msg-delivery-6.png?raw=true',
+    dark: '/img/docs/message-delivery/msg-delivery-6_dark.svg?raw=true',
+  }}
+/>
+</div>
+<br></br>
 
 ## Заключение
 
