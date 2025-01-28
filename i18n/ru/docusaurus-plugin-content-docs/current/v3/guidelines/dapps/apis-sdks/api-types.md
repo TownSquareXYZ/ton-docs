@@ -5,6 +5,12 @@
 - [TON HTTP API](/v3/guidelines/dapps/apis-sdks/ton-http-apis) - API, позволяющий работать с *индексированной информацией блокчейна*.
 - [TON ADNL API](/v3/guidelines/dapps/apis-sdks/ton-adnl-apis) - безопасный API для взаимодействия с TON, основанный на протоколе ADNL.
 
+:::tip Состояние инфраструктуры TON
+
+- [status.toncenter](https://status.toncenter.com/) - различная статистика активности узлов за последний час.
+- [Tonstat.us](https://tonstat.us/) - Графана в реальном времени, обновляется каждые 5 минут.
+  :::
+
 ## API-интерфейсы Toncenter
 
 - [TON Index](https://toncenter.com/api/v3/) - TON Index собирает данные с полного узла в базу данных PostgreSQL и предоставляет удобный API к индексированному блокчейну.
