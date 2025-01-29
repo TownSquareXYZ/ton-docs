@@ -1,3 +1,6 @@
+import ConceptImage from '@site/src/components/conceptImage';
+import ThemedImage from '@theme/ThemedImage';
+
 # Примеры написания тестов
 
 На этой странице показано, как писать тесты для контрактов FunC, созданных в [Blueprint SDK](https://github.com/ton-org/blueprint) ([Sandbox](https://github.com/ton-org/sandbox)).
@@ -46,9 +49,16 @@ blockchain.verbosity = {
 
 Fireworks демонстрирует различные операции с отправкой сообщений в блокчейне TON.
 
-![](/img/docs/writing-test-examples/test-examples-schemes.svg)
-
-Как только Вы развернете эту систему с помощью сообщения `set_first` с достаточным количеством TON, она будет автоматически выполняться с основными и полезными комбинациями режимов отправки.
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/docs/writing-test-examples/test-examples-schemes.svg?raw=true',
+        dark: '/img/docs/writing-test-examples/test-examples-schemes-dark.svg?raw=true',
+    }}
+/>
+<br></br>
+После развертывания с сообщением `set_first` с достаточной суммой TON, он будет автоматически запущен с основными и пригодными для использования комбинациями режимов отправки.
 
 Fireworks переразвернулся, в результате чего будет создано 3 сущности Fireworks, каждая из которых имеет свой ID(держите его в хранилище) и, как следствие, свой адрес смарт-контракта.
 
@@ -88,9 +98,16 @@ index - ID транзакции в массиве `launchResult`.
 С помощью
 `from` (адрес отправителя контракта), `to` (адрес получателя контракта), `op` (значение опкода) - мы получим только одну транзакцию для этой комбинации.
 
-![](/img/docs/writing-test-examples/test-examples-schemes_id1.svg)
-
-Транзакция[ID:1] в контракте Fireworks Setter вызывается с помощью `op::set_first` и выполняется с двумя исходящими сообщениями для Fireworks launcher-1 и Fireworks launcher-2
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/docs/writing-test-examples/test-examples-schemes_id1.svg?raw=true',
+        dark: '/img/docs/writing-test-examples/test-examples-schemes_id1_dark.svg?raw=true',
+    }}
+/>
+<br></br>
+Транзакция [ID:1] в контракте Fireworks Setter, вызвана через `op::set_first` и выполнена с двумя исходящими сообщениями к Fireworks launcher-1 и Fireworks launcher-2
 
 ```typescript
 
@@ -116,9 +133,16 @@ index - ID транзакции в массиве `launchResult`.
 
 [Этот тест](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L92) проверяет, успешно ли выполнена транзакция[ID:2].
 
-![](/img/docs/writing-test-examples/test-examples-schemes_id2.svg)
-
-Транзакция в Fireworks launcher 1 вызывается с помощью `op::launch_first`, и выполняется с четырьмя исходящими сообщениями в Launcher.
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/docs/writing-test-examples/test-examples-schemes_id2.svg?raw=true',
+        dark: '/img/docs/writing-test-examples/test-examples-schemes_id2_dark.svg?raw=true',
+    }}
+/>
+<br></br>
+Транзакция в Fireworks launcher 1 вызвана через `op::launch_first`, и выполняется четырьмя исходящими сообщениями в Launcher.
 
 ```typescript
     it('should exist a transaction[ID:2] which launch first fireworks successfully', async () => {
@@ -155,9 +179,16 @@ index - ID транзакции в массиве `launchResult`.
 
 [Этот тест](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L113) проверяет, успешно ли выполнена транзакция[ID:3].
 
-![](/img/docs/writing-test-examples/test-examples-schemes_id3.svg)
-
-Транзакция[ID:3] происходит в Fireworks launcher 1, вызывается с помощью `op::launch_first` и выполняется с четырьмя исходящими сообщениями к Launcher.
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/docs/writing-test-examples/test-examples-schemes_id3.svg?raw=true',
+        dark: '/img/docs/writing-test-examples/test-examples-schemes_id3_dark.svg?raw=true',
+    }}
+/>
+<br></br>
+Транзакция [ID:3] осуществляется в Fireworks launcher 1, вызывается через `op::launch_first` и выполняется четырьмя исходящими сообщениями в Launcher.
 
 ```typescript
 
@@ -188,9 +219,16 @@ index - ID транзакции в массиве `launchResult`.
 
 [Этот тест](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L133) проверяет, успешно ли выполнена транзакция[ID:4].
 
-![](/img/docs/writing-test-examples/test-examples-schemes_id4.svg)
-
-Транзакция[ID:4] выполняется в Launcher(Deploy Wallet) с входящим сообщением от Fireworks launcher 1. Это сообщение отправлено с `send mode = 0` в транзакции[ID:2].
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/docs/writing-test-examples/test-examples-schemes_id4.svg?raw=true',
+        dark: '/img/docs/writing-test-examples/test-examples-schemes_id4_dark.svg?raw=true',
+    }}
+/>
+<br></br>
+Транзакция [ID:4] осуществляется в Launcher(Deploy Wallet) с входящим сообщением от Fireworks launcher 1. Это сообщение отправлено с `send mode = 0` в транзакции[ID:2].
 
 ```typescript
  it('should exist a transaction[ID:4] with a comment send mode = 0', async() => {
@@ -216,9 +254,16 @@ index - ID транзакции в массиве `launchResult`.
 
 [Этот тест](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L152) проверяет, успешно ли выполнена транзакция[ID:5].
 
-![](/img/docs/writing-test-examples/test-examples-schemes_id5.svg)
-
-Транзакция[ID:5] выполняется в Launcher с входящим сообщением от Fireworks launcher 1. Это сообщение отправлено с `send mode = 1`
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/docs/writing-test-examples/test-examples-schemes_id5.svg?raw=true',
+        dark: '/img/docs/writing-test-examples/test-examples-schemes_id5_dark.svg?raw=true',
+    }}
+/>
+<br></br>
+Транзакция[ID:5] осуществляется в Launcher с входящим сообщением от Fireworks launcher 1. Это сообщение отправлено с `send mode = 1`
 
 ```typescript
      it('should exist a transaction[ID:5] with a comment send mode = 1', async() => {
@@ -246,9 +291,16 @@ index - ID транзакции в массиве `launchResult`.
 
 [Этот тест](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L170) проверяет, успешно ли выполнена транзакция[ID:6].
 
-![](/img/docs/writing-test-examples/test-examples-schemes_id6.svg)
-
-Транзакция[ID:6] выполняется в Launcher с входящим сообщением от Fireworks launcher 1. Это сообщение отправлено с параметром `send mode = 2`
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/docs/writing-test-examples/test-examples-schemes_id6.svg?raw=true',
+        dark: '/img/docs/writing-test-examples/test-examples-schemes_id6_dark.svg?raw=true',
+    }}
+/>
+<br></br>
+Транзакция[ID:6] осуществляется в Launcher с входящим сообщением от Fireworks launcher 1. Это сообщение отправлено с `send mode = 2`
 
 ```typescript
     it('should exist a transaction[ID:6] with a comment send mode = 2', async() => {
@@ -274,9 +326,16 @@ index - ID транзакции в массиве `launchResult`.
 
 [Этот тест](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L188) проверяет, успешно ли выполнена транзакция[ID:7].
 
-![](/img/docs/writing-test-examples/test-examples-schemes_id7.svg)
-
-Транзакция[ID:7] выполняется в Launcher с входящим сообщением от Fireworks launcher 1. Это сообщение отправлено с параметром `send mode = 128 + 32`
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/docs/writing-test-examples/test-examples-schemes_id7.svg?raw=true',
+        dark: '/img/docs/writing-test-examples/test-examples-schemes_id7_dark.svg?raw=true',
+    }}
+/>
+<br></br>
+Транзакция[ID:7] осуществляется в Launcher с входящим сообщением от Fireworks launcher 1. Это сообщение отправлено с `send mode = 128 + 32`
 
 ```typescript
      it('should exist a transaction[ID:7] with a comment send mode = 32 + 128', async() => {
@@ -301,9 +360,16 @@ index - ID транзакции в массиве `launchResult`.
 
 [Этот тест](https://github.com/ton-community/fireworks-func/blob/main/tests/Fireworks.spec.ts#L188) проверяет, успешно ли выполнена транзакция[ID:8].
 
-![](/img/docs/writing-test-examples/test-examples-schemes_id8.svg)
-
-Транзакция[ID:8] выполняется в Launcher с входящим сообщением от Fireworks launcher 2. Это сообщение отправлено с параметром `send mode = 64`
+<br></br>
+<ThemedImage
+    alt=""
+    sources={{
+        light: '/img/docs/writing-test-examples/test-examples-schemes_id8.svg?raw=true',
+        dark: '/img/docs/writing-test-examples/test-examples-schemes_id8_dark.svg?raw=true',
+    }}
+/>
+<br></br>
+Транзакция[ID:8] осуществляется в Launcher с входящим сообщением от Fireworks launcher 2. Это сообщение отправлено с `send mode = 64`
 
 ```typescript
   it('should exist a transaction[ID:8] with a comment send mode = 64', async() => {
