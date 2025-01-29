@@ -69,7 +69,7 @@
    2. Введите правильные значения конфигурации:
       - **project_id**: В проекте Crowdin перейдите на вкладку "Инструменты", выберите API и найдите там **project_id**.
         ![select-api-tool](/img/localizationProgramGuideline/howItWorked/select-api-tool.png)
-        ![projectId](/img/localizationProgramGuideline/howItWorked/projectId.png)
+        ![projectId](/img/localizationProgrameline/howItWorked/projectId.png)
       - **preserve_hierarchy**: Поддерживает структуру каталогов GitHub на сервере Crowdin.
       - **source** и **translation**: Укажите пути для файлов, которые нужно загрузить в Crowdin, и место, где должны быть переведенные файлы.
 
