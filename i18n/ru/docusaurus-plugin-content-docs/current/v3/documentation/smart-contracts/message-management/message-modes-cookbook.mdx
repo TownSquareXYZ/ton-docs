@@ -1,17 +1,17 @@
 # Рецепты режимов сообщений
 
-Понимание различных режимов и флагов, доступных для отправки сообщений, важно для обеспечения корректной работы ваших смарт-контрактов.
-Хотя раздел [режимы сообщений](/v3/documentation/smart-contracts/message-management/sending-messages#message-modes) содержит подробные описания этих режимов и флагов, в этом разделе мы проиллюстрируем их практическое применение на конкретных примерах.
+Понимание различных режимов и флагов, доступных для отправки сообщений, имеет решающее значение для обеспечения того, чтобы ваши смарт-контракты вели себя так, как задумано.
+Хотя в разделе [режимы сообщений](/v3/documentation/smart-contracts/message-management/sending-messages#message-modes) были предоставлены подробные описания этих режимов и флагов, в этом разделе мы проиллюстрируем их практическое применение на конкретных примерах.
 
 :::info ВАЖНО
-Вы можете проверить [этот пример](https://testnet.tonviewer.com/transaction/42ed45726e4fe994b7fd6dbf953a2ac24ecd77753858abeda9d6755c664a537a) в качестве реального подтверждения.
+Вы можете проверить [этот пример](https://testnet.tonviewer.com/transaction/42ed45726e4fe994b7fd6dbf953a2ac24ecd77753858abeda9d6755c664a537a) в качестве реальной проверки.
 :::
 
 #### Значение сообщения и баланс аккаунта
 
-Пожалуйста, проверьте, как работает [get_balance](/v3/documentation/smart-contracts/func/docs/stdlib/#get_balance), чтобы лучше понять состояние транзакции. Баланс в
+Пожалуйста, проверьте, как работает [get_balance](/v3/documentation/smart-contracts/func/docs/stdlib/#get_balance), чтобы лучше понять состояние транзакции.
 
-Есть 2 способа оплаты за действие в блокчейне:
+Существует два способа оплаты действий в блокчейне:
 
 - Из [значения сообщения](/v3/documentation/data-formats/tlb/msg-tlb#commonmsginfo)
 - Из [баланса контракта](https://github.com/ton-blockchain/ton/blob/7151ff26279fef6dcfa1f47fc0c5b63677ae2458/crypto/block/block.tlb#L263C1-L265C20)
@@ -20,7 +20,7 @@
 
 #### Комиссии
 
-Фактические комиссии за транзакции будут варьироваться в зависимости от конфигурации блокчейна, кода смарт-контракта и других факторов. При получении сообщения часть `balance` контракта будет израсходована на [сборы за хранение](/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee) и gas_fees, если `value` сообщения [выше определенной суммы](/v3/documentation/tvm/tvm-overview#compute-phase-skipped).
+Фактические комиссии за транзакции будут варьироваться в зависимости от конфигурации блокчейна, кода смарт-контракта и других факторов. При получении сообщения часть `balance` контракта будет израсходована на [storage fee](/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee) и gas_fees, если `value` сообщения [выше определенной суммы](/v3/documentation/tvm/tvm-overview#compute-phase-skipped).
 
 Согласно [потоку транзакций](/v3/documentation/tvm/tvm-overview#transactions-and-phases) существует 5 фаз:
 
@@ -209,7 +209,7 @@ Please note that `SENDRAWMSG` doesn't update balance.
 
 Состояние до транзакции: аккаунт A имеет 1 TON, аккаунт B имеет 1 TON, аккаунт C имеет 1 TON
 
-**A** отправил 0,1 TON в **B**, после чего **B** отправил 0,5 TON в **C** с `mode` = 80, `msg_fwd_fees` составляет 0,004 TON, фактическое полученное значение составит 0,6 TON, total_fee + `fwd_fee` вычтено из `balance`.
+**A** отправил 0,1 TON в **B**, после чего **B** отправил 0,5 TON в **C** с `mode` = 80, `msg_fwd_fees` составляет 0,004 TON, фактическое полученное значение составит 0,6 TON, total_fee + `fwd_fee` вычтено из `value`.
 В случае ошибки во время фазы действия сообщение будет отклонено, и `total_fee` + `fwd_fee` вычтено из `value`.
 
 Состояние после транзакции с ошибкой: аккаунт A имеет 1 - (total_fee + `fwd_fee`) TON, аккаунт B имеет 1 TON, аккаунт C имеет 1 TON
@@ -217,7 +217,7 @@ Please note that `SENDRAWMSG` doesn't update balance.
 ![](/img/docs/message-modes-cookbook/carry_remaining_value_9_error.svg)
 
 :::info подсказка
-Если ошибок нет, результат такой же, как [`mode = 65`](#7-carry-remaining-value-with-new-message-with-separate-fees).
+Если ошибок нет, результат такой же, как у [`mode = 65`](#7-carry-remaining-value-with-new-message-with-separate-fees).
 :::
 
 ![](/img/docs/message-modes-cookbook/carry_remaining_value_9_noerror.svg)
