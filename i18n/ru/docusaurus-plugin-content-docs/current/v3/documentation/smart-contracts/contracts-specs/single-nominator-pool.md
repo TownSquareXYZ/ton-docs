@@ -135,7 +135,7 @@ zA05WJ6ywM/g/eKEVmV6O909lTlVrj+Y8lZkqzyQT70=
 
 Если владелец использует **холодный кошелек** (рекомендуется), [withdraw.fif](https://github.com/ton-blockchain/single-nominator/blob/main/scripts/fift/withdraw.fif) может использоваться для создания тела boc, содержащего опкод withdraw и сумму для вывода. <br/>
 Командная строка: `fift -s scripts/fif/withdraw.fif withdraw-amount`, <br/> где withdraw-amount – сумма для вывода средств из контракта номинатора на кошелек владельца. Как указано выше, в контракте номинатора будет оставлено не менее 1 TON. <br/>
-Этот скрипт сгенерирует тело boc (с именем withdraw.boc), которое должно быть подписано и отправлено с кошелька владельца. <0/>
+Этот скрипт сгенерирует тело boc (с именем withdraw.boc), которое должно быть подписано и отправлено с кошелька владельца. <br/>
 С черного компьютера владелец должен запустить:
 
 - создайте и подпишите tx: `fift -s wallet-v3.fif my-wallet single_nominator_address sub_wallet_id seqno amount -B withdraw.boc`, где my-wallet – это pk-файл владельца (без расширения). Суммы 1 TON должно быть достаточно, чтобы оплатить комиссию (оставшаяся сумма будет возвращена владельцу). withdraw.boc – это boc, сгенерированный выше.
