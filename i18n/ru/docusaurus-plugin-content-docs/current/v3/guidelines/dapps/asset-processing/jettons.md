@@ -1,3 +1,4 @@
+import ThemedImage from '@theme/ThemedImage';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import Button from '@site/src/components/button';
@@ -71,14 +72,10 @@ import Button from '@site/src/components/button';
 
 Быстрый переход к основному описанию обработки Jetton:
 
-<Button href="/v3/guidelines/dapps/asset-processing/jettons#accepting-jettons-from-users-through-a-centralized-wallet" colorType={'primary'} sizeType={'sm'}>
-Централизованная обработка
-</Button>
-
+<Button href="/v3/guidelines/dapps/asset-processing/jettons#accepting-jettons-from-users-through-a-centralized-wallet" colorType={'primary'} sizeType={'sm'}>Централизованная обработка</Button>
 <Button href="/v3/guidelines/dapps/asset-processing/jettons#accepting-jettons-from-user-deposit-addresses"
 colorType="secondary" sizeType={'sm'}>
-On-Chain обработка 
-</Button>
+On-Chain обработка </Button>
 
 <br></br><br></br>
 
@@ -96,11 +93,14 @@ On-Chain обработка
 - Смарт-контракт [Jetton master](https://github.com/ton-blockchain/token-contract/blob/main/ft/jetton-minter.fc)
 - Смарт-контракт [Jetton wallet](https://github.com/ton-blockchain/token-contract/blob/main/ft/jetton-wallet.fc)
 
-<p align="center">
-  <br />
-    <img width="420" src="/img/docs/asset-processing/jetton_contracts.svg" alt="contracts scheme" />
-      <br />
-</p>
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+light: '/img/docs/asset-processing/jetton_contracts.svg?raw=true',
+dark: '/img/docs/asset-processing/jetton_contracts_dark.svg?raw=true',
+}}
+/> <br></br>
 
 ## Смарт-контракт Jetton master
 
@@ -254,7 +254,14 @@ console.log('Jetton master address:', data.jettonMinterAddress.toString(true, tr
 
 Обмен между Jetton wallet и кошельками TON происходит через следующую последовательность сообщений:
 
-![](/img/docs/asset-processing/jetton_transfer.svg)
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+light: '/img/docs/asset-processing/jetton_transfer.svg?raw=true',
+dark: '/img/docs/asset-processing/jetton_transfer_dark.svg?raw=true',
+}}
+/> <br></br>
 
 #### Сообщение 0
 
