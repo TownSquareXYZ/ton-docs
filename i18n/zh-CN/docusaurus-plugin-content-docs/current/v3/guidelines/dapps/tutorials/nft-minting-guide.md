@@ -1,6 +1,7 @@
 # 逐步创建 NFT 集合的教程
 
 ## 👋 引言
+
 非同质化代币（NFT）已成为数字艺术和收藏品世界中最热门的话题之一。NFT是使用区块链技术验证所有权和真实性的独特数字资产。它们为创作者和收藏家提供了将数字艺术、音乐、视频和其他形式的数字内容货币化和交易的新可能性。近年来，NFT市场爆炸性增长，一些高调的销售额达到了数百万美元。在本文中，我们将逐步在TON上构建我们的NFT集合。
 
 **这是你在本教程结束时将创建的鸭子集合的精美图片：**
@@ -8,6 +9,7 @@
 ![](/img/tutorials/nft/collection.png)
 
 ## 🦄 你将会学到什么
+
 1. 你将在TON上铸造NFT集合
 2. 你将理解TON上的NFT是如何工作的
 3. 你将把NFT出售
@@ -338,6 +340,7 @@ const files = readdirSync(metadataFolderPath);
 ```
 
 遍历每个文件并获取其内容
+
 ```ts
 const filePath = path.join(metadataFolderPath, filename)
 const file = await readFile(filePath);
@@ -466,6 +469,7 @@ function makeSnakeCell(data: Buffer): Cell {
 ```
 
 最后，我们需要创建一个函数，使用这些函数将离线内容编码为cell：
+
 ```ts
 export function encodeOffChainContent(content: string) {
   let data = Buffer.from(content);
@@ -495,6 +499,7 @@ import { encodeOffChainContent, OpenedWallet } from "../utils";
 ```
 
 并声明一个类型，它将描述我们集合所需的初始化数据：
+
 ```ts
 export type collectionData = {
   ownerAddress: Address;
