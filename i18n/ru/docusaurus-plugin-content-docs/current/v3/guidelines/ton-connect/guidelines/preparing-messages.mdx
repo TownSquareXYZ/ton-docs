@@ -852,7 +852,7 @@ jetton.send(sender, RECEIVER_ADDRESS, toNano(10), { notify: { payload: forwardPa
 
 ### Сжигание жетонов
 
-<Tabs groupId="Сжигание жетонов">
+<Tabs groupId="Сжигание жетонов>
 <TabItem value="@ton/ton" label="@ton/ton">
 
 В основе `body` для сжигания жетонов лежит стандарт ([TEP-74](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md#1-transfer)). Обратите внимание, что количество знаков после запятой может различаться в зависимости от токена: например, USDT использует 6 знаков после запятой (1 USDT = 1 _ 10\*\*9), а TON использует 9 знаков после запятой (1 TON = 1 _ 10\*\*9).
@@ -1202,8 +1202,7 @@ const royaltyPercent =
 
 Поскольку сообщение требует много шагов, весь алгоритм огромен и его можно найти здесь:
 
-<details> 
-  <summary>Показать весь алгоритм для создания тела сообщения о продаже NFT</summary>
+<details> <summary>Показать весь алгоритм для создания тела сообщения о продаже NFT</summary>
 
 ```js
 import { Address, beginCell, StateInit, storeStateInit, toNano, Cell } from '@ton/ton'
@@ -1660,8 +1659,7 @@ transaction = {
 
 Чтобы разместить NFT на контракте продажи GetGems, мы должны подготовить специальное тело сообщения `transferNftBody`, которое будет переводить NFT на специальный контракт продажи NFT.
 
-<details> 
-  <summary>Пример создания тела продажи NFT</summary>
+<details> <summary>Пример создания тела продажи NFT</summary>
 
 ```python
 import time
@@ -2079,8 +2077,7 @@ transferNftBody := cell.BeginCell().
 
 Поскольку сообщение требует много шагов, весь алгоритм огромен и его можно найти здесь:
 
-<details> 
-  <summary>Показать весь алгоритм для создания тела сообщения о продаже NFT</summary>
+<details> <summary>Показать весь алгоритм для создания тела сообщения о продаже NFT</summary>
 
 ```go
 import (
