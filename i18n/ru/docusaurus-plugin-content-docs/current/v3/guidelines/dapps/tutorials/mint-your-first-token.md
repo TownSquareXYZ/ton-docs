@@ -4,15 +4,15 @@
 
 В этой статье мы расскажем Вам о создании Вашего первого взаимозаменяемого токена (Jetton) на TON.
 
-Для минта жетонов мы будем использовать браузерный сервис [TON Minter](https://minter.ton.org/) / [TON Minter testnet](https://minter.ton.org/?testnet=true).
+Чтобы сминтить токен, мы будем использовать [TON Minter](https://minter.ton.org/).
 
 ## 📖 Чему Вы научитесь
 
 В этой статье Вы узнаете, как:
 
-- развернуть жетон с помощью браузера
-- настроить свой токен
-- управлять и использовать Ваш токен
+- развернуть токен с помощью Minter TON
+- настроить токен
+- управлять токеном и использовать его
 - отредактировать параметры токена
 
 ## 📌 Подготовьтесь перед началом работы
@@ -51,12 +51,12 @@
 
 ![image](/img/tutorials/jetton/jetton-token-logo.png)
 
-Если Вы хотите иметь привлекательный токен Jetton, Вам нужно где-то разместить красивый логотип. Например:
+Если вы хотите иметь привлекательный токен, вам нужно где-нибудь разместить красивый логотип. Например:
 
 - https://bitcoincash-example.github.io/website/logo.png
 
 :::info
-You can easily find out  about url placement of the logo in the [repository](https://github.com/ton-blockchain/minter-contract#jetton-metadata-field-best-practices) in paragraph "Where is this metadata stored".
+You can easily find out about the URL placement of the logo in the [repository](https://github.com/ton-blockchain/minter-contract#jetton-metadata-field-best-practices) in the "Where is this metadata stored" paragraph.
 
 - On-chain.
 - Off-chain IPFS.
@@ -71,7 +71,8 @@ You can easily find out  about url placement of the logo in the [repository](htt
 4. Загрузите подготовленное изображение в git и включите `GitHub Pages`.
    1. [Добавьте страницы GitHub в свой репозиторий](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
    2. [Загрузите свое изображение и получите ссылку](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository).
-5. Если у Вас есть собственный домен, то лучше использовать `.org` вместо `github.io`.
+5. Если у вас есть возможность, мы рекомендуем купить пользовательский домен для вашего проекта, например, `bitcoincash.org`. Используйте любого продавца доменов, например [Google Domains](https://domains.google/) или [GoDaddy](https://www.godaddy.com/). Затем подключите свой пользовательский домен к репозиторию на предыдущем шаге, следуя инструкциям [здесь](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site).
+6. Если у вас есть свой домен, ваш URL-адрес изображения должен быть `https://bitcoincash.org/logo.png` вместо `github.io`. Это устранит будущую зависимость от GitHub и позволит вам в дальнейшем сменить хостинг, что является хорошей возможностью для сохранения.
 
 ## 💸 Отправить жетоны
 
@@ -80,7 +81,7 @@ You can easily find out  about url placement of the logo in the [repository](htt
 ![image](/img/tutorials/jetton/jetton-send-tokens.png)
 
 :::info
-You always also **burn** your Jettons to reduce their amount.
+You also can **burn** your tokens to reduce their amount.
 
 ![image](/img/tutorials/jetton/jetton-burn-tokens.png)
 :::
@@ -110,7 +111,7 @@ The address can be found on the right side if you are already in the owner panel
 
 ## ✏️ Настройка жетона (токена)
 
-С помощью языка [FunC](/v3/documentation/smart-contracts/func/overview) Вы можете изменить поведение токена в свою пользу.
+С помощью языка [FunC](/v3/documentation/smart-contracts/func/overview) вы можете изменить поведение токена в вашу пользу.
 
 Чтобы внести изменения, начните отсюда:
 
@@ -120,13 +121,13 @@ The address can be found on the right side if you are already in the owner panel
 
 1. Убедитесь, что у Вас есть все "Зависимости и требования" из репозитория [tonstarter-contracts](https://github.com/ton-defi-org/tonstarter-contracts).
 2. Клонируйте репозиторий [minter-contract repository](https://github.com/ton-blockchain/minter-contract) и переименуйте проект.
-3. Для установки Вам необходимо открыть терминал с правами root и запустить его:
+3. Для установки необходимо открыть терминал в корневой директории и выполнить команду:
 
 ```bash npm2yarn
 npm install
 ```
 
-4. Отредактируйте оригинальные файлы смарт-контрактов таким же образом в корневом терминале. Все файлы контрактов находятся в папке `contracts/*.fc`.
+4. Редактируйте оригинальные файлы смарт-контракта таким же образом в корневом терминале. Все файлы контрактов находятся в `contracts/*.fc`
 
 5. Создайте проект с помощью:
 
@@ -134,7 +135,7 @@ npm install
 npm run build
 ```
 
-Результат сборки будет описывать процесс создания необходимых файлов, а также поиск смарт-контрактов.
+Результат сборки опишет процесс создания необходимых файлов и поиска смарт-контрактов.
 
 :::info
 Просмотрите консоль, там много советов!
@@ -146,10 +147,10 @@ npm run build
 npm run test
 ```
 
-7. Отредактируйте **имя** и другие метаданные токена в файле `build/jetton-minter.deploy.ts`, изменив объект JettonParams.
+7. Отредактируйте **имя** и другие метаданные токена в `build/jetton-minter.deploy.ts`, изменив объект JettonParams.
 
 ```js
-// This is example data - Modify these params for your own jetton!
+// This is example data - Modify these parameters for your jetton!
 // - Data is stored on-chain (except for the image data itself)
 // - Owner should usually be the deploying wallet's address.
   
@@ -157,12 +158,12 @@ const jettonParams = {
  owner: Address.parse("EQD4gS-Nj2Gjr2FYtg-s3fXUvjzKbzHGZ5_1Xe_V0-GCp0p2"),
  name: "MyJetton",
  symbol: "JET1",
- image: "https://www.linkpicture.com/q/download_183.png", // Image url
+ image: "https://www.linkpicture.com/q/download_183.png", // Image URL
  description: "My jetton",
 };
 ```
 
-8. Чтобы развернуть токен, выполните следующую команду:
+8. Для развёртывания токена используйте следующую команду:
 
 ```bash npm2yarn
 npm run deploy
@@ -186,10 +187,10 @@ Deploy script running, let's find some contracts to deploy..
 
 * Found root contract 'build/jetton-minter.deploy.ts - let's deploy it':
  - Based on your init code+data, your new contract address is: YOUR-ADDRESS
- - Let's deploy the contract on-chain..
+ - Let's deploy the contract on-chain.
  - Deploy transaction sent successfully
  - Block explorer link: https://tonwhales.com/explorer/address/YOUR-ADDRESS
- - Waiting up to 20 seconds to check if the contract was actually deployed..
+ - Waiting up to 20 seconds to check if the contract was actually deployed.
  - SUCCESS! Contract deployed successfully to address: YOUR-ADDRESS
  - New contract balance is now YOUR-BALANCE TON, make sure it has enough to pay rent
  - Running a post deployment test:
@@ -208,8 +209,11 @@ Deploy script running, let's find some contracts to deploy..
 
 - [Как и почему нужно чередовать смарт-контракты — изучаем анатомию TON Jettons](https://blog.ton.org/how-to-shard-your-ton-smart-contract-and-why-studying-the-anatomy-of-tons-jettons)
 
+Если вы хотите узнать больше о других решениях для минтинга токенов, прочитайте эту статью:
+
+- [История массового минтинга на TON](https://blog.ton.org/history-of-mass-minting-on-ton)
+
 ## Ссылки
 
 - Проект: https://github.com/ton-blockchain/minter-contract
-- Slava ([Telegram @delovoyslava](https://t.me/delovoyslava), [delovoyhomie на GitHub](https://github.com/delovoyhomie))
 - [Обработка жетонов](/v3/guidelines/dapps/asset-processing/jettons)
