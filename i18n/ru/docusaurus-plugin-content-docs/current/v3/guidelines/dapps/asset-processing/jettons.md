@@ -97,8 +97,8 @@ On-Chain обработка </Button>
 <ThemedImage
 alt=""
 sources={{
-light: '/img/docs/asset-processing/jetton_contracts.svg?raw=true',
-dark: '/img/docs/asset-processing/jetton_contracts_dark.svg?raw=true',
+light: '/img/docs/asset-processing/jetton_contracts.png?raw=true',
+dark: '/img/docs/asset-processing/jetton_contracts_dark.png?raw=true',
 }}
 /> <br></br>
 
@@ -258,8 +258,8 @@ console.log('Jetton master address:', data.jettonMinterAddress.toString(true, tr
 <ThemedImage
 alt=""
 sources={{
-light: '/img/docs/asset-processing/jetton_transfer.svg?raw=true',
-dark: '/img/docs/asset-processing/jetton_transfer_dark.svg?raw=true',
+light: '/img/docs/asset-processing/jetton_transfer.png?raw=true',
+dark: '/img/docs/asset-processing/jetton_transfer_dark.png?raw=true',
 }}
 /> <br></br>
 
