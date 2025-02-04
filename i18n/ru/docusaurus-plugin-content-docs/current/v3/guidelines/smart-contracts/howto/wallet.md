@@ -306,7 +306,7 @@ while (cs.slice_refs()) {
 >
 > [`slice_refs()` в docs](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_refs)
 >
-> [`send_raw_message()` and `message modes` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#send_raw_message)
+> [`send_raw_message()` and `message modes` в docs](/v3/documentation/smart-contracts/func/docs/stdlib/#send_raw_message)
 >
 > [`load_ref()` в docs](/v3/documentation/smart-contracts/func/docs/stdlib/#load_ref)
 
