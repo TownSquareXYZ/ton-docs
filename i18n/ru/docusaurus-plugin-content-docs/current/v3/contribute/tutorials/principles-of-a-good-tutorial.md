@@ -1,5 +1,10 @@
 # Принципы хорошего руководства
 
+:::danger
+Эта страница устарела и скоро будет удалена.
+См. [Как внести вклад](/v3/contribute/).
+:::
+
 Оригинальный комментарий к этим принципам от [talkol](https://github.com/talkol):
 
 - [Оригинальный комментарий к TON Footstep #7](https://github.com/ton-society/ton-footsteps/issues/7#issuecomment-1187581181)
