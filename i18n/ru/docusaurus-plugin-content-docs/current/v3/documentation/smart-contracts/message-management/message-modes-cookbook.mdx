@@ -59,7 +59,7 @@
 
 Состояние после транзакции: аккаунт A имеет 0,9 TON, аккаунт B имеет 1,096 TON
 
-![](/img/docs/message-modes-cookbook/send_regular_message_1.svg)
+![](/img/docs/message-modes-cookbook/send_regular_message_1.png)
 
 | Режим и флаги          | Код                        |
 | :--------------------- | :------------------------- |
@@ -79,7 +79,7 @@
 Если ошибок нет, результат такой же, как и [`mode = 0`](#1-send-a-regular-message).
 :::
 
-![](/img/docs/message-modes-cookbook/send_regular_message_2.svg)
+![](/img/docs/message-modes-cookbook/send_regular_message_2.png)
 
 | Режим и флаги          | Код                        |
 | :--------------------- | :------------------------- |
@@ -94,13 +94,13 @@
 
 Состояние после транзакции с ошибкой: у аккаунта A 1 - ([total_fee](/v3/documentation/smart-contracts/transaction-fees/fees#basic-fees-formula) + `fwd_fee`) TON, у аккаунта B 1 TON
 
-![](/img/docs/message-modes-cookbook/send_regular_message_3_error.svg)
+![](/img/docs/message-modes-cookbook/send_regular_message_3_error.png)
 
 :::info подсказка
 Если ошибок нет, результат такой же, как у [`mode = 0`](#1-send-a-regular-message).
 :::
 
-![](/img/docs/message-modes-cookbook/send_regular_message_3_noerror.svg)
+![](/img/docs/message-modes-cookbook/send_regular_message_3_noerror.png)
 
 | Режим и флаги           | Код                         |
 | :---------------------- | :-------------------------- |
@@ -114,7 +114,7 @@
 
 Состояние после транзакции: аккаунт A имеет 0,896 TON, аккаунт B имеет 1,1 TON
 
-![](/img/docs/message-modes-cookbook/send_regular_message_4.svg)
+![](/img/docs/message-modes-cookbook/send_regular_message_4.png)
 
 | Режим и флаги          | Код                        |
 | :--------------------- | :------------------------- |
@@ -129,13 +129,13 @@
 
 Состояние после транзакции с ошибкой: у аккаунта A 1 - ([total_fee](/v3/documentation/smart-contracts/transaction-fees/fees#basic-fees-formula) + `fwd_fee`) TON, у аккаунта B 1 TON
 
-![](/img/docs/message-modes-cookbook/send_regular_message_5_error.svg)
+![](/img/docs/message-modes-cookbook/send_regular_message_5_error.png)
 
 :::info подсказка
 Если ошибок нет, результат такой же, как у [`mode = 1`](#4-send-a-regular-message-with-separate-fees).
 :::
 
-![](/img/docs/message-modes-cookbook/send_regular_message_5_noerror.svg)
+![](/img/docs/message-modes-cookbook/send_regular_message_5_noerror.png)
 
 | Режим и флаги                    | Код                         |
 | :------------------------------- | :-------------------------- |
@@ -159,7 +159,7 @@ Please note that `SENDRAWMSG` doesn't update balance.
 
 Если вы попытаетесь отправить несколько сообщений (т. е. режим 0 **и** режим 64), вы получите код выхода 37.
 
-![](/img/docs/message-modes-cookbook/carry_remaining_value_6.svg)
+![](/img/docs/message-modes-cookbook/carry_remaining_value_6.png)
 
 | Режим и флаги           | Код                         |
 | :---------------------- | :-------------------------- |
@@ -178,7 +178,7 @@ Please note that `SENDRAWMSG` doesn't update balance.
 Обратите внимание, что `storage_fee` включен в `total_fee`, но он всегда оплачивается из `balance` контракта.
 :::
 
-![](/img/docs/message-modes-cookbook/carry_remaining_value_7.svg)
+![](/img/docs/message-modes-cookbook/carry_remaining_value_7.png)
 
 | Режим и флаги           | Код                         |
 | :---------------------- | :-------------------------- |
@@ -193,13 +193,13 @@ Please note that `SENDRAWMSG` doesn't update balance.
 
 Состояние после транзакции с ошибкой: аккаунт A имеет 1 - (total_fee + `fwd_fee`) TON, аккаунт B имеет 1 TON, аккаунт C имеет 1 TON
 
-![](/img/docs/message-modes-cookbook/carry_remaining_value_8_error.svg)
+![](/img/docs/message-modes-cookbook/carry_remaining_value_8_error.png)
 
 :::info подсказка
 Если ошибок нет, результат такой же, как [`mode = 64`](#6-carry-remaining-value-with-new-message). Этот режим на самом деле часто используется в TON для переводов жетонов, вы можете [проверить его в списке действий C5](https://retracer.ton.org/?tx=6489d60d9197c0be7ee64b0812139d82221e8f94c6e378c356acc10f9067310c) кошелька жетона.
 :::
 
-![](/img/docs/message-modes-cookbook/carry_remaining_value_8_noerror.svg)
+![](/img/docs/message-modes-cookbook/carry_remaining_value_8_noerror.png)
 
 | Режим и флаги            | Код                         |
 | :----------------------- | :-------------------------- |
@@ -214,13 +214,13 @@ Please note that `SENDRAWMSG` doesn't update balance.
 
 Состояние после транзакции с ошибкой: аккаунт A имеет 1 - (total_fee + `fwd_fee`) TON, аккаунт B имеет 1 TON, аккаунт C имеет 1 TON
 
-![](/img/docs/message-modes-cookbook/carry_remaining_value_9_error.svg)
+![](/img/docs/message-modes-cookbook/carry_remaining_value_9_error.png)
 
 :::info подсказка
 Если ошибок нет, результат такой же, как у [`mode = 65`](#7-carry-remaining-value-with-new-message-with-separate-fees).
 :::
 
-![](/img/docs/message-modes-cookbook/carry_remaining_value_9_noerror.svg)
+![](/img/docs/message-modes-cookbook/carry_remaining_value_9_noerror.png)
 
 | Режим и флаги                | Код                          |
 | :--------------------------- | :--------------------------- |
@@ -234,7 +234,7 @@ Please note that `SENDRAWMSG` doesn't update balance.
 
 Состояние после транзакции: аккаунт A имеет 0,896 TON, аккаунт B имеет 0 TON, аккаунт C имеет 2,1 - (total_fee + `fwd_fee`) TON
 
-![](/img/docs/message-modes-cookbook/carry_remaining_value_10.svg)
+![](/img/docs/message-modes-cookbook/carry_remaining_value_10.png)
 
 | Режим и флаги            | Код                           |
 | :----------------------- | :---------------------------- |
@@ -248,13 +248,13 @@ Please note that `SENDRAWMSG` doesn't update balance.
 
 Состояние после транзакции с ошибкой: аккаунт A имеет 1 - (total_fee + `fwd_fee`) TON, аккаунт B имеет 1 TON, аккаунт C имеет 1 TON
 
-![](/img/docs/message-modes-cookbook/carry_remaining_value_11_error.svg)
+![](/img/docs/message-modes-cookbook/carry_remaining_value_11_error.png)
 
 :::info подсказка
 Если ошибок нет, результат такой же, как [`mode = 128`](#10-send-all-received-tokens-together-with-the-contract-balance). Этот режим на самом деле часто используется в TON для переводов жетонов, вы можете [проверить его в списке действий C5](https://retracer.ton.org/?tx=e4f31e37eec74a8cfcecdad9246a6bbf3da20c4edb3635150cb0fa54b9def558) кошелька жетона.
 :::
 
-![](/img/docs/message-modes-cookbook/carry_remaining_value_11_noerror.svg)
+![](/img/docs/message-modes-cookbook/carry_remaining_value_11_noerror.png)
 
 | Режим и флаги             | Код                          |
 | :------------------------ | :--------------------------- |
@@ -270,7 +270,7 @@ Please note that `SENDRAWMSG` doesn't update balance.
 
 Когда баланс достигнет 0 TON, уничтожить контракт.
 
-![](/img/docs/message-modes-cookbook/carry_remaining_value_12.svg)
+![](/img/docs/message-modes-cookbook/carry_remaining_value_12.png)
 
 | Режим и флаги             | Код                           |
 | :------------------------ | :---------------------------- |
