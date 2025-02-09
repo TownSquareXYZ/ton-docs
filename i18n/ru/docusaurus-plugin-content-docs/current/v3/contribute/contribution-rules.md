@@ -1,5 +1,10 @@
 # Руководство по внесению вклада
 
+:::danger
+Эта страница устарела и скоро будет удалена.
+См. [Как внести вклад](/v3/contribute/).
+:::
+
 Перед добавлением любой страницы на docs.ton.org, пожалуйста, ознакомьтесь со следующим списком общих и важных требований, чтобы гарантировать качественную работу.
 
 ## Название
@@ -25,8 +30,8 @@ The TON Connect protocol...
 
 ```
 ## See Also
-* [TON Contribution Guidelines](/v3/contribute/contribution-rules)
-* [Tutorial Styling Guidelines](/v3/contribute/tutorials/guidelines)
+* [TON Contribution Guidelines](/v3/contribute/contribution-rules/)
+* [Tutorial Styling Guidelines](/v3/contribute/tutorials/guidelines/)
 ```
 
 :::
@@ -40,5 +45,5 @@ The TON Connect protocol...
 
 ## См. также
 
-- [Руководство по внесению вклада в TON](/v3/contribute/contribution-rules)
-- [Рекомендации по оформлению руководств](/v3/contribute/tutorials/guidelines)
+- [Руководство по внесению вклада в TON](/v3/contribute/contribution-rules/)
+- [Рекомендации по оформлению руководств](/v3/contribute/tutorials/guidelines/)

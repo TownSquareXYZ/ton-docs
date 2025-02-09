@@ -1,37 +1,23 @@
-# Мейнтейнеры
+# Сопровождающие
 
 ## Основная команда
 
-Ниже представлен алфавитный список текущих членов команды TON Docs.
+Ниже представлен алфавитный список текущих членов команды документации TON.
 
-### Alex Golev
+### Алекс Голев
 
-Мейнтейнер TON Docs и DevRel в TON Foundation
+Руководитель отдела по адаптации в TON Studio
 
 - Telegram: [@alexgton](https://t.me/alexgton)
 - GitHub: [Reveloper](https://github.com/Reveloper)
 
-### Gusarich
-
-Web3 разработчик, участник [TON Dev community](https://github.com/ton-community), ответственный за TON Docs и [TON Footsteps](https://github.com/ton-society/ton-footsteps)
-
-- Telegram: [@Gusarich](https://t.me/Gusarich)
-- GitHub: [Gusarich](https://github.com/Gusarich)
-
-### SwiftAdviser
-
-Менеджер по адаптации разработчиков в TON Foundation
-
-- Telegram: [@SwiftAdviser](https://t.me/SwiftAdviser)
-- GitHub: [SwiftAdviser](https://github.com/SwiftAdviser)
-
 ## Благодарности
 
-TON Docs изначально был создан [tolya-yanot](https://github.com/toya-janet) и [EmelyanenkoK](https://github.com/EmelyanenkoK).
+Документация TON была создана [tolya-yanot](https://github.com/tolya-yanot) и [EmelyanenkoK](https://github.com/EmelyanenkoK).
 
-Со временем TON Docs выиграл от интеллекта и преданности [многочисленных внешних участников](https://github.com/ton-community/ton-docs/graphs/contributors). Мы выражаем нашу искреннюю благодарность каждому из них.
+Со временем документация TON обогатилась интеллектом и преданностью [многочисленных внешних участников](https://github.com/ton-community/ton-docs/graphs/contributors). Мы выражаем нашу искреннюю благодарность каждому из них.
 
-Однако мы хотели бы особо отметить существенный вклад следующих лиц. Их вклад значительно обогатил качество и глубину нашей документации:
+Тем не менее, мы хотели бы особо отметить значительный вклад, внесенный следующими лицами. Их вклад значительно повысил качество и глубину нашей документации:
 
 - [akifoq](https://github.com/akifoq): раннее участие
 - [amnch1](https://github.com/amnch1): исправления
@@ -39,13 +25,22 @@ TON Docs изначально был создан [tolya-yanot](https://github.c
 - [awesome-doge](https://github.com/awesome-doge): раннее участие
 - [coalus](https://github.com/coalus): содержание
 - [delovoyhomie](https://github.com/delovoyhomie): содержание
+- [Gusarich](https://github.com/Gusarich): содержание
 - [krau5](https://github.com/krau5): улучшения
 - [LevZed](https://github.com/LevZed): содержание
 - [ProgramCrafter](https://github.com/ProgramCrafter): содержание
 - [siandreev](https://github.com/siandreev): содержание
 - [SpyCheese](https://github.com/SpyCheese): раннее участие
+- [SwiftAdviser](https://github.com/SwiftAdviser): контент, удобный конструктор документов
 - [Tal Kol](https://github.com/talkol): раннее участие
 - [TrueCarry](https://github.com/TrueCarry): содержание
 - [xssnick](https://github.com/xssnick): содержание
 
-Мы искренне признательны каждому участнику, который помог сделать TON Docs богатым и надежным ресурсом.
+Мы искренне ценим каждого участника, который помог превратить документацию TON в богатый и надежный ресурс.
+
+## См. также
+
+- [Как внести свой вклад](/v3/contribute/)
+- [Стандартизация контента](/v3/contribute/content-standardization/)
+- [Типографика](/v3/contribute/typography/)
+- [Программа локализации](/v3/contribute/localization-program/overview/)
