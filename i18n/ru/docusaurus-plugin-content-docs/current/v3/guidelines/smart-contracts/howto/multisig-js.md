@@ -4,6 +4,12 @@ description: В конце этого руководства вы разверн
 
 # Взаимодействие с мультиподписными кошельками с помощью TypeScript
 
+:::warning
+Эта страница сильно устарела и скоро будет обновлена.
+См. [multisig-contract-v2](https://github.com/ton-blockchain/multisig-contract-v2), самый современный контракт с мультиподписью на TON.
+Используйте npm и не обновляйте.
+:::
+
 ## Введение
 
 Если вы не знаете, что такое мультиподписной кошелек в ​​TON, вы можете ознакомиться с этим [здесь](/v3/guidelines/smart-contracts/howto/multisig)
@@ -28,7 +34,7 @@ yarn tsc --init -t es2022
 
 Давайте создадим исходный файл, например `main.ts`. Откройте его в своем любимом редакторе кода и следуйте этому руководству!
 
-Сначала нам нужно импортировать все важные данные
+Сначала нам нужно импортировать все важные компоненты
 
 ```js
 import { Address, beginCell, MessageRelaxed, toNano, TonClient, WalletContractV4, MultisigWallet, MultisigOrder, MultisigOrderBuilder } from "ton";
@@ -194,4 +200,4 @@ order2b.clearSignatures();
 
 - [Руководство по низкоуровневой мультиподписи](/v3/guidelines/smart-contracts/howto/multisig)
 - [Документация ton.js](https://ton-community.github.io/ton/)
-- [Источники контрактов Multisig](https://github.com/ton-blockchain/multisig-contract)
+- [Multisig contract sources](https://github.com/ton-blockchain/multisig-contract)
