@@ -1,8 +1,8 @@
 ---
-description: В конце этого руководства вы развернете мультиподписной кошелек и отправите несколько транзакций с помощью библиотеки ton
+description: В конце этого руководства вы развернете кошелек с мультиподписью и отправите несколько транзакций с помощью библиотеки ton
 ---
 
-# Взаимодействие с мультиподписными кошельками с помощью TypeScript
+# Взаимодействие с кошельками с мультиподписью с помощью TypeScript
 
 :::warning
 Эта страница сильно устарела и скоро будет обновлена.
@@ -12,14 +12,14 @@ description: В конце этого руководства вы разверн
 
 ## Введение
 
-Если вы не знаете, что такое мультиподписной кошелек в ​​TON, вы можете ознакомиться с этим [здесь](/v3/guidelines/smart-contracts/howto/multisig)
+Если вы не знаете, что такое кошелек с мультиподписью в TON, вы можете узнать об этом [здесь](/v3/guidelines/smart-contracts/howto/multisig)
 
-Выполнив эти шаги, вы узнаете, как:
+Выполнив эти действия, вы узнаете, как:
 
-- Создать и развернуть мультиподписной кошелек
+- Создать и развернуть кошелек с мультиподписью
 - Создать, подписать и отправить транзакции с помощью этого кошелька
 
-Мы создадим проект TypeScript и используем библиотеку [ton](https://www.npmjs.com/package/ton), поэтому вам нужно сначала установить ее. Мы также будем использовать [ton-access](https://www.orbs.com/ton-access/):
+Мы создадим проект TypeScript и будем использовать библиотеку [ton](https://www.npmjs.com/package/ton), поэтому вам нужно сначала установить ее. Мы также будем использовать [ton-access](https://www.orbs.com/ton-access/):
 
 ```bash
 yarn add typescript @types/node ton ton-crypto ton-core buffer @orbs-network/ton-access
@@ -30,9 +30,9 @@ yarn tsc --init -t es2022
 
 - https://github.com/Gusarich/multisig-ts-example
 
-## Создание и развертывание мультиподписного кошелька
+## Создание и развертывание кошелька с мультиподписью
 
-Давайте создадим исходный файл, например `main.ts`. Откройте его в своем любимом редакторе кода и следуйте этому руководству!
+Давайте создадим исходный файл, например `main.ts`. Откройте его в вашем любимом редакторе кода и следуйте этому руководству!
 
 Сначала нам нужно импортировать все важные компоненты
 
@@ -49,7 +49,7 @@ const endpoint = await getHttpEndpoint();
 const client = new TonClient({ endpoint });
 ```
 
-Затем нам понадобятся пары ключей для работы:
+Далее нам понадобятся пары ключей для работы:
 
 ```js
 let keyPairs: KeyPair[] = [];
@@ -65,24 +65,24 @@ let mnemonics[] = [
 for (let i = 0; i < mnemonics.length; i++) keyPairs[i] = await mnemonicToPrivateKey(mnemonics[i]);
 ```
 
-Существует два способа создать объект `MultisigWallet`:
+Существует два способа создания объекта `MultisigWallet`:
 
-- Импортируйте существующий из адреса
+- Импортировать существующий из адреса
 
 ```js
 let addr: Address = Address.parse('EQADBXugwmn4YvWsQizHdWGgfCTN_s3qFP0Ae0pzkU-jwzoE');
 let mw: MultisigWallet = await MultisigWallet.fromAddress(addr, { client });
 ```
 
-- Создайте новый
+- Создать новый
 
 ```js
 let mw: MultisigWallet = new MultisigWallet([keyPairs[0].publicKey, keyPairs[1].publicKey], 0, 0, 1, { client });
 ```
 
-Также есть два способа его развертывания
+Есть также два способа его развертывания
 
-- С помощью внутреннего сообщения
+- Через внутреннее сообщение
 
 ```js
 let wallet: WalletContractV4 = WalletContractV4.create({ workchain: 0, publicKey: keyPairs[4].publicKey });
@@ -90,13 +90,13 @@ let wallet: WalletContractV4 = WalletContractV4.create({ workchain: 0, publicKey
 await mw.deployInternal(wallet.sender(client.provider(wallet.address, null), keyPairs[4].secretKey), toNano('0.05'));
 ```
 
-- С помощью внешнего сообщения
+- Через внешнее сообщение
 
 ```js
 await mw.deployExternal();
 ```
 
-## Создание, подпись и отправка заявки
+## Создайте, подпишите и отправьте заказ
 
 Нам нужен объект `MultisigOrderBuilder` для создания новой заявки.
 
