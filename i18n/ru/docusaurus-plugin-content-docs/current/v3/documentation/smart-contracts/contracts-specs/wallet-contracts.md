@@ -1,4 +1,5 @@
-
+import ConceptImage from '@site/src/components/conceptImage';
+import ThemedImage from '@theme/ThemedImage';
 
 # Типы контрактов кошелька
 
