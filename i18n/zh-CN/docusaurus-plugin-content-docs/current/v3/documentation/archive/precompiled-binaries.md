@@ -86,24 +86,7 @@ fift -V -and func -V -and lite-client -V
    4. 在"*变量值*"字段中，指定文件的路径：**`/%USERNAME%/ton/lib/fiftlib`**，然后单击 "<Highlight color="#1877F2">确定</Highlight>"。完成。
 
 :::caution important
-您必须插入自己的 "用户名"，而不是 "%USERNAME%"关键字。\
-:::</TabItem>
-<TabItem value="mac" label="Linux / MacOS">1.下载后，通过更改权限确保下载的二进制文件可执行。```bash
-chmod +x func
-chmod +x fift
-chmod +x lite-client
-```2.将这些二进制文件添加到路径中（或复制到 `/usr/local/bin`）也很有用，这样你就可以在任何地方访问它们。```bash
-cp ./func /usr/local/bin/func
-cp ./fift /usr/local/bin/fift
-cp ./lite-client /usr/local/bin/lite-client
-```3.要检查一切安装是否正确，请在终端中运行```bash
-fift -V && func -V && lite-client -V
-```4.如果打算 `使用 fift`，还需下载 [fiftlib.zip](/ton-binaries/windows/fiftlib.zip)，在设备上的某个目录（如 `/usr/local/lib/fiftlib`）中打开该压缩包，并设置环境变量 `FIFTPATH` 指向该目录。```
-unzip fiftlib.zip
-mkdir -p /usr/local/lib/fiftlib
-cp fiftlib/* /usr/local/lib/fiftlib
-```:::info 嘿，你差不多完成了:)
-记得设置[环境变量](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix) `FIFTPATH`指向此目录。
+您必须插入自己的 "用户名"，而不是 "%USERNAME%" 关键字。
 :::
 
 </TabItem>
