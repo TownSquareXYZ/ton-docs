@@ -23,7 +23,7 @@
 Найдите или напишите материал, который вы хотите описать.
 
 1. Проверьте [список issues на GitHub TON Docs](https://github.com/ton-community/ton-docs/issues) с меткой 'tutorial'.
-2. *Или* предложите свою идею на GitHub TON Docs с помощью [шаблона руководства](https://github.com/ton-community/ton-docs/issues/new?assignees=\&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A\&template=suggest_tutorial.yaml\&title=Suggest+a+tutorial).
+2. *Или* предложите свою идею на GitHub TON Docs с помощью [шаблона руководства](https://github.com/ton-community/ton-docs/issues/new?assignees=\\&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A\\&template=suggest_tutorial.yaml\\&title=Suggest+a+tutorial).
 
 ## Опишите проблему, чтобы получить вознаграждение
 
