@@ -245,11 +245,11 @@ dark: '/img/docs/wallet-contracts/wallet-contract-V5_dark.png?raw=true',
 #### Содержимое постоянной памяти
 
 ```
-contract_state$_ 
-    is_signature_allowed:(## 1) 
-    seqno:# 
-    wallet_id:(## 32) 
-    public_key:(## 256) 
+contract_state$_
+    is_signature_allowed:(## 1)
+    seqno:#
+    wallet_id:(## 32)
+    public_key:(## 256)
     extensions_dict:(HashmapE 256 int1) = ContractState;
 ```
 
@@ -268,8 +268,8 @@ signed_request$_             // 32 (opcode from outer)
 
 internal_signed#73696e74 signed:SignedRequest = InternalMsgBody;
 
-internal_extension#6578746e 
-    query_id:(## 64) 
+internal_extension#6578746e
+    query_id:(## 64)
     inner:InnerRequest = InternalMsgBody;
 
 external_signed#7369676e signed:SignedRequest = ExternalMsgBody;
@@ -287,8 +287,8 @@ external_signed#7369676e signed:SignedRequest = ExternalMsgBody;
 
 ```
 out_list_empty$_ = OutList 0;
-out_list$_ {n:#} 
-    prev:^(OutList n) 
+out_list$_ {n:#}
+    prev:^(OutList n)
     action:OutAction = OutList (n + 1);
 
 action_send_msg#0ec3c86d mode:(## 8) out_msg:^(MessageRelaxed Any) = OutAction;
@@ -304,7 +304,7 @@ action_set_signature_auth_allowed#04 allowed:(## 1) = ExtendedAction;
 actions$_ out_actions:(Maybe OutList) has_other_actions:(## 1) {m:#} {n:#} other_actions:(ActionList n m) = InnerRequest;
 ```
 
-Мы можем рассматривать `InnerRequest` как два списка действий:<0></0>`OutList` – представляет собой необязательную цепочку ссылок на ячейки, каждая из которых содержит запрос на отправку сообщения, инициируемый режимом сообщения.<0></0>`ActionList` – инициируется однобитным флагом, `has_other_actions`, который отмечает наличие расширенных действий, начиная с первой ячейки и далее в виде цепочки ссылок на ячейки. Мы уже знакомы с первыми двумя расширенными действиями, `action_add_ext` и `action_delete_ext`, за которыми следует внутренний адрес, который мы хотим добавить или удалить из словаря расширений. Третье действие, `action_set_signature_auth_allowed`, ограничивает или разрешает аутентификацию через публичный ключ, оставляя единственный способ взаимодействия с кошельком через расширения. Эта функциональность может оказаться чрезвычайно важной в случае потери или компрометации приватного ключа.
+Мы можем рассматривать `InnerRequest` как два списка действий:`OutList` – представляет собой необязательную цепочку ссылок на ячейки, каждая из которых содержит запрос на отправку сообщения, инициируемый режимом сообщения.`ActionList` – инициируется однобитным флагом, `has_other_actions`, который отмечает наличие расширенных действий, начиная с первой ячейки и далее в виде цепочки ссылок на ячейки. Мы уже знакомы с первыми двумя расширенными действиями, `action_add_ext` и `action_delete_ext`, за которыми следует внутренний адрес, который мы хотим добавить или удалить из словаря расширений. Третье действие, `action_set_signature_auth_allowed`, ограничивает или разрешает аутентификацию через публичный ключ, оставляя единственный способ взаимодействия с кошельком через расширения. Эта функциональность может оказаться чрезвычайно важной в случае потери или компрометации приватного ключа.
 
 :::info
 Обратите внимание, что максимальное количество действий равно 255 – это следствие реализации через [c5 TVM-регистр](/v3/documentation/tvm/tvm-overview#result-of-tvm-execution). Технически, вы можете сделать запрос с пустыми `OutAction` и `ExtendedAction`, но в таком случае это будет похоже на простое получение средств.
@@ -398,67 +398,6 @@ actions$_ out_actions:(Maybe OutList) has_other_actions:(## 1) {m:#} {n:#} other
 - [EmelyanenkoK/nomination-contract/restricted-wallet](https://github.com/EmelyanenkoK/nomination-contract/tree/master/restricted-wallet)
 
 ## Известные оп-коды
-
-:::info
-Также оп-код, опкод, `op::code` и операционный код
-:::
-
-| Тип контракта | Шестнадцатеричный код | Оп-код                                                                                                                                           |
-| ------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Глобальный    | 0x00000000            | Текстовый комментарий                                                                                                                            |
-| Глобальный    | 0xffffffff            | Bounce                                                                                                                                           |
-| Глобальный    | 0x2167da4b            | [Зашифрованный комментарий](/v3/documentation/smart-contracts/message-management/internal-messages#messages-with-encrypted-comments)             |
-| Глобальный    | 0xd53276db            | Excesses                                                                                                                                         |
-| Избиратель    | 0x4e73744b            | Новая ставка                                                                                                                                     |
-| Избиратель    | 0xf374484c            | Подтверждение новой ставки                                                                                                                       |
-| Избиратель    | 0x47657424            | Запрос на восстановление ставки                                                                                                                  |
-| Избиратель    | 0x47657424            | Ответ на восстановление ставки                                                                                                                   |
-| Кошелек       | 0x0f8a7ea5            | Перевод жетона                                                                                                                                   |
-| Кошелек       | 0x235caf52            | [Вызов жетона](https://testnet.tonviewer.com/transaction/1567b14ad43be6416e37de56af198ced5b1201bb652f02bc302911174e826ef7)                       |
-| Jetton        | 0x178d4519            | Внутренняя передача жетона                                                                                                                       |
-| Jetton        | 0x7362d09c            | Уведомление жетона                                                                                                                               |
-| Jetton        | 0x595f07bc            | Сжигание жетона                                                                                                                                  |
-| Jetton        | 0x7bdd97de            | Уведомление о сжигании жетона                                                                                                                    |
-| Jetton        | 0xeed236d3            | Установка статуса жетона                                                                                                                         |
-| Jetton-Minter | 0x642b7d07            | Выпуск жетона                                                                                                                                    |
-| Jetton-Minter | 0x6501f354            | Изменение админа жетона                                                                                                                          |
-| Jetton-Minter | 0xfb88e119            | Jetton Claim Admin                                                                                                                               |
-| Jetton-Minter | 0x7431f221            | Jetton Drop Admin                                                                                                                                |
-| Jetton-Minter | 0xcb862902            | Изменение метаданных жетона                                                                                                                      |
-| Jetton-Minter | 0x2508d66a            | Апргрейд жетона                                                                                                                                  |
-| Vesting       | 0xd372158c            | [Пополнение счета](https://github.com/ton-blockchain/liquid-staking-contract/blob/be2ee6d1e746bd2bb0f13f7b21537fb30ef0bc3b/PoolConstants.ts#L28) |
-| Vesting       | 0x7258a69b            | Добавление вайтлиста                                                                                                                             |
-| Vesting       | 0xf258a69b            | Добавление ответа в вайтлист                                                                                                                     |
-| Vesting       | 0xa7733acd            | Отправка                                                                                                                                         |
-| Vesting       | 0xf7733acd            | Отправка ответа                                                                                                                                  |
-| Dedust        | 0x9c610de3            | Dedust Swap ExtOut                                                                                                                               |
-| Dedust        | 0xe3a0d482            | Обмен жетонов на Dedust                                                                                                                          |
-| Dedust        | 0xea06185d            | Внутренний обмен Dedust                                                                                                                          |
-| Dedust        | 0x61ee542d            | Внешний обмен                                                                                                                                    |
-| Dedust        | 0x72aca8aa            | Обмен пирами                                                                                                                                     |
-| Dedust        | 0xd55e4686            | Внутренняя ликвидность депозитов                                                                                                                 |
-| Dedust        | 0x40e108d6            | Ликвидность депозитов Jetton                                                                                                                     |
-| Dedust        | 0xb56b9598            | Ликвидность всех депозитов                                                                                                                       |
-| Dedust        | 0xad4eb6f5            | Выплаты из пула                                                                                                                                  |
-| Dedust        | 0x474а86са            | Выплаты                                                                                                                                          |
-| Dedust        | 0xb544f4a4            | Депозит                                                                                                                                          |
-| Dedust        | 0x3aa870a6            | Вывод средств                                                                                                                                    |
-| Dedust        | 0x21cfe02b            | Создать хранилище                                                                                                                                |
-| Dedust        | 0x97d51f2f            | Создание энергозависимого пула                                                                                                                   |
-| Dedust        | 0x166cedee            | Отмена депозита                                                                                                                                  |
-| StonFi        | 0x25938561            | Внутренний обмен                                                                                                                                 |
-| StonFi        | 0xf93bb43f            | Запрос на оплату                                                                                                                                 |
-| StonFi        | 0xfcf9e58f            | Обеспечение ликвидности                                                                                                                          |
-| StonFi        | 0xc64370e5            | Успешный обмен                                                                                                                                   |
-| StonFi        | 0x45078540            | Ссылка на успешный обмен                                                                                                                         |
-
-:::info
-[DeDust docs](https://docs.dedust.io/docs/swaps)
-
-[документация StonFi](https://docs.ston.fi/docs/developer-section/architecture#calls-descriptions)
-:::
-
-## Заключение
 
 Как видите, в TON существует множество различных версий кошельков. Но в большинстве случаев вам нужны только `V3R2` или `V4R2`. Вы также можете использовать один из специальных кошельков, если вам нужна какая-то дополнительная функциональность, например, периодическая разблокировка средств.
 
