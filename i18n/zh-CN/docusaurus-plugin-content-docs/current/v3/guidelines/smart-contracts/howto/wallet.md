@@ -2640,7 +2640,7 @@ do {
 >
 > [文档中的"udict_delete_get_min()"](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_delete_get_min)
 
-请注意，有必要多次与 `f` 变量交互。由于 [TVM 是堆栈机器](/v3/documentation/tvm/tvm-overview#tvm-is-a-stack-machine)，在每次与 `f` 变量交互时，都需要弹出所有值以获得所需的变量。f~touch()\` 操作将 f 变量置于栈顶，以优化代码执行。
+请注意，有必要多次与 `f` 变量交互。由于 [TVM 是堆栈机器](/v3/documentation/tvm/tvm-overview#tvm-is-a-stack-machine)，在每次与 `f` 变量交互时，都需要弹出所有值以获得所需的变量。f~touch()\\` 操作将 f 变量置于栈顶，以优化代码执行。
 
 ### 位操作
 
