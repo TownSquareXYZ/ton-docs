@@ -112,12 +112,12 @@ print(address2.to_str(is_user_friendly=False))  # 0:ca6e321c7cce9ecedf0a8ca2492e
 
 我们通过定义两个标志（flags）：**bounceable**/**non-bounceable** 和 **testnet**/**any-net**。它代表地址编码中的前 6 位，并且标志根据 [TEP-2](https://github.com/ton-blockchain/TEPs/blob/master/text/0002-address.md#smart-contract-addresses) 使得我们只查看地址的第一个字母去轻松检测到它们：
 
-|    地址开头    |    二进制形式   | 可返回（Bounceable） |    仅测试网    |
+|   地址开头     |   二进制形式    | 可返回（Bounceable） |   仅测试网     |
 | :--------: | :--------: | :-------------: | :--------: |
-| E...       | 000100.01  |     yes         | no         |
-| U...       | 010100.01  |      no         | no         |
-| k...       | 100100.01  |     yes         | yes        |
-| 0...       | 110100.01  |      no         | yes        |
+| E...       | 000100.01  |   yes           | no         |
+| U...       | 010100.01  |    no           | no         |
+| k...       | 100100.01  |   yes           | yes        |
+| 0...       | 110100.01  |    no           | yes        |
 
 :::tip
 Testnet-only 标志在区块链中没有任何表示。Non-bounceable 标志仅在用作转账的目标地址时才有所不同：在这种情况下，它[不允许消息回弹](/v3/documentation/smart-contracts/message-management/non-bounceable-messages)；区块链中的地址同样不包含此标志。

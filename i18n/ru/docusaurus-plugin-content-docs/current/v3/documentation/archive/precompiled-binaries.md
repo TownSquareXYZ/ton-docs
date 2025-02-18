@@ -87,23 +87,6 @@ fift -V -and func -V -and lite-client -V
 
 :::caution важно
 Вместо `%USERNAME%` вам нужно вставить свой `username`.\
-:::</TabItem>
-<TabItem value="mac" label="Linux / MacOS">1. После загрузки убедитесь, что загруженные бинарные файлы могут быть выполнены, изменив их разрешения.```bash
-chmod +x func
-chmod +x fift
-chmod +x lite-client
-```2. Также полезно добавить эти бинарные файлы в путь (или скопировать их в `/usr/local/bin`), чтобы вы могли запускать их из любой директории.```bash
-cp ./func /usr/local/bin/func
-cp ./fift /usr/local/bin/fift
-cp ./lite-client /usr/local/bin/lite-client
-```3. Чтобы проверить, что все установлено правильно, выполните в терминале следующую команду.```bash
-fift -V && func -V && lite-client -V
-```4. Если Вы планируете `использовать fift`, также скачайте [fiftlib.zip](/ton-binaries/windows/fiftlib.zip), распакуйте архив в любую директорию на вашем устройстве (например, `/usr/local/lib/fiftlib`) и задайте переменную среды `FIFTPATH`, указывающую на эту директорию.```
-unzip fiftlib.zip
-mkdir -p /usr/local/lib/fiftlib
-cp fiftlib/* /usr/local/lib/fiftlib
-```:::info Вы почти закончили :)
-Не забудьте задать [переменную среды](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix) `FIFTPATH`, указывающую на эту директорию.
 :::
 
 </TabItem>

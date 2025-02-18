@@ -20,7 +20,7 @@ import TabItem from '@theme/TabItem';
 
 您可以在 [此处](/v3/concepts/dive-into-ton/ton-blockchain/cells-as-data-storage) 了解有关 cell 的更多信息。
 
-### 创建 cell 
+### 创建 cell
 
 要创建 cell ，需要使用 `beginCell()` 函数。当 cell  "打开" 时，您可以使用 `store...()` 函数存储各种数据类型。
 完成后，使用 `endCell()` 函数关闭 cell 。
@@ -35,7 +35,7 @@ const cell = beginCell()
   .endCell() // Closes the cell
 ```
 
-### 解析 cell 
+### 解析 cell
 
 要从 cell 中读取或解析数据，需要调用 `beginParse()` 函数。使用类似的`load...()` 函数，读取数据的顺序与存储数据的顺序相同：
 
@@ -931,7 +931,6 @@ const result = await tonConnectUI.sendTransaction(transaction)
 ```
 
 </TabItem>
-</Tabs>
 
 <TabItem value="tonconnect-sdk" label="@tonconnect/sdk">
 
@@ -1948,7 +1947,7 @@ if err != nil {
 }
 ```
 
-###  jetton 销毁
+### jetton 销毁
 
 Jetton 销毁消息的函数示例。请注意，不同代币的小数位数可能会有所不同：例如，USDT 使用 6 位小数（1 USDT = 1 _ 10\*\*9），而 TON 使用 9 位小数（1 TON = 1 _ 10\*\*9）。
 

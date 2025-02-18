@@ -29,7 +29,7 @@ TON Payments - это платформа для каналов микропла�
 
 - [grejwood/Hack-a-TON](https://github.com/Grejwood/Hack-a-TON)—OnlyTONs payments project ([веб-сайт](https://main.d3puvu1kvbh8ti.amplifyapp.com/), [видео](https://www.youtube.com/watch?v=38JpX1vRNTk))
 - [nns2009/Hack-a-TON-1_Tonario](https://github.com/nns2009/Hack-a-TON-1_Tonario)—OnlyGrams payments project ([веб-сайт](https://onlygrams.io/), [видео](https://www.youtube.com/watch?v=gm5-FPWn1XM))
-- [sevenzing/hack-a-ton](https://github.com/sevenzing/hack-a-ton)—Pay-per-Request API usage in TON ([видео](https://www.youtube.com/watch?v=7lAnbyJdpOA\&feature=youtu.be))
+- [sevenzing/hack-a-ton](https://github.com/sevenzing/hack-a-ton)—Pay-per-Request API usage in TON ([видео](https://www.youtube.com/watch?v=7lAnbyJdpOA\\&feature=youtu.be))
 - [illright/diamonds](https://github.com/illright/diamonds)—Pay-per-Minute learning platform ([веб-сайт](https://diamonds-ton.vercel.app/), [видео](https://www.youtube.com/watch?v=g9wmdOjAv1s))
 
 ## См. также

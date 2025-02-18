@@ -4,7 +4,7 @@ import TabItem from '@theme/TabItem';
 
 # Обзор обработки активов
 
-В этой статье вы можете найти **краткое описание** того, [как работают переводы TON](/v3/documentation/dapps/assets/overview#overview-on-messages-and-transactions), какие [типы активов](/v3/documentation/dapps/assets/overview#digital-asset-types-on-ton) можно найти в TON (и о чем вы прочтете [далее](/v3/documentation/dapps/assets/overview#read-next)) и как [взаимодействовать с TON](/v3/documentation/dapps/assets/overview#interaction-with-ton-blockchain) с использованием вашего языка программирования, рекомендуется понять всю информацию, представленную ниже, перед переходом к следующим страницам.
+Здесь вы можете найти **краткий обзор** того, [как работают переводы TON](/v3/documentation/dapps/assets/overview#overview-on-messages-and-transactions), какие [типы активов](/v3/documentation/dapps/assets/overview#digital-asset-types-on-ton) вы можете найти в TON (и о чем вы прочтете [дальше](/v3/documentation/dapps/assets/overview#read-next)) и как [взаимодействовать с TON](/v3/documentation/dapps/assets/overview#interaction-with-ton-blockchain) с помощью вашего языка программирования, рекомендуется понять всю предоставленную информацию перед переходом на следующие страницы.
 
 ## Обзор сообщений и транзакций
 
