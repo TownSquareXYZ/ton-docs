@@ -195,4 +195,4 @@ smc_info#076ef1ea
 
 ## 另见
 
-- 白皮书中 [TVM 初始化](https://docs.ton.org/tblkch.pdf#page=89\&zoom=100) 的原始描述
+- 白皮书中 [TVM 初始化](https://docs.ton.org/tblkch.pdf#page=89\\&zoom=100) 的原始描述

@@ -6,15 +6,13 @@ import Button from '@site/src/components/button'
 本指南介绍了将 TON Connect 与 Telegram 机器人集成的过时方法。如需更安全、更现代的方法，请考虑使用 [Telegram 小程序](/v3/guidelines/dapps/tma/overview)。
 :::
 
-<Button href="https://t.me/test_tonconnect_bot" colorType={'primary'} sizeType={'sm'}>
-
-打开演示机器人
+<Button href="https://t.me/ton_connect_example_bot" colorType={'primary'} sizeType={'sm'}>
 
 打开演示机器人
 
 </Button>
 
-查看 GitHub
+<Button href="https://github.com/yungwine/ton-connect-bot" colorType={'secondary'} sizeType={'sm'}>
 
 查看 GitHub
 
@@ -97,7 +95,7 @@ if __name__ == "__main__":
 
 ```
 
-## TON Connect 存储
+## TON 连接存储
 
 ### TON 连接存储
 
@@ -498,11 +496,11 @@ if __name__ == "__main__":
 
 </details>
 
-## 添加持久存储 - Redis
+## 添加永久存储 - Redis
 
 ### 添加永久存储 - Redis
 
-在启动 Redis 数据库后安装用于与之交互的 python 库：
+启动 Redis 数据库后，安装 python 库与之交互：
 
 启动 Redis 数据库后，安装 python 库与之交互：
 
