@@ -205,17 +205,17 @@ cell get_nft_content(int index, cell individual_nft_content) method_id {
 
 #### Tonviewer
 
-Вы можете узнать get-методы в нижней части страницы во вкладке "Methods"
+Вы можете вызвать get-методы в нижней части страницы во вкладке "Methods"
 
 - https://tonviewer.com/EQAWrNGl875lXA6Fff7nIOwTIYuwiJMq0SmtJ5Txhgnz4tXI?section=method
 
 #### Ton.cx
 
-Вы можете узнать get-методы во вкладке "Get methods"
+Вы можете вызвать get-методы во вкладке "Get methods"
 
 - https://ton.cx/address/EQAWrNGl875lXA6Fff7nIOwTIYuwiJMq0SmtJ5Txhgnz4tXI
 
-### Вызов get- методов из кода
+### Вызов get-методов из кода
 
 В примерах ниже мы будем использовать библиотеки и инструменты JavaScript:
 
@@ -283,7 +283,7 @@ it('should return correct number from get method', async () => {
 });
 ```
 
-Проверьте, запустив `npx blueprint test` в терминале. Если все сделано правильно, тест успешно пройдет!
+Проверьте, запустив `npx blueprint test` в терминале. Если все сделано правильно, тест пройдёт успешно!
 
 ## Вызов get-методов из других контрактов
 
@@ -359,7 +359,7 @@ int get_total() method_id {
 
 - [CRC32-хеши для оп-кодов](/v3/documentation/data-formats/tlb/crc32)
 
-## Распространённые ошибки и способы их избежать
+## Распространённые ошибки и как их избежать
 
 1. **Неправильное использование get-методов.** Как уже упоминалось ранее, get-методы предназначены для получения данных из состояния контракта и не могут его изменять. Попытка изменить состояние контракта внутри get-метода не даст результата.
 
