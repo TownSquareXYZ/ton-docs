@@ -117,7 +117,7 @@ pip install -e tonconnect
 
 [GitHub](https://github.com/ClickoTON-Foundation/tonconnect)
 
-## TON Connect C\\#
+## TON Connect C\\\#
 
 TON Connect 2.0 的 C# SDK。相当于 `@tonconnect/sdk` 库。
 
@@ -171,7 +171,7 @@ TON Connect 2.0 的 Unity 资产。使用`continuation-team/TonSdk.NET/tree/main
 ## 另请参见
 
 - [建立第一个网络客户端的分步指南](https://ton-community.github.io/tutorials/03-client/)
-- [[YouTube] TON Smart Contracts | 10 | Telegram DApp[EN]](https://www.youtube.com/watch?v=D6t3eZPdgAU\&t=254s\&ab_channel=AlefmanVladimir%5BEN%5D)
+- [[YouTube] TON Smart Contracts | 10 | Telegram DApp[EN]](https://www.youtube.com/watch?v=D6t3eZPdgAU\\&t=254s\\&ab_channel=AlefmanVladimir%5BEN%5D)
 - [Ton Connect 入门](https://github.com/ton-connect/sdk/tree/main/packages/sdk)
 - [集成手册](/v3/guidelines/ton-connect/guidelines/integration-with-javascript-sdk)
 - [[YouTube] TON Dev Study TON Connect Protocol [RU]](https://www.youtube.com/playlist?list=PLyDBPwv9EPsCJ226xS5_dKmXXxWx1CKz_)

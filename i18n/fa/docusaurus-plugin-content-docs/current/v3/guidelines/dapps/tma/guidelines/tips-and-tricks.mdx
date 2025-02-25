@@ -1,0 +1,54 @@
+# نکات و ترفندها
+
+در این صفحه، فهرستی از سوالات متداول مربوط به مشکلات در TMA را خواهید یافت.
+
+### چگونه مشکل سرریز کش در TMA را حل کنیم؟
+
+:::tip
+تنها نصب مجدد اپلیکیشن تلگرام می‌تواند مفید باشد.
+:::
+
+### آیا توصیه‌ای برای کش هدرها در فایل‌های HTML وجود دارد؟
+
+:::tip
+It's preferable to switch off cache in the HTML. To ensure your cache switched off, specify headers in your request according the following:
+
+```curl
+Cache-Control: no-store, must-revalidate
+Pragma: no-cache
+Expires: 0
+```
+
+:::
+
+### چه IDE‌ ای برای توسعه TMA پیشنهاد می‌شود؟
+
+فرآیند توسعه در گوگل کروم به دلیل ابزارهای توسعه دهنده آشنا راحت‌تر است.
+
+شما می‌توانید پارامترهای راه‌اندازی مینی‌اپ را بازیابی و این لینک را در کروم باز کنید. در مورد ما، ساده‌ترین راه این است که پارامترهای راه‌اندازی را از نسخه وب تلگرام بازیابی کنید: [https://web.telegram.org/](https://web.telegram.org/)
+
+### روشهای بستن
+
+در بسیاری از برنامه‌های وب، ممکن است کاربران به طور تصادفی در هنگام پیمایش به بالا، برنامه را ببندند. این می‌تواند زمانی اتفاق بیافتد که بخشی از برنامه را بیش از حد بکشند و به طور ناخواسته باعث بسته شدن برنامه شوند.
+
+<p align="center">
+    <br />
+    <img width="240" src="/img/docs/telegram-apps/closing-behaviour.svg" alt="closing_behaviour_durgerking" />
+    <br />
+</p>
+
+برای جلوگیری از بسته شدن‌های تصادفی، `closing_behavior` را در TMA فعال کنید. این متد یک دیالوگ اضافه می‌کند که کاربر می‌تواند بسته شدن وب اپلیکیشن را تأیید یا رد کند.
+
+```typescript
+window.Telegram.WebApp.enableClosingConfirmation()
+```
+
+## چگونه توضیحی برای یک زبان خاص در TMA مشخص کنیم؟
+
+:::tip
+You can configure your description with following methods:
+
+- https://core.telegram.org/bots/api#setmydescription
+- https://core.telegram.org/bots/api#setmyshortdescription
+
+:::
