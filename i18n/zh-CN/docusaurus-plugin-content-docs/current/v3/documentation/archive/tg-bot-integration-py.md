@@ -12,7 +12,7 @@ import Button from '@site/src/components/button'
 
 </Button>
 
-<Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>
+<Button href="https://github.com/yungwine/ton-connect-bot" colorType={'secondary'} sizeType={'sm'}>
 
 查看 GitHub
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
 
 ```
 
-## TON Connect 存储
+## TON 连接存储
 
 ### TON 连接存储
 
@@ -496,11 +496,11 @@ if __name__ == "__main__":
 
 </details>
 
-## 添加持久存储 - Redis
+## 添加永久存储 - Redis
 
 ### 添加永久存储 - Redis
 
-在启动 Redis 数据库后安装用于与之交互的 python 库：
+启动 Redis 数据库后，安装 python 库与之交互：
 
 启动 Redis 数据库后，安装 python 库与之交互：
 

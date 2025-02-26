@@ -45,7 +45,7 @@ Jetton 矿工不在本文讨论范围之内。
 我首先想到的设计是这样的：
 
 - 用户向 distributor 发送证明
--  distributor 检查证明并部署 `双花` 合约
+- distributor 检查证明并部署 `双花` 合约
 - distributor 将信息传递给双花。 
 - 如果之前没有部署，双倍花费会向分发者发送 `claim_ok` 文件
 - distributor 将领取费用发送到费用钱包。
@@ -63,7 +63,7 @@ Jetton 矿工不在本文讨论范围之内。
 - 用户部署 "双重花费"，并将证明代理给 distributor
 - distributor 通过状态 init `(distributor_address, user_address?)` 检查发送 "双倍花费 "的地址
 - distributor 检查校样，在这种情况下，用户索引应是校样的一部分，然后放行。
--  distributor 将费用发送至费用钱包
+- distributor 将费用发送至费用钱包
   **MORE NAIVE ART**
 
 ## 分片优化
@@ -137,7 +137,7 @@ _ _(HashMap 64 AirdropItem) = Airdrop;
 是的，**但**我们可以将它们分组，使用户地址分片与分发者分片相匹配。
 在这种情况下，每个分发者都将处理 _merkle root_ ，它完全由来自其分片的用户组成。
 
-#### 总结 
+#### 总结
 
 我们可以把链中的 `double_spend->dist->dist_jetton` 部分放在同一个分片中。
 留给其他分片的就是`dist_jetton->user_jetton->user_wallet`。
@@ -159,7 +159,7 @@ _ _(HashMap 64 AirdropItem) = Airdrop;
 
 - 用户使用索引调整功能在同一分片部署 _双花_ 合约
 - 用户分片中的分发器通过状态 init `(distributor_address, index)` 检查发送 "双花 "的地址
--  distributor 将费用发送至费用钱包
+- distributor 将费用发送至费用钱包
 - Distributor 检查证明，在这种情况下，用户索引应是证明的一部分，并通过同一分片中的 jetton 钱包释放 jetton 。
 
 **MORE NAIVE ART**
