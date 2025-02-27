@@ -1,18 +1,18 @@
 ---
-description: В конце этого руководства вы развернете мультиподписной кошелек и отправите несколько транзакций с помощью библиотеки ton
+description: В конце этого руководства вы развернете кошелек с мультиподписью и отправите несколько транзакций с помощью библиотеки ton
 ---
 
-# Взаимодействие с мультиподписными кошельками с помощью TypeScript
+# Взаимодействие с кошельками с мультиподписью с использованием TypeScript
 
 :::warning
 Эта страница сильно устарела и скоро будет обновлена.
-См. [multisig-contract-v2](https://github.com/ton-blockchain/multisig-contract-v2), самый современный контракт с мультиподписью на TON.
+См. [multisig-contract-v2](https://github.com/ton-blockchain/multisig-contract-v2), самый новый контракт с мультиподписью на TON.
 Используйте npm и не обновляйте.
 :::
 
 ## Введение
 
-Выполнив эти шаги, вы узнаете, как:
+Если вы не знаете, что такое кошелек с мультиподписью в TON, вы можете узнать об этом [здесь](/v3/guidelines/smart-contracts/howto/multisig)
 
 Выполнив эти действия, вы узнаете, как:
 
@@ -34,7 +34,7 @@ yarn tsc --init -t es2022
 
 Сначала нам нужно импортировать все важные данные
 
-Сначала нам нужно импортировать все важные компоненты
+Сначала нам нужно импортировать все необходимые компоненты
 
 ```js
 import { Address, beginCell, MessageRelaxed, toNano, TonClient, WalletContractV4, MultisigWallet, MultisigOrder, MultisigOrderBuilder } from "ton";
@@ -65,7 +65,7 @@ let mnemonics[] = [
 for (let i = 0; i < mnemonics.length; i++) keyPairs[i] = await mnemonicToPrivateKey(mnemonics[i]);
 ```
 
-Существует два способа создания объекта `MultisigWallet`:
+Существует два способа создать объект `MultisigWallet`:
 
 - Импортировать существующий из адреса
 
@@ -96,7 +96,7 @@ await mw.deployInternal(wallet.sender(client.provider(wallet.address, null), key
 await mw.deployExternal();
 ```
 
-## Создайте, подпишите и отправьте заказ
+## Создание, подпись и отправка заявки
 
 Нам нужен объект `MultisigOrderBuilder` для создания новой заявки.
 
@@ -150,19 +150,19 @@ order1b.unionSignatures(order2b); //Now order1b have also have all signatures fr
 await mw.sendOrder(order1b, keyPairs[0].secretKey);
 ```
 
-Теперь соберите проект
+Теперь соберем проект
 
 ```bash
 yarn tsc
 ```
 
-И запустите скомпилированный файл
+И запустим скомпилированный файл
 
 ```bash
 node main.js
 ```
 
-Если он не выдает никаких ошибок, вы все сделали правильно! Теперь проверьте, прошла ли ваша транзакция успешно с помощью любого обозревателя или кошелька.
+Если он не выдает никаких ошибок, вы все сделали правильно! Теперь проверьте, прошла ли ваша транзакция успешно в любом проводнике или кошельке.
 
 ## Другие методы и свойства
 
@@ -178,7 +178,7 @@ order2.clearMessages();
 order2b.clearSignatures();
 ```
 
-И, конечно, вы можете получить публичные свойства из объектов `MultisigWallet`, `MultisigOrderBuilder` и `MultisigOrder`
+И, конечно, вы можете получить внешние свойства из объектов `MultisigWallet`, `MultisigOrderBuilder` и `MultisigOrder`
 
 - MultisigWallet:
   - `owners` - `словарь <number, Buffer>` подписей *ownerId => signature*
@@ -193,11 +193,11 @@ order2b.clearSignatures();
   - `queryId` - глобальное время, до которого заявка действительна
 
 - MultisigOrder
-  - `payload` - `Cell` с платой за payload
-  - `signatures` - `словарь <number, Buffer>` подписей *ownerId => signature*
+  - `payload` - `Cell` с полезной нагрузкой заявки
+  - `signatures` - `Dictionary <number, Buffer>` подписей *ownerId => signature*
 
 ## Ссылки
 
-- [Руководство по низкоуровневой мультиподписи](/v3/guidelines/smart-contracts/howto/multisig)
+- [Низкоуровневое руководство по мультиподписи](/v3/guidelines/smart-contracts/howto/multisig)
 - [Документация ton.js](https://ton-community.github.io/ton/)
-- [Multisig contract sources](https://github.com/ton-blockchain/multisig-contract)
+- [Исходный код контракта мультиподписи](https://github.com/ton-blockchain/multisig-contract)
