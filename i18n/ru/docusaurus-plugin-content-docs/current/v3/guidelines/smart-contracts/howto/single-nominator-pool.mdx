@@ -10,7 +10,7 @@ import TabItem from '@theme/TabItem';
 ### Установите single-nominator
 
 :::caution
-Перед началом работы убедитесь, что вы пополнили и [активировали](/v3/guidelines/nodes/running-nodes/validator-node#activate-the-wallets) кошелек валидатора.
+Перед началом работы убедитесь, что вы пополнили и [активировали](/v3/guidelines/nodes/running-nodes/validator-node#активация-кошельков) кошелек валидатора.
 :::
 
 1. Включите режим single-nominator:
@@ -19,7 +19,7 @@ import TabItem from '@theme/TabItem';
 MyTonCtrl> enable_mode single-nominator
 ```
 
-2. Проверьте, включен ли режим single-nominator:
+2. Проверьте статус режима _single-nominator_:
 
 ```bash
 MyTonCtrl> status_modes
@@ -33,7 +33,7 @@ single-nominator  enabled   Orbs's single nominator pools.
 MyTonCtrl> new_single_pool <pool-name> <owner_address>
 ```
 
-Если вы уже создали пул, то его можно импортировать:
+Если вы уже создавали пул, то можно его импортировать:
 
 ```bash
 MyTonCtrl> import_pool <pool-name> <pool-addr>
