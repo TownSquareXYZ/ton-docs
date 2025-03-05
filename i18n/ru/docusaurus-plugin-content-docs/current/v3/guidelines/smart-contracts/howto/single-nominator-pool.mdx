@@ -13,7 +13,7 @@ import TabItem from '@theme/TabItem';
 Перед началом работы убедитесь, что вы пополнили и [активировали](/v3/guidelines/nodes/running-nodes/validator-node#активация-кошельков) кошелек валидатора.
 :::
 
-1. Включите режим single-nominator:
+1. Включите режим _single-nominator_:
 
 ```bash
 MyTonCtrl> enable_mode single-nominator
@@ -33,7 +33,7 @@ single-nominator  enabled   Orbs's single nominator pools.
 MyTonCtrl> new_single_pool <pool-name> <owner_address>
 ```
 
-Если вы уже создавали пул, то можно его импортировать:
+Если вы уже создавали пул, то его можно импортировать:
 
 ```bash
 MyTonCtrl> import_pool <pool-name> <pool-addr>
@@ -69,7 +69,7 @@ test-pool  active  0.99389  spool_r2  kf_JcC5pn3etTAdwOnc16_tyMmKE8-ftNUnf0OnUjA
 
 ## Запуск без MyTonCtrl
 
-#### Подготовьте запущенный валидатор
+#### Подготовка запущенного валидатора
 
 Если у вас установлен MyTonCtrl и запущен валидатор:
 
@@ -77,7 +77,7 @@ test-pool  active  0.99389  spool_r2  kf_JcC5pn3etTAdwOnc16_tyMmKE8-ftNUnf0OnUjA
 
 #### Подготовка к началу
 
-  Если раньше у вас не было валидатора, выполните следующее:
+Если у вас ранее не было валидатора, выполните следующее:
 
 1. [Запустите валидатор](/v3/guidelines/nodes/running-nodes/full-node) и убедитесь, что он синхронизирован.
 2. Остановите валидацию и выведите все средства.
