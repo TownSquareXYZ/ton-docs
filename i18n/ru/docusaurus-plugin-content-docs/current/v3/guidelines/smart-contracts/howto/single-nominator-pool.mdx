@@ -378,7 +378,7 @@ Time                 Coins   From/To
 
 В конце раунда **MyTonCtrl** отправляет сообщение **ElectorRecoverStakeRequest** смарт-контракту избирателя. В ответ избиратель отправляет сумму TON в размере `ставка + доход` на адрес Single Nominator Pool.
 
-(/img/docs/single-nominator/validator-profit.png)
+![!](/img/docs/single-nominator/validator-profit.png)
 
 Историю транзакций вашего пула можно проверить с помощью команды `vas`:
 
@@ -400,7 +400,7 @@ MyTonCtrl> disable_mode validator
 
 1. Отключите режим `validator`, чтобы прекратить участие в выборах.
 2. Ожидайте возврата двух ваших ставок от избирателя.
-3. Выполните следующие [шаги](/v3/guidelines/smart-contracts/howto/single-nominator-pool#set-up-single-nominator).
+3. Выполните следующие [шаги](/v3/guidelines/smart-contracts/howto/single-nominator-pool#установка-single-nominator).
 
 ## Клиент Single Nominator Pool
 
@@ -452,7 +452,7 @@ MyTonCtrl> activate_single_pool <pool-name>
 MyTonCtrl> activate_single_pool my_s_pool
 ```
 
-6. После получения адреса `single_nominator_pool` on-chain, запросите whitelist `single_nominator_pool` у того, кто отправил вам Vesting-контракт.
+6. После получения адреса `single_nominator_pool` on-chain, попросите внести его в whitelist у того, кто отправил вам Vesting-контракт.
 7. После того, как `single_nominator_pool` будет внесен в whitelist, вы сможете отправлять заблокированные токены из `vesting`-контракта в `single_nominator_pool` с помощью [vesting.ton.org](https://vesting.ton.org/):
    - подключитесь к `owner_wallet` на [vesting.ton.org](https://vesting.ton.org/).
    - создайте тестовый депозит из `vesting`. Отправьте 10 TON в `single_nominator_pool`.
