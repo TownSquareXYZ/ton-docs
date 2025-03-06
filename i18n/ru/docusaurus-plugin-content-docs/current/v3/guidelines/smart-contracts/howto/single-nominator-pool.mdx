@@ -120,15 +120,15 @@ export TON_ENDPOINT=https://toncenter.com/api/v2/jsonRPC
 export TON_API_KEY=<toncenter api key>
 ```
 
-2. Создайте адрес развертывающего устройства:
+2. Создайте адрес с которого будет происходить развертывание (адрес диплоера):
 
 ```bash
 $ npm run init-deploy-wallet
 Insufficient Deployer [EQAo5U...yGgbvR] funds 0
 ```
 
-3. Пополните адрес развертывающего устройства на 2.1 TON.
-4. Разверните контракт пула, после чего вы получите адрес пула: `Ef-kC0..._WLqgs`:
+3. Пополните адрес диплоера на 2.1 TON.
+4. Разверните смарт-контракт пула, после чего вы получите адрес пула: `Ef-kC0..._WLqgs`:
 
 ```
 $ npm run deploy
@@ -142,8 +142,8 @@ $ fift -s ./scripts/fift/str-to-addr.fif Ef-kC0..._WLqgs
 
 (сохранение адреса в файл single-nominator.addr).
 
-6. Выполните бэкап приватного ключа деплоера `./build/deploy.config.json` и `single-nominator.addr` файлов.
-7. Скопируйте `single-nominator.addr` в файл `mytoncore/pools/single-nominator-1.addr`.
+6. Выполните бэкап приватного ключа диплоера `./build/deploy.config.json` и `single-nominator.addr` файлов.
+7. Скопируйте `single-nominator.addr` в `mytoncore/pools/single-nominator-1.addr`.
 8. Отправьте ставку с адреса владельца на адрес single nominator.
 
 ### Вывод средств с Single Nominator
@@ -201,7 +201,7 @@ d. Откройте deeplink на телефоне владельца.
 
 ## Депозитный пул
 
-Вы можете сделать депозит с помощью **MyTonCtrl**, используя следующие команды:
+Вы можете сделать депозит с помощью **MyTonCtrl**, используя следующую команду:
 
 ```sh
 MyTonCtrl> mg <from-wallet-name> <pool-account-addr> <amount>
@@ -225,7 +225,7 @@ MyTonCtrl> deposit_to_pool <pool-addr> <amount>
 
 4. После перехода в кошелек введите сумму TON и отправьте транзакцию. После чего средства будут добавлены в стейкинг.
 
-Если кошелек не открывается автоматически, вы можете отправить транзакцию вручную, скопировав адрес пула. Отправьте транзакцию через любой кошелек TON. С отправленной транзакции будет списан 1 TON в качестве комиссии за обработку депозита.
+Если кошелек не открывается автоматически, можно отправить транзакцию вручную, скопировав адрес пула. Отправьте транзакцию через любой кошелек TON. С отправленной транзакции будет списан 1 TON в качестве комиссии за обработку депозита.
 
 ## Вывод средств
 
@@ -299,7 +299,7 @@ func WithdrawSingleNominatorMessage(single_nominator_address string, query_id, a
 
 ### Настройка Single Nominator Pool
 
-Настройте смарт-контракт Single Nominator Pool, используя [следующие](/v3/guidelines/smart-contracts/howto/single-nominator-pool#set-up-single-nominator) инструкции.
+Настройте смарт-контракт Single Nominator Pool, используя [следующие](/v3/guidelines/smart-contracts/howto/single-nominator-pool#настройка-single-nominator-pool) инструкции.
 
 ### Присоединяйтесь к выборам
 
