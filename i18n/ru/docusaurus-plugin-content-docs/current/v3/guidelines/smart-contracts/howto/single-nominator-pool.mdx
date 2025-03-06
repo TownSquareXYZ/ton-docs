@@ -303,19 +303,19 @@ func WithdrawSingleNominatorMessage(single_nominator_address string, query_id, a
 
 ### Присоединяйтесь к выборам
 
-[Внесите](/v3/guidelines/smart-contracts/howto/single-nominator-pool#deposit-pool) минимальную ставку в Single Nominator Pool.
+[Внесите](/v3/guidelines/smart-contracts/howto/single-nominator-pool#депозитный-пул) минимальную ставку в Single Nominator Pool.
 
-**MyTonCtrl** автоматически присоединится к выборам. Вы можете установить сумму ставки, которую mytonctrl отправляет в [контракт Избирателя](/v3/documentation/smart-contracts/contracts-specs/governance#elector) ~ каждые 18 часов в Mainnet и 2 часа в Testnet.
+**MyTonCtrl** автоматически присоединится к выборам. Вы можете установить сумму ставки, которую MyTonCtrl отправляет в [контракт Избирателя](/v3/documentation/smart-contracts/contracts-specs/governance#избиратель) ~ каждые 18 часов в Mainnet и каждые 2 часа в Testnet.
 
 ```sh
 MyTonCtrl> set stake 90000
 ```
 
-**Минимальная сумма ставки** может быть найдена с помощью команды `status`.
+**Минимальную сумму ставки** можно узнать с помощью команды `status`.
 
 ![](/img/docs/single-nominator/tetsnet-conf.png)
 
-Вы можете установить `stake` как `null`, и она будет рассчитываться в соответствии со значением `stakePercent` (можно проверить с помощью команды `status_settings`).
+Вы можете задать `stake` как `null`, и тогда ставка будет рассчитываться в соответствии со значением `stakePercent` (можно проверить с помощью команды `status_settings`).
 
 Можно проверить, начались ли уже выборы:
 
@@ -329,11 +329,11 @@ MyTonCtrl> status
 MyTonCtrl> status fast
 ```
 
-Например:
+Пример вывода:
 
 ![](/img/docs/single-nominator/election-status.png)
 
-Если выборы начались и активирован Single Nominator Pool, валидатор должен **автоматически** отправить сообщение **ElectorNewStake** в контракт избирателя в начале следующего раунда.
+Если выборы начались и активирован Single Nominator Pool, валидатор должен **автоматически** отправить сообщение **ElectorNewStake** контракту избирателя в начале следующего раунда.
 
 Проверьте кошелек валидатора:
 
@@ -361,18 +361,18 @@ Time                 Coins   From/To
 
 ![](/img/docs/single-nominator/new-stake.png)
 
-В приведенном выше примере **MyTonCtrl** автоматически делает ставку в `90000` Toncoins на контракт Elector.
+В приведенном выше примере **MyTonCtrl** автоматически делает ставку в `90000` Toncoins на контракт избирателя.
 
 ### Проверка состояния валидатора
 
-В начале следующего раунда проверьте состояние валидатора **MyTonCtrl** командой `status` (`status fast` в Testnet).
+В начале следующего раунда проверьте состояние валидатора **MyTonCtrl** командой `status` (для Testnet – `status fast`).
 
 ![](/img/docs/single-nominator/status-validator.png)
 
-Вы можете подтвердить, что ваш узел стал полноценным валидатором, проверив следующие условия:
+Чтобы удостовериться в том, что ваш узел стал полноценным валидатором, проверьте следующие условия:
 
-1. **Эффективность валидатора** – Эффективность локального валидатора должна быть зеленой, а не `n/a`.
-2. **Индекс валидатора** – Индекс валидатора должен быть выше, чем -1.
+1. **Validator Efficiency** (эффективность валидатора) – эффективность локального валидатора должна быть зеленой, а не `n/a`.
+2. **Validator Index** (индекс валидатора) – индекс валидатора должен быть выше, чем -1.
 
 ### Проверка прибыли
 
