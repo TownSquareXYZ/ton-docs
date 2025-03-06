@@ -53,7 +53,7 @@ test-pool  empty   0.0      spool_r2  kf_JcC5pn3etTAdwOnc16_tyMmKE8-ftNUnf0OnUjA
 MyTonCtrl> activate_single_pool <pool-name>
 ```
 
-После успешной активации пула:
+После успешной активации пула проверьте статус:
 
 ```bash
 MyTonCtrl> pools_list
@@ -235,7 +235,7 @@ MyTonCtrl> deposit_to_pool <pool-addr> <amount>
 MyTonCtrl> withdraw_from_pool <pool-addr> <amount>
 ```
 
-Или Вы можете создать и отправить транзакцию вручную:
+Или же создать и отправить транзакцию вручную:
 
 <Tabs groupId="Покупка NFT">
 <TabItem value="tonconnect-react-ui" label="@tonconnect/react-ui">
@@ -299,7 +299,7 @@ func WithdrawSingleNominatorMessage(single_nominator_address string, query_id, a
 
 ### Настройка Single Nominator Pool
 
-Настройте смарт-контракт Single Nominator Pool, используя [следующие](/v3/guidelines/smart-contracts/howto/single-nominator-pool#настройка-single-nominator-pool) инструкции.
+Настройте смарт-контракт Single Nominator Pool, используя [следующие](/v3/guidelines/smart-contracts/howto/single-nominator-pool#установите-single-nominator) инструкции.
 
 ### Присоединяйтесь к выборам
 
@@ -376,7 +376,7 @@ Time                 Coins   From/To
 
 ### Проверка прибыли
 
-В конце раунда **MyTonCtrl** отправляет **ElectorRecoverStakeRequest** сообщение смарт-контракту Избирателя. В ответ Избиратель отправляет сумму TON в размере `ставка + доход` в ваш Single Nominator Pool.
+В конце раунда **MyTonCtrl** отправляет сообщение **ElectorRecoverStakeRequest** смарт-контракту избирателя. В ответ избиратель отправляет сумму TON в размере `ставка + доход` на адрес Single Nominator Pool.
 
 ![](/img/docs/single-nominator/validator-profit.png)
 
