@@ -10,16 +10,16 @@ import TabItem from '@theme/TabItem';
 ### Установите single-nominator
 
 :::caution
-Перед началом работы убедитесь, что вы пополнили и [активировали](/v3/guidelines/nodes/running-nodes/validator-node#activate-the-wallets) кошелек валидатора.
+Перед началом работы убедитесь, что вы пополнили и [активировали](/v3/guidelines/nodes/running-nodes/validator-node#активация-кошельков) кошелек валидатора.
 :::
 
-1. Включите режим single-nominator:
+1. Включите режим _single-nominator_:
 
 ```bash
 MyTonCtrl> enable_mode single-nominator
 ```
 
-2. Проверьте, включен ли режим single-nominator:
+2. Проверьте статус режима _single-nominator_:
 
 ```bash
 MyTonCtrl> status_modes
@@ -33,7 +33,7 @@ single-nominator  enabled   Orbs's single nominator pools.
 MyTonCtrl> new_single_pool <pool-name> <owner_address>
 ```
 
-Если вы уже создали пул, то его можно импортировать:
+Если вы уже создавали пул, то его можно импортировать:
 
 ```bash
 MyTonCtrl> import_pool <pool-name> <pool-addr>
@@ -61,30 +61,30 @@ Name       Status  Balance  Version   Address
 test-pool  active  0.99389  spool_r2  kf_JcC5pn3etTAdwOnc16_tyMmKE8-ftNUnf0OnUjAIdDJpX
 ```
 
-Теперь вы можете работать с этим пулом через mytonctrl, как с обычным пулом номинаторов.
+Теперь можно работать с этим пулом через MyTonCtrl как с обычным пулом номинаторов.
 
 :::info
-Если баланс пула достаточен для участия в обоих раундах (`баланс > min_stake_amount * 2`), то MyTonCtrl автоматически примет участие в обоих раундах, используя `stake = баланс / 2`, если только пользователь не сделает ставку вручную, используя команду `set stake`. Такое поведение отличается от использования пула номинаторов, но похоже на ставку с помощью кошелька валидатора.
+Если средств на балансе пула достаточно для участия в обоих раундах (`balance > min_stake_amount * 2`), то MyTonCtrl автоматически примет в них участие, используя `stake = balance / 2`, если только пользователь не сделает ставку вручную, используя команду `set stake`. Такое поведение отличается от работы пула номинаторов, но похоже на ставку с помощью кошелька валидатора.
 :::
 
-## Запуск без mytonctrl
+## Запуск без MyTonCtrl
 
-#### Подготовьте запущенный валидатор
+#### Подготовка запущенного валидатора
 
-  Если у Вас установлен mytonctrl и запущен валидатор:
+Если у вас установлен MyTonCtrl и запущен валидатор:
 
 1. Остановите валидацию и выведите все средства.
 
 #### Подготовка к началу
 
-  Если раньше у вас не было валидатора, выполните следующее:
+Если у вас ранее не было валидатора, выполните следующее:
 
-1. [Запустите валидатор] (/v3/guidelines/nodes/running-nodes/full-node) и убедитесь, что он синхронизирован.
+1. Запустите узел в [режиме валидатора](/v3/guidelines/nodes/running-nodes/full-node) и убедитесь, что он синхронизировался.
 2. Остановите валидацию и выведите все средства.
 
 ### Подготовка Single Nominator
 
-1. Установите [nodejs](https://nodejs.org/en) 16 или более поздний версии и npm ([подробные инструкции](https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions)).
+1. Установите [Node.js](https://nodejs.org/en) 16 или более поздней версии и npm ([подробные инструкции](https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions)).
 
 2. Установите модули `ts-node` и `arg`:
 
