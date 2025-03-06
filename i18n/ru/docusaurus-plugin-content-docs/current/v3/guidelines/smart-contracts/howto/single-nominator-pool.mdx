@@ -110,7 +110,7 @@ $ npm run test
 
 ### Создание Single Nominator Pool
 
-1. Получите API-ключ Toncenter в Telegram [@tonapibot](https://t.me/tonapibot).
+1. Получите API-ключ Toncenter у [@tonapibot](https://t.me/tonapibot) в Telegram.
 2. Установите переменные окружения:
 
 ```bash
@@ -452,7 +452,7 @@ MyTonCtrl> activate_single_pool <pool-name>
 MyTonCtrl> activate_single_pool my_s_pool
 ```
 
-6. После получения адреса `single_nominator_pool` on-chain, попросите внести его в whitelist у того, кто отправил вам Vesting-контракт.
+6. После получения адреса `single_nominator_pool` on-chain, попросите того, кто отправил вам Vesting-контракт внести адрес в whitelist.
 7. После того, как `single_nominator_pool` будет внесен в whitelist, вы сможете отправлять заблокированные токены из `vesting`-контракта в `single_nominator_pool` с помощью [vesting.ton.org](https://vesting.ton.org/):
    - подключитесь к `owner_wallet` на [vesting.ton.org](https://vesting.ton.org/).
    - создайте тестовый депозит из `vesting`. Отправьте 10 TON в `single_nominator_pool`.
