@@ -53,8 +53,8 @@ sudo ufw enable         # Enable firewall
 ### 5. 로그 모니터링
 
 - 의심스러운 활동을 식별하기 위해 시스템 로그를 정기적으로 모니터링하세요:
-  - */var/log/auth.log* (인증 시도용)
-  - */var/log/syslog* 또는 */var/log/messages*
+   - */var/log/auth.log* (인증 시도용)
+   - */var/log/syslog* 또는 */var/log/messages*
 - 중앙 집중식 로깅 고려
 
 ### 6. 사용자 권한 제한
