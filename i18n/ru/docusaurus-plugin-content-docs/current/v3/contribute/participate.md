@@ -23,14 +23,14 @@
 Найдите или напишите материал, который вы хотите описать.
 
 1. Проверьте [список issues на GitHub TON Docs](https://github.com/ton-community/ton-docs/issues) с меткой 'tutorial'.
-2. *Или* предложите свою идею на GitHub TON Docs с помощью [шаблона руководства](https://github.com/ton-community/ton-docs/issues/new?assignees=\\&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A\\&template=suggest_tutorial.yaml\\&title=Suggest+a+tutorial).
+2. *Или* предложите свою идею на GitHub TON Docs с помощью шаблона руководства.
 
 ## Опишите проблему, чтобы получить вознаграждение
 
 Напишите заявку в *ton-footstep*, чтобы получить финансирование за свой вклад.
 
 1. Подробнее о программе [TON Bounties](https://github.com/ton-society/grants-and-bounties/blob/main/bounties/BOUNTIES_PROGRAM_GUIDELINES.md).
-   1. **Кратко**: используйте статью [Improve TVM Instructions](https://github.com/ton-society/grants-and-bounties/issues/361) в качестве примера.
+    1. **Кратко**: используйте статью [Improve TVM Instructions](https://github.com/ton-society/grants-and-bounties/issues/361) в качестве примера.
 2. Напишите [заявку на награду](https://github.com/ton-society/grants-and-bounties/issues/new/choose) за участие и ждите одобрения. [TON Bounties Creator Bot](https://t.me/footsteps_helper_bot) поможет вам.
 3. После получения метки `approved` начните писать свое руководство.
 
