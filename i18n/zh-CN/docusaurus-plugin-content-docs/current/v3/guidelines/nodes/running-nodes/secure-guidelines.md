@@ -53,8 +53,8 @@ sudo ufw enable         # Enable firewall
 ### 5. 监控日志
 
 - 定期监控系统日志，识别可疑活动：
-  - */var/log/auth.log*（用于验证尝试）
-  - */var/log/syslog* 或 */var/log/messages*。
+   - */var/log/auth.log*（用于验证尝试）
+   - */var/log/syslog* 或 */var/log/messages*。
 - 考虑集中登录
 
 ### 6. 限制用户权限
