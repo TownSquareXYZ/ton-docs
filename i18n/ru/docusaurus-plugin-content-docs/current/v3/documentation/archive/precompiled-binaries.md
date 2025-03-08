@@ -66,7 +66,7 @@ padding: '0.2rem',
 4. В разделе *"User variables"* выберите переменную "*Path*" и нажмите <Highlight color="#1877F2">"Edit"</Highlight> (это обычно необходимо).
 
 5. Чтобы добавить новое значение `(path)` к системной переменной в следующем окне, нажмите кнопку <Highlight color="#1877F2">"New"</Highlight>.
-   В новом поле необходимо указать путь к папке, где хранятся ранее установленные файлы:
+  В новом поле необходимо указать путь к папке, где хранятся ранее установленные файлы:
 
 ```
 C:\Users\%USERNAME%\ton\bin\
@@ -80,10 +80,10 @@ fift -V -and func -V -and lite-client -V
 
 7. Если вы планируете использовать fift, вам понадобиться переменная среды `FIFTPATH` с необходимыми импортами:
 
-   1. Скачайте [fiftlib.zip](/ton-binaries/windows/fiftlib.zip)
-   2. Распакуйте архив в какую-либо директорию на вашем компьютере (например, **`C:/Users/%USERNAME%/ton/lib/fiftlib`**)
-   3. Создайте новую (нажмите кнопку <Highlight color="#1877F2">"New"</Highlight>) переменную среды `FIFTPATH` в разделе "*User variables*".
-   4. В поле "*Variable value*" укажите путь к файлам: **`/%USERNAME%/ton/lib/fiftlib`** и нажмите <Highlight color="#1877F2">OK</Highlight>. Готово.
+  1. Скачайте [fiftlib.zip](/ton-binaries/windows/fiftlib.zip)
+  2. Распакуйте архив в какую-либо директорию на вашем компьютере (например, **`C:/Users/%USERNAME%/ton/lib/fiftlib`**)
+  3. Создайте новую (нажмите кнопку <Highlight color="#1877F2">"New"</Highlight>) переменную среды `FIFTPATH` в разделе "*User variables*".
+  4. В поле "*Variable value*" укажите путь к файлам: **`/%USERNAME%/ton/lib/fiftlib`** и нажмите <Highlight color="#1877F2">OK</Highlight>. Готово.
 
 :::caution важно
 Вместо `%USERNAME%` вам нужно вставить свой `username`.\
