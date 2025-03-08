@@ -9,3 +9,4 @@ TON Connect는 사용자가 공유하는 데이터를 명시적으로 제어할 
 - TON Connect 프로토콜은 개인 데이터 항목 공유(연락처 정보 및 KYC 정보 등)를 허용하며, 이는 사용자가 해당 데이터의 공유를 명시적으로 확인함을 의미합니다.
 
 TON Connect와 그 기반이 되는 보안 중심 설계에 관한 구체적인 세부 사항과 관련 코드 예시는 [TON Connect GitHub](https://github.com/ton-connect/)에서 확인할 수 있습니다.
+
