@@ -29,7 +29,7 @@ TON 결제는 소액 결제 채널 플랫폼입니다.
 
 - [grejwood/Hack-a-TON](https://github.com/Grejwood/Hack-a-TON) - OnlyTONs 결제 프로젝트 ([웹사이트](https://main.d3puvu1kvbh8ti.amplifyapp.com/), [영상](https://www.youtube.com/watch?v=38JpX1vRNTk))
 - [nns2009/Hack-a-TON-1_Tonario](https://github.com/nns2009/Hack-a-TON-1_Tonario) - OnlyGrams 결제 프로젝트 ([웹사이트](https://onlygrams.io/), [영상](https://www.youtube.com/watch?v=gm5-FPWn1XM))
-- [sevenzing/hack-a-ton](https://github.com/sevenzing/hack-a-ton) - TON에서 요청당 결제 API 사용 ([영상](https://www.youtube.com/watch?v=7lAnbyJdpOA\&feature=youtu.be))
+- [sevenzing/hack-a-ton](https://github.com/sevenzing/hack-a-ton) - TON에서 요청당 결제 API 사용 ([영상](https://www.youtube.com/watch?v=7lAnbyJdpOA&feature=youtu.be))
 - [illright/diamonds](https://github.com/illright/diamonds) - 분당 결제 학습 플랫폼 ([웹사이트](https://diamonds-ton.vercel.app/), [영상](https://www.youtube.com/watch?v=g9wmdOjAv1s))
 
 ## 참고
