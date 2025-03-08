@@ -99,3 +99,5 @@ MyTonCtrl> add_custom_overlay <name> <path_to_config>
   ```
 - `delcustomoverlay <name>` - удалить пользовательский оверлей из узла.
 - `showcustomoverlays` - показать список пользовательских оверлеев, о которых знает узел.
+
+
