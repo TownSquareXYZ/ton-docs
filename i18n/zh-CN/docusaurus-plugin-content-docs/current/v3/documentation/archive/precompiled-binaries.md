@@ -66,7 +66,7 @@ padding: '0.2rem',
 4. 在_“用户变量”_部分，选择“*Path*”变量，然后点击<Highlight color="#1877F2">“编辑”</Highlight>（通常需要）。
 
 5. 要在下一个窗口中为系统变量添加新值 `(路径)`，请单击<Highlight color="#1877F2">"新建 "</Highlight>按钮。
-   在新字段中，您需要指定存储先前安装的文件的文件夹路径：
+  在新字段中，您需要指定存储先前安装的文件的文件夹路径：
 
 ```
 C:\Users\%USERNAME%\ton\bin\
@@ -80,10 +80,10 @@ fift -V -and func -V -and lite-client -V
 
 7. 要检查是否一切安装正确，请在终端运行（*cmd.exe*）：
 
-   1. 下载 [fiftlib.zip](/ton-binaries/windows/fiftlib.zip)
-   2. 在机器上的某个目录（如 **`C:/Users/%USERNAME%/ton/lib/fiftlib`** ）中打开压缩包
-   3. 在"*用户变量*"部分创建一个新的环境变量 "FIFTPATH"（点击 "<Highlight color="#1877F2">新建</Highlight>"按钮）。
-   4. 在"*变量值*"字段中，指定文件的路径：**`/%USERNAME%/ton/lib/fiftlib`**，然后单击 "<Highlight color="#1877F2">确定</Highlight>"。完成。
+  1. 下载 [fiftlib.zip](/ton-binaries/windows/fiftlib.zip)
+  2. 在机器上的某个目录（如 **`C:/Users/%USERNAME%/ton/lib/fiftlib`** ）中打开压缩包
+  3. 在"*用户变量*"部分创建一个新的环境变量 "FIFTPATH"（点击 "<Highlight color="#1877F2">新建</Highlight>"按钮）。
+  4. 在"*变量值*"字段中，指定文件的路径：**`/%USERNAME%/ton/lib/fiftlib`**，然后单击 "<Highlight color="#1877F2">确定</Highlight>"。完成。
 
 :::caution important
 您必须插入自己的 "用户名"，而不是 "%USERNAME%" 关键字。
