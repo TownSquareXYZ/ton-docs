@@ -99,3 +99,5 @@ MyTonCtrl> add_custom_overlay <name> <path_to_config>
   ```
 - `delcustomoverlay <name>` - حذف پوشش سفارشی از گره.
 - `showcustomoverlays` - نمایش فهرست پوشش‌های سفارشی که گره درباره آنها می‌داند.
+
+
