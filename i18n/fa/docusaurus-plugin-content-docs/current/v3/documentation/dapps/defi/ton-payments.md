@@ -29,7 +29,7 @@ TON Payments پلتفرمی برای کانال‌های پرداخت خرد ا�
 
 - [grejwood/Hack-a-TON](https://github.com/Grejwood/Hack-a-TON)—پروژه پرداخت OnlyTONs ([وبسایت](https://main.d3puvu1kvbh8ti.amplifyapp.com/)، [ویدئو](https://www.youtube.com/watch?v=38JpX1vRNTk))
 - [nns2009/Hack-a-TON-1_Tonario](https://github.com/nns2009/Hack-a-TON-1_Tonario)—پروژه پرداخت OnlyGrams ([وبسایت](https://onlygrams.io/)، [ویدئو](https://www.youtube.com/watch?v=gm5-FPWn1XM))
-- [sevenzing/hack-a-ton](https://github.com/sevenzing/hack-a-ton)—استفاده از API پرداخت به ازای درخواست در TON ([ویدئو](https://www.youtube.com/watch?v=7lAnbyJdpOA\&feature=youtu.be))
+- [sevenzing/hack-a-ton](https://github.com/sevenzing/hack-a-ton)—استفاده از API پرداخت به ازای درخواست در TON ([ویدئو](https://www.youtube.com/watch?v=7lAnbyJdpOA&feature=youtu.be))
 - [illright/diamonds](https://github.com/illright/diamonds)—پلتفرم آموزش پرداخت به ازای دقیقه ([وبسایت](https://diamonds-ton.vercel.app/)، [ویدئو](https://www.youtube.com/watch?v=g9wmdOjAv1s))
 
 ## همچنین ببینید
