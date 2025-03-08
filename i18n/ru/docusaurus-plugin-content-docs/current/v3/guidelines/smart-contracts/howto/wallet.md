@@ -339,7 +339,7 @@ while (cs.slice_refs()) {
 
 ### CommonMsgInfo
 
-Изначально каждое сообщение должно хранить `CommonMsgInfo` ([TL-B](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/block/block.tlb#L123-L130)) или `CommonMsgInfoRelaxed` ([TL-B](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/block/block.tlb#L132-L137)). Это позволяет нам определить технические детали, относящиеся к типу и времени сообщения, адресу получателя, техническим флагам и сборам.
+Изначально каждое сообщение должно хранить `CommonMsgInfo` ([TL-B](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/block/block.tlb#L123-L130)) или `CommonMsgInfoRelaxed` ([TL-B](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/block/block.tlb#L132-L137)). Эти данные позволяют определить технические детали, относящиеся к типу и времени сообщения, адресу получателя, техническим флагам и сборам.
 
 Читая файл `block.tlb`, можно заметить три типа CommonMsgInfo: `int_msg_info$0`, `ext_in_msg_info$10`, `ext_out_msg_info$11`. Если не углубляться в детали, то конструктор `ext_out_msg_info` – это внешнее сообщение, которое может отправляться смарт-контрактом в качестве внешних логов. Как пример подобного формата изучите смарт-контракт [Избирателя](https://tonscan.org/address/Ef8zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM0vF).
 
