@@ -6,9 +6,9 @@
 Working with potentially large trees of cells creates a couple of considerations:
 
 1. 모든 업데이트 작업은 상당한 양의 셀을 생성합니다(생성된 각 셀은 500 가스가 소비됨, [TVM 명령어](/v3/documentation/tvm/instructions#gas-prices) 참조). 즉, 주의 없이 사용하면 가스가 부족할 수 있습니다.
-   - 특히, Wallet 봇이 highload-v2 월렛 사용 시 이러한 문제를 겪었습니다. 무한 루프와 각 반복의 비싼 딕셔너리 업데이트가 결합되어 가스가 소진되었고, 결국 [fd78228f352f582a544ab7ad7eb716610668b23b88dae48e4f4dbd4404b5d7f6](https://tonviewer.com/transaction/fd78228f352f582a544ab7ad7eb716610668b23b88dae48e4f4dbd4404b5d7f6)와 같은 반복 트랜잭션으로 잔액이 소진되었습니다.
+    - 특히, Wallet 봇이 highload-v2 월렛 사용 시 이러한 문제를 겪었습니다. 무한 루프와 각 반복의 비싼 딕셔너리 업데이트가 결합되어 가스가 소진되었고, 결국 [fd78228f352f582a544ab7ad7eb716610668b23b88dae48e4f4dbd4404b5d7f6](https://tonviewer.com/transaction/fd78228f352f582a544ab7ad7eb716610668b23b88dae48e4f4dbd4404b5d7f6)와 같은 반복 트랜잭션으로 잔액이 소진되었습니다.
 2. N개의 키-값 쌍을 위한 이진 트리는 N-1개의 포크를 포함하므로, 총 최소 2N-1개의 셀이 필요합니다. 스마트 컨트랙트 저장소는 65536개의 고유 셀로 제한되어 있어, 딕셔너리의 최대 항목 수는 32768개이거나 반복되는 셀이 있는 경우 약간 더 많을 수 있습니다.
-   :::
+    :::
 
 ## 딕셔너리 종류
 
