@@ -21,11 +21,11 @@ git clone --recurse-submodules https://github.com/ton-blockchain/ton.git
 ```
 
 2. Установите последние версии:
-   - `make`
-   - `cmake` 3.0.2 или более поздней версии
-   - `g++` или `clang` (или другой C++14-совместимый компилятор, подходящий для вашей операционной системы)
-   - `OpenSSL` 1.1.1 (включая заголовочные файлы на языке C) версии 1.1.1 или более поздней
-   - `build-essential`, `zlib1g-dev`, `gperf`, `libreadline-dev`, `ccache`, `libmicrohttpd-dev`, `pkg-config`, `libsodium-dev`, `libsecp256k1-dev`, `liblz4-dev`.
+  - `make`
+  - `cmake` 3.0.2 или более поздней версии
+  - `g++` или `clang` (или другой C++14-совместимый компилятор, подходящий для вашей операционной системы)
+  - `OpenSSL` 1.1.1 (включая заголовочные файлы на языке C) версии 1.1.1 или более поздней
+  - `build-essential`, `zlib1g-dev`, `gperf`, `libreadline-dev`, `ccache`, `libmicrohttpd-dev`, `pkg-config`, `libsodium-dev`, `libsecp256k1-dev`, `liblz4-dev`.
 
 ### Ubuntu
 
@@ -264,9 +264,9 @@ TON поддерживает Apple M1 с 11 июня 2022 года ([Добав�
 Для компиляции старых ревизий TON на Apple M1:
 
 1. Обновите субмодуль RocksDb до версии 6.27.3
-   ```bash
-   cd ton/third-party/rocksdb/
-   git checkout fcf3d75f3f022a6a55ff1222d6b06f8518d38c7c
-   ```
+  ```bash
+  cd ton/third-party/rocksdb/
+  git checkout fcf3d75f3f022a6a55ff1222d6b06f8518d38c7c
+  ```
 
 2. Замените `CMakeLists.txt` в корневом каталоге на https://github.com/ton-blockchain/ton/blob/c00302ced4bc4bf1ee0efd672e7c91e457652430/CMakeLists.txt
