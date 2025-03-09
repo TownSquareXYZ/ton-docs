@@ -21,11 +21,11 @@ git clone --recurse-submodules https://github.com/ton-blockchain/ton.git
 ```
 
 2. 다음의 최신 버전을 설치하세요:
-   - `make`
-   - `cmake` 버전 3.0.2 이상
-   - `g++` 또는 `clang` (또는 운영 체제에 적합한 다른 C++14 호환 컴파일러)
-   - OpenSSL(C 헤더 파일 포함) 버전 1.1.1 이상
-   - `build-essential`, `zlib1g-dev`, `gperf`, `libreadline-dev`, `ccache`, `libmicrohttpd-dev`, `pkg-config`, `libsodium-dev`, `libsecp256k1-dev`, `liblz4-dev`
+  - `make`
+  - `cmake` 버전 3.0.2 이상
+  - `g++` 또는 `clang` (또는 운영 체제에 적합한 다른 C++14 호환 컴파일러)
+  - OpenSSL(C 헤더 파일 포함) 버전 1.1.1 이상
+  - `build-essential`, `zlib1g-dev`, `gperf`, `libreadline-dev`, `ccache`, `libmicrohttpd-dev`, `pkg-config`, `libsodium-dev`, `libsecp256k1-dev`, `liblz4-dev`
 
 ### Ubuntu에서
 
@@ -264,9 +264,9 @@ TON은 2022년 6월 11일부터 Apple M1을 지원합니다([Add apple m1 suppor
 Apple M1에서 이전 TON 개정판을 컴파일하려면:
 
 1. RocksDb 서브모듈을 6.27.3으로 업데이트
-   ```bash
-   cd ton/third-party/rocksdb/
-   git checkout fcf3d75f3f022a6a55ff1222d6b06f8518d38c7c
-   ```
+  ```bash
+  cd ton/third-party/rocksdb/
+  git checkout fcf3d75f3f022a6a55ff1222d6b06f8518d38c7c
+  ```
 
 2. 루트 `CMakeLists.txt`를 https://github.com/ton-blockchain/ton/blob/c00302ced4bc4bf1ee0efd672e7c91e457652430/CMakeLists.txt로 교체

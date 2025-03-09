@@ -121,21 +121,21 @@ This contract is deployed at [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH\_Zp]
 1. 它将子域名和类别作为输入。
 2. 如果开头有零字节，则跳过。
 3. 检查子域名是否以 `"ton\0"` 开头。如果是，
-   1. 跳过前32位（子域名 = `"resolve-contract\0"`）
-   2. 设置 `subdomain_sfx` 的值为 `subdomain`，并读取直到零字节的字节
-   3. （子域名 = `"resolve-contract\0"`，subdomain_sfx = `""`）
-   4. 从子域名 slice 的末尾裁剪零字节和 subdomain_sfx（子域名 = `"resolve-contract"`）
-   5. 使用 slice_hash 和 get_ton_dns_nft_address_by_index 函数将域名转换为合约地址。您可以在 [[Subresolvers#Appendix 1. resolve-contract.ton 的代码|附录 1]] 中看到它们。
+  1. 跳过前32位（子域名 = `"resolve-contract\0"`）
+  2. 设置 `subdomain_sfx` 的值为 `subdomain`，并读取直到零字节的字节
+  3. （子域名 = `"resolve-contract\0"`，subdomain_sfx = `""`）
+  4. 从子域名 slice 的末尾裁剪零字节和 subdomain_sfx（子域名 = `"resolve-contract"`）
+  5. 使用 slice_hash 和 get_ton_dns_nft_address_by_index 函数将域名转换为合约地址。您可以在 [[Subresolvers#Appendix 1. resolve-contract.ton 的代码|附录 1]] 中看到它们。
 4. 否则，dnsresolve() 检查子域名是否以 `"address\0"` 开头。如果是，它跳过该前缀并读取 base64 地址。
 5. 如果提供的用于解析的子域名与这些前缀都不匹配，函数通过返回 `(0, null())`（零字节前缀解析无 DNS 条目）表示失败。
 6. 然后检查子域名后缀是否为空。空后缀表示请求已完全满足。如果后缀为空：
-   1. dnsresolve() 为域名的 "wallet" 子部分创建一个 DNS 记录，使用它检索到的 TON 域名合约地址。
-   2. 如果请求类别 0（所有 DNS 条目），则将记录包装在字典中并返回。
-   3. 如果请求类别为 "wallet"H，则按原样返回记录。
-   4. 否则，指定类别没有 DNS 条目，因此函数表示解析成功但未找到任何结果。
+  1. dnsresolve() 为域名的 "wallet" 子部分创建一个 DNS 记录，使用它检索到的 TON 域名合约地址。
+  2. 如果请求类别 0（所有 DNS 条目），则将记录包装在字典中并返回。
+  3. 如果请求类别为 "wallet"H，则按原样返回记录。
+  4. 否则，指定类别没有 DNS 条目，因此函数表示解析成功但未找到任何结果。
 7. 如果后缀不为空：
-   1. 之前获得的合约地址用作下一个解析器。函数构建指向它的下一个解析器记录。
-   2. `"\0ton\0stabletimer\0"` 被传递给该合约：处理的位是子域名的位。
+  1. 之前获得的合约地址用作下一个解析器。函数构建指向它的下一个解析器记录。
+  2. `"\0ton\0stabletimer\0"` 被传递给该合约：处理的位是子域名的位。
 
 总结来说，dnsresolve() 要么：
 

@@ -229,4 +229,4 @@ trans_merge_install$0111 split_info:SplitMergeInfo
 
 ## 另见
 
-- 白皮书中 [交易布局](/tblkch.pdf#page=75\\&zoom=100,148,290) 的原始描述
+- 白皮书中 交易布局 的原始描述

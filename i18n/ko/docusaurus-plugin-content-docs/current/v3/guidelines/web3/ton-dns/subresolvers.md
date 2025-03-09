@@ -121,21 +121,21 @@ This contract is deployed at [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH\_Zp]
 1. 서브도메인과 카테고리를 입력으로 받습니다.
 2. 시작 부분에 0 바이트가 있으면 건너뜁니다.
 3. 서브도메인이 `"ton\0"`으로 시작하는지 확인합니다. 그렇다면:
-   1. 처음 32비트를 건너뜁니다(subdomain = `"resolve-contract\0"`)
-   2. `subdomain_sfx` 값을 `subdomain`으로 설정하고, 0 바이트까지 바이트를 읽습니다
-   3. (subdomain = `"resolve-contract\0"`, subdomain_sfx = `""`)
-   4. 서브도메인 슬라이스 끝에서 0 바이트와 subdomain_sfx를 제거합니다(subdomain = `"resolve-contract"`)
-   5. slice_hash와 get_ton_dns_nft_address_by_index 함수를 사용하여 도메인 이름을 컨트랙트 주소로 변환합니다. [[Subresolvers#Appendix 1. Code of resolve-contract.ton|Appendix 1]]에서 확인할 수 있습니다.
+  1. 처음 32비트를 건너뜁니다(subdomain = `"resolve-contract\0"`)
+  2. `subdomain_sfx` 값을 `subdomain`으로 설정하고, 0 바이트까지 바이트를 읽습니다
+  3. (subdomain = `"resolve-contract\0"`, subdomain_sfx = `""`)
+  4. 서브도메인 슬라이스 끝에서 0 바이트와 subdomain_sfx를 제거합니다(subdomain = `"resolve-contract"`)
+  5. slice_hash와 get_ton_dns_nft_address_by_index 함수를 사용하여 도메인 이름을 컨트랙트 주소로 변환합니다. [[Subresolvers#Appendix 1. Code of resolve-contract.ton|Appendix 1]]에서 확인할 수 있습니다.
 4. 그렇지 않으면 dnsresolve()는 서브도메인이 `"address\0"`으로 시작하는지 확인합니다. 그렇다면 해당 접두사를 건너뛰고 base64 주소를 읽습니다.
 5. 리졸브를 위해 제공된 서브도메인이 이러한 접두사와 일치하지 않으면, 함수는 `(0, null())` (0 바이트 접두사가 DNS 항목 없이 리졸브됨)을 반환하여 실패를 나타냅니다.
 6. 그런 다음 서브도메인 접미사가 비어 있는지 확인합니다. 빈 접미사는 요청이 완전히 충족되었음을 나타냅니다. 접미사가 비어 있다면:
-   1. dnsresolve()는 검색한 TON Domain 컨트랙트 주소를 사용하여 도메인의 "wallet" 하위 섹션에 대한 DNS 레코드를 생성합니다.
-   2. 카테고리 0(모든 DNS 항목)이 요청되면 레코드를 딕셔너리로 래핑하여 반환합니다.
-   3. 카테고리 "wallet"H가 요청되면 레코드를 그대로 반환합니다.
-   4. 그렇지 않으면 지정된 카테고리에 대한 DNS 항목이 없으므로 함수는 리졸브는 성공했지만 결과를 찾지 못했음을 나타냅니다.
+  1. dnsresolve()는 검색한 TON Domain 컨트랙트 주소를 사용하여 도메인의 "wallet" 하위 섹션에 대한 DNS 레코드를 생성합니다.
+  2. 카테고리 0(모든 DNS 항목)이 요청되면 레코드를 딕셔너리로 래핑하여 반환합니다.
+  3. 카테고리 "wallet"H가 요청되면 레코드를 그대로 반환합니다.
+  4. 그렇지 않으면 지정된 카테고리에 대한 DNS 항목이 없으므로 함수는 리졸브는 성공했지만 결과를 찾지 못했음을 나타냅니다.
 7. 접미사가 비어 있지 않다면:
-   1. 이전에 얻은 컨트랙트 주소를 다음 리졸버로 사용합니다. 함수는 다음 리졸버 레코드를 가리키는 리졸버 레코드를 생성합니다.
-   2. `"\0ton\0stabletimer\0"`가 해당 컨트랙트로 전달됩니다: 처리된 비트는 서브도메인의 비트입니다.
+  1. 이전에 얻은 컨트랙트 주소를 다음 리졸버로 사용합니다. 함수는 다음 리졸버 레코드를 가리키는 리졸버 레코드를 생성합니다.
+  2. `"\0ton\0stabletimer\0"`가 해당 컨트랙트로 전달됩니다: 처리된 비트는 서브도메인의 비트입니다.
 
 요약하면 dnsresolve()는 다음 중 하나를 수행합니다:
 

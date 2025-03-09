@@ -229,4 +229,4 @@ trans_merge_install$0111 split_info:SplitMergeInfo
 
 ## 참고
 
-- 백서의 [트랜잭션 레이아웃](/tblkch.pdf#page=75\&zoom=100,148,290) 원본 설명
+- 백서의 트랜잭션 레이아웃 원본 설명

@@ -6,9 +6,9 @@
 Working with potentially large trees of cells creates a couple of considerations:
 
 1. 每次更新操作都会构建相当数量的 cell （每个构建的 cell 需要消耗 500 gas，详情请查看 [TVM 说明](/v3/documentation/tvm/instructions#gas-prices) 页面），这意味着如果不小心使用，这些操作可能会耗尽 gas。
-   - 特别是，钱包机器人在使用 highload-v2 钱包时遇到过一次这样的问题。无限制循环加上每次迭代时昂贵的字典更新导致 gas 耗尽，最终导致重复交易，如 [fd78228f352f582a544ab7ad7eb716610668b23b88dae48e4f4dbd4404b5d7f6](https://tonviewer.com/transaction/fd78228f352f582a544ab7ad7eb716610668b23b88dae48e4f4dbd4404b5d7f6)，耗尽了余额。
+    - 特别是，钱包机器人在使用 highload-v2 钱包时遇到过一次这样的问题。无限制循环加上每次迭代时昂贵的字典更新导致 gas 耗尽，最终导致重复交易，如 [fd78228f352f582a544ab7ad7eb716610668b23b88dae48e4f4dbd4404b5d7f6](https://tonviewer.com/transaction/fd78228f352f582a544ab7ad7eb716610668b23b88dae48e4f4dbd4404b5d7f6)，耗尽了余额。
 2. N 个键值对的二叉树包含 N-1 个分叉，因此总共至少有 2N-1 个 cell 。智能合约的存储空间仅限于 65536 个唯一 cell ，因此字典中的最大条目数为 32768，如果有重复 cell ，条目数会稍多一些。
-   :::
+    :::
 
 ## 词典种类
 

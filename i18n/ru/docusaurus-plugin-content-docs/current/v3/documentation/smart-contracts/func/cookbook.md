@@ -1550,3 +1550,8 @@ await contractV1.sendUpgrade(provider.sender(), {
 > [Возможно ли повторно развернуть код на существующий адрес или его нужно развернуть как новый контракт?](/v3/documentation/faq#is-it-possible-to-re-deploy-code-to-an-existing-address-or-does-it-have-to-be-deployed-as-a-new-contract)
 >
 > ["set_code()" в документации](/v3/documentation/smart-contracts/func/docs/stdlib#set_code)
+
+
+
+
+

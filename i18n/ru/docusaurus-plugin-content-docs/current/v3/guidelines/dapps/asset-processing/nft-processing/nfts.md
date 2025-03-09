@@ -204,7 +204,7 @@ curl -X 'POST' \
 
 ### Отправка NFT
 
-В этом примере сообщение о передаче NFT находится на [строке 67](https://www.google.com/url?q=https://github.com/ton-blockchain/token-contract/blob/1ad314a98d20b41241d5329e1786fc894ad811de/nft/nft-sale.fc%23L67\\&sa=D\\&source=docs\\&ust=1685436161341866\\&usg=AOvVaw1yuoIzcbEuvqMS4xQMqfXE):
+В этом примере сообщение о передаче NFT находится на строке 67:
 
 ```
 var nft_msg = begin_cell()

@@ -336,9 +336,9 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 - `cell_price`：此参数反映了每个cell消息转发的成本。cell是TON区块链上数据存储的基本单位。
 
 - `ihr_price_factor`：用于计算即时超立方路由（IHR）成本的因子。
-  :::info
-  IHR是TON区块链网络中的一种消息传递方法，消息直接发送到接收方的分片链。
-  :::
+    :::info
+    IHR是TON区块链网络中的一种消息传递方法，消息直接发送到接收方的分片链。
+    :::
 
 - `first_frac`：此参数定义了沿消息路线的第一次转换将使用的剩余的remainder的部分。
 

@@ -271,7 +271,7 @@ def get_user_payments(user_id):
 
 Например, в тестовой сети есть кошелек `EQAVKMzqtrvNB2SkcBONOijadqFZ1gMdjmzh1Y3HB1p_zai5`, в нем есть несколько транзакций:
 
-Используя [запрос](https://testnet.toncenter.com/api/v2/getTransactions?address=EQAVKMzqtrvNB2SkcBONOijadqFZ1gMdjmzh1Y3HB1p_zai5\\&limit=2\\&to_lt=0\\&archival=true), мы получим ответ, содержащий две транзакции (часть информации, которая сейчас не нужна, была скрыта, полный ответ вы можете увидеть по ссылке выше).
+Используя запрос, мы получим ответ, содержащий две транзакции (часть информации, которая сейчас не нужна, была скрыта, полный ответ вы можете увидеть по ссылке выше).
 
 ```json
 {
@@ -351,7 +351,7 @@ def get_user_payments(user_id):
 }
 ```
 
-Запрос будет выглядеть [вот так](https://testnet.toncenter.com/api/v2/getTransactions?address=EQAVKMzqtrvNB2SkcBONOijadqFZ1gMdjmzh1Y3HB1p_zai5\\&limit=2\\&lt=1943166000003\\&hash=hxIQqn7lYD%2Fc%2FfNS7W%2FiVsg2kx0p%2FkNIGF6Ld0QEIxk%3D\\&to_lt=0\\&archival=true)
+Запрос будет выглядеть [вот так](https://testnet.toncenter.com/api/v2/getTransactions?address=EQAVKMzqtrvNB2SkcBONOijadqFZ1gMdjmzh1Y3HB1p_zai5\&limit=2\&lt=1943166000003\&hash=hxIQqn7lYD%2Fc%2FfNS7W%2FiVsg2kx0p%2FkNIGF6Ld0QEIxk%3D\&to_lt=0\&archival=true)
 
 Нам также понадобится метод `detectAddress`.
 

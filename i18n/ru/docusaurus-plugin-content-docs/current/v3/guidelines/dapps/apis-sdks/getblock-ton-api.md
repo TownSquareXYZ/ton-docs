@@ -20,7 +20,7 @@
 
 Посетите [веб-сайт] GetBlock (https://getblock.io/?utm_source=external&utm_medium=article&utm_campaign=ton_docs) и найдите на главной странице кнопку "Get Started for Free". Зарегистрируйте аккаунт, используя адрес электронной почты или подключив кошелек MetaMask.
 
-![GetBlock.io\\_main\\_page](/img/docs/getblock-img/unnamed-2.png?=RAW)
+![GetBlock.io\_main\_page](/img/docs/getblock-img/unnamed-2.png?=RAW)
 
 ### 2. Выберите блокчейн TON
 
@@ -28,7 +28,7 @@
 
 Выберите желаемую сеть и тип API (JSON-RPC или JSON-RPC(v2)).
 
-![GetBlock\account\\\_dashboard](/img/docs/getblock-img/unnamed-4.png)
+![GetBlock\account\\_dashboard](/img/docs/getblock-img/unnamed-4.png)
 
 ### 3. Сгенерируйте URL конечной точки
 
@@ -40,7 +40,7 @@
 
 Пользователи имеют возможность генерировать несколько конечных точек, заменять токены, если они скомпрометированы и удалять неиспользуемые конечные точки.
 
-![GetBlock\\_account\\_endpoints](/img/docs/getblock-img/unnamed-3.png)
+![GetBlock\_account\_endpoints](/img/docs/getblock-img/unnamed-3.png)
 
 Теперь вы можете использовать эти URL-адреса для взаимодействия с блокчейном TON, запрашивать данные, отправлять транзакции и создавать децентрализованные приложения без необходимости настройки и поддержания инфраструктуры.
 
@@ -90,7 +90,7 @@ curl --location --request GET 'https://go.getblock.io/[ACCESS-TOKEN]/getAddressB
 
 Это выведет баланс в nanotons.
 
-![getAddressBalance\\_response\\_on\\_TON\\_blockchain](/img/docs/getblock-img/unnamed-2.png)
+![getAddressBalance\_response\_on\_TON\_blockchain](/img/docs/getblock-img/unnamed-2.png)
 
 Некоторые другие доступные методы для запросов к блокчейну TON:
 
@@ -114,4 +114,5 @@ curl --location --request GET 'https://go.getblock.io/[ACCESS-TOKEN]/getAddressB
 
 Этот руководство должно предоставить подробный обзор для разработчиков, которые хотят эффективно использовать API GetBlock с блокчейном TON.
 
-Не стесняйтесь узнать больше на [веб-сайте](https://getblock.io/?utm_source=external\\&utm_medium=article\\&utm_campaign=ton_docs) или написать в службу поддержки GetBlock через чат, [Telegram](https://t.me/GetBlock_Support_Bot) или форму на сайте.
+Не стесняйтесь узнать больше на веб-сайте или написать в службу поддержки GetBlock через чат, Telegram или форму на сайте.
+

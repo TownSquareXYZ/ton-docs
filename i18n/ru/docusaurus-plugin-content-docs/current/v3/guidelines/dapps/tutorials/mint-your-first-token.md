@@ -61,7 +61,7 @@ You can easily find out about the URL placement of the logo in the [repository](
 - On-chain.
 - Off-chain IPFS.
 - Off-chain веб-сайт.
-  :::
+ :::
 
 #### Как создать URL-адрес своего логотипа?
 
@@ -69,8 +69,8 @@ You can easily find out about the URL placement of the logo in the [repository](
 2. Получите ссылку на свой логотип. Хорошим решением является [GitHub Pages](https://pages.github.com/). Давайте воспользуемся им.
 3. [Создайте новый публичный репозиторий](https://docs.github.com/en/get-started/quickstart/create-a-repo) с именем `website`.
 4. Загрузите подготовленное изображение в git и включите `GitHub Pages`.
-   1. [Добавьте страницы GitHub в свой репозиторий](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
-   2. [Загрузите свое изображение и получите ссылку](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository).
+ 1. [Добавьте страницы GitHub в свой репозиторий](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
+ 2. [Загрузите свое изображение и получите ссылку](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository).
 5. Если у вас есть возможность, мы рекомендуем купить пользовательский домен для вашего проекта, например, `bitcoincash.org`. Используйте любого продавца доменов, например [Google Domains](https://domains.google/) или [GoDaddy](https://www.godaddy.com/). Затем подключите свой пользовательский домен к репозиторию на предыдущем шаге, следуя инструкциям [здесь](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site).
 6. Если у вас есть свой домен, ваш URL-адрес изображения должен быть `https://bitcoincash.org/logo.png` вместо `github.io`. Это устранит будущую зависимость от GitHub и позволит вам в дальнейшем сменить хостинг, что является хорошей возможностью для сохранения.
 
