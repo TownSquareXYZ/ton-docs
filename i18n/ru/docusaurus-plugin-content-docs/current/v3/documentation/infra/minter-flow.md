@@ -65,3 +65,7 @@ _ (Hashmap 32 std_addr) = ExtraCurrencyAuthorizationConfig;
 2. Создайте контракт Currency Admin, который контролирует, как выпускается дополнительная валюта.
 3. Создайте предложение валидаторам добавить адрес вашего контракта Currency Admin в ExtraCurrencyAuthorizationConfig для некоторого `currency_id` и получите его принятие.
 4. Отправьте запрос `mint` из контракта Currency Admin в Minter. Подождите, пока Minter отправит обратно дополнительную валюту.
+
+
+
+

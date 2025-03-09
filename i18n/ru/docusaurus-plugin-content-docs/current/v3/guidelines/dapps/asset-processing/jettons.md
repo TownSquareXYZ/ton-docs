@@ -73,13 +73,10 @@ import Button from '@site/src/components/button';
 Быстрый переход к основному описанию обработки Jetton:
 
 <Button href="/v3/guidelines/dapps/asset-processing/jettons#accepting-jettons-from-users-through-a-centralized-wallet" colorType={'primary'} sizeType={'sm'}>
-Централизованная обработка 
-</Button>
-
+Централизованная обработка </Button>
 <Button href="/v3/guidelines/dapps/asset-processing/jettons#accepting-jettons-from-user-deposit-addresses"
 colorType="secondary" sizeType={'sm'}>
-On-Chain обработка 
-</Button>
+On-Chain обработка </Button>
 
 <br></br><br></br>
 
@@ -356,7 +353,7 @@ dark: '/img/docs/asset-processing/jetton_transfer_dark.png?raw=true',
 1. Получите адрес Jetton master для нового Jetton wallet, [получив данные кошелька](/v3/guidelines/dapps/asset-processing/jettons#retrieving-data-for-a-specific-jetton-wallet).
 2. Получите адрес Jetton wallet для вашего адреса кошелька (как владельца), используя контракт Jetton master: [Как получить адрес Jetton wallet для данного пользователя](#retrieving-jetton-wallet-addresses-for-a-given-user)
 3. Сравните адрес, возвращенный master контрактом, и фактический адрес токена кошелька.
-   Если они совпадают, это идеальный вариант. Если нет, то вы, вероятно, получили мошеннический токен, который является поддельным.
+  Если они совпадают, это идеальный вариант. Если нет, то вы, вероятно, получили мошеннический токен, который является поддельным.
 4. Получите метаданные жетона: [Как получить метаданные жетона](#retrieving-jetton-data).
 5. Проверьте поля `symbol` и `name` на наличие признаков мошенничества. При необходимости предупредите пользователя. [Добавление нового жетона для обработки и первичных проверок.](#adding-new-jettons-for-asset-processing-and-initial-verification).
 
@@ -397,12 +394,12 @@ dark: '/img/docs/asset-processing/jetton_transfer_dark.png?raw=true',
 6. Проверьте входящее сообщение (in_msg) на предмет транзакций и извлеките исходный адрес из входящего сообщения. [Пример Tonweb](https://github.com/toncenter/examples/blob/9f20f7104411771793dfbbdf07f0ca4860f12de2/deposits-jettons-single-wallet.js#L84)
 7. Если исходный адрес совпадает с адресом Jetton wallet, то необходимо продолжить обработку транзакции. Если нет, то пропустите обработку и проверьте следующую транзакцию.
 8. Убедитесь, что тело сообщения не пусто и первые 32 бита сообщения совпадают с op code `transfer notification` `0x7362d09c`.
-   [Пример с использованием Tonweb](https://github.com/toncenter/examples/blob/9f20f7104411771793dfbbdf07f0ca4860f12de2/deposits-jettons-single-wallet.js#L91).
-   Если тело сообщения пустое или op code недействителен - пропустите транзакцию.
+  [Пример с использованием Tonweb](https://github.com/toncenter/examples/blob/9f20f7104411771793dfbbdf07f0ca4860f12de2/deposits-jettons-single-wallet.js#L91).
+  Если тело сообщения пустое или op code недействителен - пропустите транзакцию.
 9. Прочитайте другие данные тела сообщения, включая `query_id`, `amount`, `sender`, `forward_payload`.
-   [Макеты сообщений контрактов жетона](/v3/guidelines/dapps/asset-processing/jettons#message-layouts), [Пример с использованием Tonweb](https://github.com/toncenter/examples/blob/9f20f7104411771793dfbbdf07f0ca4860f12de2/deposits-jettons-single-wallet.js#L105)
+  [Макеты сообщений контрактов жетона](/v3/guidelines/dapps/asset-processing/jettons#message-layouts), [Пример с использованием Tonweb](https://github.com/toncenter/examples/blob/9f20f7104411771793dfbbdf07f0ca4860f12de2/deposits-jettons-single-wallet.js#L105)
 10. Попытайтесь извлечь текстовые комментарии из данных `forward_payload`. Первые 32 бита должны совпадать с op code `0x000000`, а остальные - с текстом в UTF-8 кодировке.
-    [Пример с использованием Tonweb](https://github.com/toncenter/examples/blob/9f20f7104411771793dfbbdf07f0ca4860f12de2/deposits-jettons-single-wallet.js#L110)
+  [Пример с использованием Tonweb](https://github.com/toncenter/examples/blob/9f20f7104411771793dfbbdf07f0ca4860f12de2/deposits-jettons-single-wallet.js#L110)
 11. Если данные `forward_payload` пусты или op code недействителен - пропустите транзакцию.
 12. Сравните полученный комментарий с сохраненными memo. Если есть совпадение (идентификация пользователя всегда возможна) - отправьте депозит.
 13. Начните заново с шага 5 и повторяйте процесс, пока не пройдете весь список транзакций.
@@ -435,7 +432,7 @@ const wallet = new WalletClass(tonweb.provider, {
 2. Сгенерируйте новый адрес субкошелька (/v3R2) на основе seed-фразы горячего кошелька. [Создание субкошелька в Tonweb](#creating-a-subwallet-in-tonweb)
 3. Принимающий адрес может быть предоставлен пользователю как адрес, используемый для депозитов жетонов (это адрес владельца депозитного Jetton wallet). Инициализация кошелька не требуется, это можно сделать при выводе жетонов из депозита.
 4. Для этого адреса необходимо рассчитать адрес кошелька Jetton через контракт Jetton master.
-   [Как получить адрес Jetton wallet для определенного пользователя](#retrieving-jetton-wallet-addresses-for-a-given-user).
+  [Как получить адрес Jetton wallet для определенного пользователя](#retrieving-jetton-wallet-addresses-for-a-given-user).
 5. Добавьте адрес Jetton wallet в пул адресов для отслеживания транзакций и сохраните адрес субкошелька.
 
 #### Обработка транзакций
@@ -493,7 +490,7 @@ const wallet = new WalletClass(tonweb.provider, {
 1. Загрузите список обработанных жетонов
 2. Получите адреса Jetton wallet для развернутого горячего кошелька: [Как извлечь адреса Jetton wallet для заданного пользователя](#retrieving-jetton-wallet-addresses-for-a-given-user)
 3. Получите адреса Jetton master для каждого Jetton wallet: [Как получить данные для Jetton wallet](#retrieving-data-for-a-specific-jetton-wallet).
-   Требуется параметр `jetton` (который на самом деле является адресом контракта Jetton master).
+  Требуется параметр `jetton` (который на самом деле является адресом контракта Jetton master).
 4. Сравните адреса из контракта Jetton master из шага 1 и шага 3. Если адреса не совпадают, следует сообщить об ошибке проверки адреса жетона.
 5. Получите запрос на вывод, в которых фактически указывается тип жетона, переводимая сумма и адрес кошелька получателя.
 6. Проверьте баланс Jetton wallet, чтобы убедиться, что есть достаточно средств для выполнения вывода.

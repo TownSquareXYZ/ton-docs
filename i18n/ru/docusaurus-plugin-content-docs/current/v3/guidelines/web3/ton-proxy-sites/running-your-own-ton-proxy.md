@@ -14,15 +14,15 @@
 
 1. Загрузите **rldp-http-proxy** с [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest).
 
-   Или Вы можете скомпилировать **rldp-http-proxy** самостоятельно, следуя этим [инструкциям](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy).
+ Или Вы можете скомпилировать **rldp-http-proxy** самостоятельно, следуя этим [инструкциям](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy).
 
 2. [Скачать](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config) глобальную конфигурацию TON.
 
 3. Запустите **rldp-http-proxy**
 
-   ```bash
-   rldp-http-proxy/rldp-http-proxy -p 8080 -c 3333 -C global.config.json
-   ```
+ ```bash
+ rldp-http-proxy/rldp-http-proxy -p 8080 -c 3333 -C global.config.json
+ ```
 
 В приведенном выше примере `8080` — это TCP-порт, который будет слушать localhost для входящих HTTP-запросов, а `3333` — это UDP-порт, который будет использоваться для всех исходящих и входящих действий RLDP и ADNL (т.е. для подключения к TON Sites через TON Network). `global.config.json` — это имя файла глобальной конфигурации TON.
 
@@ -34,49 +34,49 @@
 
 1. Загрузите **rldp-http-proxy** с [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest).
 
-   Или вы можете скомпилировать **rldp-http-proxy** самостоятельно, следуя этим [инструкциям](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy).
+ Или вы можете скомпилировать **rldp-http-proxy** самостоятельно, следуя этим [инструкциям](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy).
 
 2. [Скачать](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config) глобальную конфигурацию TON.
 
 3. Скачайте **generate-random-id** с [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest).
 
-   Или вы можете скомпилировать **generate-random-id** самостоятельно, следуя этим [инструкциям](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#generate-random-id).
+ Или вы можете скомпилировать **generate-random-id** самостоятельно, следуя этим [инструкциям](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#generate-random-id).
 
 4. Создайте постоянный ANDL-адрес для вашего прокси-входа
 
-   ```bash
-   mkdir keyring
+ ```bash
+ mkdir keyring
 
-   utils/generate-random-id -m adnlid
-   ```
+ utils/generate-random-id -m adnlid
+ ```
 
-   Вы увидите что-то похожее на это
+ Вы увидите что-то похожее на это
 
-   ```
-   45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
-   ```
+ ```
+ 45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
+ ```
 
-   Это ваш недавно сгенерированный постоянный ADNL-адрес в шестнадцатеричном и удобном для пользователя формате. Соответствующий приватный ключ сохранен в файл `45061...2DB` в текущей директории. Переместите ключ в директорию keyring
+ Это ваш недавно сгенерированный постоянный ADNL-адрес в шестнадцатеричном и удобном для пользователя формате. Соответствующий приватный ключ сохранен в файл `45061...2DB` в текущей директории. Переместите ключ в директорию keyring
 
-   ```bash
-   mv 45061C1* keyring/
-   ```
+ ```bash
+ mv 45061C1* keyring/
+ ```
 
 5. Запустите **rldp-http-proxy**
 
-   ```
-   rldp-http-proxy/rldp-http-proxy -p 8080 -a <your_public_ip>:3333 -C global.config.json -A <your_adnl_address>
-   ```
+ ```
+ rldp-http-proxy/rldp-http-proxy -p 8080 -a <your_public_ip>:3333 -C global.config.json -A <your_adnl_address>
+ ```
 
-   где `<your_public_ip>` - это ваш публичный IPv4-адрес, а `<your_adnl_address>` - это ADNL-адрес, сгенерированный в предыдущем шаге.
+ где `<your_public_ip>` - это ваш публичный IPv4-адрес, а `<your_adnl_address>` - это ADNL-адрес, сгенерированный в предыдущем шаге.
 
-   Пример:
+ Пример:
 
-   ```
-   rldp-http-proxy/rldp-http-proxy -p 8080 -a 777.777.777.777:3333 -C global.config.json -A vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
-   ```
+ ```
+ rldp-http-proxy/rldp-http-proxy -p 8080 -a 777.777.777.777:3333 -C global.config.json -A vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
+ ```
 
-   В приведенном выше примере `8080` — это TCP-порт, который будет слушать localhost для входящих HTTP-запросов, а `3333` — это UDP-порт, который будет использоваться для всех исходящих и входящих действий RLDP и ADNL (т.е. для подключения к TON Sites через TON Network). `global.config.json` — это имя файла глобальной конфигурации TON.
+ В приведенном выше примере `8080` — это TCP-порт, который будет слушать localhost для входящих HTTP-запросов, а `3333` — это UDP-порт, который будет использоваться для всех исходящих и входящих действий RLDP и ADNL (т.е. для подключения к TON Sites через TON Network). `global.config.json` — это имя файла глобальной конфигурации TON.
 
 Если вы все сделали правильно, прокси не завершит свою работу и будет продолжать работать в терминале. Теперь его можно использовать для доступа к TON Sites. Когда он больше не нужен, вы можете завершить его работу, нажав `Ctrl-C`, или просто закрыв окно терминала. Вы также можете запустить его как службу Unix для постоянной работы.
 
@@ -131,45 +131,45 @@ curl -x 127.0.0.1:8080 http://utoljjye6y4ixazesjofidlkrhyiakiwrmes3m5hthlc6ie2h7
 
 1. Загрузите **rldp-http-proxy** с [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest).
 
-   Или вы можете скомпилировать **rldp-http-proxy** самостоятельно, следуя этим [инструкциям](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy).
+ Или вы можете скомпилировать **rldp-http-proxy** самостоятельно, следуя этим [инструкциям](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy).
 
 2. [Скачать](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config) глобальную конфигурацию TON.
 
 3. Скачайте **generate-random-id** с [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest).
 
-   Или вы можете скомпилировать **generate-random-id** самостоятельно, следуя этим [инструкциям](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#generate-random-id).
+ Или вы можете скомпилировать **generate-random-id** самостоятельно, следуя этим [инструкциям](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#generate-random-id).
 
 4. Создайте постоянный ANDL-адрес для вашего сервера
 
-   ```bash
-   mkdir keyring
+ ```bash
+ mkdir keyring
 
-   utils/generate-random-id -m adnlid
-   ```
+ utils/generate-random-id -m adnlid
+ ```
 
-   Вы увидите что-то похожее на это
+ Вы увидите что-то похожее на это
 
-   ```bash
-   45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
-   ```
+ ```bash
+ 45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
+ ```
 
-   Это ваш недавно сгенерированный постоянный ADNL-адрес в шестнадцатеричном и удобном для пользователя формате. Соответствующий приватный ключ сохранен в файл `45061...2DB` в текущей директории. Переместите ключ в директорию keyring
+ Это ваш недавно сгенерированный постоянный ADNL-адрес в шестнадцатеричном и удобном для пользователя формате. Соответствующий приватный ключ сохранен в файл `45061...2DB` в текущей директории. Переместите ключ в директорию keyring
 
-   ```bash
-   mv 45061C1* keyring/
-   ```
+ ```bash
+ mv 45061C1* keyring/
+ ```
 
 5. Убедитесь, что ваш веб-сервер принимает HTTP-запросы с доменами `.ton` и `.adnl`.
 
-   Например, если вы используете nginx с конфигурацией `server_name example.com;`, вам нужно изменить ее на `server_name _;` или `server_name example.com example.ton vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3.adnl;`.
+ Например, если вы используете nginx с конфигурацией `server_name example.com;`, вам нужно изменить ее на `server_name _;` или `server_name example.com example.ton vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3.adnl;`.
 
 6. Запустите прокси в обратном режиме
 
-   ```bash
-   rldp-http-proxy/rldp-http-proxy -a <your-server-ip>:3333 -L '*' -C global.config.json -A <your-adnl-address> -d -l <log-file>
-   ```
+ ```bash
+ rldp-http-proxy/rldp-http-proxy -a <your-server-ip>:3333 -L '*' -C global.config.json -A <your-adnl-address> -d -l <log-file>
+ ```
 
-   где `<your_public_ip>` - это публичный IPv4-адрес вашего сервера, а `<your_adnl_address>` - это ADNL-адрес, сгенерированный в предыдущем шаге.
+ где `<your_public_ip>` - это публичный IPv4-адрес вашего сервера, а `<your_adnl_address>` - это ADNL-адрес, сгенерированный в предыдущем шаге.
 
 Если вы хотите, чтобы ваш TON Site работал постоянно, вам нужно использовать параметры `-d` и `-l <log-file>`.
 
@@ -202,3 +202,4 @@ rldp-http-proxy/rldp-http-proxy -a 777.777.777.777:3333 -R '*'@333.333.333.333:8
 - Запустите обратный прокси на отдельном сервере с флагом `-R`, как описано выше.
 
 - Создайте дублирующий сервер с копией вашего сайта и запустите обратный прокси локально.
+

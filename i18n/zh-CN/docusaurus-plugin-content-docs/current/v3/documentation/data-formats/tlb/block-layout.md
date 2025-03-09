@@ -231,4 +231,4 @@ masterchain_block_extra#cca5
 
 ## 另见
 
-- 白皮书中对 [区块布局](https://docs.ton.org/tblkch.pdf#page=96\\&zoom=100,148,172)的原始描述
+- 白皮书中对 区块布局的原始描述

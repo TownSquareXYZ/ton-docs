@@ -267,7 +267,7 @@ def get_user_payments(user_id):
 
 예를 들어, 테스트넷에 `EQAVKMzqtrvNB2SkcBONOijadqFZ1gMdjmzh1Y3HB1p_zai5` 지갑이 있고, 여기에 몇 개의 거래가 있습니다:
 
-[쿼리](https://testnet.toncenter.com/api/v2/getTransactions?address=EQAVKMzqtrvNB2SkcBONOijadqFZ1gMdjmzh1Y3HB1p_zai5\&limit=2\&to_lt=0\&archival=true)를 사용하면 두 개의 거래를 포함하는 응답을 받습니다(지금은 필요하지 않은 일부 정보는 숨겨져 있습니다, 전체 응답은 링크에서 볼 수 있습니다).
+쿼리를 사용하면 두 개의 거래를 포함하는 응답을 받습니다(지금은 필요하지 않은 일부 정보는 숨겨져 있습니다, 전체 응답은 링크에서 볼 수 있습니다).
 
 ```json
 {
@@ -347,7 +347,7 @@ def get_user_payments(user_id):
 }
 ```
 
-이 요청은 [이렇게](https://testnet.toncenter.com/api/v2/getTransactions?address=EQAVKMzqtrvNB2SkcBONOijadqFZ1gMdjmzh1Y3HB1p_zai5\&limit=2\&lt=1943166000003\&hash=hxIQqn7lYD%2Fc%2FfNS7W%2FiVsg2kx0p%2FkNIGF6Ld0QEIxk%3D\&to_lt=0\&archival=true) 보일 것입니다.
+이 요청은 이렇게 보일 것입니다.
 
 또한 `detectAddress` 메소드도 필요할 것입니다.
 

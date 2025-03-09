@@ -54,3 +54,5 @@
 - https://app.hipo.finance/#/network=testnet/
 
 - https://testnet-elections.toncenter.com/getValidationCycles?limit=2&return_participants=true
+
+

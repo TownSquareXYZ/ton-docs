@@ -9,3 +9,4 @@ TON Connect 确保用户对他们分享的数据有明确的控制权，这意�
 - TON Connect 协议允许分享个人数据项（如联系方式和 KYC 信息等），这意味着用户明确确认了这些数据的分享。
 
 有关 TON Connect 及其以安全为重点的设计的具体细节和相关代码示例，可以通过 [TON Connect Github](https://github.com/ton-connect/) 找到。
+

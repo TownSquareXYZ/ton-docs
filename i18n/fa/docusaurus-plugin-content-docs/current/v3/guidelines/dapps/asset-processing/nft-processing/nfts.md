@@ -205,7 +205,7 @@ curl -X 'POST' \
 
 ### ارسال NFT
 
-در این مثال، پیام انتقال NFT در [خط ۶۷](https://www.google.com/url?q=https://github.com/ton-blockchain/token-contract/blob/1ad314a98d20b41241d5329e1786fc894ad811de/nft/nft-sale.fc%23L67\&sa=D\&source=docs\&ust=1685436161341866\&usg=AOvVaw1yuoIzcbEuvqMS4xQMqfXE) قرار دارد:
+در این مثال، پیام انتقال NFT در خط ۶۷ قرار دارد:
 
 ```
 var nft_msg = begin_cell()

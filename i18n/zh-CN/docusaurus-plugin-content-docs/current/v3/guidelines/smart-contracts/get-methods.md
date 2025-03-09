@@ -16,47 +16,47 @@ Get方法是智能合约中用于查询特定数据的特殊函数。它们的�
 
 1. **单一数据点检索**：一种基本设计模式是创建返回合约状态中单个数据点的方法。这些方法没有参数，并返回单个值。
 
-   示例：
+    示例：
 
-   ```func
-   int get_balance() method_id {
-       return get_data().begin_parse().preload_uint(64);
-   }
-   ```
+    ```func
+    int get_balance() method_id {
+        return get_data().begin_parse().preload_uint(64);
+    }
+    ```
 
 2. **聚合数据检索**：另一种常见的模式是创建一次返回合约状态中多个数据点的方法。这通常在某些数据点一起使用时采用。这些在[Jetton](#jettons)和[NFT](#nfts)合约中非常常见。
 
-   示例：
+    示例：
 
-   ```func
-   (int, slice, slice, cell) get_wallet_data() method_id {
-       return load_data();
-   }
-   ```
+    ```func
+    (int, slice, slice, cell) get_wallet_data() method_id {
+        return load_data();
+    }
+    ```
 
 ### 高级 get 方法设计模式
 
 1. **计算数据检索**：在某些情况下，需要检索的数据并不直接存储在合约的状态中，而是根据状态和输入参数计算得出的。
 
-   示例：
+    示例：
 
-   ```func
-   slice get_wallet_address(slice owner_address) method_id {
-       (int total_supply, slice admin_address, cell content, cell jetton_wallet_code) = load_data();
-       return calculate_user_jetton_wallet_address(owner_address, my_address(), jetton_wallet_code);
-   }
-   ```
+    ```func
+    slice get_wallet_address(slice owner_address) method_id {
+        (int total_supply, slice admin_address, cell content, cell jetton_wallet_code) = load_data();
+        return calculate_user_jetton_wallet_address(owner_address, my_address(), jetton_wallet_code);
+    }
+    ```
 
 2. **条件数据检索**：有时需要检索的数据取决于某些条件，如当前时间。
 
-   示例：
+    示例：
 
-   ```func
-   (int) get_ready_to_be_used() method_id {
-       int ready? = now() >= 1686459600;
-       return ready?;
-   }
-   ```
+    ```func
+    (int) get_ready_to_be_used() method_id {
+        int ready? = now() >= 1686459600;
+        return ready?;
+    }
+    ```
 
 ## 最常见的 get 方法
 

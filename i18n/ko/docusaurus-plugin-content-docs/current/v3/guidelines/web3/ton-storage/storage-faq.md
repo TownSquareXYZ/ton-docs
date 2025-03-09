@@ -53,3 +53,4 @@ TON 도메인의 sha256("site") DNS 레코드에 다음 값을 할당해야 합�
 ```
 dns_storage_address#7473 bag_id:uint256 = DNSRecord;
 ```
+

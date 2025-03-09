@@ -123,14 +123,14 @@ x{00} @Defop NOP
 ## 특별 기능
 
 - Ed25519 암호화
-  - newkeypair - 개인-공개 키 쌍 생성
-  - priv>pub   - 개인 키에서 공개 키 생성
-  - ed25519_sign[_uint] - 데이터와 개인 키가 주어지면 서명 생성
-  - ed25519_chksign     - Ed25519 서명 확인
+ - newkeypair - 개인-공개 키 쌍 생성
+ - priv>pub   - 개인 키에서 공개 키 생성
+ - ed25519_sign[_uint] - 데이터와 개인 키가 주어지면 서명 생성
+ - ed25519_chksign     - Ed25519 서명 확인
 - TVM과의 상호작용
-  - runvmcode와 유사 - 스택에서 가져온 코드 슬라이스로 TVM 호출
+ - runvmcode와 유사 - 스택에서 가져온 코드 슬라이스로 TVM 호출
 - BOC를 파일에 쓰기:
-  `boc>B ".../contract.boc" B>file`
+ `boc>B ".../contract.boc" B>file`
 
 ## 더 알아보기
 

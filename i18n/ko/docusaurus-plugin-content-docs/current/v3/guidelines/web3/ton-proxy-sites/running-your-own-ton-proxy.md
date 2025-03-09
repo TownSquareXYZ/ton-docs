@@ -14,15 +14,15 @@
 
 1. [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest)에서 **rldp-http-proxy**를 다운로드하세요.
 
-   또는 이 [지침](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy)을 따라 **rldp-http-proxy**를 직접 컴파일할 수 있습니다.
+ 또는 이 [지침](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy)을 따라 **rldp-http-proxy**를 직접 컴파일할 수 있습니다.
 
 2. TON [글로벌 설정](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config)을 다운로드하세요.
 
 3. **rldp-http-proxy** 실행
 
-   ```bash
-   rldp-http-proxy/rldp-http-proxy -p 8080 -c 3333 -C global.config.json
-   ```
+ ```bash
+ rldp-http-proxy/rldp-http-proxy -p 8080 -c 3333 -C global.config.json
+ ```
 
 위 예시에서 `8080`은 localhost에서 들어오는 HTTP 쿼리를 수신할 TCP 포트이며, `3333`은 모든 아웃바운드 및 인바운드 RLDP와 ADNL 활동(TON 네트워크를 통한 TON Sites 연결)에 사용될 UDP 포트입니다. `global.config.json`은 TON 글로벌 설정 파일의 이름입니다.
 
@@ -34,49 +34,49 @@
 
 1. [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest)에서 **rldp-http-proxy**를 다운로드하세요.
 
-   또는 이 [지침](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy)을 따라 **rldp-http-proxy**를 직접 컴파일할 수 있습니다.
+ 또는 이 [지침](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy)을 따라 **rldp-http-proxy**를 직접 컴파일할 수 있습니다.
 
 2. TON [글로벌 설정](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config)을 다운로드하세요.
 
 3. [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest)에서 **generate-random-id**를 다운로드하세요.
 
-   또는 이 [지침](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#generate-random-id)을 따라 **generate-random-id**를 직접 컴파일할 수 있습니다.
+ 또는 이 [지침](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#generate-random-id)을 따라 **generate-random-id**를 직접 컴파일할 수 있습니다.
 
 4. 진입 프록시용 영구 ADNL 주소 생성하기
 
-   ```bash
-   mkdir keyring
+ ```bash
+ mkdir keyring
 
-   utils/generate-random-id -m adnlid
-   ```
+ utils/generate-random-id -m adnlid
+ ```
 
-   다음과 같은 내용이 표시됩니다:
+ 다음과 같은 내용이 표시됩니다:
 
-   ```
-   45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
-   ```
+ ```
+ 45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
+ ```
 
-   이것은 16진수와 사용자 친화적 형식으로 된 새로 생성된 영구 ADNL 주소입니다. 해당하는 개인키는 현재 디렉토리의 `45061...2DB` 파일에 저장됩니다. 키를 keyring 디렉토리로 이동하세요.
+ 이것은 16진수와 사용자 친화적 형식으로 된 새로 생성된 영구 ADNL 주소입니다. 해당하는 개인키는 현재 디렉토리의 `45061...2DB` 파일에 저장됩니다. 키를 keyring 디렉토리로 이동하세요.
 
-   ```bash
-   mv 45061C1* keyring/
-   ```
+ ```bash
+ mv 45061C1* keyring/
+ ```
 
 5. **rldp-http-proxy** 실행
 
-   ```
-   rldp-http-proxy/rldp-http-proxy -p 8080 -a <your_public_ip>:3333 -C global.config.json -A <your_adnl_address>
-   ```
+ ```
+ rldp-http-proxy/rldp-http-proxy -p 8080 -a <your_public_ip>:3333 -C global.config.json -A <your_adnl_address>
+ ```
 
-   여기서 `<your_public_ip>`는 공개 IPv4 주소이고 `<your_adnl_address>`는 이전 단계에서 생성한 ADNL 주소입니다.
+ 여기서 `<your_public_ip>`는 공개 IPv4 주소이고 `<your_adnl_address>`는 이전 단계에서 생성한 ADNL 주소입니다.
 
-   예시:
+ 예시:
 
-   ```
-   rldp-http-proxy/rldp-http-proxy -p 8080 -a 777.777.777.777:3333 -C global.config.json -A vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
-   ```
+ ```
+ rldp-http-proxy/rldp-http-proxy -p 8080 -a 777.777.777.777:3333 -C global.config.json -A vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
+ ```
 
-   위 예시에서 `8080`은 localhost에서 들어오는 HTTP 쿼리를 수신할 TCP 포트이며, `3333`은 모든 아웃바운드 및 인바운드 RLDP와 ADNL 활동에 사용될 UDP 포트입니다. `global.config.json`은 TON 글로벌 설정 파일의 이름입니다.
+ 위 예시에서 `8080`은 localhost에서 들어오는 HTTP 쿼리를 수신할 TCP 포트이며, `3333`은 모든 아웃바운드 및 인바운드 RLDP와 ADNL 활동에 사용될 UDP 포트입니다. `global.config.json`은 TON 글로벌 설정 파일의 이름입니다.
 
 모든 것을 올바르게 수행했다면, 프록시는 종료되지 않고 터미널에서 계속 실행될 것입니다. 이제 TON Sites 접근에 사용할 수 있습니다. 더 이상 필요하지 않을 때는 `Ctrl-C`를 누르거나 터미널 창을 닫아 종료할 수 있습니다. Unix 서비스로 실행하여 영구적으로 실행할 수 있습니다.
 
@@ -131,45 +131,45 @@ curl -x 127.0.0.1:8080 http://utoljjye6y4ixazesjofidlkrhyiakiwrmes3m5hthlc6ie2h7
 
 1. [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest)에서 **rldp-http-proxy**를 다운로드하세요.
 
-   또는 이 [지침](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy)을 따라 **rldp-http-proxy**를 직접 컴파일할 수 있습니다.
+ 또는 이 [지침](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#rldp-http-proxy)을 따라 **rldp-http-proxy**를 직접 컴파일할 수 있습니다.
 
 2. TON [글로벌 설정](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config)을 다운로드하세요.
 
 3. [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest)에서 **generate-random-id**를 다운로드하세요.
 
-   또는 이 [지침](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#generate-random-id)을 따라 **generate-random-id**를 직접 컴파일할 수 있습니다.
+ 또는 이 [지침](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#generate-random-id)을 따라 **generate-random-id**를 직접 컴파일할 수 있습니다.
 
 4. 서버용 영구 ADNL 주소 생성하기
 
-   ```bash
-   mkdir keyring
+ ```bash
+ mkdir keyring
 
-   utils/generate-random-id -m adnlid
-   ```
+ utils/generate-random-id -m adnlid
+ ```
 
-   다음과 같은 내용이 표시됩니다:
+ 다음과 같은 내용이 표시됩니다:
 
-   ```bash
-   45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
-   ```
+ ```bash
+ 45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
+ ```
 
-   이것은 새로 생성된 지속적인 ADNL 주소로, 16진수와 사용자 친화적인 형태로 제공됩니다. 해당하는 개인 키는 현재 디렉토리의 `45061...2DB` 파일에 저장되었습니다. 이를 keyring 디렉토리로 이동시키세요.
+ 이것은 새로 생성된 지속적인 ADNL 주소로, 16진수와 사용자 친화적인 형태로 제공됩니다. 해당하는 개인 키는 현재 디렉토리의 `45061...2DB` 파일에 저장되었습니다. 이를 keyring 디렉토리로 이동시키세요.
 
-   ```bash
-   mv 45061C1* keyring/
-   ```
+ ```bash
+ mv 45061C1* keyring/
+ ```
 
 5. 웹서버가 `.ton`과 `.adnl` 도메인의 HTTP 요청을 수락하도록 확인하세요.
 
-   예를 들어 nginx에서 `server_name example.com;` 설정을 사용하는 경우, `server_name _;` 또는 `server_name example.com example.ton vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3.adnl;`로 변경해야 합니다.
+ 예를 들어 nginx에서 `server_name example.com;` 설정을 사용하는 경우, `server_name _;` 또는 `server_name example.com example.ton vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3.adnl;`로 변경해야 합니다.
 
 6. 역방향 모드로 프록시 실행
 
-   ```bash
-   rldp-http-proxy/rldp-http-proxy -a <your-server-ip>:3333 -L '*' -C global.config.json -A <your-adnl-address> -d -l <log-file>
-   ```
+ ```bash
+ rldp-http-proxy/rldp-http-proxy -a <your-server-ip>:3333 -L '*' -C global.config.json -A <your-adnl-address> -d -l <log-file>
+ ```
 
-   여기서 `<your_public_ip>`는 서버의 공개 IPv4 주소이고 `<your_adnl_address>`는 이전 단계에서 생성한 ADNL 주소입니다.
+ 여기서 `<your_public_ip>`는 서버의 공개 IPv4 주소이고 `<your_adnl_address>`는 이전 단계에서 생성한 ADNL 주소입니다.
 
 TON Site를 영구적으로 실행하려면 `-d`와 `-l <log-file>` 옵션을 사용해야 합니다.
 
@@ -202,3 +202,4 @@ rldp-http-proxy/rldp-http-proxy -a 777.777.777.777:3333 -R '*'@333.333.333.333:8
 - 위에서 설명한 대로 `-R` 플래그를 사용하여 별도의 서버에서 역방향 프록시를 실행합니다.
 
 - 웹사이트 사본이 있는 중복 서버를 만들고 로컬에서 역방향 프록시를 실행합니다.
+
