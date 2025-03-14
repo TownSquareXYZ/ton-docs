@@ -58,5 +58,5 @@ TON имеет три типа цифровых активов.
 После прочтения этой статьи вы можете проверить:
 
 1. [Обработка платежей](/v3/guidelines/dapps/asset-processing/payments-processing), чтобы узнать, как работать с `TON coins`
-2. [Обработка жетонов,](/v3/guidelines/dapps/asset-processing/jettons), тобы узнать, как работать с `jettons` (иногда называемыми `tokens`)
-3. [NFT processing](/v3/guidelines/dapps/asset-processing/nft-processing/nfts), чтобы узнать, как работать с `NFT` (это специальный тип `jetton`)
+2. [Обработка жетонов](/v3/guidelines/dapps/asset-processing/jettons), чтобы узнать, как работать с `jettons` (иногда называемыми `tokens`)
+3. [Обработка NFT](/v3/guidelines/dapps/asset-processing/nft-processing/nfts), чтобы узнать, как работать с NFT (это особый тип  `jetton`)
