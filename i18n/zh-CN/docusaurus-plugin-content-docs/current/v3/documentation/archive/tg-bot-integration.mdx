@@ -13,7 +13,7 @@ import Button from '@site/src/components/button'
 
 打开演示机器人
 
-<Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>
+</Button>
 
 <Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>
 
@@ -1296,8 +1296,6 @@ export async function handleSendTXCommand(msg: TelegramBot.Message): Promise<voi
 
 </details>
 
-你可以将此参数设置为 `5000`，编译并重新运行机器人，测试其行为。
-
 您可以将该参数设置为 `5000`，编译并重新运行机器人，测试其行为。
 
 ### 优化钱包连接流程
@@ -1586,8 +1584,6 @@ async function onWalletClick(query: CallbackQuery, data: string): Promise<void> 
 
 首先，让我们创建一些实用函数：
 
-首先，让我们创建一些实用功能：
-
 ```ts
 // src/utils.ts
 import { encodeTelegramUrlParameters, isTelegramUrl } from '@tonconnect/sdk';
@@ -1698,9 +1694,8 @@ async function onOpenUniversalQRClick(query: CallbackQuery, _: string): Promise<
 
 // ... other code
 ```
+</details>
 
-<details>
-<summary>src/commands-handlers.ts 代码</summary>
 
 <details>
 <summary>src/commands-handlers.ts 代码</summary>
