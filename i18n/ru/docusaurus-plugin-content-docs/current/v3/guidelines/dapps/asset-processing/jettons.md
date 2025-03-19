@@ -73,13 +73,10 @@ import Button from '@site/src/components/button';
 Быстрый переход к основному описанию обработки Jetton:
 
 <Button href="/v3/guidelines/dapps/asset-processing/jettons#accepting-jettons-from-users-through-a-centralized-wallet" colorType={'primary'} sizeType={'sm'}>
-Централизованная обработка 
-</Button>
-
+Централизованная обработка </Button>
 <Button href="/v3/guidelines/dapps/asset-processing/jettons#accepting-jettons-from-user-deposit-addresses"
 colorType="secondary" sizeType={'sm'}>
-On-Chain обработка 
-</Button>
+On-Chain обработка </Button>
 
 <br></br><br></br>
 
