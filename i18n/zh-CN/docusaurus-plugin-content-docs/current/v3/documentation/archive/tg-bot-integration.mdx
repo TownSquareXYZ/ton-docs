@@ -13,7 +13,7 @@ import Button from '@site/src/components/button'
 
 打开演示机器人
 
-<Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>
+</Button>
 
 <Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>
 
@@ -1584,8 +1584,6 @@ async function onWalletClick(query: CallbackQuery, data: string): Promise<void> 
 
 ### 改进与 @wallet 的互动
 
-首先，让我们创建一些实用函数：
-
 首先，让我们创建一些实用功能：
 
 ```ts
@@ -1620,8 +1618,6 @@ export function convertDeeplinkToUniversalLink(link: string, walletUniversalLink
 ```
 
 由于我们在两个地方使用通用 QR 页面创建代码，我们将其移动到单独的函数中：
-
-由于我们在两个地方使用通用 QR 页面创建代码，因此我们将其移至单独的功能中：
 
 ```ts
 // src/utils.ts
@@ -1698,9 +1694,8 @@ async function onOpenUniversalQRClick(query: CallbackQuery, _: string): Promise<
 
 // ... other code
 ```
+</details>
 
-<details>
-<summary>src/commands-handlers.ts 代码</summary>
 
 <details>
 <summary>src/commands-handlers.ts 代码</summary>
