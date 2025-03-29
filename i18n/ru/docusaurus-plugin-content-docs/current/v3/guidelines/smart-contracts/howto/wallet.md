@@ -1673,7 +1673,7 @@ internalMessage := cell.BeginCell().
 
 ### GET-методы кошелька V3 и V4
 
-Смарт-контракты часто используют [GET-методы] (/v3/guidelines/smart-contracts/get-methods), однако они работают на стороне клиента, а не внутри блокчейна. GET-методы имеют множество применений и обеспечивают смарт-контрактам доступ к различным типам данных. Например, метод [get_nft_data() в смарт-контрактах NFT](https://github.com/ton-blockchain/token-contract/blob/991bdb4925653c51b0b53ab212c53143f71f5476/nft/nft-item.fc#L142-L145) позволяет пользователям получать информацию о владельце, коллекции NFT, содержимом `content`.
+Смарт-контракты часто используют [GET-методы](/v3/guidelines/smart-contracts/get-methods), однако они работают на стороне клиента, а не внутри блокчейна. GET-методы имеют множество применений и обеспечивают смарт-контрактам доступ к различным типам данных. Например, метод [get_nft_data() в смарт-контрактах NFT](https://github.com/ton-blockchain/token-contract/blob/991bdb4925653c51b0b53ab212c53143f71f5476/nft/nft-item.fc#L142-L145) позволяет пользователям получать информацию о владельце, коллекции NFT, содержимом `content`.
 
 Ниже мы познакомимся с основными GET-методами, используемыми в [V3](https://github.com/ton-blockchain/ton/blob/e37583e5e6e8cd0aebf5142ef7d8db282f10692b/crypto/smartcont/wallet3-code.fc#L31-L41) и [V4](https://github.com/ton-blockchain/wallet-contract/blob/4111fd9e3313ec17d99ca9b5b1656445b5b49d8f/func/wallet-v4-code.fc#L164-L198). Начнем с методов, которые одинаковы для обеих версий кошелька:
 
