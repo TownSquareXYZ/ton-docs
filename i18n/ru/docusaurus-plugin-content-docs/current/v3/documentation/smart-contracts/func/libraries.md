@@ -1,9 +1,13 @@
 # SDK и библиотеки для FunC
 
+:::warning
+Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
+:::
+
 ## Стандартные библиотеки
 
 - [stdlib](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/stdlib.fc) — Стандартная библиотека для FunC
-- mathlib](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/mathlib.fc) — Математическая библиотека с фиксированной точкой
+- [mathlib](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/mathlib.fc) — Математическая библиотека с фиксированной точкой
 
 ## Библиотеки сообщества
 

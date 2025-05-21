@@ -1,5 +1,9 @@
 # Обзор низкоуровневых комиссий
 
+:::warning
+Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
+:::
+
 :::caution
 This section describes instructions and manuals for interacting with TON at a low level.
 

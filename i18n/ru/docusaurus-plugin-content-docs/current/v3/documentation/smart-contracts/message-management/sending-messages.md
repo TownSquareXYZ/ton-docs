@@ -1,5 +1,9 @@
 # Отправка сообщений
 
+:::warning
+Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
+:::
+
 Составление, анализ и отправка сообщений лежат на пересечении [схем TL-B](/v3/documentation/data-formats/tlb/tl-b-language), [фаз транзакций и TVM](/v3/documentation/tvm/tvm-overview).
 
 Действительно, FunC предоставляет функцию [send_raw_message](/v3/documentation/smart-contracts/func/docs/stdlib#send_raw_message), которая ожидает сериализованное сообщение в качестве аргумента.

@@ -1,5 +1,9 @@
 # FAQ по TON Storage
 
+:::warning
+Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
+:::
+
 ## Как назначить домен TON пакету файлов TON Storage
 
 1. [Загрузите](/v3/guidelines/web3/ton-storage/storage-daemon#creating-a-bag-of-files) пакет файлов в сеть и получите идентификатор Bag ID
