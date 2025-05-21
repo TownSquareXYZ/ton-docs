@@ -14,15 +14,15 @@
 
 1. 从[TON自动构建](https://github.com/ton-blockchain/ton/releases/latest)下载**rldp-http-proxy**。
 
-   或者你可以按照这些[指示](/develop/howto/compile#rldp-http-proxy)自己编译**rldp-http-proxy**。
+ 或者你可以按照这些[指示](/develop/howto/compile#rldp-http-proxy)自己编译**rldp-http-proxy**。
 
 2. [下载](/develop/howto/compile#download-global-config)TON全局配置。
 
 3. 运行**rldp-http-proxy**
 
-   ```bash
-   rldp-http-proxy/rldp-http-proxy -p 8080 -c 3333 -C global.config.json
-   ```
+ ```bash
+ rldp-http-proxy/rldp-http-proxy -p 8080 -c 3333 -C global.config.json
+ ```
 
 在上面的例子中，`8080`是将在本地主机上监听传入HTTP查询的TCP端口，而`3333`是将用于所有出站和入站RLDP和ADNL活动的UDP端口（即通过TON网络连接到TON网站）。`global.config.json`是TON全局配置的文件名。
 
@@ -34,49 +34,49 @@
 
 1. 从[TON自动构建](https://github.com/ton-blockchain/ton/releases/latest)下载**rldp-http-proxy**。
 
-   或者你可以按照这些[指示](/develop/howto/compile#rldp-http-proxy)自己编译**rldp-http-proxy**。
+ 或者你可以按照这些[指示](/develop/howto/compile#rldp-http-proxy)自己编译**rldp-http-proxy**。
 
 2. [下载](/develop/howto/compile#download-global-config)TON全局配置。
 
 3. 从[TON自动构建](https://github.com/ton-blockchain/ton/releases/latest)下载**generate-random-id**。
 
-   或者你可以按照这些[指示](/develop/howto/compile#generate-random-id)自己编译**generate-random-id**。
+ 或者你可以按照这些[指示](/develop/howto/compile#generate-random-id)自己编译**generate-random-id**。
 
 4. 为你的入口代理生成一个持久的ANDL地址
 
-   ```bash
-   mkdir keyring
+ ```bash
+ mkdir keyring
 
-   utils/generate-random-id -m adnlid
-   ```
+ utils/generate-random-id -m adnlid
+ ```
 
-   你会看到类似于
+ 你会看到类似于
 
-   ```
-   45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
-   ```
+ ```
+ 45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
+ ```
 
-   这是你新生成的持久ADNL地址，以十六进制和用户友好形式显示。相应的私钥保存在当前目录的文件`45061...2DB`中。将密钥移动到keyring目录
+ 这是你新生成的持久ADNL地址，以十六进制和用户友好形式显示。相应的私钥保存在当前目录的文件`45061...2DB`中。将密钥移动到keyring目录
 
-   ```bash
-   mv 45061C1* keyring/
-   ```
+ ```bash
+ mv 45061C1* keyring/
+ ```
 
 5. 运行**rldp-http-proxy**
 
-   ```
-   rldp-http-proxy/rldp-http-proxy -p 8080 -a <your_public_ip>:3333 -C global.config.json -A <your_adnl_address>
-   ```
+ ```
+ rldp-http-proxy/rldp-http-proxy -p 8080 -a <your_public_ip>:3333 -C global.config.json -A <your_adnl_address>
+ ```
 
-   其中`<your_public_ip>`是你的公共IPv4地址，`<your_adnl_address>`是在上一步中生成的ADNL地址。
+ 其中`<your_public_ip>`是你的公共IPv4地址，`<your_adnl_address>`是在上一步中生成的ADNL地址。
 
-   示例：
+ 示例：
 
-   ```
-   rldp-http-proxy/rldp-http-proxy -p 8080 -a 777.777.777.777:3333 -C global.config.json -A vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
-   ```
+ ```
+ rldp-http-proxy/rldp-http-proxy -p 8080 -a 777.777.777.777:3333 -C global.config.json -A vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
+ ```
 
-   在上面的示例中，`8080`是将在本地主机上监听传入HTTP查询的TCP端口，而`3333`是将用于所有出站和入站RLDP和ADNL活动的UDP端口（即通过TON网络连接到TON网站）。`global.config.json`是TON全局配置的文件名。
+ 在上面的示例中，`8080`是将在本地主机上监听传入HTTP查询的TCP端口，而`3333`是将用于所有出站和入站RLDP和ADNL活动的UDP端口（即通过TON网络连接到TON网站）。`global.config.json`是TON全局配置的文件名。
 
 如果你做得都对，代理不会终止，而是会继续在终端运行。现在可以用它来访问TON网站。当你不再需要它时，可以通过按`Ctrl-C`或简单地关闭终端窗口来终止它。你可以将这个运行为一个unix服务以永久运行。
 
@@ -131,45 +131,45 @@ curl -x 127.0.0.1:8080 http://utoljjye6y4ixazesjofidlkrhyiakiwrmes3m5hthlc6ie2h7
 
 1. 从 [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest) 下载 **rldp-http-proxy** 。
 
-   或者你可以按照这个[指示](/develop/howto/compile#rldp-http-proxy)自己编译**rldp-http-proxy**。
+ 或者你可以按照这个[指示](/develop/howto/compile#rldp-http-proxy)自己编译**rldp-http-proxy**。
 
 2. [下载](/develop/howto/compile#download-global-config)TON全局配置。
 
 3. 从[TON自动构建](https://github.com/ton-blockchain/ton/releases/latest)下载**generate-random-id**。
 
-   或者你可以按照这些[指示](/develop/howto/compile#generate-random-id)自己编译**generate-random-id**。
+ 或者你可以按照这些[指示](/develop/howto/compile#generate-random-id)自己编译**generate-random-id**。
 
 4. 为你的服务器生成一个持久的ANDL地址
 
-   ```bash
-   mkdir keyring
+ ```bash
+ mkdir keyring
 
-   utils/generate-random-id -m adnlid
-   ```
+ utils/generate-random-id -m adnlid
+ ```
 
-   你会看到类似于
+ 你会看到类似于
 
-   ```bash
-   45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
-   ```
+ ```bash
+ 45061C1D4EC44A937D0318589E13C73D151D1CEF5D3C0E53AFBCF56A6C2FE2BD vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3
+ ```
 
-   这是你新生成的持久ADNL地址，以十六进制和用户友好形式显示。相应的私钥保存在当前目录的文件`45061...2DB`中。将密钥移动到keyring目录
+ 这是你新生成的持久ADNL地址，以十六进制和用户友好形式显示。相应的私钥保存在当前目录的文件`45061...2DB`中。将密钥移动到keyring目录
 
-   ```bash
-   mv 45061C1* keyring/
-   ```
+ ```bash
+ mv 45061C1* keyring/
+ ```
 
 5. 确保你的Web服务器接受带有`.ton`和`.adnl`域名的HTTP请求。
 
-   例如，如果你使用带有配置`server_name example.com;`的nginx，你需要将其更改为`server_name _;`或`server_name example.com example.ton vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3.adnl;`。
+ 例如，如果你使用带有配置`server_name example.com;`的nginx，你需要将其更改为`server_name _;`或`server_name example.com example.ton vcqmha5j3ceve35ammfrhqty46rkhi455otydstv66pk2tmf7rl25f3.adnl;`。
 
 6. 以反向模式运行代理
 
-   ```bash
-   rldp-http-proxy/rldp-http-proxy -a <your-server-ip>:3333 -L '*' -C global.config.json -A <your-adnl-address> -d -l <log-file>
-   ```
+ ```bash
+ rldp-http-proxy/rldp-http-proxy -a <your-server-ip>:3333 -L '*' -C global.config.json -A <your-adnl-address> -d -l <log-file>
+ ```
 
-   其中`<your_public_ip>`是你的服务器公共IPv4地址，`<your_adnl_address>`是在上一步中生成的ADNL地址。
+ 其中`<your_public_ip>`是你的服务器公共IPv4地址，`<your_adnl_address>`是在上一步中生成的ADNL地址。
 
 如果你想让你的TON网站永久运行，你将不得不使用选项`-d`和`-l <log-file>`。
 
@@ -202,3 +202,4 @@ rldp-http-proxy/rldp-http-proxy -a 777.777.777.777:3333 -R '*'@333.333.333.333:8
 - 在单独的服务器上运行反向代理，并使用`-R`标志，如上所述。
 
 - 制作一个带有你网站副本的重复服务器，并在本地运行反向代理。
+

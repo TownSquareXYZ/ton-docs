@@ -1,0 +1,153 @@
+---
+title: Overview
+---
+
+import Button from '@site/src/components/button'
+
+# Tolk 언어: 개요
+
+**Tolk**는 TON에서 스마트 컨트랙트를 작성하기 위한 새로운 언어입니다. Tolk는 "**차세대 FunC**"로 생각하면 됩니다.
+Tolk 컴파일러는 FunC 컴파일러를 포크한 것으로, TypeScript와 유사한 친숙한 구문을 도입하면서도
+모든 로우레벨 최적화는 그대로 유지합니다.
+
+```tolk
+import "storage.tolk"
+
+fun loadData() {
+    ctxCounter = getContractData().beginParse().loadUint(32);
+}
+
+fun onInternalMessage(msgValue: int, msgFull: cell, msgBody: slice) {
+    var cs = msgFull.beginParse();
+    var flags = cs.loadMessageFlags();
+    if (isMessageBounced(flags)) {
+        return;
+    }
+    ...
+}
+
+get currentCounter(): int {
+    loadData(); // fills global variables
+    return ctxCounter;
+}
+```
+
+<details>
+  <summary><b>FunC로 구현된 동일한 로직 보기</b></summary>
+
+```func
+#include "storage.fc";
+
+() load_data() impure {
+  slice cs = get_data().begin_parse();
+  ctx_counter = cs~load_uint(32);
+}
+
+() recv_internal(int msg_value, cell msg_full, slice msg_body) impure {
+  slice cs = msg_full.begin_parse();
+  int flags = cs.load_uint(4);
+  if (flags & 1) {
+    return ();
+  }
+  ...
+}
+
+int currentCounter() method_id {
+  load_data(); ;; fills global variables
+  return ctx_counter;
+}
+```
+
+</details>
+
+<Button href="https://github.com/ton-blockchain/convert-func-to-tolk" colorType={'primary'} sizeType={'sm'}>
+  FunC → Tolk 변환기 시도하기
+</Button>
+<Button href="/v3/documentation/smart-contracts/tolk/tolk-vs-func/in-short" colorType={'secondary'} sizeType={'sm'}>
+  "Tolk vs FunC 차이점" 읽기
+</Button>
+<div style={{height: '2em'}}></div>
+
+## Tolk의 동기
+
+FunC는 멋집니다.
+정말 로우레벨이며 프로그래머가 컴파일러 내부에 대해 생각하도록 장려합니다.
+TVM 어셈블러에 대한 완전한 제어를 제공하여 프로그래머가 자신의 컨트랙트를 가능한 한 효과적으로 만들 수 있게 합니다.
+익숙해지면, 사랑하게 될 것입니다.
+
+하지만 문제가 있습니다.
+FunC는 "functional C"이며, 이는 닌자를 위한 것입니다.
+Lisp와 Haskell에 익숙하다면 행복할 것입니다.
+하지만 JavaScript / Go / Kotlin 개발자라면, 그 구문이 특이하여 때때로 실수를 하게 됩니다.
+구문과의 투쟁은 TON을 파고드는 동기를 감소시킬 수 있습니다.
+
+똑똑하고 로우레벨이지만 함수형이 아니고 C와 같지 않은 언어가 있다고 상상해보세요.
+모든 아름다움과 복잡성은 내부에 두고, 겉보기에는 인기 있는 언어들과 더 비슷하다면 어떨까요?
+
+이것이 바로 Tolk입니다.
+
+## FunC에서 Tolk로 마이그레이션
+
+FunC를 알고 새로운 구문을 시도하고 싶다면, 다음과 같은 방법이 있습니다:
+
+1. [Tolk vs FunC: 간단히](/v3/documentation/smart-contracts/tolk/tolk-vs-func/in-short)를 읽으세요.
+2. blueprint로 새로운 Tolk 컨트랙트를 만들고(예: 카운터) 실험해보세요. 거의 모든 stdlib 함수가 ~~장황한~~ 명확한 이름으로 변경되었음을 기억하세요. 여기 [매핑](/v3/documentation/smart-contracts/tolk/tolk-vs-func/stdlib)이 있습니다.
+3. 기존 컨트랙트나 [FunC 컨트랙트](/v3/documentation/smart-contracts/contracts-specs/examples)에서 가져온 것에 대해 [변환기](https://github.com/ton-blockchain/convert-func-to-tolk)를 사용해보세요. Tolk로 처음부터 작성된 컨트랙트가 자동 변환된 것보다 확실히 더 보기 좋을 것이라는 점을 명심하세요. 예를 들어, 비트 연산자 대신 논리 연산자를 사용하면 코드 가독성이 크게 향상됩니다.
+
+## FunC를 모르는 경우 Tolk를 시도하는 방법
+
+:::tip 현재 이 문서는 FunC를 알고 있다고 가정합니다
+이 문서는 "Tolk vs FunC" 차이점을 설명합니다.
+나중에는 초보자를 위해 수정될 것입니다. 더욱이 FunC는 결국 더 이상 사용되지 않을 것이며,
+전체 문서의 모든 코드 스니펫이 Tolk로 다시 작성될 것입니다.
+:::
+
+TON을 처음 접하는 경우, 다음과 같은 방법이 있습니다:
+
+1. TON에서의 개발에 대한 기본 지식을 얻기 위해 [이 문서](/v3/documentation/smart-contracts/overview)를 파고드세요. 어떤 언어를 사용하든, 결국 셀, 슬라이스, TON의 비동기 특성을 알아야 합니다.
+2. FunC 스니펫을 마주치면, FunC를 계속 사용하거나 같은 내용을 Tolk로 표현하려고 시도할 수 있습니다. FunC 구문이 특이하게 느껴진다면 걱정하지 마세요: Tolk의 목표는 바로 이 문제를 해결하는 것입니다.
+3. 무슨 일이 일어나고 있는지 어느 정도 이해하게 되면, [blueprint](https://github.com/ton-org/blueprint)로 Tolk를 사용해보세요.
+
+## Tolk 언어 주변의 도구들
+
+Tolk 컴파일러의 소스는 `ton-blockchain` [repo](https://github.com/ton-blockchain/ton)의 일부입니다.
+컴파일러 외에도 다음이 있습니다:
+
+1. [tolk-js](https://github.com/ton-blockchain/tolk-js) — Tolk 컴파일러를 위한 WASM 래퍼.
+2. [JetBrains IDE 플러그인](https://github.com/ton-blockchain/intellij-ton)은 FunC, Fift, TL/B, Tact 외에도 Tolk를 지원합니다.
+3. [VS Code 확장](https://github.com/ton-blockchain/tolk-vscode)으로 Tolk 언어 지원을 활성화합니다.
+4. [FunC에서 Tolk로의 변환기](https://github.com/ton-blockchain/convert-func-to-tolk) — 단일 `npx` 명령으로 `.fc` 파일을 `.tolk` 파일로 변환합니다.
+5. Tolk 언어는 [blueprint](https://github.com/ton-org/blueprint)에서 사용할 수 있습니다.
+
+## Tolk는 프로덕션 준비가 되어있나요?
+
+FunC 컴파일러를 포크한 Tolk 컴파일러는 현재 다소 실험적이지만 프로덕션 준비가 된 것으로 간주됩니다.
+
+아직 발견되지 않은 버그가 있을 수 있으며, 이는 FunC에서 물려받았거나 TVM 특성에 기인할 수 있습니다.
+어떤 언어를 사용하든, 높은 신뢰성을 달성하기 위해 컨트랙트에 테스트를 추가해야 합니다.
+
+## 로드맵
+
+Tolk의 첫 번째 릴리스 버전은 v0.6으로, [누락된](/v3/documentation/smart-contracts/tolk/changelog#how-tolk-was-born) FunC v0.5를 강조합니다.
+
+다음은 (아직 전부는 아니며 어떤 순서로 정렬되지도 않은) 조사될 일부 사항들입니다:
+
+- 타입 시스템 개선: 널 가능성, 고정 크기 정수, 유니온 타입, 딕셔너리
+- 구조체와 제네릭
+- 구조체를 셀로/셀에서 자동 패킹, 아마도 메시지 핸들러와 통합
+- 구조체를 위한 메서드, 내장 타입을 포함하도록 일반화
+- 더 쉬운 메시지 전송
+- 일반적인 사용 사례(jettons, nft 등)를 위한 더 나은 경험
+- 가스와 스택 최적화, AST 인라이닝
+- stdlib 확장 및 유지 관리
+- 일종의 ABI (익스플로러가 바이트코드를 "보는" 방법)
+- 일반적인 가스 및 수수료 관리
+
+**Tolk v1.0**을 위한 다음 전략적 목표는 **셀로의 자동 직렬화가 가능한 구조체**입니다.
+이는 빌더와 슬라이스를 수동으로 조작할 필요성을 제거하여 데이터와 메시지를 선언적으로 기술할 수 있게 해줄 것입니다.
+이와 밀접하게 관련된 것이 컨트랙트의 **ABI(인터페이스)**입니다.
+잘 설계된 구조체는 실제로 ABI의 대부분을 구성합니다.
+
+## 이슈와 연락처
+
+문제가 발생하면 [TON Dev Chats](https://t.me/addlist/1r5Vcb8eljk5Yzcy)에서 개발자 사회와 연결하거나 GitHub 이슈를 생성하세요.

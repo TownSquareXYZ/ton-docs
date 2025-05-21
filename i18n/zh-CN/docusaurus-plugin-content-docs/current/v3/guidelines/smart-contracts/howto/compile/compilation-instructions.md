@@ -21,11 +21,11 @@ git clone --recurse-submodules https://github.com/ton-blockchain/ton.git
 ```
 
 2. 安装最新版本的：
-   - `make`
-   - `cmake` 版本 3.0.2 或更高
-   - `g++` 或 `clang`（或适用于您的操作系统的另一种C++14兼容编译器）。
-   - OpenSSL（包括C头文件）版本 1.1.1 或更高
-   - `build-essential`, `zlib1g-dev`, `gperf`, `libreadline-dev`, `ccache`, `libmicrohttpd-dev`, `pkg-config`, `libsodium-dev`, `libsecp256k1-dev`
+  - `make`
+  - `cmake` 版本 3.0.2 或更高
+  - `g++` 或 `clang`（或适用于您的操作系统的另一种C++14兼容编译器）。
+  - OpenSSL（包括C头文件）版本 1.1.1 或更高
+  - `build-essential`, `zlib1g-dev`, `gperf`, `libreadline-dev`, `ccache`, `libmicrohttpd-dev`, `pkg-config`, `libsodium-dev`, `libsecp256k1-dev`
 
 ### 关于 Ubuntu
 
@@ -263,9 +263,9 @@ TON从2022年6月11日开始支持Apple M1（[添加apple m1支持 (#401)](https
 在 Apple M1 上编译 TON 旧版本：
 
 1. 将RocksDb子模块更新到6.27.3
-   ```bash
-   cd ton/third-party/rocksdb/
-   git checkout fcf3d75f3f022a6a55ff1222d6b06f8518d38c7c
-   ```
+  ```bash
+  cd ton/third-party/rocksdb/
+  git checkout fcf3d75f3f022a6a55ff1222d6b06f8518d38c7c
+  ```
 
 2. 用https://github.com/ton-blockchain/ton/blob/c00302ced4bc4bf1ee0efd672e7c91e457652430/CMakeLists.txt 替换根目录的`CMakeLists.txt`

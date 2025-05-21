@@ -27,10 +27,10 @@
 - 数据块以*种子头*开头 - 包含文件列表及其名称和大小的结构。文件本身紧随在数据块中。
 - 数据块被划分为块（默认为128 KB），并且在这些块的 SHA256 散列上构建了一个 *merkle 树*（由 TVM cell构成）。这允许构建和验证单个块的 *merkle 证明*，以及通过仅交换修改块的证明来高效重建 *包*。
 - *种子信息*包含*merkle根*：
-  - 块大小（数据块）
-  - 块大小列表
-  - Hash *merkle树*
-  - 描述 - 种子创建者指定的任何文本
+    - 块大小（数据块）
+    - 块大小列表
+    - Hash *merkle树*
+    - 描述 - 种子创建者指定的任何文本
 - *种子信息*被序列化为TVM cell。此cell的哈希称为*BagID*，它唯一标识*包*。
 - *包元数据*是一个包含*种子信息*和*种子头*的文件。\*这是`.torrent`文件的类比。
 
@@ -131,7 +131,7 @@ add-by-meta <meta-file> -d dir --partial file1 file2 file3
 - `priority-all <BagID> <priority>` - 对所有文件。
 - `priority-idx <BagID> <idx> <priority>` - 根据数字为单个文件设置（见 `get` 命令）。
 - `priority-name <BagID> <name> <priority>` - 根据名称为单个文件设置。
-  即使在文件列表下载之前，也可以设置优先级。
+    即使在文件列表下载之前，也可以设置优先级。
 
 ## 创建文件包
 

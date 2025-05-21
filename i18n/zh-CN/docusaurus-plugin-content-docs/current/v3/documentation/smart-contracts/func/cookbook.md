@@ -1550,3 +1550,8 @@ await contractV1.sendUpgrade(provider.sender(), {
 > [是否可以将代码重新部署到现有地址，还是必须将其作为新合约部署？](/v3/documentation/faq#is-it-possible-to-re-deploy-code-to-an-existing-address-or-does-it-have-to-be-deployed-as-a-new-contract)
 >
 > [文档中的 "set_code()"](/v3/documentation/smart-contracts/func/docs/stdlib#set_code)
+
+
+
+
+

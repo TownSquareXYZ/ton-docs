@@ -117,7 +117,7 @@ pip install -e tonconnect
 
 [GitHub](https://github.com/ClickoTON-Foundation/tonconnect)
 
-## TON Connect C\\#
+## TON Connect C\\\#
 
 TON Connect 2.0 的 C# SDK。相当于 `@tonconnect/sdk` 库。
 

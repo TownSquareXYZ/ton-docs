@@ -7,7 +7,7 @@
 ## Стандартные библиотеки
 
 - [stdlib](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/stdlib.fc) — Стандартная библиотека для FunC
-- mathlib](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/mathlib.fc) — Математическая библиотека с фиксированной точкой
+- [mathlib](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/mathlib.fc) — Математическая библиотека с фиксированной точкой
 
 ## Библиотеки сообщества
 

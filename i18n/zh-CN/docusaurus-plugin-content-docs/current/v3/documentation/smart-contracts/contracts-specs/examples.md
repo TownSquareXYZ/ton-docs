@@ -161,4 +161,4 @@
 
 - [开发智能合约简介](/develop/smart-contracts/)
 - [如何使用钱包智能合约](/develop/smart-contracts/tutorials/wallet)
-- [[YouTube] Ton Dev 研究 FunC & BluePrint课程](https://www.youtube.com/watch?v=7omBDfSqGfA\\&list=PLtUBO1QNEKwtO_zSyLj-axPzc9O9rkmYa)
+- [[YouTube] Ton Dev 研究 FunC & BluePrint课程](https://www.youtube.com/watch?v=7omBDfSqGfA\\\&list=PLtUBO1QNEKwtO_zSyLj-axPzc9O9rkmYa)

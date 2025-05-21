@@ -112,9 +112,9 @@ x{88016543D9EAA8BC0ED9A6D5CA2DD4FD7BE655D401195457095F30CD7D964111...
 构建消息后，您可以将其序列化为 BOC。
 
 - **payload** (string base64, 可选): 以 Base64 编码的单cell BoC。
-  - 我们将使用它来存储转账上的文本评论
+ - 我们将使用它来存储转账上的文本评论
 - **stateInit** (string base64, 可选): 以 Base64 编码的单cell BoC。
-  - 我们将用它来部署智能合约
+ - 我们将用它来部署智能合约
 
 创建信息后，可以将其序列化到 BOC 中。
 

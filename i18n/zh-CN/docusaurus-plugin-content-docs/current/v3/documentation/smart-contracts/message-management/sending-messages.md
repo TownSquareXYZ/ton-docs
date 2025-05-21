@@ -194,11 +194,11 @@ currencies$_ grams:Grams other:ExtraCurrencyCollection
 :::info +2 flag
 
 1. 消息的格式无效。
-   - 没有足够的值与消息一起传送(所有入站消息值都已消耗)。
-   - 没有足够的资金来处理消息。
-   - 没有足够的信息附加值来支付转发费用。
-   - 没有足够的额外货币与消息一起发送。
-   - 没有足够的资金支付出站外部消息。
+ - 没有足够的值与消息一起传送(所有入站消息值都已消耗)。
+ - 没有足够的资金来处理消息。
+ - 没有足够的信息附加值来支付转发费用。
+ - 没有足够的额外货币与消息一起发送。
+ - 没有足够的资金支付出站外部消息。
 2. 消息模式包括 64 和128 modes。
 3. 出站消息在 StateInit 中有无效的库。
 
@@ -208,7 +208,7 @@ currencies$_ grams:Grams other:ExtraCurrencyCollection
 2. 消息模式包括 64 和128 modes。
 3. 出站消息在 StateInit 中有无效的库。
 4. 外部消息不是普通消息，或包含 +16 或 +32 标志，或两者兼有。
-   :::
+ :::
 
 :::info +16 flag
 
@@ -221,7 +221,7 @@ currencies$_ grams:Grams other:ExtraCurrencyCollection
 
 1. **+16 flag** - 不要在外部报文（如发给钱包的报文）中使用，因为没有发件人接收被退回的报文。
 2. **+2 flag** - 这在外部消息（例如，发送到钱包）中非常重要。
-   :::
+ :::
 
 ### 用例示例
 
@@ -243,3 +243,4 @@ currencies$_ grams:Grams other:ExtraCurrencyCollection
 | 如果在处理操作过程中出现错误，则发送所有收到的代币和合约余额 - 除了回滚交易外，还弹出消息                                  | `mode` = 128, `flag` = 16      | `send_raw_message(msg, 144)` | `balance` - 0 + `147 (bounced)`, `send` - 100 + 50 - 3 = `bounce` message with 147                       |
 | 发送所有收到的代币和合约余额，并销毁智能合约                                                          | `mode` = 128, `flag` = 32      | `send_raw_message(msg, 160)` | `balance` - 0, `send` - 100 + 50 - 3 = 147                                                               |
 | 发送所有收到的代币和合约余额，并销毁智能合约，如果在处理操作过程中出现错误--除了回滚交易外，还弹出消息。重要提示：避免这种行为，因为退款将转入已删除的合约。 | `mode` = 128, `flag` = 32 + 16 | `send_raw_message(msg, 176)` | `balance` - 0 + `147 (bounced)`, `send` - 100 + 50 - 3 = `bounce` message with 147                       |
+

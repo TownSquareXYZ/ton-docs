@@ -143,7 +143,7 @@ installer clcf # in mytonctrl
   <TabItem value="js" label="JavaScript">
 
 ```bash
-npm i --save ton-core ton-lite-
+npm i --save ton-core ton-lite-client
 ```
 
   </TabItem>
@@ -181,9 +181,9 @@ go get github.com/xssnick/tonutils-go/ton
 创建包含以下内容的 `index.js` 文件：
 
 ```js
-import { LiteSingleEngine } from 'ton-lite-/dist/engines/single.js'
-import { LiteRoundRobinEngine } from 'ton-lite-/dist/engines/roundRobin.js'
-import { Lite } from 'ton-lite-/dist/.js'
+import { LiteSingleEngine } from 'ton-lite-client/dist/engines/single.js'
+import { LiteRoundRobinEngine } from 'ton-lite-client/dist/engines/roundRobin.js'
+import { Lite } from 'ton-lite-client/dist/.js'
 import config from './config.json' assert {type: 'json'};
 
 

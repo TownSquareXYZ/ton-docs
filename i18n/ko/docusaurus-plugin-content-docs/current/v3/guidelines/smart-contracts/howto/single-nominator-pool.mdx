@@ -1,0 +1,462 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Single Nominator Pool 사용법
+
+:::tip
+이 튜토리얼을 읽기 전에 [Single Nominator Pool 명세서](/v3/documentation/smart-contracts/contracts-specs/single-nominator-pool)를 숙지하는 것이 좋습니다.
+:::
+
+### single-nominator 설정하기
+
+:::caution
+시작하기 전에 validator 지갑에 잔액을 충전하고 [활성화](/v3/guidelines/nodes/running-nodes/validator-node#activate-the-wallets)했는지 확인하세요.
+:::
+
+1. single nominator 모드 활성화
+
+```bash
+MyTonCtrl> enable_mode single-nominator
+```
+
+2. single-nominator 모드가 활성화되었는지 확인
+
+```bash
+MyTonCtrl> status_modes
+Name              Status             Description
+single-nominator  enabled   Orbs's single nominator pools.
+```
+
+3. 풀 생성
+
+```bash
+MyTonCtrl> new_single_pool <pool-name> <owner_address>
+```
+
+이미 풀을 생성한 경우 가져올 수 있습니다:
+
+```bash
+MyTonCtrl> import_pool <pool-name> <pool-addr>
+```
+
+4. `pools_list`를 입력하여 풀 주소 표시
+
+```bash
+MyTonCtrl> pools_list
+Name       Status  Balance  Version   Address
+test-pool  empty   0.0      spool_r2  kf_JcC5pn3etTAdwOnc16_tyMmKE8-ftNUnf0OnUjAIdDJpX
+```
+
+5. 풀 활성화
+
+```bash
+MyTonCtrl> activate_single_pool <pool-name>
+```
+
+풀을 성공적으로 활성화한 후:
+
+```bash
+MyTonCtrl> pools_list
+Name       Status  Balance  Version   Address
+test-pool  active  0.99389  spool_r2  kf_JcC5pn3etTAdwOnc16_tyMmKE8-ftNUnf0OnUjAIdDJpX
+```
+
+이제 표준 nominator 풀처럼 mytonctrl을 통해 이 풀로 작업할 수 있습니다.
+
+:::info
+풀의 잔액이 두 라운드 모두 참여할 수 있을 만큼 충분한 경우(`balance > min_stake_amount * 2`), 사용자가 `set stake` 명령으로 스테이크를 수동 설정하지 않는 한 MyTonCtrl은 자동으로 `stake = balance / 2`를 사용하여 두 라운드 모두에 참여합니다. 이 동작은 nominator 풀 사용과는 다르지만 validator 지갑을 사용한 스테이킹과 유사합니다.
+:::
+
+## mytonctrl 없이 시작하기
+
+#### 실행된 Validator 준비하기
+
+  mytonctrl이 설치되어 있고 validator가 실행 중인 경우:
+
+1. 검증을 중지하고 모든 자금을 출금하세요.
+
+#### 처음부터 준비하기
+
+  이전에 Validator가 없었다면 다음을 수행하세요:
+
+1. [Validator를 실행](/v3/guidelines/nodes/running-nodes/full-node)하고 동기화되었는지 확인하세요.
+2. 검증을 중지하고 모든 자금을 출금하세요.
+
+### Single Nominator 준비하기
+
+1. [nodejs](https://nodejs.org/en) v.16 이상과 npm 설치 ([자세한 지침](https://github.com/nodesource/distributions#debian-and-ubuntu-based-distributions))
+
+2. `ts-node`와 `arg` 모듈 설치
+
+```bash
+$ sudo apt install ts-node
+$ sudo npm i arg -g
+```
+
+4. 컴파일러용 심볼릭 링크 생성:
+
+```bash
+$ sudo ln -s /usr/bin/ton/crypto/fift /usr/local/bin/fift
+$ sudo ln -s /usr/bin/ton/crypto/func /usr/local/bin/func
+```
+
+5. 모든 것이 제대로 설정되었는지 확인하기 위해 테스트 실행:
+
+```bash
+$ npm run test
+```
+
+6. mytonctrl nominator-pool 스크립트 교체: https://raw.githubusercontent.com/orbs-network/single-nominator/main/mytonctrl-scripts/install-pool-scripts.sh
+
+### Single Nominator Pool 생성하기
+
+1. Telegram [@tonapibot](https://t.me/tonapibot)에서 Toncenter API 키 받기
+2. 환경 변수 설정:
+
+```bash
+export OWNER_ADDRESS=<owner_address>
+export VALIDATOR_ADDRESS=<validator_wallet_address>
+export TON_ENDPOINT=https://toncenter.com/api/v2/jsonRPC
+export TON_API_KEY=<toncenter api key>
+```
+
+2. deployer 주소 생성:
+
+```bash
+$ npm run init-deploy-wallet
+Insufficient Deployer [EQAo5U...yGgbvR] funds 0
+```
+
+3. deployer 주소에 2.1 TON 충전
+4. 풀 컨트랙트 배포, 풀 주소를 받게 됩니다: `Ef-kC0..._WLqgs`:
+
+```
+$ npm run deploy
+```
+
+5. 주소를 .addr로 변환:
+
+```
+$ fift -s ./scripts/fift/str-to-addr.fif Ef-kC0..._WLqgs
+```
+
+(주소를 single-nominator.addr 파일에 저장)
+
+6. deployer private key "./build/deploy.config.json"과 "single-nominator.addr" 파일 백업
+7. "single-nominator.addr"을 "mytoncore/pools/single-nominator-1.addr"로 복사
+8. owner 주소에서 single nominator 주소로 스테이크 전송
+
+### Single Nominator에서 출금하기
+
+지갑을 사용하여 Single Nominator에서 출금하기
+Fift:
+
+1. amount로 "withdraw.boc" 요청 생성:
+
+```bash
+$ fift -s ./scripts/fift/withdraw.fif <withdraw_amount>
+```
+
+2. owner의 지갑에서 요청 생성 및 서명:
+
+```bash
+$ fift -s wallet-v3.fif <my-wallet> <single_nominator_address> <sub_wallet_id> <seqno> <amount=1> -B withdraw.boc
+```
+
+3. 쿼리 브로드캐스트:
+
+```bash
+$ lite-client -C global.config.json -c 'sendfile wallet-query.boc'
+tons
+```
+
+1. amount로 "withdraw.boc" 요청 생성:
+
+```bash
+$ fift -s ./scripts/fift/withdraw.fif <withdraw_amount>
+```
+
+2. single nominator 주소로 요청 전송:
+
+a.
+
+```bash
+$ tons wallet transfer <my-wallet> <single_nominator_address> <amount=1> --body withdraw.boc
+tonkeeper
+```
+
+b.
+
+```
+npm link typescript
+```
+
+c.
+
+```
+npx ts-node scripts/ts/withdraw-deeplink.ts <single-nominator-addr> <withdraw-amount>
+```
+
+d. owner의 휴대폰에서 딥링크 열기
+
+## 풀에 예치하기
+
+**MyTonCtrl**을 사용하여 다음 명령으로 예치할 수 있습니다:
+
+```sh
+MyTonCtrl> mg <from-wallet-name> <pool-account-addr> <amount>
+```
+
+또는
+
+```sh
+MyTonCtrl> deposit_to_pool <pool-addr> <amount>
+```
+
+validator 지갑에서 풀로 예치합니다.
+
+또는 다음 단계를 따르세요:
+
+1. 풀의 페이지 https://tonscan.org/nominator/{pool_address}로 이동합니다.
+
+2. 풀에 대한 정보가 완전히 표시되는지 확인하세요. 풀의 스마트 컨트랙트가 잘못된 경우 정보가 표시되지 않습니다.
+
+3. `ADD STAKE` 버튼을 누르거나 Tonkeeper나 다른 TON 지갑을 사용하여 QR 코드를 스캔하세요.
+
+4. 지갑으로 이동한 후 TON 금액을 입력하고 트랜잭션을 보내세요. 그 후 TON 코인이 스테이킹에 추가됩니다.
+
+지갑이 자동으로 열리지 않는 경우 풀 주소를 복사하여 수동으로 트랜잭션을 보낼 수 있습니다. 아무 TON 지갑을 통해 보내세요. 보낸 트랜잭션에서 1 TON이 예치 처리 수수료로 차감됩니다.
+
+## 자금 출금하기
+
+다음 명령을 사용하여 자금을 출금할 수도 있습니다:
+
+```sh
+MyTonCtrl> withdraw_from_pool <pool-addr> <amount>
+```
+
+또는 트랜잭션을 수동으로 생성하여 보낼 수 있습니다:
+
+<Tabs groupId="code-examples">
+<TabItem value="toncore" label="JS (@ton)">
+
+```js
+import { Address, beginCell, internal, storeMessageRelaxed, toNano } from "@ton/core";
+
+async function main() {
+    const single_nominator_address = Address.parse('single nominator address');
+    const WITHDRAW_OP = 0x1000
+    const amount = 50000
+
+    const messageBody = beginCell()
+        .storeUint(WITHDRAW_OP, 32) // op code for withdrawal
+        .storeUint(0, 64)           // query_id
+        .storeCoins(amount)         // amount to withdraw
+        .endCell();
+
+    const internalMessage = internal({
+        to: single_nominator_address,
+        value: toNano('1'),
+        bounce: true,
+        body: messageBody
+    });
+}
+```
+
+</TabItem>
+
+<TabItem value="tonconnect" label="Golang">
+
+```go
+func WithdrawSingleNominatorMessage(single_nominator_address string, query_id, amount uint64) (*tonconnect.Message, error) {
+
+	const WITHDRAW_OP = 0x1000
+
+	payload, _ := cell.BeginCell().
+		MustStoreUInt(WITHDRAW_OP, 32). // op code for withdrawal
+		MustStoreUInt(query_id, 64).    // query_id
+		MustStoreCoins(amount).         // amount to withdraw
+		EndCell().MarshalJSON()
+
+	msg, err := tonconnect.NewMessage(
+		single_nominator_address,
+		tlb.MustFromTON("1").Nano().String(), // nanocoins to transfer/compute message
+		tonconnect.WithPayload(payload))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return msg, nil
+}
+```
+
+</TabItem>
+
+</Tabs>
+
+## 선거 과정
+
+### 선거 참여하기
+
+Single Nominator Pool에 최소 스테이크 금액을 [예치](/v3/guidelines/smart-contracts/howto/single-nominator-pool#deposit-pool)하세요.
+
+### 선거 참여하기 
+
+Single Nominator Pool에 최소 스테이크 금액을 [예치](/v3/guidelines/smart-contracts/howto/single-nominator-pool#deposit-pool)하세요.
+
+**MyTonCtrl**은 자동으로 선거에 참여합니다. Mainnet에서는 약 18시간마다, Testnet에서는 2시간마다 [Elector 컨트랙트](/v3/documentation/smart-contracts/contracts-specs/governance#elector)로 보내는 스테이크 금액을 설정할 수 있습니다.
+
+```sh
+MyTonCtrl> set stake 90000
+```
+
+**최소 스테이크** 금액은 `status` 명령으로 확인할 수 있습니다.
+
+![](/img/docs/single-nominator/tetsnet-conf.png)
+
+`stake`를 `null`로 설정하면 `stakePercent` 값에 따라 계산됩니다(`status_settings` 명령으로 확인 가능).
+
+선거가 이미 시작되었는지 확인할 수 있습니다:
+
+```bash
+MyTonCtrl> status
+```
+
+그리고 Testnet의 경우:
+
+```bash
+MyTonCtrl> status fast
+```
+
+예시:
+
+![](/img/docs/single-nominator/election-status.png)
+
+선거가 시작되고 Single Nominator Pool이 활성화되면, validator는 다음 라운드 시작 시 **자동으로** Elector 컨트랙트에 **ElectorNewStake** 메시지를 보내야 합니다.
+
+validator 지갑 확인:
+
+```sh
+MyTonCtrl> wl
+Name                  Status  Balance           Ver  Wch  Address
+validator_wallet_001  active  995.828585374     v1   -1   kf_dctjwS4tqWdeG4GcCLJ53rkgxZOGGrdDzHJ_mxPkm_Xct
+```
+
+그런 다음 트랜잭션 기록 확인:
+
+```sh
+MyTonCtrl> vas kf_dctjwS4tqWdeG4GcCLJ53rkgxZOGGrdDzHJ_mxPkm_Xct
+Address                                           Status  Balance        Version
+kf_dctjwS4tqWdeG4GcCLJ53rkgxZOGGrdDzHJ_mxPkm_Xct  active  995.828585374  v1r3
+
+Code hash
+c3b9bb03936742cfbb9dcdd3a5e1f3204837f613ef141f273952aa41235d289e
+
+Time                 Coins   From/To
+39 minutes ago  >>>  1.3     kf_hz3BIXrn5npis1cPX5gE9msp1nMTYKZ3l4obzc8phrBfF
+```
+
+Tonviewer의 Single Nominator 컨트랙트 기록에 있는 이 **ElectorNewStake** 트랜잭션:
+
+![](/img/docs/single-nominator/new-stake.png)
+
+위 예시에서 **MyTonCtrl**은 자동으로 Elector 컨트랙트에 `90000` Toncoin을 스테이크했습니다.
+
+### Validator 상태 확인하기
+
+다음 라운드 시작 시 `status` 명령(Testnet에서는 `status fast`)으로 **MyTonCtrl** validator 상태를 확인하세요.
+
+![](/img/docs/single-nominator/status-validator.png)
+
+노드가 전체 validator가 되었는지 다음 조건을 확인하여 확인할 수 있습니다:
+
+1. **Validator 효율성** - 로컬 validator의 효율성이 초록색이어야 하며 `n/a`가 아니어야 합니다.
+2. **Validator 인덱스** - validator 인덱스는 -1보다 커야 합니다.
+
+### 수익 확인하기
+
+라운드 종료 시 **MyTonCtrl**은 Elector 컨트랙트에 **ElectorRecoverStakeRequest** 메시지를 보냅니다. Elector는 `stake + profit` 금액의 Toncoin을 Single Nominator Pool로 응답합니다.
+
+![](/img/docs/single-nominator/validator-profit-vas.png)
+
+`vas` 명령으로 풀의 트랜잭션 기록도 확인할 수 있습니다:
+
+![](/img/docs/single-nominator/validator-profit-vas.png)
+
+### 참여 중단하기
+
+validator 역할을 더 이상 수행하고 싶지 않은 경우:
+
+1. Validator 모드 비활성화:
+
+```bash
+MyTonCtrl> disable_mode validator
+```
+
+2. Single Nominator 컨트랙트에서 owner 지갑으로 [모든 자금을 출금](/v3/guidelines/smart-contracts/howto/single-nominator-pool#withdraw-funds)하세요.
+
+## 일반 Validator를 Nominator Pool 모드로 전환하기
+
+1. 선거 참여를 중단하기 위해 `validator` 모드를 비활성화하세요.
+2. elector로부터 두 스테이크 모두가 반환될 때까지 기다리세요.
+3. 다음 [단계](/v3/guidelines/smart-contracts/howto/single-nominator-pool#set-up-single-nominator)를 진행하세요.
+
+## Single Nominator Pool 클라이언트
+
+- 컨트랙트를 배포하고 상호작용하기 위한 간단한 오픈소스 클라이언트가 있습니다 - https://github.com/orbs-network/single-nominator-client
+- 문제가 발생하면 [Telegram](https://t.me/single_nominator)에서 팀에게 지원을 요청할 수 있습니다
+
+## Vesting 컨트랙트와 함께 Single Nominator Pool 실행하기
+
+처음에는 Vesting 컨트랙트의 owner가 자신의 Wallet 컨트랙트로 관리할 수 있습니다.
+이 구성에서는 여러 컨트랙트의 상호작용을 관리할 것입니다.
+
+| 컨트랙트                    | 관리 인터페이스                                    |
+| ----------------------- | ------------------------------------------- |
+| `validator_wallet`      | Mytonctrl                                   |
+| `vesting`               | [vesting.ton.org](https://vesting.ton.org/) |
+| `owner_wallet`          | app e.g.:Tonkeeper, MyTonWallet             |
+| `single_nominator_pool` | MyTonctrl                                   |
+
+- `owner_wallet` - `vesting`을 소유하는 TON 지갑입니다.
+
+:::caution
+Vesting `owner_wallet`의 복구 구문을 완전히 백업했는지 확인하세요. `owner_wallet` 접근 권한을 잃으면 `vesting` 자금 관리 접근도 잃게 되며 복구할 수 없습니다.
+:::
+
+1. Full Node를 실행하고 노드 동기화를 기다립니다.
+2. Validator 모드를 활성화하고 설치 중에 생성된 wallet_v1 주소를 가져옵니다 - `Mytonctrl wl`로 검색합니다.
+3. `validator_wallet`에 200 TON(월간 비용)을 보냅니다.
+4. `single_nominator_pool` 생성:
+
+```bash
+MyTonCtrl> new_single_pool <pool-name> <vesting>
+```
+
+예시:
+
+```
+MyTonCtrl> new_single_pool my_s_pool EQD...lme-D
+```
+
+5. `single_nominator_pool` 활성화:
+
+```bash
+MyTonCtrl> activate_single_pool <pool-name>
+```
+
+예시:
+
+```
+MyTonCtrl> activate_single_pool my_s_pool
+```
+
+6. 온체인에서 `single_nominator_pool` 주소를 받은 후, Vesting 컨트랙트를 보낸 사람에게 `single_nominator_pool` 화이트리스트 등록을 요청합니다.
+7. `single_nominator_pool`이 화이트리스트에 등록되면 [vesting.ton.org](https://vesting.ton.org/)를 통해 `vesting` 컨트랙트에서 `single_nominator_pool`로 잠긴 토큰을 보낼 수 있습니다.
+   - a. [vesting.ton.org](https://vesting.ton.org/)에 `owner_wallet`으로 연결합니다.
+   - b. `vesting`에서 10 TON을 `single_nominator_pool`로 보내 테스트 예치를 합니다.
+   - c. [vesting.ton.org](https://vesting.ton.org/) 인터페이스에서 메시지 [amount 0, comment `w`]로 나머지 자금(~8 TON)을 `vesting`으로 반환합니다.
+   - d. `vesting`에서 나머지를 받았는지 확인합니다.
+8. 두 사이클 모두에 필요한 TON 양을 `vesting` 컨트랙트에서 `single_nominator_pool`로 전송합니다.
+9. validator들의 투표를 기다립니다.
