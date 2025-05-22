@@ -1,5 +1,9 @@
 # Разбор метаданных
 
+:::warning
+Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
+:::
+
 Стандарт метаданных, который включает NFT, коллекции NFT и Jettons, описан в TON Enhancement Proposal 64 [TEP-64] (https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md).
 
 В TON сущности могут иметь три типа метаданных: on-chain, semi-chain, и off-chain.
