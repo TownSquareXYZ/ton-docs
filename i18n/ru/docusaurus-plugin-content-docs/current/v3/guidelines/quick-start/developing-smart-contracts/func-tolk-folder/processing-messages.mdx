@@ -65,18 +65,17 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
     int flags = cs~load_uint(4);
     slice sender_address = cs~load_msg_addr();
 
-```
-;; check if message was send by owner
-if (equal_slices_bits(sender_address, owner_address)) {
-  ;;owner operations
-  return
-} else if (equal_slices_bits(sender_address, other_role_address)){
-  ;;other role operations
-  return
-} else {
-  ;;anyone else operations
-  return
-}
+    ;; check if message was send by owner
+    if (equal_slices_bits(sender_address, owner_address)) {
+      ;;owner operations
+      return
+    } else if (equal_slices_bits(sender_address, other_role_address)){
+      ;;other role operations
+      return
+    } else {
+      ;;anyone else operations
+      return
+    }
 
 ;;no known operation were obtained for presented role
 ;;0xffff is not standard exit code, but is standard practice among TON developers
@@ -130,7 +129,6 @@ const int op::decrement = 2;
         return; ;; Ничего не делаем с пустыми сообщениями
 }
 
-```
 ;; Step 2: Extract the operation code
 int op = in_msg_body~load_uint(32);
 
@@ -390,7 +388,7 @@ describe('HelloWorld', () => {
 });
 ```
 
-{/\*Этот тест описывает стандартный поток транзакций любой `многоконтрактной` системы:
+{/*Этот тест описывает стандартный поток транзакций любой `многоконтрактной` системы:
 
 1. Отправьте внешнее сообщение для обращения к логике смарт-контракта извне блокчейна.
 2. Инициируйте отправку одного или нескольких внутренних сообщений другим контрактам.  
@@ -400,7 +398,7 @@ describe('HelloWorld', () => {
 
 <div style={{marginBottom: '30px'}} align="center">
   <img src="/img/tutorials/quick-start/multi-contract.png" alt="Multi-contract scheme"/>
-</div>*/}
+</div> */}
 
 Проверьте, что все примеры верны, запустив тестовый скрипт:
 

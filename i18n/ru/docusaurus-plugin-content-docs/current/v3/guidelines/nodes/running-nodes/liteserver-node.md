@@ -3,6 +3,10 @@ import TabItem from '@theme/TabItem';
 
 # Узел Liteserver
 
+:::warning
+Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
+:::
+
 :::info
 Прочитайте о [Полном узле](/v3/guidelines/nodes/running-nodes/full-node) перед этой статьей
 :::
