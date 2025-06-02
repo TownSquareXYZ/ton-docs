@@ -1,98 +1,101 @@
-# ADNL TCP - 轻服务器
+import Feedback from '@site/src/components/Feedback';
 
-这是构建TON网络中所有交互的底层协议，它可以在任何协议之上运行，但最常用于TCP和UDP之上。UDP用于节点间通信，而TCP用于与轻服务器的通信。
+# ADNL TCP - liteserver
 
-现在我们将分析基于TCP的ADNL，并学习如何直接与轻服务器进行交互。
+This is the low-level protocol that supports all interactions within the TON network. While it can operate on top of any protocol, it is most commonly used in conjunction with TCP and UDP. Typically, UDP facilitates communication between nodes, whereas TCP is employed for communication with liteservers.
 
-在ADNL的TCP版本中，网络节点使用ed25519公钥作为地址，并使用通过椭圆曲线Diffie-Hellman过程 - ECDH获得的共享密钥建立连接。
+In this section, we will analyze how ADNL operates over TCP and learn how to interact directly with liteservers.
 
-## 数据包结构
+In the TCP version of ADNL, network nodes utilize public keys (ed25519) as their addresses. Connections are established using a shared key obtained through the Elliptic Curve Diffie-Hellman (ECDH) procedure.
+
+## Packet structure
 
 除握手外，每个ADNL TCP数据包具有以下结构：
 
-- 小端模式下的4字节标签大小 (N)
+- 4 bytes of packet size in little-endian (N)
 - 32字节随机数 [[?]](## "随机字节用于防止校验和攻击")
 - (N - 64) 字节的有效载荷
 - 32字节SHA256校验和，来自随机数和有效载荷
 
-整个数据包，包括大小，均为**AES-CTR**加密。解密后，需要检查校验和是否与数据匹配，要检查，只需自己计算校验和并将结果与我们在数据包中拥有的进行比较。
+The entire packet, including its size, is encrypted using **AES-CTR**.
 
-握手数据包是一个例外，它以部分未加密的形式传输，并在下一章中描述。
+After decrypting the packet, you must verify that the checksum matches the data. To do this, simply calculate the checksum yourself and compare it to the checksum provided in the packet.
+
+The handshake packet is an exception; it is transmitted partially unencrypted and is detailed in the next chapter.
 
 ## 建立连接
 
-要建立连接，我们需要知道服务器的ip、端口和公钥，并生成自己的ed25519私钥和公钥。
+To establish a connection, we need to know the server's IP, port, and public key and generate our own private and public key, ed25519.
 
-服务器的公共数据如ip、端口和密钥可以从[全局配置](https://ton-blockchain.github.io/global.config.json)中获得。配置中的IP以数字形式出现，可以使用例如[此工具](https://www.browserling.com/tools/dec-to-ip)转换为常规形式。配置中的公钥为base64格式。
+Public server data such as IP, port, and key can be obtained from the [global config](https://ton-blockchain.github.io/global.config.json). The IP in the config, which is numerical, can be converted to normal form using,(for example) [this tool](https://www.browserling.com/tools/dec-to-ip). The public key in the config is in base64 format.
 
 客户端生成160个随机字节，其中一些将被双方用作AES加密的基础。
 
-由此，创建了2个永久的AES-CTR密码，握手后将被双方用来加密/解密消息。
+Two permanent AES-CTR ciphers are created, which the parties will use to encrypt/decrypt messages after the handshake.
 
 - 密码A - 密钥为0 - 31字节，iv为64 - 79字节
 - 密码B - 密钥为32 - 63字节，iv为80 - 95字节
 
-密码应用的顺序如下：
+The ciphers are utilized in the following order:
 
 - 服务器使用密码A加密它发送的消息。
-- 客户端使用密码A解密收到的消息。
+- Cipher A is used by the client to decrypt messages it receives.
 - 客户端使用密码B加密它发送的消息。
-- 服务器使用密码B解密收到的消息。
+- Cipher B is used by the server to decrypt messages it receives.
 
 要建立连接，客户端必须发送一个包含以下内容的握手数据包：
 
-- [32字节] **服务器密钥ID** [[详情]](#获取密钥ID)
+- [32 bytes] **Server key ID** [[see details here]](#getting-key-id)
 - [32字节] **我们的ed25519公钥**
 - [32字节] **我们160字节的SHA256哈希**
-- [160字节] **我们加密的160字节** [[详情]](#handshake-packet-data-encryption)
+- [160 bytes] **Our 160 bytes encrypted** [[see details here]](#handshake-packet-data-encryption)
 
-收到握手数据包后，服务器将执行相同的操作，接收ECDH密钥，解密160字节并创建2个永久密钥。如果一切顺利，服务器将用一个没有有效载荷的空ADNL数据包作为回应，为了解密该数据包（以及后续的数据包），我们需要使用其中一个永久密码。
+When receiving a handshake packet, the server will do the same actions: receive an ECDH key, decrypt 160 bytes, and create 2 permanent keys. If everything works out, the server will respond with an empty ADNL packet, without payload, to decrypt which (as well as subsequent ones) we need to use one of the permanent ciphers.
 
 从这一点开始，连接可以被视为已建立。
 
-在建立了连接后，我们可以开始接收信息；TL语言用于序列化数据。
+After we have established a connection, we can start receiving information; the TL language serializes data.
 
-[更多关于TL的信息](/develop/data-formats/tl)
+[Learn more about TL here](/v3/documentation/data-formats/tl).
 
-## Ping&Pong
+## Ping and pong
 
 最佳做法是每5秒发送一次ping数据包。这是在没有数据传输时保持连接的必要条件，否则服务器可能终止连接。
 
-ping数据包与其他所有数据包一样，根据[上文](#packet-structure)描述的标准模式构建，并作为有效载荷携带请求ID和ping ID。
+Like all the others, the ping packet is built according to the standard schema described [above](#packet-structure) and carries the request ID and ping ID as payload data.
 
-让我们找到ping请求的所需模式[此处](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L35)，并计算模式id为
-`crc32_IEEE("tcp.ping random_id:long = tcp.Pong")`。转换为小端模式字节后，我们得到**9a2b084d**。
+Let's find the desired schema for the ping request [here](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L35) and calculate the schema id as `crc32_IEEE("tcp.ping random_id:long = tcp.Pong")`. When converted to little endian bytes, we get **9a2b084d**.
 
-因此，我们的ADNL ping数据包将如下所示：
+Therefore, our ADNL ping packet will look like this:
 
-- 小端模式下的4字节标签大小 -> 64 + (4+8) = **76**
+- 4 bytes of packet size in little-endian -> 64 + (4+8) = **76**
 - 32字节随机数 -> 随机的32字节
 - 4字节的ID TL模式 -> **9a2b084d**
-- 8字节的请求id -> 随机的uint64数字
+- 8 bytes of request-id -> random uint64 number
 - 32字节的SHA256校验和，来自随机数和有效载荷
 
 我们发送我们的数据包并等待[tcp.pong](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L23)，`random_id`将与我们在ping数据包中发送的相同。
 
-## 从轻服务器接收信息
+## Receiving information from a liteserver
 
-旨在从区块链获取信息的所有请求都包裹在[Liteserver Query](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L83)模式中，该模式又被包裹在[ADNL Query](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L22)模式中。
+All requests that are aimed at obtaining information from the blockchain are wrapped in [Liteserver query](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L83) schema, which in turn is wrapped in [ADNL query](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L22) schema.
 
-LiteQuery:
-`liteServer.query data:bytes = Object`, id **df068c79**
+- LiteQuery:
+  `liteServer.query data:bytes = Object`, id **df068c79**
+- ADNLQuery:
+  `adnl.message.query query_id:int256 query:bytes = adnl.Message`, id **7af98bb4**
 
-ADNLQuery:
-`adnl.message.query query_id:int256 query:bytes = adnl.Message`, id **7af98bb4**
+LiteQuery is passed inside ADNLQuery as `query:bytes`, and the final query is passed inside LiteQuery as `data:bytes`.
 
-LiteQuery作为`query:bytes`传递给ADNLQuery内部，最终查询作为`data:bytes`传递给LiteQuery内部。
-
-[解析TL中的编码字节](/develop/data-formats/tl)
+[Learn more about parsing encoding bytes in TL here](/v3/documentation/data-formats/tl).
 
 ### getMasterchainInfo
 
-现在，由于我们已经知道如何为Lite API生成TL数据包，我们可以请求有关当前TON masterchain块的信息。
-masterchain区块在许多后续请求中用作输入参数，以指示我们需要信息的状态（时刻）。
+Since we already know how to generate TL packets for the lite API, we can request information about the current TON MasterChain block.
 
-我们正在寻找[我们需要的TL模式](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L60)，计算其ID并构建数据包：
+The MasterChain block is used in many further requests as an input parameter to indicate the state (moment) in which we need information.
+
+We are looking for the [TL schema we require](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L60), calculate its ID and build the packet:
 
 - 小端模式下的4字节标签大小 -> 64 + (4+32+(1+4+(1+4+3)+3)) = **116**
 - 32字节随机数 -> 随机的32字节
@@ -152,8 +155,9 @@ ac2253594c86bd308ed631d57a63db4ab21279e9382e416128b58ee95897e164     -> sha256
 
 ### runSmcMethod
 
-我们已经知道如何获取masterchain区块，所以现在我们可以调用任何轻服务器方法。
-让我们分析**runSmcMethod** - 这是一个调用智能合约中的函数并返回结果的方法。在这里，我们需要了解一些新的数据类型，如[TL-B](/develop/data-formats/tl-b)、[Cell](/develop/data-formats/cell-boc#cell)和[BoC](/develop/data-formats/cell-boc#bag-of-cells)。
+We already know how to get the MasterChain block, so now we can call any liteserver methods.
+
+Let's analyze **runSmcMethod** - this is a method that calls a function from a smart contract and returns a result. Here we need to understand some new data types such as [TL-B](/v3/documentation/data-formats/tlb/tl-b-language), [Cell](/v3/documentation/data-formats/tlb/cell-boc#cell) and [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells).
 
 要执行智能合约方法，我们需要构建并发送使用TL模式的请求：
 
@@ -169,19 +173,19 @@ liteServer.runMethodResult mode:# id:tonNode.blockIdExt shardblk:tonNode.blockId
 
 在请求中，我们看到以下字段：
 
-1. mode:# - uint32位掩码，指示我们希望在响应中看到的内容，例如，`result:mode.2?bytes`只有在索引为2的位设置为一时才会出现在响应中。
-2. id:tonNode.blockIdExt - 我们在前一章中获得的主区块状态。
-3. account:[liteServer.accountId](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L27) - 工作链和智能合约地址数据。
-4. method_id:long - 8字节，其中写入了调用方法名称的crc16与XMODEM表+设置了第17位 [[计算]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/ton/runmethod.go#L16)
-5. params:bytes - [Stack](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783)以[BoC](/develop/data-formats/cell-boc#bag-of-cells)序列化，其中包含调用方法的参数。[[实现示例]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/tlb/stack.go)
+- mode:# - uint32位掩码，指示我们希望在响应中看到的内容，例如，`result:mode.2?bytes`只有在索引为2的位设置为一时才会出现在响应中。
+- id:tonNode.blockIdExt - our master block state that we got in the previous chapter.
+- account:[liteServer.accountId](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L27) - 工作链和智能合约地址数据。
+- method_id:long - 8字节，其中写入了调用方法名称的crc16与XMODEM表+设置了第17位 [[计算]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/ton/runmethod.go#L16)
+- params:bytes - [Stack](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783)以[BoC](/develop/data-formats/cell-boc#bag-of-cells)序列化，其中包含调用方法的参数。[[实现示例]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/tlb/stack.go)
 
 例如，我们只需要`result:mode.2?bytes`，那么我们的 mode 将等于0b100，即4。在响应中，我们将获得：
 
-1. mode:# -> 发送的内容 - 4。
-2. id:tonNode.blockIdExt -> 我们的主区块，针对该区块执行了方法
-3. shardblk:tonNode.blockIdExt -> 托管合约账户的分片区块
-4. exit_code:int -> 4字节，是执行方法时的退出代码。如果一切顺利，则为0，如果不是，则等于异常代码。
-5. result:mode.2?bytes -> [Stack](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783)以[BoC](/develop/data-formats/cell-boc#bag-of-cells)序列化，其中包含方法返回的值。
+- mode:# -> 发送的内容 - 4。
+- id:tonNode.blockIdExt -> 我们的主区块，针对该区块执行了方法
+- shardblk:tonNode.blockIdExt -> 托管合约账户的分片区块
+- exit_code:int -> 4字节，是执行方法时的退出代码。如果一切顺利，则为0，如果不是，则等于异常代码。
+- result:mode.2?bytes -> [Stack](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783)以[BoC](/develop/data-formats/cell-boc#bag-of-cells)序列化，其中包含方法返回的值。
 
 让我们分析调用合约`EQBL2_3lMiyywU17g-or8N7v9hDmPCpttzBPE2isF2GTzpK4`的`a2`方法并获取结果：
 
@@ -223,16 +227,15 @@ FunC中的方法代码：
 }
 ```
 
-如果我们解析它，我们将得到2个cell类型的值，这是我们的FunC方法返回的。根cell的前3字节`000002` - 是栈的深度，即2。这意味着该方法返回了2个值。
+If we parse it, we will get 2 values of the cell type, which our FunC method returns. The first 3 bytes of the root cell `000002` - is the depth of the stack, that is 2. This means that the method returned 2 values.
 
-我们继续解析，接下来的8位（1字节）是当前堆栈级别的值类型。对于某些类型，它可能需要2个字节。可能的选项可以在[schema](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L766)中看到。
-在我们的案例中，我们有`03`，这意味着：
+We continue parsing, the next 8 bits (1 byte) is the value type at the current stack level. For some types, it may take 2 bytes. Possible options can be seen in [schema](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L766). In our case, we have `03`, which means:
 
 ```tlb
 vm_stk_cell#03 cell:^Cell = VmStackValue;
 ```
 
-所以我们的值类型是 - cell，并且根据模式，它将值本身作为引用存储。但是，如果我们看看栈元素存储模式：
+Hence, the type of our value is - cell, and, according to the schema, it stores the value itself as a reference. However, if we look at the stack element storage schema:
 
 ```tlb
 vm_stk_cons#_ {n:#} rest:^(VmStackList n) tos:VmStackValue = VmStackList (n + 1);
@@ -253,7 +256,7 @@ vm_stk_cons#_ {n:#} rest:^(VmStackList n) tos:VmStackValue = VmStackList (n + 1)
 
 请注意，它们的顺序是相反的。调用函数时也需要以相反的顺序传递参数，与我们在FunC代码中看到的顺序相反。
 
-[实现示例](https://github.com/xssnick/tonutils-go/blob/46dbf5f820af066ab10c5639a508b4295e5aa0fb/ton/runmethod.go#L24)
+[Please see implementation example here](https://github.com/xssnick/tonutils-go/blob/46dbf5f820af066ab10c5639a508b4295e5aa0fb/ton/runmethod.go#L24)
 
 ### getAccountState
 
@@ -265,11 +268,11 @@ vm_stk_cons#_ {n:#} rest:^(VmStackList n) tos:VmStackValue = VmStackList (n + 1)
 liteServer.accountState id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_proof:bytes proof:bytes state:bytes = liteServer.AccountState;
 ```
 
-1. `id` - 我们的主链区块，我们从中获取了数据。
-2. `shardblk` - 我们账户所在的工作链分片区块，我们从中接收数据。
-3. `shard_proof` - 分片区块的Merkle证明。
-4. `proof` - 账户状态的Merkle证明。
-5. `state` - [BoC](/develop/data-formats/cell-boc#bag-of-cells) TL-B [账户状态模式](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L232)。
+- `id` - our master block, regarding which we got the data.
+- `shardblk` - WorkChain shard block where our account is located, regarding which we received data.
+- `shard_proof` - Merkle proof of a shard block.
+- `proof` - Merkle proof of account status.
+- `state` - [BoC](/develop/data-formats/cell-boc#bag-of-cells) TL-B [账户状态模式](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L232)。
 
 我们需要的所有数据都在state中，我们将对其进行分析。
 
@@ -279,7 +282,7 @@ liteServer.accountState id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_
 b5ee9c720102350100051e000277c0021137b0bc47669b3267f1de70cbb0cef5c728b8d8c7890451e8613b2d899827026a886043179d3f6000006e233be8722201d7d239dba7d818134001020114ff00f4a413f4bcf2c80b0d021d0000000105036248628d00000000e003040201cb05060013a03128bb16000000002002012007080043d218d748bc4d4f4ff93481fd41c39945d5587b8e2aa2d8a35eaf99eee92d9ba96004020120090a0201200b0c00432c915453c736b7692b5b4c76f3a90e6aeec7a02de9876c8a5eee589c104723a18020004307776cd691fbe13e891ed6dbd15461c098b1b95c822af605be8dc331e7d45571002000433817dc8de305734b0c8a3ad05264e9765a04a39dbe03dd9973aa612a61f766d7c02000431f8c67147ceba1700d3503e54c0820f965f4f82e5210e9a3224a776c8f3fad1840200201200e0f020148101104daf220c7008e8330db3ce08308d71820f90101d307db3c22c00013a1537178f40e6fa1f29fdb3c541abaf910f2a006f40420f90101d31f5118baf2aad33f705301f00a01c20801830abcb1f26853158040f40e6fa120980ea420c20af2670edff823aa1f5340b9f2615423a3534e2a2d2b2c0202cc12130201201819020120141502016616170003d1840223f2980bc7a0737d0986d9e52ed9e013c7a21c2b2f002d00a908b5d244a824c8b5d2a5c0b5007404fc02ba1b04a0004f085ba44c78081ba44c3800740835d2b0c026b500bc02f21633c5b332781c75c8f20073c5bd0032600201201a1b02012020210115bbed96d5034705520db3c8340201481c1d0201201e1f0173b11d7420c235c6083e404074c1e08075313b50f614c81e3d039be87ca7f5c2ffd78c7e443ca82b807d01085ba4d6dc4cb83e405636cf0069006031003daeda80e800e800fa02017a0211fc8080fc80dd794ff805e47a0000e78b64c00015ae19574100d56676a1ec40020120222302014824250151b7255b678626466a4610081e81cdf431c24d845a4000331a61e62e005ae0261c0b6fee1c0b77746e102d0185b5599b6786abe06fedb1c68a2270081e8f8df4a411c4605a400031c34410021ae424bae064f613990039e2ca840090081e886052261c52261c52265c4036625ccd88302d02012026270203993828290111ac1a6d9e2f81b609402d0015adf94100cc9576a1ec1840010da936cf0557c1602d0015addc2ce0806ab33b50f6200220db3c02f265f8005043714313db3ced542d34000ad3ffd3073004a0db3c2fae5320b0f26212b102a425b3531cb9b0258100e1aa23a028bcb0f269820186a0f8010597021110023e3e308e8d11101fdb3c40d778f44310bd05e254165b5473e7561053dcdb3c54710a547abc2e2f32300020ed44d0d31fd307d307d33ff404f404d10048018e1a30d20001f2a3d307d3075003d70120f90105f90115baf2a45003e06c2170542013000c01c8cbffcb0704d6db3ced54f80f70256e5389beb198106e102d50c75f078f1b30542403504ddb3c5055a046501049103a4b0953b9db3c5054167fe2f800078325a18e2c268040f4966fa52094305303b9de208e1638393908d2000197d3073016f007059130e27f080705926c31e2b3e63006343132330060708e2903d08308d718d307f40430531678f40e6fa1f2a5d70bff544544f910f2a6ae5220b15203bd14a1236ee66c2232007e5230be8e205f03f8009322d74a9802d307d402fb0002e83270c8ca0040148040f44302f0078e1771c8cb0014cb0712cb0758cf0158cf1640138040f44301e201208e8a104510344300db3ced54925f06e234001cc8cb1fcb07cb07cb3ff400f400c9
 ```
 
-[解析此BoC](/develop/data-formats/cell-boc#bag-of-cells)并获取
+[Parse this BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells) and get:
 
 <details>
   <summary>large cell</summary>
@@ -419,7 +422,7 @@ account_active$1 _:StateInit = AccountState;
 account_frozen$01 state_hash:bits256 = AccountState;
 ```
 
-我们可以看到，cell包含很多数据，但我们将分析主要情况并获取余额。其余的可以以类似的方式进行分析。
+As we can see, the cell contains a lot of data, but we will analyze the main cases and get a balance. You can analyze the rest in a similar way.
 
 让我们开始解析。在根cell数据中，我们有：
 
@@ -433,7 +436,7 @@ C0021137B0BC47669B3267F1DE70CBB0CEF5C728B8D8C7890451E8613B2D899827026A886043179D
 11000000000000100001000100110111101100001011110001000111011001101001101100110010011001111111000111011110011100001100101110110000110011101111010111000111001010001011100011011000110001111000100100000100010100011110100001100001001110110010110110001001100110000010011100000010011010101000100001100000010000110001011110011101001111110110000000000000000000000110111000100011001110111110100001110010001000100000000111010111110100100011100111011011101001111101100000011000000100110
 ```
 
-让我们看看我们的主要TL-B结构，我们看到我们有两个可能的选项 - `account_none$0`或`account$1`。我们可以通过读取符号$后声明的前缀来理解我们拥有哪个选项，在我们的例子中，它是1位。如果是0，则我们拥有`account_none`，如果是1，则`account`。
+Let's look at our main TL-B structure, we see that we have two options for what can be there - `account_none$0` or `account$1`. We can understand which option we have by reading the prefix declared after the symbol $, in our case it is 1 bit. If there is 0, then we have `account_none`, or 1, then `account`.
 
 我们上面的数据中的第一个bit=1，所以我们正在处理`account$1`，将使用模式：
 
@@ -442,34 +445,34 @@ account$1 addr:MsgAddressInt storage_stat:StorageInfo
           storage:AccountStorage = Account;
 ```
 
-接下来我们有`addr:MsgAddressInt`，我们看到MsgAddressInt也有几个选项：
+Next, we have `addr:MsgAddressInt`, we see that for MsgAddressInt we also have several options:
 
 ```tlb
 addr_std$10 anycast:(Maybe Anycast) workchain_id:int8 address:bits256  = MsgAddressInt;
 addr_var$11 anycast:(Maybe Anycast) addr_len:(## 9) workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
 ```
 
-要理解应该使用哪一个，我们像上次一样，读取前缀位，这次我们读取2个位。我们去掉已读的位，“1000000...”剩下，我们读取前2个位得到“10”，这意味着我们正在处理`addr_std$10`。
+To determine which structure to work with, we follow a similar approach as last time by reading the prefix bits. This time, we read 2 bits. After processing the first bit, we have `1000000...` remaining. Reading the first 2 bits yields `10`, indicating that we are working with `addr_std$10`.
 
-接下来我们需要解析`anycast:(Maybe Anycast)`，Maybe意味着我们应该读取1位，如果是1，则读取Anycast，否则跳过。我们剩余的位是“00000...”，读取1位，它是0，所以我们跳过Anycast。
+Next, we encounter `anycast:(Maybe Anycast)`. The "Maybe" indicates that we should read 1 bit; if it's 1, we read `Anycast`; if it's 0, we skip it. After processing, our remaining bits are `00000...`. We read 1 bit and find it to be 0, so we skip reading `Anycast`.
 
-接下来，我们有`workchain_id:int8`，这里很简单，我们读取8个位，这将是工作链ID。我们读取接下来的8个位，全部为零，所以工作链为0。
+Now, we move on to `workchain_id: int8`. This is straightforward— we read 8 bits to obtain the WorkChain ID. The next 8 bits are all zeros, so the WorkChain ID is 0.
 
-接下来，我们读取`address:bits256`，这是地址的256个位，与`workchain_id`一样。在读取时，我们得到`21137B0BC47669B3267F1DE70CBB0CEF5C728B8D8C7890451E8613B2D8998270`的十六进制表示。
+Following this, we read `address: bits256`, which consists of 256 bits for the address, similar to how we handled the `workchain_id`. Upon reading, we receive `21137B0BC47669B3267F1DE70CBB0CEF5C728B8D8C7890451E8613B2D8998270` in hexadecimal representation.
 
-我们读取了地址`addr:MsgAddressInt`，然后我们有`storage_stat:StorageInfo`来自主结构，它的模式是：
+Next, we read the address `addr: MsgAddressInt` and then proceed to `storage_stat: StorageInfo` from the main structure. Its schema is:
 
 ```tlb
 storage_info$_ used:StorageUsed last_paid:uint32 due_payment:(Maybe Grams) = StorageInfo;
 ```
 
-首先是`used:StorageUsed`，它的模式是：
+First, we have `used:StorageUsed`, along with its schema:
 
 ```tlb
 storage_used$_ cells:(VarUInteger 7) bits:(VarUInteger 7) public_cells:(VarUInteger 7) = StorageUsed;
 ```
 
-这是用于存储账户数据的cell和位的数量。每个字段都定义为`VarUInteger 7`，这意味着动态大小的uint，但最多为7位。你可以根据模式了解它是如何排列的：
+This is the number of cells and bits used to store account data. Each field is defined as `VarUInteger 7`, which means a uint of dynamic size, but a maximum of 7 bits. You can understand how it is arranged according to the schema:
 
 ```tlb
 var_uint$_ {n:#} len:(#< n) value:(uint (len * 8)) = VarUInteger n;
@@ -493,8 +496,7 @@ account_storage$_ last_trans_lt:uint64 balance:CurrencyCollection state:AccountS
 currencies$_ grams:Grams other:ExtraCurrencyCollection = CurrencyCollection;
 ```
 
-从这里我们将读取`grams:Grams`，这将是以 nanotones 计的账户余额。
-`grams:Grams`是`VarUInteger 16`，要存储16（二进制形式`10000`，减去1得到`1111`），那么我们读取前4个位，并将得到的值乘以8，然后读取接收到的位数，它是我们的余额。
+From here we will read `grams:Grams` which will be the account balance in nano-tones. `grams:Grams` is `VarUInteger 16`, to store 16 (in binary form `10000`, subtracting 1 we get `1111`), then we read the first 4 bits, and multiply the resulting value by 8, then we read the received number of bits, it is our balance.
 
 让我们根据我们的数据分析剩余的位：
 
@@ -508,7 +510,7 @@ currencies$_ grams:Grams other:ExtraCurrencyCollection = CurrencyCollection;
 
 ### 其他方法
 
-现在，学习了所有信息，您也可以调用并处理其他轻服务器方法的响应。同样的原理 :)
+After studying all the information, you can call and process responses for other liteserver methods using the same principle.
 
 ## 握手的其他技术细节
 
@@ -526,10 +528,9 @@ pub.unenc data:bytes = PublicKey   -- ID 0a451fb6
 pk.aes key:int256 = PrivateKey     -- ID 3751e8a5
 ```
 
-例如，对于握手中使用的ED25519类型密钥，密钥ID将是
-**[0xC6, 0xB4, 0x13, 0x48]** 和 **公钥**的SHA256哈希（36字节数组，前缀+密钥）
+As an example, for keys of type ed25519 that are used for handshake, the key ID will be the SHA256 hash from **[0xC6, 0xB4, 0x13, 0x48]** and **public key**, (36 byte array, prefix + key).
 
-[代码示例](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L16)
+[Please see code example](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L16).
 
 ### 握手数据包数据加密
 
@@ -544,7 +545,7 @@ pk.aes key:int256 = PrivateKey     -- ID 3751e8a5
 
 密码组装后，我们用它加密我们的160字节。
 
-[代码示例](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/connection.go#L361)
+[Please see code example](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/connection.go#L361).
 
 ### 使用ECDH获取共享密钥
 
@@ -552,20 +553,23 @@ pk.aes key:int256 = PrivateKey     -- ID 3751e8a5
 
 DH的本质是获取共享的密钥，而不暴露私人信息。我将给出一个这是如何发生的示例，以最简化的形式。假设我们需要生成我们和服务器之间的共享密钥，过程将如下：
 
-1. 我们生成secret和公共数字，如**6**和**7**
-2. 服务器生成secret和公共数字，如**5**和**15**
-3. 我们与服务器交换公共数字，发送**7**给服务器，它发送给我们**15**。
-4. 我们计算：**7^6 mod 15 = 4**
-5. 服务器计算：**7^5 mod 15 = 7**
-6. 我们交换收到的数字，我们给服务器**4**，它给我们**7**
-7. 我们计算**7^6 mod 15 = 4**
-8. 服务器计算：**4^5 mod 15 = 4**
-9. 共享密钥 = **4**
+- 我们生成secret和公共数字，如**6**和**7**
+- 服务器生成secret和公共数字，如**5**和**15**
+- 我们与服务器交换公共数字，发送**7**给服务器，它发送给我们**15**。
+- 我们计算：**7^6 mod 15 = 4**
+- 服务器计算：**7^5 mod 15 = 7**
+- 我们交换收到的数字，我们给服务器**4**，它给我们**7**
+- 我们计算**7^6 mod 15 = 4**
+- 服务器计算：**4^5 mod 15 = 4**
+- 共享密钥 = **4**
 
 为了简洁起见，将省略ECDH本身的细节。它是通过在曲线上找到一个共同点，使用两个密钥，私钥和公钥来计算的。如果感兴趣，最好单独阅读。
 
-[代码示例](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L32)
+[Please see code example](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L32).
 
 ## 参考资料
 
-*这里是[Oleg Baranov](https://github.com/xssnick)撰写的原始文章的[链接](https://github.com/xssnick/ton-deep-doc/blob/master/ADNL-TCP-Liteserver.md)。*
+Here is a [link to the original article](https://github.com/xssnick/ton-deep-doc/blob/master/ADNL-TCP-Liteserver.md) - *[Oleg Baranov](https://github.com/xssnick)*.
+
+<Feedback />
+
