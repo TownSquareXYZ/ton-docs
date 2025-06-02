@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 
 # Telegram 机器人的 TON Connect - Python
@@ -10,9 +12,11 @@ import Button from '@site/src/components/button'
 
 打开演示机器人
 
+打开演示机器人
+
 </Button>
 
-<Button href="https://github.com/yungwine/ton-connect-bot" colorType={'secondary'} sizeType={'sm'}>
+查看 GitHub
 
 查看 GitHub
 
@@ -575,3 +579,6 @@ async def connect_wallet(message: Message, wallet_name: str):
 
 - [完整机器人代码](https://github.com/yungwine/ton-connect-bot)
 - [准备信息](/v3/guidelines/ton-connect/guidelines/preparing-messages)
+
+<Feedback />
+
