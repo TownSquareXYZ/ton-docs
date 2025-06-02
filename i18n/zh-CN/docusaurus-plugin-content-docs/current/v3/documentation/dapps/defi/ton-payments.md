@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # TON 支付
 
 TON 支付是微支付通道的平台。
@@ -32,7 +34,10 @@ TON 支付是微支付通道的平台。
 - [sevenzing/hack-a-ton](https://github.com/sevenzing/hack-a-ton) - TON 中的按需求支付 API 使用（视频）
 - [illright/diamonds](https://github.com/illright/diamonds) - 按分钟支付学习平台（[网站](https://diamonds-ton.vercel.app/)，[视频](https://www.youtube.com/watch?v=g9wmdOjAv1s)）
 
-## 参阅
+## See also
 
-- [支付处理](/develop/dapps/asset-processing)
+- [Payments processing](/v3/guidelines/dapps/asset-processing/payments-processing)
 - [TON Connect](/develop/dapps/ton-connect)
+
+<Feedback />
+
