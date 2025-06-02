@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # TON Connect for React
 
 React 앱을 위한 권장 SDK는 [UI React SDK](/v3/guidelines/ton-connect/guidelines/developers#ton-connect-react)입니다. TON Connect와 상호작용하기 위한 고수준의 React 컴포넌트를 제공합니다.
@@ -6,15 +8,15 @@ React 앱을 위한 권장 SDK는 [UI React SDK](/v3/guidelines/ton-connect/guid
 
 ### 설치
 
-DApp에 TON Connect를 통합하려면 `@tonconnect/ui-react` 패키지를 설치해야 합니다. npm이나 yarn을 사용할 수 있습니다:
+To start integrating TON Connect into your dApp, you need to install the `@tonconnect/ui-react` package:
 
 ```bash npm2yarn
 npm i @tonconnect/ui-react
 ```
 
-### TON Connect 초기화
+### TON Connect initiation
 
-패키지 설치 후, 애플리케이션을 위한 `manifest.json` 파일을 생성해야 합니다. manifest.json 파일 생성 방법은 [여기](/v3/guidelines/ton-connect/guidelines/creating-manifest)에서 확인할 수 있습니다.
+After installing the package, you should create a `manifest.json` file for your application. More information on creating a manifest.json file can be found [here](/v3/guidelines/ton-connect/guidelines/creating-manifest).
 
 manifest 파일을 생성한 후, TonConnectUIProvider를 Mini App의 루트에 임포트하고 manifest URL을 전달하세요:
 
@@ -31,9 +33,9 @@ export function App() {
 
 ```
 
-### 지갑 연결
+### Connect to the wallet
 
-`TonConnectButton`을 추가하세요. TonConnect 버튼은 연결을 초기화하기 위한 범용 UI 컴포넌트입니다. 지갑이 연결되면 지갑 메뉴로 변환됩니다. 앱의 우측 상단에 배치하는 것을 권장합니다.
+Add the `TonConnectButton`. 
 
 ```tsx
 export const Header = () => {
@@ -46,13 +48,17 @@ export const Header = () => {
 };
 ```
 
-버튼에 className과 style props도 추가할 수 있습니다. TonConnectButton에는 하위 요소를 전달할 수 없습니다:
+The `TonConnectButton` is a universal UI component for initializing a connection. After the wallet is connected, it transforms into a wallet menu. Prefer to place the **Connect** button in the top right corner of your app.
+
+You can add the `className` and style props to the button:
 
 ```js
 <TonConnectButton className="my-button-class" style={{ float: "right" }}/>
 ```
 
-또한 `useTonConnectUI` 훅과 [openModal](https://github.com/ton-connect/sdk/tree/main/packages/ui#open-connect-modal) 메서드를 사용하여 수동으로 연결을 시작할 수 있습니다.
+Note that you cannot pass a child to the `TonConnectButton`.
+
+You can always initiate the connection manually using the  `useTonConnectUI` hook and [openModal](https://github.com/ton-connect/sdk/tree/main/packages/ui#open-connect-modal) method.
 
 ```tsx
 export const Header = () => {
@@ -70,7 +76,7 @@ export const Header = () => {
 
 #### 특정 지갑과 연결
 
-특정 지갑에 대한 모달 창을 열려면 `openSingleWalletModal()` 메서드를 사용하세요. 이 메서드는 지갑의 `app_name`을 파라미터로 받아([wallets-list.json](https://github.com/ton-blockchain/wallets-list/blob/main/wallets-v2.json) 파일 참조) 해당 지갑 모달을 엽니다. 모달 창이 성공적으로 열리면 프로미스가 해결됩니다.
+To open a modal window for a specific wallet, use the `openSingleWalletModal()` method. This method takes the wallet's `app_name` as a parameter (refer to the [wallets-list.json](https://github.com/ton-blockchain/wallets-list/blob/main/wallets-v2.json) file) and opens the corresponding wallet modal. It returns a promise that resolves once the modal window opens successfully.
 
 ```tsx
 <button onClick={() => tonConnectUI.openSingleWalletModal('tonwallet')}>
@@ -80,7 +86,7 @@ export const Header = () => {
 
 ### 리다이렉트
 
-지갑 연결 후 사용자를 특정 페이지로 리다이렉트하려면 `useTonConnectUI` 훅을 사용하고 [return strategy를 커스터마이징](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-the-return-strategy)할 수 있습니다.
+If you want to redirect the user to a specific page after wallet connection, you can use the `useTonConnectUI` hook and [customize your return strategy](https://github.com/ton-connect/sdk/tree/main/packages/ui#add-the-return-strategy).
 
 #### Telegram Mini Apps
 
@@ -100,7 +106,7 @@ export const Header = () => {
 
 ### UI 커스터마이징
 
-모달의 [UI를 커스터마이징](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation)하려면 `useTonConnectUI` 훅과 `setOptions` 함수를 사용할 수 있습니다. useTonConnectUI 훅에 대해 자세히 알아보려면 [Hooks](#hooks) 섹션을 참조하세요.
+To [customize UI](https://github.com/ton-connect/sdk/tree/main/packages/ui#ui-customisation) of the modal, you can use the `useTonConnectUI` hook and the `setOptions` function. See more about the `useTonConnectUI` hook in the [Hooks](#hooks) section.
 
 ## Hooks
 
@@ -108,7 +114,7 @@ React 앱에서 저수준 TON Connect UI SDK 기능을 사용하려면 `@tonconn
 
 ### useTonAddress
 
-현재 사용자의 ton 지갑 주소를 가져오는데 사용합니다. 주소 형식을 선택하려면 boolean 파라미터 `isUserFriendly`(기본값 `true`)를 전달하세요. 지갑이 연결되어 있지 않으면 훅은 빈 문자열을 반환합니다.
+Use it to get the user's current TON wallet address. Pass the boolean parameter `isUserFriendly` to choose the address format, where the `isUserFriendly` is `true` by default. The hook will return an empty string if the wallet is not connected.
 
 ```tsx
 import { useTonAddress } from '@tonconnect/ui-react';
@@ -150,8 +156,8 @@ export const ModalControl = () => {
 
 ### useTonWallet
 
-현재 사용자의 TON 지갑을 가져오는데 사용하는 훅입니다.
-지갑이 연결되어 있지 않으면 `null`을 반환합니다. `wallet` 객체는 사용자의 주소, provider, [TON proof](/v3/guidelines/ton-connect/guidelines/verifying-signed-in-users) 및 기타 속성과 같은 일반적인 데이터를 제공합니다([Wallet 인터페이스](https://ton-connect.github.io/sdk/interfaces/_tonconnect_sdk.Wallet.html) 참조).
+Use this hook to retrieve the user's current TON wallet.
+The hook will return `null` if the wallet is not connected. The `wallet` object provides common data such as the user's address, provider, [TON proof](/v3/guidelines/ton-connect/guidelines/verifying-signed-in-users), and other attributes (see the [Wallet interface](https://ton-connect.github.io/sdk/interfaces/_tonconnect_sdk.Wallet.html)).
 
 또한 연결된 지갑의 이름, 이미지 및 기타 속성과 같은 더 구체적인 세부 정보에도 접근할 수 있습니다([WalletInfo 인터페이스](https://ton-connect.github.io/sdk/types/_tonconnect_sdk.WalletInfo.html) 참조).
 
@@ -182,11 +188,11 @@ export const Wallet = () => {
 
 ### useTonConnectUI
 
-`TonConnectUI` 인스턴스와 UI 옵션 업데이트 함수에 접근하는데 사용합니다.
+Access the `TonConnectUI` instance and update the UI options function.
 
 [TonConnectUI 인스턴스 메서드에 대해 자세히 알아보기](https://github.com/ton-connect/sdk/tree/main/packages/ui#send-transaction)
 
-[setOptions 함수에 대해 자세히 알아보기](https://github.com/ton-connect/sdk/tree/main/packages/ui#change-options-if-needed)
+[See more about the `setOptions` function](https://github.com/ton-connect/sdk/tree/main/packages/ui#change-options-if-needed)
 
 ```tsx
 import { Locales, useTonConnectUI } from '@tonconnect/ui-react';
@@ -212,8 +218,8 @@ export const Settings = () => {
 
 ### useIsConnectionRestored
 
-연결 복원 프로세스의 현재 상태를 나타냅니다.
-연결 복원 프로세스가 완료되었는지 감지하는데 사용할 수 있습니다.
+`useIsConnectionRestored` indicates the current status of the connection restoring process.
+You can use it to detect when the connection restoring process is finished.
 
 ```tsx
 import { useIsConnectionRestored } from '@tonconnect/ui-react';
@@ -231,11 +237,11 @@ export const EntrypointPage = () => {
 
 ## 사용법
 
-React UI SDK를 실제로 어떻게 사용하는지 살펴보겠습니다.
+Let's look at how to use the React UI SDK in practice.
 
 ### 트랜잭션 전송
 
-특정 주소로 TON 코인(nanotons 단위)을 보내기:
+Send Toncoins to a specific address:
 
 ```js
 import { useTonConnectUI } from '@tonconnect/ui-react';
@@ -265,16 +271,18 @@ export const Settings = () => {
 
 ```
 
-- 더 많은 예제는 여기에서 확인하세요: [메시지 준비하기](/v3/guidelines/ton-connect/guidelines/preparing-messages)
+:::tip
+Get more examples on the [Preparing messages](/v3/guidelines/ton-connect/guidelines/preparing-messages) page.
+:::
 
-### 해시를 통한 트랜잭션 상태 이해
+### Understanding transaction status by hash
 
-원리는 Payment Processing(tonweb 사용)에 있습니다. [자세히 보기](/v3/guidelines/dapps/asset-processing/payments-processing#check-contracts-transactions)
+Learn the principle explained in [payment processing](/v3/guidelines/dapps/asset-processing/payments-processing#check-contracts-transactions) using the tonweb library.
 
-### 백엔드에서 선택적 체크(ton_proof)
+### Optional check on the backend: ton_proof
 
 :::tip
-메시지 서명과 검증 방법 이해하기: [서명과 검증](/v3/guidelines/ton-connect/guidelines/verifying-signed-in-users)
+Understand how to sign and verify messages: [Signing and verification](/v3/guidelines/ton-connect/guidelines/verifying-signed-in-users)
 :::
 
 사용자가 선언된 주소를 실제로 소유하고 있는지 확인하기 위해 `ton_proof`를 사용할 수 있습니다.
@@ -291,7 +299,7 @@ const [tonConnectUI] = useTonConnectUI();
 // Set loading state
 tonConnectUI.setConnectRequestParameters({ state: "loading" });
 
-// Fetch tonProofPayload from backend
+// Fetch tonProofPayload from the backend
 const tonProofPayload: string | null =
   await fetchTonProofPayloadFromBackend();
 
@@ -307,7 +315,7 @@ if (tonProofPayload) {
 }
 ```
 
-#### ton_proof 결과 처리
+#### Handling ton_proof result
 
 지갑이 연결되었을 때 `wallet` 객체에서 `ton_proof` 결과를 찾을 수 있습니다:
 
@@ -344,9 +352,9 @@ type TonProofItemReplySuccess = {
 }
 ```
 
-인증 예제는 이 [페이지](/v3/guidelines/ton-connect/guidelines/verifying-signed-in-users#react-example)에서 확인할 수 있습니다.
+You can find an example of authentication on this [page](/v3/guidelines/ton-connect/guidelines/verifying-signed-in-users#react-example).
 
-### 지갑 연결 해제
+### Wallet disconnection
 
 지갑 연결을 해제하려면:
 
@@ -358,9 +366,13 @@ await tonConnectUI.disconnect();
 
 #### 컨트랙트 배포
 
-TonConnect를 사용한 컨트랙트 배포는 매우 간단합니다. 컨트랙트 코드와 state init을 얻어 cell로 저장하고 `stateInit` 필드와 함께 트랜잭션을 전송하면 됩니다.
+Deploying a contract using TON Connect is pretty straightforward. You must:
 
-`CONTRACT_CODE`와 `CONTRACT_INIT_DATA`는 래퍼에서 찾을 수 있습니다.
+- Obtain the contract `code` and `data`
+- Store them as a `stateInit` cell
+- Send a transaction using the `statement` field provided
+
+Note that `CONTRACT_CODE` and `CONTRACT_INIT_DATA` may be found in wrappers.
 
 ```typescript
 import { beginCell, Cell, contractAddress, StateInit, storeStateInit } from '@ton/core';
@@ -391,22 +403,22 @@ await tonConnectUI.sendTransaction({
 
 ```
 
-## 래퍼
+## Wrappers
 
-래퍼는 기본 세부 사항에 신경 쓰지 않고도 컨트랙트와 상호작용할 수 있게 해주는 클래스입니다.
+Wrappers are classes that simplify interaction with the contract, allowing you to work without concerning yourself with the underlying details.
 
-- FunC로 컨트랙트를 개발할 때는 래퍼를 직접 작성해야 합니다.
-- [Tact 언어](https://docs.tact-lang.org)를 사용할 때는 래퍼가 자동으로 생성됩니다.
+- When developing a contract in FunC, write the wrapper yourself.
+- When using the [Tact language](https://docs.tact-lang.org), wrappers are automatically generated for you.
 
 :::tip
-컨트랙트 개발 및 배포 방법은 [blueprint](https://github.com/ton-org/blueprint) 문서를 확인하세요
+Check out the [Blueprint](https://github.com/ton-org/blueprint) documentation how to develop and deploy contracts
 :::
 
-기본 `Blueprint` Counter 래퍼 예제와 사용 방법을 살펴보겠습니다:
+Let's take a look at the default `Blueprint` counter wrapper example and how we can use it:
 
 <details>
-<summary>래퍼 사용법</summary>
-Counter 래퍼 클래스:
+<summary>Wrapper usage</summary>
+Counter wrapper class:
 
 ```ts
 import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode } from '@ton/core';
@@ -424,7 +436,7 @@ export const Opcodes = {
     increase: 0x7e8764ef,
 };
 
-export class Counter implements Contract {
+export class Counter implements contract {
     constructor(
         readonly address: Address,
         readonly init?: { code: Cell; data: Cell },
@@ -481,7 +493,7 @@ export class Counter implements Contract {
 
 ```
 
-그런 다음 React 컴포넌트에서 이 클래스를 사용할 수 있습니다:
+Then you can use this class in your react component:
 
 ```ts
 
@@ -532,7 +544,7 @@ class TonConnectProvider implements Sender {
     // The transaction is valid for 10 minutes.
     const validUntil = Math.floor(Date.now() / 1000) + 600;
 
-    // The address of the recipient, should be in bounceable format for all smart contracts.
+    // The recipient's address should be in bounceable format for all smart contracts.
     const address = args.to.toString({ urlSafe: true, bounceable: true });
 
     // The address of the sender, if available.
@@ -559,7 +571,7 @@ class TonConnectProvider implements Sender {
       payload = args.body.toBoc().toString("base64");
     }
 
-    // Send the message using the TonConnect UI and wait for the message to be sent.
+    // Use the TonConnect UI to send the message and wait for the sending
     await this.provider.sendTransaction({
       validUntil: validUntil,
       from: from,
@@ -637,17 +649,24 @@ export const Header = () => {
 
 </details>
 
-### Jettons와 NFT를 위한 래퍼
+### Wrappers for jettons and NFTs
 
-Jettons나 NFT와 상호작용하려면 [assets-sdk](https://github.com/ton-community/assets-sdk)를 사용할 수 있습니다.
-이 SDK는 이러한 자산과의 상호작용을 단순화하는 래퍼를 제공합니다. 실용적인 예제는 [examples](https://github.com/ton-community/assets-sdk/tree/main/examples) 섹션을 확인하세요.
+To interact with jettons or NFTs, you can use [assets-sdk](https://github.com/ton-community/assets-sdk).
+This SDK provides wrappers that simplify interaction with these assets. Please check our [examples](https://github.com/ton-community/assets-sdk/tree/main/examples) section for practical examples.
 
-## API 문서
+## API documentation
 
-[최신 API 문서](https://ton-connect.github.io/sdk/modules/_tonconnect_ui_react.html)
+[Latest API documentation](https://ton-connect.github.io/sdk/modules/_tonconnect_ui_react.html)
 
-## 예제
+## Examples
 
-- 단계별 [TON Hello World 가이드](https://ton-community.github.io/tutorials/03-client/) - React UI로 간단한 DApp 만들기.
-- [Demo dApp](https://github.com/ton-connect/demo-dapp-with-react-ui) - `@tonconnect/ui-react`를 사용한 DApp 예제.
-- [ton.vote](https://github.com/orbs-network/ton-vote) - TON Connect 구현이 포함된 React 웹사이트 예제.
+- Step-by-step [TON Hello World guide](https://helloworld.tonstudio.io/03-client/) to create a simple dApp with React UI.
+- [Demo dApp](https://github.com/ton-connect/demo-dapp-with-react-ui) - Example of a dApp with `@tonconnect/ui-react`.
+- [ton.vote](https://github.com/orbs-network/ton-vote) - Example of React website with TON Connect implementation.
+
+## See also
+
+- [TON Connect for Vue apps](/v3/guidelines/ton-connect/frameworks/vue)
+- [TON Connect for HTML/JS apps](/v3/guidelines/ton-connect/frameworks/web)
+
+<Feedback />
