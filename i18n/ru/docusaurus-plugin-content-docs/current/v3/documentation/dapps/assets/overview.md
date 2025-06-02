@@ -1,8 +1,10 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Обзор обработки активов
+# Asset processing overview
 
 В данной статье представлен **краткий обзор** того, [как работают переводы TON](/v3/documentation/dapps/assets/overview#overview-on-messages-and-transactions), какие [типы активов](/v3/documentation/dapps/assets/overview#digital-asset-types-on-ton) вы можете найти в TON, а также о том, как [взаимодействовать с ton](/v3/documentation/dapps/assets/overview#interaction-with-ton-blockchain) с помощью вашего языка программирования.Настоятельно рекомендуется ознакомиться со всей представленной ниже информацией, прежде чем переходить к последующим страницам.
 
@@ -49,7 +51,7 @@ TON имеет три типа цифровых активов.
 - Активы контрактов, такие как токены и NFT, которые аналогичны стандартам ERC-20/ERC-721 и управляются произвольными контрактами и, таким образом, могут требовать настраиваемых правил для обработки. Вы можете найти больше информации об их обработке в статьях о [обработке NFT](/v3/guidelines/dapps/asset-processing/nft-processing/nfts) и [обработке жетонов](/v3/guidelines/dapps/asset-processing/jettons).
 - Собственный токен – это особый вид активов, который можно прикрепить к любому сообщению в сети. Однако данные активы в настоящее время не используются, поскольку функциональность для выпуска новых собственных токенов закрыта.
 
-## Взаимодействие с блокчейном TON
+## Interaction with TON Blockchain
 
 Основные операции в блокчейне TON можно выполнять через TonLib. Это общая библиотека, которая может быть скомпилирована вместе с узлом TON и предоставлять API для взаимодействия с блокчейном через так называемые lite server (серверы для lite clients).TonLib следует подходу без доверия, проверяя доказательства для всех входящих данных. Таким образом, при взаимодействии нет необходимости в доверенном поставщике данных.Методы, доступные TonLib, перечислены [в схеме TL](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L234). Их можно использовать как общую библиотеку через [обертки](/v3/guidelines/dapps/asset-processing/payments-processing/#sdks).
 
@@ -60,3 +62,6 @@ TON имеет три типа цифровых активов.
 1. [Обработка платежей](/v3/guidelines/dapps/asset-processing/payments-processing), чтобы узнать, как работать с `TON coins`
 2. [Обработка жетонов](/v3/guidelines/dapps/asset-processing/jettons), чтобы узнать, как работать с `jettons` (иногда называемыми `tokens`)
 3. [Обработка NFT](/v3/guidelines/dapps/asset-processing/nft-processing/nfts), чтобы узнать, как работать с NFT (это особый тип  `jetton`)
+
+<Feedback />
+
