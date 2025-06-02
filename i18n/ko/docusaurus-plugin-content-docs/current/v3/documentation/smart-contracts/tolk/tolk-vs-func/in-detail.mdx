@@ -1,6 +1,8 @@
+import Feedback from '@site/src/components/Feedback';
+
 # Tolk vs FunC: 상세 비교
 
-매우 긴 목록입니다. 끝까지 읽을 인내심이 있으신가요?..
+A huge list is below. Will anyone have enough patience to read it up to the end?..
 
 :::tip 요약 버전이 있습니다
 여기에서 보실 수 있습니다: [Tolk vs FunC: 요약](/v3/documentation/smart-contracts/tolk/tolk-vs-func/in-short)
@@ -33,9 +35,9 @@
   ✅ `2+2`는 식별자가 아닌 4입니다. 식별자는 알파벳과 숫자만 가능합니다
 </h3>
 
-FunC에서는 거의 모든 문자가 식별자의 일부가 될 수 있습니다.
-예를 들어 `2+2`(공백 없이)는 식별자입니다.
-이러한 이름으로 변수를 선언할 수도 있습니다.
+In FunC, almost any character can be a part of the identifier.
+For example, `2+2` (without a space) is an identifier.
+You can even declare a variable with such a name.
 
 Tolk에서는 공백이 필수가 아닙니다. `2+2`는 예상대로 4입니다. `3+~x`는 `3 + (~ x)`이고, 이런 식입니다.
 
@@ -54,9 +56,12 @@ Tolk에서는 공백이 필수가 아닙니다. `2+2`는 예상대로 4입니다
   </tbody>
 </table>
 
-더 정확히 말하면, 식별자는 <code style={{display: 'inline-block'}}>{'[a-zA-Z$_]'}</code>로 시작할 수 있고 <code style={{display: 'inline-block'}}>{'[a-zA-Z0-9$_]'}</code>로 이어질 수 있습니다. `?`, `:` 등은 유효한 기호가 아니며, `found?`와 `op::increase`는 유효한 식별자가 아닙니다.
+More precisely, an identifier can start from <code style={{display: 'inline-block'}}>{'[a-zA-Z$_]'}</code>
+and be continued with <code style={{display: 'inline-block'}}>{'[a-zA-Z0-9$_]'}</code>. Note that `?`, `:`, and others are not valid symbols, and `found?` and `op::increase` are invalid identifiers.
 
-백틱을 사용하여 식별자를 둘러싸면 모든 기호를 포함할 수 있습니다(Kotlin과 다른 언어들과 유사). 예를 들어 코드 생성 스키마에서 키워드를 식별자로 사용할 수 있게 하는 것이 잠재적인 용도입니다.
+Note, that `cell`, `slice`, etc. are valid identifiers: `var cell = ...` or even `var cell: cell = ...` is okay. (like in TypeScript, `number` is a valid identifier)
+
+You can use backticks to surround an identifier, and then it can contain any symbols (similar to Kotlin and some other languages). This potential usage is to allow keywords to be used as identifiers in case of code generation by a scheme, for example.
 
 <table className="cmp-func-tolk-table">
   <thead>
@@ -81,12 +86,12 @@ Tolk에서는 공백이 필수가 아닙니다. `2+2`는 예상대로 4입니다
   ✅ 기본적으로 impure, 컴파일러는 사용자 함수 호출을 삭제하지 않습니다
 </h3>
 
-FunC에는 `impure` 함수 지정자가 있습니다. 지정자가 없으면 함수는 pure로 취급됩니다. 결과가 사용되지 않으면 컴파일러에 의해 호출이 삭제됩니다.
+FunC has an `impure` function specifier. When absent, a function is treated as pure. If its result is unused, its call is deleted by the compiler.
 
-이 동작은 문서화되어 있지만 초보자들에게는 매우 예상치 못한 것입니다.
-예를 들어 아무것도 반환하지 않는 다양한 함수들(불일치 시 예외를 던지는 등)이
-자동으로 삭제됩니다. FunC가 함수 본문을 확인하고 검증하지 않아
-pure 함수 내에서 impure 연산을 허용한다는 사실로 인해 이 상황이 더 악화됩니다.
+Though this behavior is documented, it is very unexpected to newcomers.
+For instance, various functions that don't return anything (throw an exception on mismatch, for example)
+are silently deleted. This situation is spoilt by FunC not checking and validating the function body,
+allowing impure operations inside pure functions.
 
 Tolk에서는 모든 함수가 기본적으로 impure입니다. 어노테이션으로 함수를 pure로 표시할 수 있으며,
 그런 경우 그 본문에서 impure 연산(예외, 전역 수정, non-pure 함수 호출 등)이 금지됩니다.
@@ -207,7 +212,7 @@ fun mulDivFloor(x: int, y: int, z: int): int
   ✅ `method_id` 대신 `get`
 </h3>
 
-FunC에서 `method_id`(인수 없이)는 실제로 get 메서드를 선언했습니다. Tolk에서는 직관적인 구문을 사용합니다:
+In FunC, `method_id` (without arguments) declared a get method. In Tolk, you use a straightforward syntax:
 
 <table className="cmp-func-tolk-table">
   <thead>
@@ -254,7 +259,7 @@ fun do_smth(c, n)
 fun do_smth(c: cell, n: int)
 ```
 
-매개변수 타입이 필수인 반면, 반환 타입은 필수가 아닙니다(종종 명백하거나 장황합니다). 생략하면 자동으로 추론됩니다:
+If parameter types are mandatory, the return type is not (it's often obvious or verbose). If omitted, it's auto-inferred:
 
 ```tolk
 fun x() { ... }  // auto infer from return statements
@@ -306,6 +311,140 @@ fun send(msg: cell) {
 ```
 
 <h3 className="cmp-func-tolk-header">
+  ✅ String postfixes removed, compile-time functions introduced
+</h3>
+
+Tolk removes the old FunC-style string postfixes (`"..."c`, etc.) in favor of a **more transparent and more flexible approach**.
+
+<table className="cmp-func-tolk-table">
+    <thead>
+    <tr>
+        <th>FunC</th>
+        <th>Tolk</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><code>{'"..."c'}</code></td>
+        <td><code>{'stringCrc32("...")'}</code></td>
+    </tr>
+    <tr>
+        <td>—</td>
+        <td><code>{'stringCrc16("...")'}</code></td>
+    </tr>
+    <tr>
+        <td><code>{'"..."H'}</code></td>
+        <td><code>{'stringSha256("...")'}</code></td>
+    </tr>
+    <tr>
+        <td><code>{'"..."h'}</code></td>
+        <td><code>{'stringSha256_32("...")'}</code></td>
+    </tr>
+    <tr>
+        <td><code>{'"..."a'}</code></td>
+        <td><code>{'stringAddressToSlice("...")'}</code></td>
+    </tr>
+    <tr>
+        <td><code>{'"..."s'}</code></td>
+        <td><code>{'stringHexToSlice("...")'}</code></td>
+    </tr>
+    <tr>
+        <td><code>{'"..."u'}</code></td>
+        <td><code>{'stringToBase256("...")'}</code></td>
+    </tr>
+    </tbody>
+</table>
+
+These functions:
+
+- compile-time only
+- for constant strings only
+- can be used in constant initialization
+
+```tolk
+// type will be `slice`
+const BASIC_ADDR = stringAddressToSlice("EQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPrHF");
+
+// return type will be `int`
+fun minihashDemo() {
+    return stringSha256_32("transfer(slice, int)");
+}
+```
+
+The naming highlights that these functions have arrived from string postfixes and operate on string values.
+Remember that at runtime, there are no strings, only slices.
+
+<h3 className="cmp-func-tolk-header">
+  ✅ Trailing comma support
+</h3>
+
+Tolk now supports trailing commas in the following contexts:
+
+- tensors
+- tuples
+- function calls
+- function parameters
+
+```tolk
+var items = (
+    totalSupply,
+    verifiedCode,
+    validatorsList,
+);
+```
+
+Note that `(5)` is not a tensor. It's just the integer `5` in parentheses.
+With a trailing comma `(5,)` it's still `(5)`.
+
+<h3 className="cmp-func-tolk-header">
+  ✅ Optional semicolon for the last statement in a block
+</h3>
+
+In Tolk, you can omit the semicolon after the final statement in a block.
+While semicolons are still required between statements, the trailing semicolon on the last statement is now optional.
+
+```tolk
+fun f(...) {
+	doSomething();
+	return result   // <-- valid without semicolon
+}
+
+// or
+if (smth) {
+	return 1
+} else {
+	return 2
+}
+```
+
+<h3 className="cmp-func-tolk-header">
+  ✅ Function `ton("...")` for human-readable amounts of Toncoins
+</h3>
+
+<table className="cmp-func-tolk-table">
+    <thead>
+    <tr>
+        <th>FunC</th>
+        <th>Tolk</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><code>{'int cost = 50000000;'}</code></td>
+        <td><code>{'val cost = ton("0.05");'}</code></td>
+    </tr>
+    <tr>
+        <td><code>{'const ONE_TON = 1000000000;'}</code></td>
+        <td><code>{'const ONE_TON = ton("1");'}</code></td>
+    </tr>
+    </tbody>
+</table>
+
+The function `ton()` only accepts constant values (e.g., `ton(some_var)` is invalid).
+Its type is `coins` (not `int`!), although it's still a regular `int` from the TVM point of view.
+Arithmetic over `coins` degrade to `int` (for example, `cost << 1` is valid, `cost + ton("0.02")` also).
+
+<h3 className="cmp-func-tolk-header">
   ✅ 타입 시스템의 변경사항
 </h3>
 
@@ -320,9 +459,16 @@ Hindley-Milner는 구조체 메서드와 충돌하고, 적절한 제네릭을 �
 - `int`, `bool`, `cell`, `slice`, `builder`, 타입이 지정되지 않은 `tuple`
 - 타입이 지정된 튜플 `[T1, T2, ...]`
 - 텐서 `(T1, T2, ...)`
-- 호출 가능 타입 `fun(TArgs) -> TResult`
+- callables `(TArgs) -> TResult`
+- nullable types `T?`, compile-time null safety
+- union types `T1 | T2 | ...`, handled with pattern matching
+- `coins` and function `ton("0.05")`
+- `int32`, `uint64`, and other fixed-width integers (just int at TVM) [details](https://github.com/ton-blockchain/ton/pull/1559)
+- `bytesN` and `bitsN`, similar to `intN` (backed by slices at TVM)
 - `void` (`unit`으로 명명하는 것이 더 정통적이지만 `void`가 더 안정적)
 - `self`, 아래에서 설명할 연결 가능한 메서드를 만들기 위함; 실제로는 타입이 아니며 함수의 반환 타입 대신에만 발생할 수 있음
+- `never` (an always-throwing function returns `never`, for example; an "impossible type" is also `never`)
+- structures and generics
 
 타입 시스템은 다음 규칙을 따릅니다:
 
@@ -364,7 +510,7 @@ Tolk에서는 사람이 읽을 수 있습니다:
 
 ```tolk
 var valid = isSignatureValid(...);    // bool
-var end = cs.isEndOfSlice();          // bool
+var end = cs.isEnd();                 // bool
 ```
 
 연산자 `!x`는 `int`와 `bool` 모두 지원합니다. `if`와 유사한 조건문은 `int`(!= 0)와 `bool` 모두 허용합니다.
@@ -399,51 +545,10 @@ var i = boolValue as int;  // -1 / 0
   ✅ 제네릭 함수와 <code>f&amp;lt;int&amp;gt;(...)</code> 같은 인스턴스화
 </h3>
 
-FunC에는 "forall" 함수가 있었습니다:
-
-```func
-forall X -> tuple tpush(tuple t, X value) asm "TPUSH";
-```
-
 Tolk는 제대로 만들어진 제네릭 함수를 도입합니다. 구문은 주류 언어들을 연상시킵니다:
 
 ```tolk
-fun tuplePush<T>(mutate self: tuple, value: T): void
-    asm "TPUSH";
-```
-
-`f<T>`가 호출될 때 `T`는 (대부분의 경우) 제공된 인수에 의해 감지됩니다:
-
-```tolk
-t.tuplePush(1);     // detected T=int
-t.tuplePush(cs);    // detected T=slice
-t.tuplePush(null);  // error, need to specify "null of what type"
-```
-
-구문 `f<int>(...)`도 지원됩니다:
-
-```tolk
-t.tuplePush<int>(1);     // ok
-t.tuplePush<int>(cs);    // error, can not pass slice to int
-t.tuplePush<int>(null);  // ok, null is "null of type int"
-```
-
-사용자 정의 함수도 제네릭일 수 있습니다:
-
-```tolk
-fun replaceLast<T>(mutate self: tuple, value: T) {
-    val size = self.tupleSize();
-    self.tupleSetAt(value, size - 1);
-}
-```
-
-`replaceLast<int>`와 `replaceList<slice>`를 호출하면 두 개의 생성된 asm (fift) 함수가 됩니다.
-실제로 이들은 대부분 "템플릿" 함수를 연상시킵니다. 각각의 고유한 호출에서 함수의 본문은 새로운 이름으로 완전히 복제됩니다.
-
-여러 제네릭 매개변수가 있을 수 있습니다:
-
-```tolk
-fun replaceNulls<T1, T2>(tensor: (T1, T2), v1IfNull: T1, v2IfNull: T2): (T1, T2) {
+fun replaceNulls<T1, T2>(tensor: (T1?, T2?), v1IfNull: T1, v2IfNull: T2): (T1, T2) {
     var (a, b) = tensor;
     return (a == null ? v1IfNull : a, b == null ? v2IfNull : b);
 }
@@ -465,7 +570,7 @@ duplicate((1, 2));    // duplicate<(int, int)>
 또는 함수도 가능하며, 이것도 작동합니다:
 
 ```tolk
-fun callAnyFn<TObj, TResult>(f: fun(TObj) -> TResult, arg: TObj) {
+fun callAnyFn<TObj, TResult>(f: TObj -> TResult, arg: TObj) {
     return f(arg);
 }
 
@@ -474,29 +579,27 @@ fun callAnyFn2<TObj, TCallback>(f: TCallback, arg: TObj) {
 }
 ```
 
-제네릭 `T`가 대부분 인수에서 감지되는 반면, `T`가 인수에 의존하지 않는 덜 분명한 경우가 있습니다:
+Note that while generic `T` is mostly detected from arguments, there are no such obvious corner cases when `T` does not depend on arguments:
 
 ```tolk
-fun tupleLast<T>(self: tuple): T
+fun tupleLast<T>(t: tuple): T
     asm "LAST";
 
-var last = t.tupleLast();    // error, can not deduce T
+var last = tupleLast(t);    // error, can not deduce T
 ```
 
 이를 유효하게 만들기 위해서는 `T`를 외부에서 제공해야 합니다:
 
 ```tolk
-var last: int = t.tupleLast();       // ok, T=int
-var last = t.tupleLast<int>();       // ok, T=int
-var last = t.tupleLast() as int;     // ok, T=int
+var last: int = tupleLast(t);       // ok, T=int
+var last = tupleLast<int>(t);       // ok, T=int
+var last = tupleLast(t) as int;     // ok, T=int
 
-someF(t.tupleLast());       // ok, T=(paremeter's declared type)
-return t.tupleLast();       // ok if function specifies return type
+someF(tupleLast(t));       // ok, T=(paremeter's declared type)
+return tupleLast(t);       // ok if function specifies return type
 ```
 
-또한 asm 함수의 `T`는 1개의 스택 슬롯을 차지해야 합니다(그렇지 않으면 asm 본문이 제대로 처리할 수 없음), 반면 사용자 정의 함수의 경우 `T`는 어떤 형태도 가능합니다.
-
-향후 구조체와 제네릭 구조체가 구현되면 제네릭 함수의 모든 힘이 발휘될 것입니다.
+Also note that `T` for asm functions must occupy one stack slot, whereas for a user-defined function, `T` could be of any shape. Otherwise, asm body is unable to handle it properly.
 
 <h3 className="cmp-func-tolk-header">
   ✅ recv_internal / recv_external에 대한 다른 이름
@@ -531,11 +634,11 @@ fun onSplitInstall
   </tbody>
 </table>
 
-Tolk에서는 이 파일을 임포트하지 않고는 `a.tolk`의 심볼을 사용할 수 없습니다. 다시 말해서 "사용하는 것을 임포트하세요".
+In Tolk, you can not use a symbol from `a.tolk` without importing this file. In other words, "import what you use".
 
-모든 stdlib 함수는 기본적으로 사용 가능하며, stdlib를 다운로드하고 `#include "stdlib.fc"`를 할 필요가 없습니다. 내장된 stdlib에 대해서는 아래를 참조하세요.
+All stdlib functions are available out of the box. Downloading stdlib and \`#include "stdlib.fc" is unnecessary. See below about embedded stdlib.
 
-여전히 전역 이름 범위가 있습니다. `f`가 두 개의 다른 파일에서 선언되면 오류입니다. 우리는 파일 전체를 "임포트"하며, 현재는 파일별 가시성과 `export` 키워드가 지원되지 않지만 향후에는 가능할 것입니다.
+There is still a global scope of naming. If `f` is declared in two different files, it's an error. We "import" a whole file with no per-file visibility, and the `export` keyword is now supported but probably will be in the future.
 
 <h3 className="cmp-func-tolk-header">
   ✅ #pragma → 컴파일러 옵션
@@ -547,28 +650,28 @@ Tolk에서는 모든 프라그마가 제거되었습니다. `allow-post-modifica
 
 현재로서는 하나의 실험적 옵션이 도입되었습니다 - `remove-unused-functions`으로, 사용되지 않은 심볼을 Fift 출력에 포함하지 않습니다.
 
-`#pragma version xxx`는 `tolk xxx`로 대체되었습니다(>=가 없고 엄격한 버전). 사용하고 있는 컴파일러 버전을 주석으로 달아두는 것이 좋은 관행입니다. 일치하지 않으면 Tolk가 경고를 표시합니다.
+`#pragma version xxx` was replaced by `tolk xxx` (no >=, just a strict version). It's good practice to annotate the compiler version you are using. If it doesn't match, Tolk will show a warning.
 
 ```tolk
-tolk 0.6
+tolk 0.12
 ```
 
 <h3 className="cmp-func-tolk-header">
   ✅ 늦은 심볼 해결. AST 표현
 </h3>
 
-FunC에서는(C와 마찬가지로) 아래에 선언된 함수에 접근할 수 없습니다:
+In FunC, like in С, you can not access a function declared below:
 
 ```func
 int b() { a(); }   ;; error
 int a() { ... }    ;; since it's declared below
 ```
 
-오류를 피하기 위해서는 프로그래머가 먼저 전방 선언을 해야 합니다. 이는 심볼 해결이 구문 분석 시점에 수행되기 때문입니다.
+To avoid an error, a programmer should first create a forward declaration. The reason is that symbol resolution is performed right during parsing.
 
-Tolk 컴파일러는 이 두 단계를 분리합니다. 먼저 구문 분석을 하고, 그 다음 심볼 해결을 합니다. 따라서 위의 코드 조각은 오류가 되지 않습니다.
+Tolk compiler separates these two steps. At first, it does parsing, and then it does symbol resolving. Hence, a snippet above would not be erroneous.
 
-간단해 보이지만 내부적으로는 매우 큰 작업입니다. 이를 가능하게 하기 위해 FunC에는 완전히 빠져있던 중간 AST 표현을 도입했습니다. 이는 향후 수정과 의미론적 코드 분석 수행을 위한 필수적인 부분입니다.
+It sounds simple, but internally, it's a very huge job. To make this available, I've introduced an intermediate AST representation, which was completely missed in FunC. That's an essential point for future modifications and performing semantic code analysis.
 
 <h3 className="cmp-func-tolk-header">
   ✅ `null` 키워드
@@ -603,13 +706,11 @@ Tolk 컴파일러는 이 두 단계를 분리합니다. 먼저 구문 분석을 
   </tbody>
 </table>
 
-이것이 Tolk 언어에 널 가능성이 있다는 의미는 아닙니다. 아니요, FunC처럼 여전히 정수 변수에 `null`을 할당할 수 있습니다 - 단지 구문적으로 더 보기 좋을 뿐입니다. 진정한 널 가능성은 타입 시스템에 대한 힘든 작업 이후에 언젠가 사용 가능할 것입니다.
-
 <h3 className="cmp-func-tolk-header">
   ✅ `throw`와 `assert` 키워드
 </h3>
 
-Tolk는 예외 작업을 크게 단순화합니다.
+Tolk dramatically simplifies working with exceptions.
 
 FunC가 `throw()`, `throw_if()`, `throw_arg_if()`와 unless에 대한 같은 것을 가지고 있다면, Tolk는 `throw`와 `assert` 두 가지 기본 요소만 가집니다.
 
@@ -646,7 +747,7 @@ FunC가 `throw()`, `throw_if()`, `throw_arg_if()`와 unless에 대한 같은 것
 
 ```tolk
 assert(condition) throw excNo;
-// with possibility to include arg to throw
+// with a possibility to include arg to throw
 ```
 
 또한 Tolk는 `catch` 인수를 바꿉니다: `catch (excNo, arg)`이며, 둘 다 선택사항입니다(arg가 대부분 비어있기 때문에).
@@ -703,11 +804,11 @@ assert(condition) throw excNo;
   ✅ 연산자 우선순위가 C++ / JavaScript와 동일해짐
 </h3>
 
-FunC에서는 `if (slices_equal() & status == 1)` 같은 코드가 `if( (slices_equal()&status) == 1 )`로 파싱됩니다. 이는 실제 계약에서 다양한 오류의 원인이 됩니다.
+In FunC, such code `if (slices_equal() & status == 1)` is parsed as `if( (slices_equal()&status) == 1 )`. This approach is a reason for various errors in real-world contracts.
 
-Tolk에서는 `&`가 C++와 JavaScript와 동일하게 더 낮은 우선순위를 가집니다.
+In Tolk, `&` has a lower priority, which is identical to C++ and JavaScript.
 
-더욱이 Tolk는 이러한 오류를 완전히 제거하기 위해 잠재적으로 잘못된 연산자 사용에 대해 오류를 발생시킵니다:
+Moreover, Tolk fires errors on potentially wrong operators' usage to eliminate such errors:
 
 ```tolk
 if (flags & 0xFF != 0)
@@ -719,7 +820,7 @@ if (flags & 0xFF != 0)
 & has lower precedence than ==, probably this code won't work as you expected.  Use parenthesis: either (... & ...) to evaluate it first, or (... == ...) to suppress this error.
 ```
 
-따라서 코드는 다시 작성되어야 합니다:
+Hence, you should rewrite the code:
 
 ```tolk
 // either to evaluate it first (our case)
@@ -777,7 +878,7 @@ Tolk에서 함수는 `mutate` 매개변수를 선언할 수 있습니다. 이는
   ✅ 더 이상 사용되지 않는 명령줄 옵션 제거
 </h3>
 
-명령줄 플래그 `-A`, `-P` 등이 제거되었습니다. 기본 동작
+Command-line flags `-A`, `-P`, and others were removed. Default behavior
 
 ```
 /path/to/tolk {inputFile}
@@ -791,7 +892,7 @@ Tolk에서 함수는 `mutate` 매개변수를 선언할 수 있습니다. 이는
   ✅ stdlib 함수들이 ~~장황한~~ 명확한 이름으로 변경됨, camelCase 스타일
 </h3>
 
-표준 라이브러리의 모든 이름이 재고되었습니다. 이제 함수들은 더 길지만 명확한 이름을 사용합니다.
+All names in the standard library were reconsidered. Now, functions are called using longer but clear names.
 
 <table className="cmp-func-tolk-table">
   <thead>
@@ -803,7 +904,7 @@ Tolk에서 함수는 `mutate` 매개변수를 선언할 수 있습니다. 이는
   <tbody>
   <tr>
     <td><code dangerouslySetInnerHTML={{__html: 'cur_lt()<br>car(l)<br>get_balance().pair_first()<br>raw_reserve(count)<br>dict~idict_add?(...)<br>dict~udict::delete_get_max()<br>t~tpush(triple(x, y, z))<br>s.slice_bits()<br>~dump(x)<br>...'}}></code></td>
-    <td><code dangerouslySetInnerHTML={{__html: 'getLogicalTime()<br>listGetHead(l)<br>getMyOriginalBalance()<br>reserveToncoinsOnBalance(count)<br>dict.iDictSetIfNotExists(...)<br>dict.uDictDeleteLastAndGet()<br>t.tuplePush([x, y, z])<br>s.getRemainingBitsCount()<br>debugPrint(x)<br>...'}}></code></td>
+    <td><code dangerouslySetInnerHTML={{__html: 'blockchain.logicalTime()<br>listGetHead(l)<br>contract.getOriginalBalance()<br>reserveToncoinsOnBalance(count)<br>dict.iDictSetIfNotExists(...)<br>dict.uDictDeleteLastAndGet()<br>t.push([x, y, z])<br>s.remainingBitsCount()<br>debug.print(x)<br>...'}}></code></td>
   </tr>
   </tbody>
 </table>
@@ -975,9 +1076,707 @@ Tolk는 논리 연산자를 지원합니다. 이들은 익숙한 대로 정확�
   </tbody>
 </table>
 
-키워드 `ifnot`과 `elseifnot`는 이제 논리 NOT이 있기 때문에 제거되었습니다(최적화를 위해 Tolk 컴파일러는 `IFNOTJMP`를 생성합니다). 키워드 `elseif`는 전통적인 `else if`로 대체되었습니다.
+Keywords `ifnot` and `elseifnot` were removed, since now we have logical not (for optimization, Tolk compiler generates `IFNOTJMP`, btw). The `elseif` keyword  was replaced by the traditional `else if`.
 
-불리언 `true`가 `as int`로 변환되면 1이 아닌 -1이라는 점을 기억하세요. 이는 TVM 표현입니다.
+Remember that a boolean `true`, transformed `as int`, is -1, not 1. It's a TVM representation.
+
+<h3 className="cmp-func-tolk-header">
+  ✅ Indexed access `tensorVar.0` and `tupleVar.0`
+</h3>
+
+Use `tensorVar.{i}` to access i-th component of a tensor. Modifying it will change the tensor.
+
+```tolk
+var t = (5, someSlice, someBuilder);   // 3 stack slots
+t.0         			// 5
+t.0 = 10;   			// t is now (10, ...)
+t.0 += 1;               // t is now (11, ...)
+increment(mutate t.0);  // t is now (12, ...)
+t.0.increment();        // t is now (13, ...)
+
+t.1         // slice
+t.100500    // compilation error
+```
+
+Use `tupleVar.{i}` to access i-th element of a tuple (does INDEX under the hood). Modifying it will change the tuple (does SETINDEX under the hood).
+
+```tolk
+var t = [5, someSlice, someBuilder];   // 1 tuple on a stack with 3 items
+t.0                     // "0 INDEX", reads 5
+t.0 = 10;               // "0 SETINDEX", t is now [10, ...]
+t.0 += 1;               // also works: "0 INDEX" to read 10, "0 SETINDEX" to write 11
+increment(mutate t.0);  // also, the same way
+t.0.increment();        // also, the same way
+
+t.1         // "1 INDEX", it's slice
+t.100500    // compilation error
+```
+
+It also works for untyped tuples, though the compiler can't guarantee index correctness.
+
+```tolk
+var t = createEmptyTuple();
+t.tuplePush(5);
+t.0                     // will head 5
+t.0 = 10                // t will be [10]
+t.100500                // will fail at runtime
+```
+
+It works for nesting `var.{i}.{j}`. It works for nested tensor, nested tuples, tuples nested into tensors.
+It works for `mutate`. It works for globals.
+
+```tolk
+t.1.2 = 10;    // "1 INDEX" + "2 SETINDEX" + "1 SETINDEX"
+t.1.2 += 10;   // "1 INDEX" + "2 INDEX" + sum + "2 SETINDEX" + "1 SETINDEX"
+
+globalTuple.1.2 += 10;  // "GETGLOB" + ... + "SETGLOB"
+```
+
+<h3 className="cmp-func-tolk-header">
+  ✅ Type aliases <code>type NewName = &amp;lt;existing type&amp;gt;</code>
+</h3>
+
+Tolk supports type aliases, similar to TypeScript and Rust.
+An alias creates a new name for an existing type but **remains interchangeable with it**.
+
+```tolk
+type UserId = int32;
+type MaybeOwnerHash = bytes32?;
+
+fun calcHash(id: UserId): MaybeOwnerHash { ... }
+
+var id: UserId = 1;       // ok
+var num: int = id;        // ok
+var h = calcHash(id);
+if (h != null) {
+    h as slice;           // bytes32 as slice
+}
+```
+
+<h3 className="cmp-func-tolk-header">
+  ✅ Nullable types `T?`, null safety, smart casts, operator `!`
+</h3>
+
+Tolk has nullable types: `int?`, `cell?`, and `T?` in general (even for tensors).
+Non-nullable types, such as `int` and `cell`, can never hold null values.
+
+The compiler enforces **null safety**: you cannot use nullable types without first checking for null.
+Fortunately, these checks integrate smoothly and organically into the code thanks to smart casts.
+Smart casts are purely a compile-time feature — they do not consume gas or extra stack space.
+
+```tolk
+var value = x > 0 ? 1 : null;  // int?
+
+value + 5;               // error
+s.storeInt(value);       // error
+
+if (value != null) {
+    value + 5;           // ok, smart cast
+    s.storeInt(value);   // ok, smart cast
+}
+```
+
+Remember that when a variable's type is not specified, it's auto-inferred from the assignment and never changes:
+
+```tolk
+var i = 0;
+i = null;       // error, can't assign `null` to `int`
+i = maybeInt;   // error, can't assign `int?` to `int`
+```
+
+Such a code will not work. You must **explicitly declare the variable as nullable**::
+
+```tolk
+// incorrect
+var i = null;
+if (...) {
+    i = 0;     // error
+}
+
+// correct
+var i: int? = null;
+// or
+var i = null as int?;
+```
+
+Smart casts (similar to TypeScript and Kotlin) make it easier to deal with nullable types, allowing code like this:
+
+```tolk
+if (lastCell != null) {
+    // here lastCell is `cell`, not `cell?`
+}
+```
+
+```tolk
+if (lastCell == null || prevCell == null) {
+    return;
+}
+// both lastCell and prevCell are `cell`
+```
+
+```tolk
+var x: int? = ...;
+if (x == null) {
+    x = random();
+}
+// here x is `int`
+```
+
+```tolk
+while (lastCell != null) {
+    lastCell = lastCell.beginParse().loadMaybeRef();
+}
+// here lastCell is 100% null
+```
+
+```tolk
+// t: (int, int)?
+t.0                // error
+t!.0               // ok
+if (t.0 != null) {
+    t.0            // ok
+}
+```
+
+Note that smart casts don't work for globals; they only work for local vars.
+
+Tolk has the `!` operator (non-null assertion, compile-time only), like `!` in TypeScript and `!!` in Kotlin.
+If you are certain that a variable is not null,
+this operator allows you to skip the compiler's check.
+
+```tolk
+fun doSmth(c: cell);
+
+fun analyzeStorage(nCells: int, lastCell: cell?) {
+    if (nCells) {           // then lastCell 100% not null
+        doSmth(lastCell!);  // use ! for this fact
+    }
+}
+```
+
+In practice, you'll use this operator working with low-level dicts API.
+Tolk will have a high-level `map<K,V>` in the future.
+For now, working with dicts will require the `!` operator.
+
+```tolk
+// it returns either (slice, true) or (null, false)
+@pure
+fun dict.iDictGet(self, keyLen: int, key: int): (slice?, bool)
+    asm(key self keyLen) "DICTIGET" "NULLSWAPIFNOT";
+
+var (cs, exists) = myDict.iDictGet(...);
+// if exists is true, cs is not null
+if (exists) {
+    cs!.loadInt(32);
+}
+```
+
+You can also declare "always-throwing functions" that return `never`:
+
+```tolk
+fun alwaysThrows(): never {
+    throw 123;
+}
+
+fun f(x: int) {
+    if (x > 0) {
+        return x;
+    }
+    alwaysThrows();
+    // no `return` statement needed
+}
+```
+
+The `never` type implicitly occurs when a condition can never happen:
+
+```tolk
+var v = 0;
+// prints a warning
+if (v == null) {
+    // v is `never`
+    v + 10;   // error, can not apply `+` `never` and `int`
+}
+// v is `int` again
+```
+
+If you encounter `never` in compilation errors, there is most likely a warning in the preceding code.
+
+Non-atomic nullable are also allowed: `(int, int)?`, `(int?, int?)?`, or even `()?`. Then,
+a special _value presence_ stack slot is implicitly added.
+It holds `0` if a value is null, and not 0 (currently, -1) if not null:
+
+```tolk
+// t: (int, int)?
+t = (1, 2);    // 1 2 -1
+t = (3, 4);    // 3 4 -1
+t = null;      // null null 0
+
+// t: ()?
+t = ();         // -1
+t = null;       // 0
+```
+
+All in all, nullability is a significant step forward for type safety and reliability.
+Nullable types eliminate runtime errors, enforcing correct handling of optional values.
+
+<h3 className="cmp-func-tolk-header">
+  ✅ Union types `T1 | T2 | ...`, operators `match`, `is`, `!is`
+</h3>
+
+Union types allow a variable to hold multiple possible types, similar to TypeScript.
+
+```tolk
+fun whatFor(a: bits8 | bits256): slice | UserId { ... }
+
+var result = whatFor(...);  // slice | UserId
+```
+
+Nullable types `T?` are now formally `T | null`.
+Union types have intersection properties. For instance, `B | C` can be passed/assigned to `A | B | C | D`.
+
+The only way to work with unions from code is **pattern matching**:
+
+```tolk
+match (result) {
+    slice  => { /* result is smart-casted to slice  */ }
+    UserId => { /* result is smart-casted to UserId */ }
+}
+```
+
+Example:
+
+```tolk
+match (result) {
+    slice => {
+        return result.loadInt(32);
+    }
+    UserId => {
+        if (result < 0) {
+            throw 123;
+        }
+        return loadUser(result).parentId;
+    }
+}
+```
+
+`match` must cover all union cases (should be _exhaustive_). It can also be **used as an expression**:
+
+```tolk
+type Pair2 = (int, int);
+type Pair3 = (int, int, int);
+
+fun getLast(tensor: Pair2 | Pair3) {
+    return match (tensor) {
+        Pair2 => tensor.1,
+        Pair3 => tensor.2,
+    }
+}
+```
+
+Syntax details:
+
+- commas are optional with {} but required for expressions
+- a trailing comma is allowed
+- semicolon is not required after `match` used as a statement
+- for match-expressions, its arm can terminate, then its type is considered `never`:
+
+```tolk
+return match (msg) {
+    ...
+    CounterReset => throw 403,  // forbidden
+}
+```
+
+Variable declaration inside `match` is allowed:
+
+```tolk
+match (val v = getPair2Or3()) {
+    Pair2 => {
+        // use v.0 and v.1
+    }
+    Pair3 => {
+        // use v.0, v.1, and v.2
+    }
+}
+```
+
+<details>
+<summary>How are union types represented on the stack, at the TVM level?</summary>
+
+Internally, at the TVM level, they are stored as tagged unions, like enums in Rust:
+
+- each type is assigned a unique type ID, which is stored alongside the value
+- the union occupies N + 1 stack slots, where N is the maximum size of any type in the union
+- a nullable type `T?` is just a union with null (type ID = 0); `int?` and other atomics still use 1 stack slot
+
+```tolk
+var v: int | slice;    // 2 stack slots: value and typeID
+                       // - int:   (100, 0xF831)
+                       // - slice: (CS{...}, 0x29BC)
+match (v) {
+    int =>     // IF TOP == 0xF831 { ... }
+        // v.slot1 contains int, can be used in arithmetics
+    slice =>   // ELSE { IF TOP == 0x29BC { ... } }
+        // v.slot1 contains slice, can be used to loadInt()
+}
+
+fun complex(v: int | slice | (int, int)) {
+    // Stack representation:
+    // - int:        (null, 100, 0xF831)
+    // - slice:      (null, CS{...}, 0x29BC)
+    // - (int, int): (200, 300, 0xA119)
+}
+
+complex(v);   // passes (null, v.slot1, v.typeid)
+complex(5);   // passes (null, 5, 0xF831)
+```
+
+</details>
+
+Besides `match`, you can test a union type by `is`. Smart casts work as expected:
+
+```tolk
+fun f(v: cell | slice | builder) {
+    if (v is cell) {
+        v.cellHash();
+    } else {
+        // v is `slice | builder`
+        if (v !is builder) { return; }
+        // v is `slice`
+        v.sliceHash();
+    }
+    // v is `cell | slice`
+    if (v is int) {
+        // v is `never`
+        // a warning is also printed, condition is always false
+    }
+}
+```
+
+<h3 className="cmp-func-tolk-header">
+  ✅ Pattern matching for expressions (switch-like behavior)
+</h3>
+
+`match` can also be used for **constant expressions**, similar to `switch`:
+
+```tolk
+val nextValue = match (curValue) {
+    1 => 0,
+    0 => 1,
+    else => -1
+};
+```
+
+Rules:
+
+- only constant expressions are allowed on the left-hand side (1, SOME_CONST, 2 + 3)
+- branches can contain `return` and `throw`
+- `else` is required for expression form but optional for statement form:
+
+```tolk
+// statement form
+match (curValue) {
+    1 => { nextValue = 0 }
+    0 => { nextValue = 1 }
+    -1 => throw NEGATIVE_NOT_ALLOWED
+}
+
+// expression form, else branch required
+val nextValue = match (curValue) {
+    ...
+    else => <expression>
+}
+```
+
+<h3 className="cmp-func-tolk-header">
+  ✅ Structures <code>{'struct A { ... }'}</code>
+</h3>
+
+Looks like TypeScript — but works in TVM!
+
+```tolk
+struct Point {
+    x: int;
+    y: int;
+}
+
+fun calcMaxCoord(p: Point) {
+    return p.x > p.y ? p.x : p.y;
+}
+
+// declared like a JS object
+var p: Point = { x: 10, y: 20 };
+calcMaxCoord(p);
+
+// called like a JS object
+calcMaxCoord({ x: 10, y: 20 });
+
+// works with shorthand syntax
+fun createPoint(x: int, y: int): Point {
+    return { x, y };
+}
+```
+
+- a struct is just **a named tensor**
+- `Point` is identical to `(int, int)` at the TVM level
+- field access `p.x` works like accessing tensor elements `t.0`, for reading and writing
+
+This means **no bytecode overhead** — you can replace unreadable tensors with clean, structured types.
+
+Fields can be separated by `;` or `,` (both are valid, like in TypeScript). Trailing commas are allowed.
+
+When creating a structure, you can specify `StructName { ... }` or simply `{ ... }` if the type is clear from the context (e.g., return type or assignment):
+
+```tolk
+var s: StoredInfo = { counterValue, ... };
+var s: (int, StoredInfo) = (0, { counterValue, ... });
+
+// also valid, but not preferred
+var s = StoredInfo { counterValue, ... };
+```
+
+Default values for fields are supported:
+
+```tolk
+struct DefDemo {
+    f1: int = 0;
+    f2: int? = null;
+    f3: (int, coins) = (0, ton("0.05"));
+}
+
+var d: DefDemo = {};         // ok
+var d: DefDemo = { f2: 5 };  // ok
+```
+
+Structs can have methods as extension functions, read below.
+
+<h3 className="cmp-func-tolk-header">
+  ✅ Generic structs and aliases
+</h3>
+
+They exist only at the type level (no runtime cost).
+
+```tolk
+struct Container<T> {
+    isAllowed: bool;
+    element: T?;
+}
+
+struct Nothing {}
+
+type Wrapper<T> = Nothing | Container<T>;
+```
+
+Example usage:
+
+```tolk
+fun checkElement(c: Container<T>) {
+    return c.element != null;
+}
+
+var c: Container<int32> = { isAllowed: false, element: null };
+
+var v: Wrapper<int> = Nothing {};
+var v: Wrapper<int32> = Container { value: 0 };
+```
+
+Since it's a generic, you should specify type arguments when using it:
+
+```tolk
+fun getItem(c: Container)        // error, specify type arguments
+fun getItem(c: Container<int>)   // ok
+fun getItem<T>(c: Container<T>)  // ok
+
+var c: Container = { ... }       // error, specify type arguments
+var c: Container<int> = { ... }  // ok
+```
+
+When you declare a generic function, the compiler can automatically infer type arguments for a call:
+
+```tolk
+fun doSmth<T>(value: Container<T>) { ... }
+
+doSmth({ item: 123 });         // T = int
+doSmth({ item: cellOrNull });  // T = cell?
+```
+
+Demo: `Response<TResult, TError>`:
+
+```tolk
+struct Ok<TResult> { result: TResult; }
+struct Err<TError> { err: TError; }
+
+type Response<R, E> = Ok<R> | Err<E>;
+
+fun tryLoadMore(slice: slice): Response<cell, int32> {
+    return ...
+        ? Ok { result: ... }
+        : Err { err: ErrorCodes.NO_MORE_REFS };
+}
+
+match (val r = tryLoadMore(inMsg)) {
+    Ok => { r.result }
+    Err => { r.err }
+}
+```
+
+<h3 className="cmp-func-tolk-header">
+  ✅ Methods: for any types, including structures
+</h3>
+
+Methods are declared as extension functions, similar to Kotlin.
+A method can accept the first `self` parameter (then it's an instance method) or not accept it (then it's a static method).
+
+```tolk
+fun Point.getX(self) {
+    return self.x
+}
+
+fun Point.create(x: int, y: int): Point {
+    return { x, y }
+}
+```
+
+Methods can be created **for any type**, including aliases, unions, and built-in types:
+
+```tolk
+fun int.isZero(self) {
+    return self == 0;
+}
+
+type MyMessage = CounterIncrement | ...;
+
+fun MyMessage.parse(self) { ... }
+// this is identical to
+// fun (CounterIncrement | ...).parse(self)
+```
+
+Methods perfectly work with `asm`, since `self` is just a regular variable:
+
+```tolk
+@pure
+fun tuple.size(self): int
+    asm "TLEN";
+```
+
+By default, **`self` is immutable**. It means that you can't modify it or call mutating methods.
+To make `self` mutable, you should explicitly declare `mutate self`:
+
+```tolk
+fun Point.assignX(mutate self, x: int) {
+    self.x = x;   // without mutate, an error "modifying immutable object"
+}
+
+fun builder.storeInt32(mutate self, v: int32): self {
+    return self.storeInt(v, 32);
+}
+```
+
+Methods for generic structs created seamlessly.
+Note, that no extra `<T>` is required: while parsing the receiver type, compiler treats unknown symbols as generic arguments.
+
+```tolk
+struct Container<T> {
+    item: T;
+}
+
+// compiler treats T (unknown symbol) as a generic parameter
+fun Container<T>.getItem(self) {
+    return self.item;
+}
+
+// and this is a specialization for integer containers
+fun Container<int>.getItem(self) {
+    ...
+}
+```
+
+Another example:
+
+```tolk
+struct Pair<T1, T2> {
+    first: T1;
+    second: T2;
+}
+
+// both <T1,T2>, <A,B>, etc. work: any unknown symbols
+fun Pair<A, B>.create(f: A, s: B): Pair<A, B> {
+    return {
+        first: f,
+        second: s,
+    }
+}
+```
+
+Similarly, any unknown symbol (typically, `T`) can be used to make a method accepting anything:
+
+```tolk
+// any receiver
+fun T.copy(self): T {
+    return self;
+}
+
+// any nullable receiver
+fun T?.isNull(self): bool {
+    return self == null;
+}
+```
+
+When you call `someObj.method()`, multiple methods with the same name may exist and theoretically be acceptable:
+
+```tolk
+fun T.copy(self) { ... }
+fun int.copy(self) { ... }
+
+someVar.copy();   // ???
+```
+
+So, the compiler performs matching to find as precise method as follows:
+
+1. Search for exact type receiver like `int.copy` (most practical cases finish here)
+2. Search for non-generic receivers that are acceptable (like `int32.copy` / `int?.copy`)
+3. Search for generic receivers except `T` (like `Container<T>.copy`)
+4. Search for `T` receivers (`T.copy`)
+
+```tolk
+fun int.copy(self) { ... }
+fun T.copy(self) { ... }
+
+6.copy()              // int.copy (rule 1)
+(6 as int32).copy()   // int.copy (rule 2)
+(6 as int32?).copy()  // T.copy with T=int? (rule 4)
+```
+
+```tolk
+type MyMessage = CounterIncrement | CounterReset;
+fun MyMessage.check() { ... }
+fun CounterIncrement.check() { ... }
+
+MyMessage{...}.check()         // first (rule 1)
+CounterIncrement{...}.check()  // second (rule 1)
+CounterReset{...}.check()      // first (rule 2)
+```
+
+In case of ambiguity, an error is printed:
+
+```tolk
+fun int?.doSmth(self) { ... }
+fun int64.doSmth(self) { ... }
+
+var v: int32;
+v.doSmth();   // error: no exact match, but two possible acceptable receivers
+```
+
+You can assign a generic function to the variable, but you should explicitly specify types:
+
+```tolk
+fun genericFn<T>(v: T) { ... }
+fun Container<T>.getItem(self) { ... }
+
+var callable1 = genericFn<slice>;
+var callable2 = Container<int32>.getItem;
+callable2(someContainer32);   // pass it as self
+```
 
 <h3 className="cmp-func-tolk-header">
   ✅ 틸다 `~` 메서드 없음, 대신 `mutate` 키워드
@@ -989,26 +1788,20 @@ Tolk는 논리 연산자를 지원합니다. 이들은 익숙한 대로 정확�
 
 <h3>Tolk vs FunC 가스 소비</h3>
 
-:::caution 요약
-Tolk의 가스 소비는 FunC의 예상치 못한 인수 셔플링을 수정하기 때문에 약간 더 높을 수 있습니다. 실제로는 무시할 만한 수준입니다.
-향후 Tolk 컴파일러는 셔플링 문제를 피하면서도 스택 조작을 최소화하도록 인수를 재정렬하는 데 충분히 똑똑해질 것입니다.
+:::tip The same or slightly less
+If you transform FunC code line-by-line (for example, using a [converter](https://github.com/ton-blockchain/convert-func-to-tolk)),
+you'll have the same results or even a bit better.
 :::
 
-FunC 컴파일러는 어셈블리 함수를 호출할 때 예상치 못하게 인수를 섞을 수 있습니다:
+Since Tolk is a fork of FunC, part of its core remains unchanged — particularly the stack manipulation logic.
+Yes, Tolk is a completely different language, with its own syntax and semantics,
+but its low-level internal representation is exactly the same as FunC's.
+As a result, the syntax has no impact on gas consumption.
+In fact, it's even slightly lower, since the strict type system
+gives the compiler more room for optimizations.
 
-```
-some_asm_function(f1(), f2());
-```
+However, once Tolk v1.0 is released, it will be significantly more efficient.
+Auto-serialized structures, automatic message construction, and other features will be
+noticeably cheaper than manual work with builders and slices — almost always.
 
-때로는 `f2()`가 `f1()` 전에 호출될 수 있으며, 이는 예상치 못한 일입니다.
-이 동작을 수정하기 위해 `#pragma compute-asm-ltr`를 지정하여 인수가 항상 ltr 순서로 평가되도록 강제할 수 있습니다.
-이는 실험적이었고 따라서 기본적으로 꺼져 있었습니다.
-
-이 프라그마는 스택의 인수를 재정렬하여 종종 프라그마 없이보다 더 많은 스택 조작이 필요합니다.
-다시 말해, 예상치 못한 동작은 수정하지만 가스 소비가 증가합니다.
-
-Tolk는 이 프라그마가 켜진 것처럼 정확히 스택에 인수를 넣습니다.
-따라서 프라그마를 사용하지 않았을 때보다 때때로 가스 소비가 더 높습니다.
-물론 Tolk에는 셔플링 문제가 없습니다.
-
-향후 Tolk 컴파일러는 셔플링 문제를 피하면서도 스택 조작을 최소화하도록 인수를 재정렬하는 데 충분히 똑똑해질 것입니다.
+<Feedback />
