@@ -1,86 +1,137 @@
-# 거버넌스 컨트랙트
+import Feedback from '@site/src/components/Feedback';
 
-TON에서는 TVM, 캣체인, 수수료, 체인 토폴로지와 관련된 노드 운영의 합의 매개변수(및 이러한 매개변수의 저장 및 업데이트 방식)가 특수 스마트 컨트랙트 집합에 의해 제어됩니다(이전 세대 블록체인에서 채택한 매개변수를 하드코딩하는 구식의 비유연한 방식과 대조적). 이를 통해 TON은 포괄적이고 투명한 온체인 거버넌스를 구현합니다. 특수 컨트랙트 집합 자체는 매개변수에 의해 관리되며 현재 Elector, Config, DNS 컨트랙트를 포함하고 있으며 향후 추가 통화 Minter 등으로 확장될 예정입니다.
+# Governance contracts
+
+In TON, a set of special smart contracts controls consensus parameters for node operation - including TVM, catchain, fees, and chain topology - and how these parameters are stored and updated. Unlike older blockchains that hardcode these parameters, TON enables transparent on-chain governance. The current governance contracts include the **Elector**, **Config**, and **DNS** contracts, with expansion plans (e.g., extra-currency **Minter**).
 
 ## Elector
 
-Elector 스마트 컨트랙트는 검증 라운드가 서로 교체되는 방식, 누가 블록체인 검증 의무를 갖게 되는지, 검증에 대한 보상이 어떻게 분배될지를 제어합니다. 검증자가 되어 Elector와 상호작용하고 싶다면 [validator instructions](https://ton.org/validator)를 확인하세요.
+The **Elector** smart contract manages validator elections, validation rounds, and reward distribution. To become a validator and interact with the Elector, follow the [validator instructions](https://ton.org/validator).
 
-Elector는 `credits` 해시맵에 인출되지 않은 Toncoin 데이터를, `elect` 해시맵에 새로운 신청을, *past_elections* 해시맵에 이전 선거 정보를 저장합니다(후자는 이미 종료된 라운드의 검증자 부정행위에 대한 _complaints_와 `stake_held_for`(ConfigParam 15) 동안 보류된 검증자의 *frozen*-stakes 내에 저장됨). Elector 컨트랙트는 다음 세 가지 목적을 가집니다:
+### Data storage
 
-- 검증자 선거 신청 처리
-- 선거 실시
-- 검증자 부정행위 신고 처리
-- 검증 보상 분배
+The Elector stores:
 
-### 신청 처리
+- Non-withdrawn Toncoin in the `credits` hashmap.
+- New validator applications in the `elect` hashmap.
+- Past election data in the `past_elections` hashmap (including complaints and `frozen` stakes held for `stake_held_for` periods, defined in **ConfigParam 15**).
 
-신청을 생성하기 위해 미래 검증자는 해당 매개변수(ADNL 주소, 공개키, `max_factor` 등)가 포함된 특수 메시지를 구성하고, TON(스테이크라고 함)을 첨부하여 Elector에 전송해야 합니다. Elector는 이러한 매개변수를 확인하고 신청을 등록하거나 즉시 스테이크를 발신자에게 반환합니다. 마스터체인의 주소에서만 신청이 접수된다는 점에 유의하세요.
+### Key functions
+
+1. **Process validator applications**
+2. **Conduct elections**
+3. **Handle validator misbehavior reports**
+4. **Distribute validation rewards**
+
+#### 신청 처리
+
+To apply, a validator must:
+
+1. Send a message to the Elector with their ADNL address, public key, `max_factor`, and stake (TON amount).
+2. The Elector validates the parameters and either registers the application or refunds the stake.\
+  *Note:* Only masterchain addresses can apply.
 
 ### 선거 실시
 
-Elector는 각 블록의 시작과 끝에 강제로 호출될 수 있는 특수 스마트 컨트랙트입니다(소위 Tick과 Tock 트랜잭션). Elector는 실제로 각 블록에서 호출되어 새로운 선거를 실시할 시기인지 확인합니다.
+The Elector is a special smart contract that triggers **Tick and Tock transactions** (forced executions at the start and end of each block). It checks whether it’s time to conduct a new election during each block.
 
-선거 과정의 일반적인 개념은 모든 신청을 고려하는 것입니다. 특히 TON 금액과 `max_factor`(가장 약한 검증자와 비교하여 이 신청자가 동의한 검증 작업의 최대 비율)를 고려하고, TON 금액에 비례하되 모든 `max_factor` 조건을 충족하는 방식으로 각 검증자에게 가중치를 부여합니다.
+**Process details:**
 
-기술적으로 다음과 같이 구현됩니다:
+- Take applications with stake ≥ `min_stake` (**ConfigParam 17**).
+- Arrange candidates by stake in descending order.
+- If applicants exceed `max_validators` (**ConfigParam 16**), discard the lowest-staked candidates.
+- For each subset size `i` (from 1 to remaining candidates):
+  - Assume the `i`-th candidate (lowest in the subset) defines the baseline.
+  - Calculate effective stake (`true_stake`) for each `j`-th candidate (`j < i`) as:
 
-1. Elector는 현재 네트워크 최소 `min_stake`(ConfigParam 17) 이상의 스테이크 금액을 가진 모든 신청을 고려합니다.
-2. 내림차순으로 스테이크별로 정렬합니다.
-3. 참가자가 최대 검증자 수(`max_validators` ConfigParam 16)보다 많으면 목록의 끝부분을 버립니다.
-4. `1`부터 `N`(남은 참가자 수)까지 `i`를 순환합니다.
+```
+min(stake[i] * max_factor[j], stake[j])
+```
 
-- 목록에서 첫 번째 `i` 요소를 가져옵니다(내림차순으로 정렬됨)
-- _i_번째 후보가 마지막으로 수락될 것이라고 가정하고(따라서 가장 낮은 가중치를 가짐) `max_factor`를 고려하여 실효 스테이크(`true_stake`(코드))를 계산합니다. 다시 말해, _j_번째(`j<i`) 신청자의 실효 스테이크는 `min(stake[i]*max_factor[j], stake[j])`로 계산됩니다.
-- 1번째부터 _i_번째까지 참가자의 총 실효 스테이크(TES)를 계산합니다. 이 TES가 이전에 알려진 최대 TES보다 높다면 현재 최상의 가중치 구성으로 간주합니다.
+- Track the subset with the highest **total effective stake (TES)**.
+- Submit the winning validator set to the **Config** contract.
+- Return unused stakes and excess amounts (e.g., `stake[j] - min(stake[i] * max_factor[j], stake[j])`) to `credits`.
 
-5. 현재 최상의 구성, 즉 최대 스테이크를 활용하는 가중치 구성을 가져와서 새로운 검증자 세트로 구성 컨트랙트(아래 Config 컨트랙트 참조)에 전송합니다.
-6. 검증자가 되지 않은 신청자의 미사용 스테이크와 초과분(있는 경우) `stake[j]-min(stake[i]*max_factor[j], stake[j])`을 신청자가 요청할 수 있는 `credits` 테이블에 넣습니다.
+**Example breakdown**:
 
-이런 방식으로, 100,000의 스테이크와 2.7의 요소를 가진 9명의 후보와 10,000을 가진 1명의 참가자가 있다면 마지막 참가자는 선출되지 않습니다: 그 없이는 실효 스테이크가 900,000이 되고, 그와 함께라면 9 \* 27,000 + 10,000 = 253,000만 됩니다. 반대로 100,000의 스테이크와 2.7의 요소를 가진 1명의 후보와 10,000을 가진 9명의 참가자가 있다면 모두 검증자가 됩니다. 그러나 첫 번째 후보는 10\*2.7 = 27,000 TON만 스테이킹하고 73,000 TON의 초과분은 `credits`로 들어갑니다.
+- **Case 1**: 9 candidates stake 100,000 TON (`max_factor=2.7`), 1 candidate stakes 10,000.
 
-결과적인 검증 세트에는 특히 `min_validators`, `max_validators`(ConfigParam 16), `min_stake`, `max_stake`, `min_total_stake`, `max_stake_factor`(ConfigParam 17)와 같은 제한이 있습니다(당연히 TON 구성 매개변수에 의해 제어됨). 현재 신청으로 이러한 조건을 충족할 수 없다면 선거가 연기됩니다.
+  - *Without the 10k candidate*: TES = 900,000.
+  - *With the 10k candidate*: TES = 9 \* 27,000 + 10,000 = 253,000.
+  - **Result**: 10k candidate is excluded.
+
+- **Case 2**: 1 candidate stakes 100,000 (`max_factor=2.7`), 9 stake 10,000.
+  - Effective stake for the 100k candidate: `10,000 * 2.7 = 27,000`.
+  - Excess: `100,000 - 27,000 = 73,000` → sent to `credits`.
+  - **Result**: All 10 participate.
+
+**Election constraints**:
+
+- `min_validators` ≤ participants ≤ `max_validators` (**ConfigParam 16**).
+- Stakes must satisfy:
+  - `min_stake` ≤ stake ≤ `max_stake`
+  - `min_total_stake` ≤ total stake ≤ `max_total_stake`
+  - Stake ratios ≤ `max_stake_factor` (**ConfigParam 17**).
+- If conditions aren’t met, elections **postponed**.
 
 ### 검증자 부정행위 신고 처리
 
-각 검증자는 때때로 무작위로 새로운 블록을 생성하도록 지정됩니다(검증자가 몇 초 후에 실패하면 이 의무는 다음 검증자에게 전달됨). 이러한 지정의 빈도는 검증자의 가중치에 의해 결정됩니다. 따라서 누구나 이전 검증 라운드의 블록을 가져와서 예상되는 생성된 블록 수가 실제 블록 수에 가까운지 확인할 수 있습니다. 통계적으로 유의미한 편차(생성된 블록 수가 예상보다 적을 때)는 검증자가 부정행위를 한다는 것을 의미합니다. TON에서는 Merkle 증명을 사용하여 부정행위를 비교적 쉽게 증명할 수 있습니다. Elector 컨트랙트는 그 저장에 대한 비용을 지불할 준비가 된 누구에게나 제안된 벌금과 함께 이러한 증명을 받아들이고 불만을 등록합니다. 그런 다음 현재 라운드의 모든 검증자가 불만을 확인하고, 그것이 정확하고 제안된 벌금이 부정행위의 심각성에 상응한다면 그들은 그것에 투표합니다. 가중치를 고려하여 2/3 이상의 투표를 얻으면 불만이 수락되고 벌금은 해당 `past_elections` 요소의 `frozen` 해시맵에서 보류됩니다.
+Each validator is periodically assigned the duty to create new blocks, with the frequency of assignments determined by their weight. After a validation round, anyone can audit the blocks to check whether the actual number of blocks produced by a validator significantly deviates from the expected number (based on their weight). A statistically significant underperformance (e.g., fewer blocks created than expected) constitutes misbehavior.
 
-### 검증 보상 분배
+To report misbehavior, a user must:
 
-새로운 선거를 실시할 시기인지 확인하는 것과 같은 방식으로 Elector는 각 블록에서 저장된 `past_elections`에 대한 `frozen`에서 자금을 해제할 시기인지 확인합니다. 해당 블록에서 Elector는 해당 검증 라운드에서 누적된 수익(가스 수수료 및 블록 생성 보상)을 검증자 가중치에 비례하여 해당 라운드의 검증자들에게 분배합니다. 그 후 보상이 포함된 스테이크는 `credits` 테이블에 추가되고 선거는 `past_elections` 테이블에서 제거됩니다.
+1. Generate a **Merkle proof** demonstrating the validator's failure to produce the expected blocks.
+2. Propose a fine proportional to the severity of the offense.
+3. Submit the proof and fine proposal to the Elector contract, covering the associated storage costs.
 
-### Elector의 현재 상태
+The Elector registers the complaint in the `past_elections` hashmap. Current round validators then verify the complaint. If the proof is valid and the proposed fine aligns with the severity of the misbehavior, validators vote on the complaint. Approval requires agreement from over **two-thirds of the total validator weight** (not just a majority of participants).
 
-[dapp](https://1ixi1.github.io/elector/)에서 현재 상태를 확인할 수 있으며, 이를 통해 선거 참가자, 잠긴 스테이크, 인출 준비금, 불만 등을 볼 수 있습니다.
+The fine is deducted from the validator's `frozen` stake in the relevant `past_elections` record if approved. These funds stay locked for the period defined by **ConfigParam 15** (`stake_held_for`).
+
+#### Distributing rewards
+
+The Elector releases `frozen` stakes and rewards (gas fees + block rewards) proportionally to past validators. Funds move to `credits`, and the election record clears from `past_elections`.
+
+### Current Elector state
+
+Track live data (elections, stakes, complaints) via this [dapp](https://1ixi1.github.io/elector/).
 
 ## Config
 
-Config 스마트 컨트랙트는 TON 구성 매개변수를 제어합니다. 그 로직은 누가 어떤 조건에서 이러한 매개변수 중 일부를 변경할 수 있는 권한이 있는지 결정합니다. 또한 제안/투표 메커니즘과 검증자 세트 롤링 업데이트를 구현합니다.
+The **Config** contract manages TON’s configuration parameters, validator set updates, and proposal voting.
 
-### 검증자 세트 롤링 업데이트
+### Validator set updates
 
-Config 컨트랙트가 새로 선출된 검증자 세트를 알리는 Elector 컨트랙트로부터 특별 메시지를 받으면 새 검증자 세트를 ConfigParam 36(다음 검증자)에 넣습니다. 그런 다음 TickTock 트랜잭션 중 각 블록에서 Config는 새 검증자 세트를 적용할 시기인지 확인하고(시간 `utime_since`는 검증자 세트 자체에 포함되어 있음) 이전 세트를 ConfigParam 34(현재 검증자)에서 ConfigParam32(이전 검증자)로 이동하고 ConfigParam 36에서 ConfigParam 34로 설정합니다.
+1. The **Elector** notifies **Config** of a new validator set.
+2. **Config** stores it in **ConfigParam 36** (*next validators*).
+3. At the scheduled time (`utime_since`), **Config**:
+  - Moves the old set to **ConfigParam 32** (*previous validators*).
+  - Promotes **ConfigParam 36** to **ConfigParam 34** (*current validators*).
 
 ### 제안/투표 메커니즘
 
-제안 저장 수수료를 지불할 준비가 된 사람이라면 누구나 Config 컨트랙트에 해당 메시지를 보내 하나 이상의 구성 매개변수 변경을 제안할 수 있습니다. 현재 세트의 모든 검증자는 자신의 개인 키로 승인 메시지에 서명하여 이 제안에 투표할 수 있습니다(해당 공개 키는 ConfigParam 34에 저장되어 있음). 검증자 가중치를 고려하여 3/4의 투표를 얻거나 얻지 못하면 제안은 라운드에서 승리하거나 패배합니다. 중요한 수의 라운드(`min_wins` ConfigParam 11)에서 승리하면 제안이 수락되고, 중요한 수의 라운드(`max_losses` ConfigParam 11)에서 패배하면 폐기됩니다.
-일부 매개변수는 중요하다고 간주되며(중요 매개변수 집합 자체가 구성 매개변수 ConfigParam 10임) 따라서 수락하기 위해 더 많은 라운드가 필요합니다.
+1. **Submit a proposal**: Pay storage fees to propose parameter changes.
+2. **Vote**: Validators (from **ConfigParam 34**) sign approval messages.
+3. **Outcome**:
+  - **Approved**: After `min_wins` rounds (**ConfigParam 11**) with ≥3/4 weighted votes.
+  - **Rejected**: After `max_losses` rounds.
+  - *Critical parameters* (**ConfigParam 10**) require more rounds.
 
-구성 매개변수 인덱스 `-999`, `-1000`, `-1001`은 비상 업데이트 메커니즘에 대한 투표와 Config 및 Elector의 코드 업데이트를 위해 예약되어 있습니다. 해당 인덱스를 가진 제안이 비상 키에 해당하는 충분한 라운드에서 충분한 투표를 얻으면 Config 컨트랙트 또는 Elector 컨트랙트의 코드가 업데이트됩니다.
+#### Emergency updates
 
-#### 비상 업데이트
+- Reserved indexes (`-999`, `-1000`, `-1001`) allow urgent updates to **Config**/**Elector** code.
+- A temporary emergency key (assigned to the TON Foundation in 2021) accelerated fixes but couldn't alter contracts.
+- **Key retired** on Nov 22, 2023 (**block 34312810**), replaced with zeros.
+- Later patched to a fixed byte sequence (`sha256("Not a valid curve point")`) to prevent exploits.
 
-검증자들은 투표 메커니즘을 통해 수행할 수 없을 때 구성 매개변수를 업데이트할 수 있는 특별 공개 키를 지정하는데 투표할 수 있습니다. 이는 네트워크의 활발한 개발 기간 동안 필요한 임시 조치입니다. 네트워크가 성숙해감에 따라 이 조치는 단계적으로 폐지될 것으로 예상됩니다. 개발되고 테스트되는 대로 키는 다중서명 솔루션으로 이전될 것입니다. 네트워크가 안정성을 입증하면 비상 메커니즘은 완전히 폐기될 것입니다.
+**Historical uses**:
 
-실제로 검증자들은 2021년 7월(마스터체인 블록 `12958364`)에 그 키를 TON Foundation에 할당하는 데 투표했습니다. 이러한 키는 구성 업데이트를 가속화하는 데만 사용될 수 있다는 점에 유의하세요. 모든 체인의 어떤 컨트랙트의 코드, 저장소 및 잔액에도 개입할 수 없습니다.
+- **Apr 2022**: Increased gas limits (**blocks 19880281/19880300**) to unblock elections.
+- **Mar 2023**: Raised `special_gas_limit` to 25M (**block 27747086**) for election throughput.
 
-비상 업데이트 기록:
+## See also
 
-- 2022년 4월 17일, 선거 신청 수가 당시 가스 제한 내에서 선거를 실시할 수 없을 만큼 크게 증가했습니다. 특히 선거는 1천만 이상의 가스를 필요로 했지만, 블록 `soft_limit`와 `hard_limit`은 `10m`과 `20m`(ConfigParam 22)으로, `special_gas_limit`와 `block_gas_limit`은 각각 `10m`과 `10m`(ConfigParam 20)으로 설정되어 있었습니다. 이로 인해 새로운 검증자를 설정할 수 없었고, 블록 가스 제한에 도달하여 마스터체인의 내부 메시지를 처리하는 트랜잭션을 블록에 포함할 수 없었습니다. 이는 구성 업데이트에 대한 투표가 불가능한 상황으로 이어졌습니다(현재 라운드가 완료될 수 없어서 필요한 수의 라운드에서 승리할 수 없었음). 비상 키는 ConfigParam 22의 `soft_limit`을 22m로, `hard_limit`을 25m로(블록 `19880281`에서), ConfigParam 20의 `special_gas_limit`을 20m로, `block_gas_limit`을 22m로(블록 `19880300`에서) 업데이트하는 데 사용되었습니다. 그 결과 선거가 성공적으로 실시되었고, 다음 블록은 `10 001 444` 가스를 소비했습니다. 선거 연기는 총 약 6시간이었고, 기본 체인의 기능은 영향을 받지 않았습니다.
-- 2023년 3월 2일, 선거 신청 수가 `20m`조차도 선거를 실시하기에 충분하지 않을 만큼 크게 증가했습니다. 그러나 이번에는 더 높은 `hard_limit` 덕분에 마스터체인이 외부 메시지를 계속 처리했습니다. 비상 키는 ConfigParam 20의 `special_gas_limit`을 25m로, `block_gas_limit`을 27m로(블록 `27747086`에서) 업데이트하는 데 사용되었습니다. 그 결과 선거는 다음 블록에서 성공적으로 실시되었습니다. 선거 연기는 총 약 6시간이었고, 선거 외에 마스터체인과 기본 체인 모두의 기능은 영향을 받지 않았습니다.
-- 2023년 11월 22일, 키는 [자체 포기](https://t.me/tonblockchain/221)에 사용되었습니다(블록 `34312810`에서). 그 결과 공개 키는 32개의 0 바이트로 대체되었습니다.
-- Ed25519 서명 검증의 OpenSSL 구현으로 전환하면서 [공개 키의 모든 바이트가 동일한] 특수 케이스(https://github.com/ton-blockchain/ton/blob/7fcf26771748338038aec4e9ec543dc69afeb1fa/crypto/ellcurve/Ed25519.cpp#L57C1-L57C1) 검사가 비활성화되었습니다. 그 결과 0 공개 키에 대한 검사가 의도한 대로 작동하지 않았습니다. 이 문제를 이용하여 [12월 9일](https://t.me/tonstatus/80)에 비상 키가 한 번 더 업데이트되었습니다(블록 `34665437`, [tx](https://tonscan.org/tx/MU%2FNmSFkC0pJiCi730Fmt6PszBooRZkzgiQMv0sExfY=)). Nothing-in-my-sleeve 바이트 시퀀스 `82b17caadb303d53c3286c06a6e1affc517d1bc1d3ef2e4489d18b873f5d7cd1`로, 이는 `sha256("Not a valid curve point")`입니다. 이제 네트워크 구성 매개변수를 업데이트하는 유일한 방법은 검증자 합의를 통하는 것입니다.
+- [Precompiled contracts](/v3/documentation/smart-contracts/contracts-specs/precompiled-contracts)
 
-## 참조
+<Feedback />
 
-- [Precompiled Contracts](/v3/documentation/smart-contracts/contracts-specs/precompiled-contracts)
