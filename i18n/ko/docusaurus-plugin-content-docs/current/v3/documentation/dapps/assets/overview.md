@@ -1,8 +1,10 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# 자산 처리 개요
+# Asset processing overview
 
 여기에서는 [TON 전송이 어떻게 작동하는지](/v3/documentation/dapps/assets/overview#overview-on-messages-and-transactions), TON에서 어떤 [자산 유형](/v3/documentation/dapps/assets/overview#digital-asset-types-on-ton)을 찾을 수 있는지([다음](/v3/documentation/dapps/assets/overview#read-next)에서 읽을 내용) 그리고 프로그래밍 언어를 사용하여 [TON과 상호작용하는 방법](/v3/documentation/dapps/assets/overview#interaction-with-ton-blockchain)에 대한 **간단한 개요**를 확인할 수 있습니다. 다음 페이지로 넘어가기 전에 아래에서 설명하는 모든 정보를 이해하는 것이 좋습니다.
 
@@ -49,7 +51,7 @@ TON에는 세 가지 유형의 디지털 자산이 있습니다.
 - 토큰과 NFT와 같은 컨트랙트 자산으로, ERC-20/ERC-721 표준과 유사하며 임의의 컨트랙트에 의해 관리되므로 처리에 사용자 지정 규칙이 필요할 수 있습니다. [NFT 처리](/v3/guidelines/dapps/asset-processing/nft-processing/nfts)와 [Jetton 처리](/v3/guidelines/dapps/asset-processing/jettons) 문서에서 처리에 대한 자세한 정보를 확인할 수 있습니다.
 - 네이티브 토큰은 네트워크의 모든 메시지에 첨부할 수 있는 특별한 종류의 자산입니다. 하지만 새로운 네이티브 토큰을 발행하는 기능이 닫혀 있어 현재 이 자산은 사용되지 않습니다.
 
-## TON 블록체인과의 상호작용
+## Interaction with TON Blockchain
 
 TON 블록체인의 기본 작업은 TonLib를 통해 수행할 수 있습니다. 이는 TON 노드와 함께 컴파일되어 라이트 서버(라이트 클라이언트용 서버)를 통해 블록체인과 상호작용하기 위한 API를 제공하는 공유 라이브러리입니다. TonLib는 모든 수신 데이터에 대한 증명을 확인하는 무신뢰 방식을 따르므로 신뢰할 수 있는 데이터 제공자가 필요하지 않습니다. TonLib에서 사용할 수 있는 메소드는 [TL 스키마](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L234)에 나열되어 있습니다. 이들은 [래퍼](/v3/guidelines/dapps/asset-processing/payments-processing/#sdks)를 통해 공유 라이브러리로 사용할 수 있습니다.
 
@@ -60,3 +62,6 @@ TON 블록체인의 기본 작업은 TonLib를 통해 수행할 수 있습니다
 1. `TON 코인` 작업 방법을 알아보려면 [결제 처리](/v3/guidelines/dapps/asset-processing/payments-processing)
 2. `제톤`(때로는 `토큰`이라고 함) 작업 방법을 알아보려면 [제톤 처리](/v3/guidelines/dapps/asset-processing/jettons)
 3. `NFT`(`제톤`의 특별한 유형) 작업 방법을 알아보려면 [NFT 처리](/v3/guidelines/dapps/asset-processing/nft-processing/nfts)
+
+<Feedback />
+
