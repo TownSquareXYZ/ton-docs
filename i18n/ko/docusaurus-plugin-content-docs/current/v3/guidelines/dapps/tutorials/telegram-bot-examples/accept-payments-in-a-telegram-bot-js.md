@@ -2,13 +2,15 @@
 description: 이 튜토리얼의 마지막에는 TON을 통해 제품 결제를 직접 받을 수 있는 멋진 봇을 작성하게 될 것입니다.
 ---
 
-# 만두 판매 봇
+import Feedback from '@site/src/components/Feedback';
+
+# Bot for selling dumplings
 
 이 글에서는 TON으로 결제를 받는 간단한 텔레그램 봇을 만들어보겠습니다.
 
 ## 🦄 어떻게 보이나요
 
-튜토리얼이 끝나면 TON으로 직접 결제를 받을 수 있는 멋진 봇을 작성하게 될 것입니다.
+By the end of the tutorial, you will have a fully functional bot that can accept payments for your product directly in TON.
 
 봇은 다음과 같이 보일 것입니다:
 
@@ -18,23 +20,23 @@ description: 이 튜토리얼의 마지막에는 TON을 통해 제품 결제를 
 
 다음 내용을 배우게 됩니다:
 
-- grammY를 사용하여 NodeJS에서 텔레그램 봇 만들기
-- 공개 TON Center API 사용하기
+- Create a Telegram bot in NodeJS using grammY,
+- Work with the public TON Center API.
 
-> 왜 grammY를 사용하나요?
-> grammY는 JS/TS/Deno에서 텔레그램 봇을 편하고 빠르게 개발할 수 있는 현대적이고 젊은 고수준 프레임워크이기 때문입니다. 또한 grammY는 훌륭한 [문서](https://grammy.dev)와 언제나 도움을 줄 수 있는 활발한 커뮤니티가 있습니다.
+> Why use grammY?
+> grammY is a modern, high-level framework designed for fast and efficient development of Telegram bots using JavaScript, TypeScript, or Deno. It features excellent [documentation](https://grammy.dev) and an active community ready to help.
 
 ## ✍️ 시작하기 전 준비사항
 
 아직 설치하지 않았다면 [NodeJS](https://nodejs.org/en/download/)를 설치하세요.
 
-또한 다음 라이브러리들이 필요합니다:
+You will also need the following libraries:
 
-- grammy
-- ton
-- dotenv
+- grammy,
+- ton,
+- dotenv.
 
-터미널에서 다음 명령어로 한 번에 설치할 수 있습니다.
+You can install them with a single terminal command.
 
 ```bash npm2yarn
 npm install ton dotenv grammy @grammyjs/conversations
@@ -55,15 +57,15 @@ src
 .env
 ```
 
-- `bot/start.js` & `bot/payment.js` - 텔레그램 봇 핸들러가 있는 파일들
-- `src/ton.js` - TON 관련 비즈니스 로직이 있는 파일
-- `app.js` - 봇을 초기화하고 실행하는 파일
+- `bot/start.js` & `bot/payment.js` - Handlers for the Telegram bot,
+- `src/ton.js` - Business logic related to TON,
+- `app.js` - Initializes and launches the bot.
 
-이제 코드를 작성해봅시다!
+Now let's start writing the code!
 
 ## 설정
 
-`.env`부터 시작합시다. 여기에 몇 가지 파라미터만 설정하면 됩니다.
+Let's begin with `.env`. You need to set the following parameters:
 
 **.env**
 
@@ -76,35 +78,33 @@ OWNER_WALLET=
 
 처음 네 줄의 값을 채워야 합니다:
 
-- `BOT_TOKEN`은 [봇 생성](https://t.me/BotFather) 후 받을 수 있는 텔레그램 봇 토큰입니다.
-- `OWNER_WALLET`은 모든 결제를 받을 프로젝트의 지갑 주소입니다. 새 TON 지갑을 만들고 주소를 복사하면 됩니다.
-- `API_KEY`는 메인넷과 테스트넷용 [@tonapibot](https://t.me/tonapibot)/[@tontestnetapibot](https://t.me/tontestnetapibot)에서 받을 수 있는 TON Center의 API 키입니다.
-- `NETWORK`는 봇이 실행될 네트워크 - testnet 또는 mainnet입니다.
+- `BOT_TOKEN` - Your Telegram bot token, obtained after [creating a bot](https://t.me/BotFather).
+- `OWNER_WALLET` - Your project's wallet address for receiving payments. You can create a new TON wallet and copy its address.
+- `API_KEY` - Your API key from TON Center, available via [@tonapibot](https://t.me/tonapibot)/[@tontestnetapibot](https://t.me/tontestnetapibot) for the Mainnet and Testnet, respectively.
+- `NETWORK` - The network on which your bot will operate: Testnet or Mainnet.
 
-설정 파일은 이게 전부입니다. 다음으로 넘어갑시다!
+With the config file set up, we can move forward!
 
 ## TON Center API
 
-`src/services/ton.py` 파일에서는 거래의 존재 여부를 확인하고 결제를 위해 지갑 애플리케이션으로 빠르게 이동하는 링크를 생성하는 함수를 선언할 것입니다.
+In `src/services/ton.py`, we will define functions to verify transactions and generate payment links.
 
 ### 최근 지갑 거래 가져오기
 
-우리의 임무는 특정 지갑에서 필요한 거래의 가용성을 확인하는 것입니다.
+Our goal is to check whether a specific transaction exists in a wallet.
 
-다음과 같이 해결하겠습니다:
+How to solve it:
 
-1. 우리 지갑으로 받은 마지막 거래들을 받습니다. 왜 우리 것일까요? 이 경우 사용자의 지갑 주소가 무엇인지 걱정할 필요가 없고, 그것이 그의 지갑인지 확인할 필요가 없으며, 이 지갑을 어디에도 저장할 필요가 없기 때문입니다.
-2. 정렬하고 들어오는 거래만 남깁니다
-3. 모든 거래를 확인하면서 코멘트와 금액이 우리가 가진 데이터와 일치하는지 확인합니다
-4. 문제 해결을 축하합니다🎉
+1. Retrieve the latest transactions for our wallet. Why our wallet? In this case, we do not have to worry about what the user's wallet address is, we do not have to confirm that it is their wallet, and we do not have to store this wallet.
+2. Filter incoming transactions only.
+3. Iterate through transactions and verify if the comment and amount match our data.
+4. Celebrate the solution to our problem.
 
 #### 최근 거래 가져오기
 
-TON Center API를 사용하면 [문서](https://toncenter.com/api/v2/)를 참조하여 우리 문제를 이상적으로 해결하는 메소드 [getTransactions](https://toncenter.com/api/v2/#/accounts/get_transactions_getTransactions_get)를 찾을 수 있습니다.
+Using the TON Center API, we can refer to their [documentation](https://toncenter.com/api/v2/) and call the [getTransactions](https://toncenter.com/api/v2/#/accounts/get_transactions_getTransactions_get) method with just the wallet address. We also use the limit parameter to restrict the response to 100 transactions.
 
-거래를 받기 위해 하나의 파라미터만 있으면 됩니다 - 결제를 받을 지갑 주소입니다. 하지만 거래 발급을 100개로 제한하기 위해 limit 파라미터도 사용할 것입니다.
-
-`EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N` 주소(참고로 이는 TON Foundation 주소입니다)에 대한 테스트 요청을 호출해봅시다.
+For example, a test request for `EQCD39VS5jcptHL8vMjEXrzGaRcCVYto7HUn4bpAOg8xqB2N` (this is the TON Foundation address):
 
 ```bash
 curl -X 'GET' \
@@ -112,7 +112,7 @@ curl -X 'GET' \
   -H 'accept: application/json'
 ```
 
-좋습니다. 이제 ["result"]에 거래 목록이 있으니 하나의 거래를 자세히 살펴봅시다.
+Great, now we have a list of transactions on hand in `["result"]`, now let's take a closer look at 1 transaction.
 
 ```json
 {
@@ -146,26 +146,26 @@ curl -X 'GET' \
     }
 ```
 
-이 json 파일에서 우리에게 유용한 몇 가지 정보를 알 수 있습니다:
+From this JSON file, we can extract some insights:
 
-- "out_msgs" 필드가 비어있으므로 이것은 들어오는 거래입니다
-- 거래의 코멘트, 송신자, 거래 금액도 얻을 수 있습니다
+- The transaction is incoming, which is indicated by an empty `out_msgs` field.
+- We can extract the transaction comment, sender, and amount.
 
-이제 거래 검증기를 만들 준비가 되었습니다.
+Now, we're ready to create a transaction checker.
 
-### TON 작업하기
+### Working with TON
 
-필요한 TON 라이브러리를 임포트하는 것부터 시작합시다.
+Start with importing the required TON library:
 
 ```js
 import { HttpApi, fromNano, toNano } from "ton";
 ```
 
-사용자가 우리가 필요로 하는 거래를 보냈는지 어떻게 확인할지 생각해봅시다.
+Think about how to check if the user has sent the transaction we need.
 
-매우 기초적으로 간단합니다. 우리 지갑으로 들어오는 거래만 정렬한 다음, 마지막 100개의 거래를 확인하면서 같은 코멘트와 금액을 가진 거래를 찾으면 그것이 우리가 필요로 하는 거래입니다!
+It's all very simple. We can simply sort only incoming transactions to our wallet, and then go through the last 100 transactions, and if there is a transaction with the same comment and amount, then we have found the transaction we need!
 
-TON과의 편리한 작업을 위해 http 클라이언트를 초기화하는 것부터 시작합시다.
+Initialize the http client for convenient work with TON:
 
 ```js
 export async function verifyTransactionExistance(toWallet, amount, comment) {
@@ -180,9 +180,9 @@ export async function verifyTransactionExistance(toWallet, amount, comment) {
   );
 ```
 
-여기서는 설정에서 선택된 네트워크에 따라 endpoint url을 생성합니다. 그리고 나서 http 클라이언트를 초기화합니다.
+Here we simply generate the endpoint url based on which network is selected in the configuration. And after that we initialize the http client.
 
-이제 소유자의 지갑에서 마지막 100개의 거래를 가져올 수 있습니다.
+So, now we can get the last 100 transactions from the owner's wallet.
 
 ```js
 const transactions = await httpClient.getTransactions(toWallet, {
@@ -190,7 +190,7 @@ const transactions = await httpClient.getTransactions(toWallet, {
   });
 ```
 
-그리고 들어오는 거래만 남기도록 필터링합니다(거래의 out_msgs가 비어있으면 남깁니다).
+Filter, leaving only incoming transactions (if the out_msgs of the transaction is empty, we leave it).
 
 ```js
 let incomingTransactions = transactions.filter(
@@ -198,7 +198,7 @@ let incomingTransactions = transactions.filter(
   );
 ```
 
-이제 모든 거래를 확인하면서 코멘트와 거래 값이 일치하면 true를 반환하기만 하면 됩니다.
+Now we just have to go through all the transactions. If a matching transaction is found, we return true.
 
 ```js
   for (let i = 0; i < incomingTransactions.length; i++) {
@@ -221,10 +221,10 @@ let incomingTransactions = transactions.filter(
   return false;
 ```
 
-value가 기본적으로 나노톤 단위라는 점에 유의하세요. 따라서 10억으로 나누거나 TON 라이브러리의 `fromNano` 메소드를 사용하면 됩니다.
-이것으로 `verifyTransactionExistance` 함수가 끝났습니다!
+Since values are in nanotons by default, we divide by 1 billion or use the `fromNano` method from the TON library.
+And that's it for the `verifyTransactionExistance` function!
 
-이제 결제를 위해 지갑 애플리케이션으로 빠르게 이동하는 링크를 생성하는 함수를 만들 수 있습니다.
+Finally, we create a function to generate a payment link by embedding the transaction parameters in a URL.
 
 ```js
 export function generatePaymentLink(toWallet, amount, comment, app) {
@@ -239,7 +239,7 @@ export function generatePaymentLink(toWallet, amount, comment, app) {
 }
 ```
 
-URL에 거래 파라미터를 대체하기만 하면 됩니다. 거래 값을 나노로 변환하는 것을 잊지 마세요.
+All we need is just to substitute the transaction parameters in the URL. Make sure to convert the transaction value to nano.
 
 ## 텔레그램 봇
 
@@ -259,13 +259,13 @@ import {
 import handleStart from "./bot/handlers/start.js";
 ```
 
-.env 파일에 설정한 환경 변수를 편하게 사용하기 위해 dotenv 모듈을 설정합시다.
+Set up the dotenv module to work with environment variables:
 
 ```js
 dotenv.config();
 ```
 
-그 다음 프로젝트를 실행할 함수를 만듭니다. 오류가 발생해도 봇이 중지되지 않도록 다음 코드를 추가합니다.
+Now, define a function to run the bot. To prevent it from stopping due to errors, include:
 
 ```js
 async function runApp() {
@@ -277,7 +277,7 @@ async function runApp() {
   });
 ```
 
-이제 봇과 필요한 플러그인을 초기화합니다.
+Next, initialize the bot and the necessary plugins.
 
 ```js
   // Initialize the bot
@@ -291,9 +291,9 @@ async function runApp() {
   bot.use(createConversation(startPaymentProcess));
 ```
 
-여기서 튜토리얼 시작 부분에서 만든 config의 `BOT_TOKEN`을 사용합니다.
+Here we use `BOT_TOKEN` from our configuration we created at the beginning of the tutorial.
 
-봇을 초기화했지만 아직 비어 있습니다. 사용자와의 상호작용을 위한 함수를 추가해야 합니다.
+We have initialized the bot, but it is still empty. We need to add some features to interact with the user.
 
 ```js
   // Register all handelrs
@@ -304,9 +304,9 @@ async function runApp() {
   bot.callbackQuery("check_transaction", checkTransaction);
 ```
 
-command/start에 반응하여 handleStart 함수가 실행됩니다. 사용자가 callback_data가 "buy"인 버튼을 클릭하면 위에서 등록한 "conversation"을 시작합니다. 그리고 callback_data가 "check_transaction"인 버튼을 클릭하면 checkTransaction 함수를 실행합니다.
+Reacting to the command/start, the handleStart function will be executed. If the user clicks on the button with callback_data equal to "buy", we will start our "conversation", which we registered just above. And when we click on the button with callback_data equal to `"check_transaction"`, we will execute the `checkTransaction` function.
 
-이제 남은 것은 봇을 실행하고 성공적인 실행에 대한 로그를 출력하는 것뿐입니다.
+Finally, launch the bot and output a log a success message.
 
 ```js
   // Start bot
@@ -319,7 +319,7 @@ command/start에 반응하여 handleStart 함수가 실행됩니다. 사용자�
 
 #### /start 명령
 
-`/start` 명령 핸들러부터 시작합시다. 이 함수는 사용자가 처음으로 봇을 시작하거나 재시작할 때 호출됩니다.
+Let's begin with the `/start` command handler. This function is triggered when a user starts or restarts the bot.
 
 ```js
 import { InlineKeyboard } from "grammy";
@@ -338,14 +338,13 @@ Welcome to the best Dumplings Shop in the world <tg-spoiler>and concurrently an 
 }
 ```
 
-먼저 grammy 모듈에서 InlineKeyboard를 임포트합니다. 그 다음 핸들러에서 만두 구매 제안과 이 글의 링크가 있는 인라인 키보드를 만듭니다(여기에 약간의 재귀가 있습니다😁).
-.row()는 다음 버튼을 새 줄로 이동하는 것을 의미합니다.
-그 다음 생성된 키보드와 함께 환영 메시지를 보냅니다(중요한 점은 메시지를 꾸미기 위해 html 마크업을 사용한다는 것입니다).
-환영 메시지는 원하는 대로 할 수 있습니다.
+First, import the InlineKeyboard from the grammy module. Then, create an inline keyboard offering to buy dumplings and linking to this tutorial.
+The `.row()` method places the next button on a new line.
+We send a welcome message (formatted with HTML) along with the keyboard. You can customize this message as needed.
 
 #### 결제 프로세스
 
-항상 그렇듯이 필요한 임포트부터 시작합니다.
+We begin by importing the necessary modules:
 
 ```js
 import { InlineKeyboard } from "grammy";
@@ -356,15 +355,15 @@ import {
 } from "../../services/ton.js";
 ```
 
-그 다음 app.js에서 이미 특정 버튼을 눌렀을 때 실행하도록 등록한 startPaymentProcess 핸들러를 만들겠습니다.
+After that, we will create a startPaymentProcess handler, which we have already registered in the `app.js`. This function is executed when a specific button is pressed.
 
-텔레그램에서 인라인 버튼을 클릭하면 회전하는 시계가 나타나는데, 이를 제거하기 위해 콜백에 응답합니다.
+To remove the spinning watch icon in Telegram, we acknowledge the callback before proceeding.
 
 ```js
   await ctx.answerCallbackQuery();
 ```
 
-그 다음 사용자에게 만두 사진을 보내고 구매하고 싶은 만두의 수를 보내달라고 요청합니다. 그리고 이 숫자를 입력할 때까지 기다립니다.
+Next, we need to send the user a picture of dumplings, ask them to send the number of dumplings that they want to buy. Wait for the user to enter this number.
 
 ```js
   await ctx.replyWithPhoto(
@@ -379,7 +378,7 @@ import {
   const count = await conversation.form.number();
 ```
 
-이제 주문 총액을 계산하고 거래 코멘트로 사용할 무작위 문자열을 생성하고 만두 접미사를 추가합니다.
+Next, we calculate the total amount of the order and generate a random string that we will use for the transaction comment and add the postfix `"dumplings"`.
 
 ```js
   // Get the total cost: multiply the number of portions by the price of the 1 portion
@@ -388,14 +387,14 @@ import {
   const comment = Math.random().toString(36).substring(2, 8) + "dumplings";
 ```
 
-그리고 다음 핸들러에서 이 데이터를 가져올 수 있도록 세션에 결과 데이터를 저장합니다.
+Save the resulting data to the session so that we can get this data in the next handler.
 
 ```js
   conversation.session.amount = amount;
   conversation.session.comment = comment;
 ```
 
-빠른 결제를 위한 링크를 생성하고 인라인 키보드를 만듭니다.
+We generate links for quick payment and create a built-in keyboard.
 
 ```js
 const tonhubPaymentLink = generatePaymentLink(
@@ -419,7 +418,7 @@ const tonhubPaymentLink = generatePaymentLink(
     .text(`I sent ${amount} TON`, "check_transaction");
 ```
 
-그리고 무작위로 생성된 코멘트와 함께 우리 지갑 주소로 거래를 보내달라고 요청하는 메시지와 키보드를 보냅니다.
+Send the message using the keyboard, in which ask the user to send a transaction to our wallet address with a randomly generated comment.
 
 ```js
   await ctx.reply(
@@ -428,13 +427,13 @@ Fine, all you have to do is transfer ${amount} TON to the wallet <code>${process
 
 <i>WARNING: I am currently working on ${process.env.NETWORK}</i>
 
-P.S. You can conveniently make a transfer by clicking on the appropriate button below and confirm the transaction in the offer`,
+P.S. You can conveniently make a transfer by clicking on the appropriate button below and confirming the transaction in the offer`,
     { reply_markup: menu, parse_mode: "HTML" }
   );
 }
 ```
 
-이제 거래의 존재 여부를 확인하는 핸들러를 만들기만 하면 됩니다.
+Now all we have to do is create a handler to check for the presence of a transaction.
 
 ```js
 export async function checkTransaction(ctx) {
@@ -464,20 +463,23 @@ export async function checkTransaction(ctx) {
 }
 ```
 
-여기서는 거래를 확인하고, 거래가 있으면 사용자에게 알리고 세션의 데이터를 초기화하기만 합니다.
+Next, simply check for a transaction, and if it exists, notify the user and flush the data in the session.
 
-### 봇 시작
+### Start of the bot
 
-시작하려면 다음 명령어를 사용하세요:
+To start the bot, use this command:
 
 ```bash npm2yarn
 npm run app
 ```
 
-봇이 제대로 작동하지 않는다면, [이 저장소](https://github.com/coalus/DumplingShopBot)의 코드와 비교해보세요. 도움이 되지 않는다면 텔레그램으로 자유롭게 연락주세요. 아래에서 제 텔레그램 계정을 찾을 수 있습니다.
+If your bot isn't working correctly, compare your code with the code [from this repository](https://github.com/coalus/DumplingShopBot). If issues persist, feel free to contact me on Telegram. You can find my Telegram account below.
 
 ## 참고자료
 
-- [ton-footsteps/58](https://github.com/ton-society/ton-footsteps/issues/58)의 일부로 TON을 위해 만들어짐
-- 작성자: Coalus ([텔레그램 @coalus](https://t.me/coalus), [GitHub Coalus](https://github.com/coalus))
-- [봇 소스](https://github.com/coalus/DumplingShopBot)
+- Made for TON as a part of [ton-footsteps/58](https://github.com/ton-society/ton-footsteps/issues/58)
+- [Telegram @coalus](https://t.me/coalus), [Coalus on GitHub](https://github.com/coalus) - *Coalus*
+- [Bot sources](https://github.com/coalus/DumplingShopBot)
+
+<Feedback />
+
