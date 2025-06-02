@@ -1,10 +1,12 @@
-# 저수준 ADNL
+import Feedback from '@site/src/components/Feedback';
 
-Abstract Datagram Network Layer (ADNL)는 네트워크 피어들이 서로 통신하는 것을 돕는 TON의 핵심 프로토콜입니다.
+# Low-level ADNL
+
+Abstract Datagram Network Layer (ADNL) is the core protocol of TON, which helps network peers communicate.
 
 ## 피어 신원
 
-각 피어는 최소 하나의 신원을 가져야 하며, 여러 개를 사용할 수 있지만 필수는 아닙니다. 각 신원은 피어 간 Diffie-Hellman을 수행하는 데 사용되는 키쌍입니다. 추상 네트워크 주소는 공개 키에서 다음과 같이 도출됩니다: `address = SHA-256(type_id || public_key)`. type_id는 리틀 엔디안 uint32로 직렬화되어야 합니다.
+Each peer must have at least one identity; while it's possible to use multiple identities, it is not required. Each identity consists of a keypair used for performing the Diffie-Hellman exchange between peers. An abstract network address is derived from the public key in the following way: `address = SHA-256(type_id || public_key)`. Note that the `type_id` must be serialized as a little-endian uint32.
 
 ## 공개 키 암호 시스템 목록
 
@@ -12,11 +14,11 @@ Abstract Datagram Network Layer (ADNL)는 네트워크 피어들이 서로 통�
 | ---------------------------- | ------------------- |
 | 0x4813b4c6                   | ed25519<sup>1</sup> |
 
-*1. x25519를 수행하려면 키쌍이 x25519 형식으로 생성되어야 합니다. 하지만 공개 키는 ed25519 형식으로 네트워크를 통해 전송되므로 공개 키를 x25519에서 ed25519로 변환해야 합니다. 이러한 변환의 예시는 Kotlin용 [여기](https://github.com/andreypfau/curve25519-kotlin/blob/f008dbc2c0ebc3ed6ca5d3251ffb7cf48edc91e2/src/commonMain/kotlin/curve25519/MontgomeryPoint.kt#L39)에서 찾을 수 있습니다.*
+- **To perform x25519, the keypair must be generated in "x25519" format. However, the public key is transmitted over the network in ed25519 format, so you have to convert the public key from x25519 to ed25519, examples of such conversions can be found [here](https://github.com/andreypfau/curve25519-kotlin/blob/f008dbc2c0ebc3ed6ca5d3251ffb7cf48edc91e2/src/commonMain/kotlin/curve25519/MontgomeryPoint.kt#L39) for Kotlin.**
 
 ## 클라이언트-서버 프로토콜 (TCP 기반 ADNL)
 
-클라이언트는 TCP를 사용하여 서버에 연결하고 ADNL 핸드셰이크 패킷을 보냅니다. 이 패킷에는 서버 추상 주소, 클라이언트 공개 키 및 클라이언트가 결정한 암호화된 AES-CTR 세션 매개변수가 포함됩니다.
+The client connects to the server using TCP and sends an ADNL handshake packet. This packet contains a server abstract address, a client public key, and encrypted AES-CTR session parameters, which the client determines.
 
 ### 핸드셰이크
 
@@ -32,9 +34,9 @@ Abstract Datagram Network Layer (ADNL)는 네트워크 피어들이 서로 통�
 | tx_nonce | 16 바이트 |
 | padding                       | 64 바이트 |
 
-패딩의 목적은 알려지지 않았으며 서버 구현에서 사용되지 않습니다. 160바이트 버퍼 전체를 무작위 바이트로 채우는 것이 권장됩니다. 그렇지 않으면 공격자가 손상된 AES-CTR 세션 매개변수를 사용하여 활성 MitM 공격을 수행할 수 있습니다.
+The purpose of padding is unknown; it is not used by server implementations. It is recommended that the whole 160-byte buffer be filled with random bytes. Otherwise, an attacker may perform an active MitM attack using compromised AES-CTR session parameters.
 
-다음 단계는 위의 키 합의 프로토콜을 통해 얻은 `secret`을 사용하여 세션 매개변수를 암호화하는 것입니다. 이를 위해 AES-256은 128비트 빅 엔디안 카운터를 사용하는 CTR 모드에서 다음과 같이 계산된 (key, nonce) 쌍으로 초기화되어야 합니다(`aes_params`는 위에서 구축된 160바이트 버퍼):
+The next step is to encrypt the session parameters using the `secret` through the key agreement protocol outlined above. To achieve this, AES-256 needs to be initialized in CTR mode with a 128-bit big-endian counter. This will utilize a (key, nonce) pair that is computed as follows (note that `aes_params` is a 160-byte buffer that was created earlier):
 
 ```cpp
 hash = SHA-256(aes_params)
@@ -42,9 +44,7 @@ key = secret[0..16] || hash[16..32]
 nonce = hash[0..4] || secret[20..32]
 ```
 
-`aes_params`의 암호화(`E(aes_params)`로 표시)가 끝나면 더 이상 필요하지 않으므로 AES는 제거되어야 합니다.
-
-이제 모든 정보를 256바이트 핸드셰이크 패킷으로 직렬화하여 서버에 보낼 준비가 되었습니다:
+After encrypting `aes_params`, noted as `E(aes_params)`, remove AES as it is no longer needed. We are now ready to serialize all this information into the 256-byte handshake packet and send it to the server.
 
 | 매개변수                                                        | 크기      | 참고                  |
 | ----------------------------------------------------------- | ------- | ------------------- |
@@ -53,18 +53,19 @@ nonce = hash[0..4] || secret[20..32]
 | SHA-256(aes_params) | 32 바이트  | 세션 매개변수의 무결성 증명     |
 | E(aes_params)       | 160 바이트 | 암호화된 세션 매개변수        |
 
-서버는 클라이언트와 동일한 방식으로 키 합의 프로토콜에서 도출된 secret을 사용하여 세션 매개변수를 복호화해야 합니다. 그런 다음 서버는 프로토콜의 보안 속성을 확인하기 위해 다음 검사를 수행해야 합니다:
+The server must decrypt session parameters using a secret derived from the key agreement protocol, just as the client does. After decryption, the server must perform the following checks to ensure the security properties of the protocol:
 
-1. 서버는 `receiver_address`에 해당하는 개인 키를 가지고 있어야 합니다. 그렇지 않으면 키 합의 프로토콜을 수행할 방법이 없습니다.
-2. `SHA-256(aes_params) == SHA-256(D(E(aes_params)))`, 그렇지 않으면 키 합의 프로토콜이 실패했고 양쪽의 `secret`이 같지 않습니다.
+- The server must possess the corresponding private key for `receiver_address`. Without this key, it cannot execute the key agreement protocol.
 
-이러한 검사 중 하나라도 실패하면 서버는 클라이언트에 응답하지 않고 즉시 연결을 끊습니다. 모든 검사가 통과되면 서버는 지정된 `receiver_address`에 대한 개인 키를 소유하고 있음을 증명하기 위해 클라이언트에 빈 데이터그램(데이터그램 섹션 참조)을 발행해야 합니다.
+- The condition `SHA-256(aes_params) == SHA-256(D(E(aes_params)))` must hold true. If this condition is not met, it indicates that the key agreement protocol has failed and the `secret` values on both sides are not equal.
+
+If any of these checks fail, the server will immediately drop the connection without responding to the client. If all checks pass, the server must issue an empty datagram (see the [Datagram](#datagram) section) to the client in order to prove that it owns the private key for the specified `receiver_address`.
 
 ### 데이터그램
 
-클라이언트와 서버 모두 TX와 RX 방향 모두에 대해 각각 두 개의 AES-CTR 인스턴스를 초기화해야 합니다. 128비트 빅 엔디안 카운터를 사용하는 CTR 모드에서 AES-256을 사용해야 합니다. 각 AES 인스턴스는 핸드셰이크의 `aes_params`에서 가져올 수 있는 해당 (key, nonce) 쌍을 사용하여 초기화됩니다.
+Both the client and server must initialize two AES-CTR instances each for both transmission (TX) and reception (RX) directions. The AES-256 must be used in CTR mode with a 128-bit big-endian counter. Each AES instance is initialized using a (key, nonce) pair, which can be taken from the `aes_params` during the handshake.
 
-데이터그램을 보내기 위해 피어(클라이언트 또는 서버)는 다음 구조를 구축하고 암호화하여 다른 피어에게 보내야 합니다:
+To send a datagram, either the client or the server must construct the following structure, encrypt it, and send it to the other peer:
 
 | 매개변수   | 크기                            | 참고                                            |
 | ------ | ----------------------------- | --------------------------------------------- |
@@ -75,19 +76,19 @@ nonce = hash[0..4] || secret[20..32]
 
 전체 구조는 해당 AES 인스턴스(클라이언트 -> 서버는 TX, 서버 -> 클라이언트는 RX)를 사용하여 암호화되어야 합니다.
 
-수신 피어는 처음 4바이트를 가져와서 `length` 필드로 복호화하고 정확히 `length` 바이트를 읽어 전체 데이터그램을 얻어야 합니다. 수신 피어는 더 일찍 `buffer`를 복호화하고 처리하기 시작할 수 있지만, 의도적으로 또는 우연히 손상될 수 있다는 점을 고려해야 합니다. `buffer`의 무결성을 보장하기 위해 데이터그램 `hash`를 확인해야 합니다. 실패할 경우 새로운 데이터그램을 발행할 수 없으며 연결을 끊어야 합니다.
+The receiving peer must fetch the first 4 bytes, decrypt it into the `length` field, and read exactly the `length` bytes to get the full datagram. The receiving peer may start to decrypt and process `buffer` earlier, but it must take into account that it may be corrupted, intentionally or occasionally. Datagram `hash` must be checked to ensure the integrity of the `buffer`. In case of failure, no new datagrams can be issued and the connection must be dropped.
 
-세션의 첫 번째 데이터그램은 핸드셰이크 패킷이 서버에 의해 성공적으로 수락된 후 항상 서버에서 클라이언트로 전송되며 실제 버퍼는 비어 있습니다. 클라이언트는 이를 복호화해야 하며 실패할 경우 서버와 연결을 끊어야 합니다. 이는 서버가 프로토콜을 제대로 따르지 않았고 서버와 클라이언트 측의 실제 세션 키가 다르다는 것을 의미하기 때문입니다.
+The first datagram in the session always goes from the server to the client after a handshake packet is successfully accepted by the server and its actual buffer is empty. The client should decrypt it and disconnect from the server in case of failure because it means that the server has not followed the protocol properly and the actual session keys differ on the server and client side.
 
 ### 통신 세부사항
 
-통신 세부사항을 더 자세히 알아보려면 [ADNL TCP - Liteserver](/v3/documentation/network/protocols/adnl/adnl-tcp) 문서에서 몇 가지 예시를 확인할 수 있습니다.
+If you want to dive into communication details, you could check the article [ADNL TCP - liteserver](/v3/documentation/network/protocols/adnl/adnl-tcp) to see some examples.
 
 ### 보안 고려사항
 
 #### 핸드셰이크 패딩
 
-초기 TON 팀이 이 필드를 핸드셰이크에 포함하기로 한 이유는 알려지지 않았습니다. `aes_params`의 무결성은 SHA-256 해시로 보호되고 기밀성은 `secret` 매개변수에서 도출된 키로 보호됩니다. 아마도 어느 시점에서 AES-CTR에서 마이그레이션하려는 의도였을 것입니다. 이를 위해 사양은 피어가 업데이트된 기본 요소를 사용할 준비가 되었음을 알리는 특별한 매직 값을 `aes_params`에 포함하도록 확장될 수 있습니다. 이러한 핸드셰이크에 대한 응답은 다른 피어가 실제로 어떤 방식을 사용하고 있는지 확인하기 위해 새로운 방식과 이전 방식으로 두 번 복호화될 수 있습니다.
+It is unknown why the initial TON team decided to include this field in the handshake. `aes_params` integrity is protected by a SHA-256 hash, and confidentiality is protected by the key derived from the `secret` parameter. Probably, it was intended to migrate from AES-CTR at some point. To do this, the specification may be extended to include a special magic value in `aes_params`, which will signal that the peer is ready to use the updated primitives. The response to such a handshake may be decrypted twice, with new and old schemes, to clarify which scheme the other peer is actually using.
 
 #### 세션 매개변수 암호화 키 도출 프로세스
 
@@ -95,16 +96,22 @@ nonce = hash[0..4] || secret[20..32]
 
 #### 데이터그램 논스
 
-데이터그램에 `nonce` 필드가 있는 이유가 명확하지 않습니다. AES의 세션 바운드 키와 CTR 모드의 암호화 때문에 이 필드가 없어도 두 암호문은 다르기 때문입니다. 하지만 논스가 없거나 예측 가능한 경우 다음과 같은 공격이 가능합니다. CTR 암호화 모드는 AES와 같은 블록 암호를 스트림 암호로 전환하여 비트 플리핑 공격이 가능하게 합니다. 공격자가 암호화된 데이터그램에 속하는 평문을 알고 있다면 순수한 키스트림을 얻어 자신의 평문과 XOR 연산을 수행하고 피어가 보낸 메시지를 효율적으로 대체할 수 있습니다. 버퍼 무결성은 SHA-256 해시로 보호되지만 전체 평문을 알고 있다는 것은 해시도 알고 있다는 것을 의미하므로 공격자는 이것도 대체할 수 있습니다. 논스 필드는 이러한 공격을 방지하기 위해 존재하므로 공격자는 논스를 알지 못하면 SHA-256을 대체할 수 없습니다.
+The purpose of the `nonce` field in the datagram may not be immediately clear. Even without it, any two ciphertexts will differ due to the session-bounded keys used in AES and the encryption method in CTR mode. However, if a nonce is absent or predictable, a potential attack can occur.
+
+In CTR encryption mode, block ciphers like AES function as stream ciphers, allowing for bit-flipping attacks. If an attacker knows the plaintext corresponding to an encrypted datagram, they can create an exact key stream and XOR it with their own plaintext, effectively replacing the original message sent by a peer. Although buffer integrity is protected by a hash (referred to here as SHA-256), an attacker can still manipulate it because if they know the entire plaintext, they can also compute its hash.
+
+The nonce field is crucial for preventing such attacks, as it ensures that an attacker cannot replace the SHA-256 without also having access to the nonce.
 
 ## P2P 프로토콜 (UDP 기반 ADNL)
 
-자세한 설명은 [ADNL UDP - Internode](/v3/documentation/network/protocols/adnl/adnl-udp) 문서에서 찾을 수 있습니다.
+A detailed description can be found in the article [ADNL UDP - internode](/v3/documentation/network/protocols/adnl/adnl-udp).
 
 ## 참조
 
-- [The Open Network, p. 80](https://ton.org/ton.pdf)
+- [The Open Network, p. 80](https://ton.org/whitepaper.pdf#80)
+
 - [TON의 ADNL 구현](https://github.com/ton-blockchain/ton/tree/master/adnl)
 
-*커뮤니티에 기여해 주신 [hacker-volodya](https://github.com/hacker-volodya)님께 감사드립니다!*\
-*GitHub에 있는 [원본 문서 링크](https://github.com/tonstack/ton-docs/tree/main/ADNL)입니다.*
+*Thanks to the [hacker-volodya](https://github.com/hacker-volodya) for contributing to the community!*
+*Here a [link to the original article](https://github.com/tonstack/ton-docs/tree/main/ADNL) on GitHub.* <Feedback />
+
