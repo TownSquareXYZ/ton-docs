@@ -1,8 +1,10 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# مروری بر پردازش دارایی‌ها
+# Asset processing overview
 
 اینجا می‌توانید **یک مرور کوتاه** درباره [نحوه عملکرد انتقال‌های TON](/v3/documentation/dapps/assets/overview#overview-on-messages-and-transactions) بیابید، چه [انواع دارایی](/v3/documentation/dapps/assets/overview#digital-asset-types-on-ton) را می‌توانید در TON پیدا کنید (و در مورد چه چیزی در [بخش بعدی](/v3/documentation/dapps/assets/overview#read-next) خواهید خواند) و چطور با استفاده از زبان برنامه‌نویسی خود با TON [تعامل کنید](/v3/documentation/dapps/assets/overview#interaction-with-ton-blockchain)، توصیه می‌شود تمامی اطلاعاتی که در زیر آمده است را قبل از رفتن به صفحات بعدی درک کنید.
 
@@ -49,7 +51,7 @@ TON دارای سه نوع دارایی دیجیتال است.
 - دارایی‌های قراردادی، مانند توکن‌ها و NFTها، که مشابه استانداردهای ERC-20/ERC-721 هستند و توسط قراردادهای دلخواه مدیریت می‌شوند و بنابراین ممکن است به قوانین سفارشی برای پردازش نیاز داشته باشند. شما می‌توانید اطلاعات بیشتری درباره پردازش آنها در مقالات [پردازش NFTها](/v3/guidelines/dapps/asset-processing/nft-processing/nfts) و [پردازش Jettonها](/v3/guidelines/dapps/asset-processing/jettons) پیدا کنید.
 - توکن بومی، که یک نوع خاص از دارایی است که می‌تواند به هر پیامی در شبکه پیوست شود. اما این دارایی‌ها در حال حاضر استفاده نمی‌شوند زیرا قابلیت صدور توکن‌های جدید بومی غیر فعال است.
 
-## تعامل با بلاکچین TON
+## Interaction with TON Blockchain
 
 عملیات پایه در بلاکچین TON می‌توانند از طریق TonLib انجام شوند. این یک کتابخانه مشترک است که می‌تواند همراه با یک نود TON کامپایل شده و API ها را برای تعامل با بلاکچین از طریق به اصطلاح سرورهای لایت (سرورها برای کلاینت‌های لایت) آشکار می‌کند. TonLib از رویکرد بدون اعتماد پیروی می‌کند با بررسی مدارک برای همه داده‌های ورودی؛ بنابراین، نیازی به تامین‌کننده داده‌های معتبر نیست. روش‌های موجود در TonLib [در الگو TL](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L234) لیست شده‌اند. آنها می‌توانند به عنوان یک کتابخانه مشترک از طریق [پوشش‌دهنده‌ها](/v3/guidelines/dapps/asset-processing/payments-processing/#sdks) استفاده شوند.
 
@@ -60,3 +62,6 @@ TON دارای سه نوع دارایی دیجیتال است.
 1. [پردازش پرداخت‌ها](/v3/guidelines/dapps/asset-processing/payments-processing) برای آشنایی با نحوه کار با `تونکوین‌ها`
 2. [پردازش Jettonها](/v3/guidelines/dapps/asset-processing/jettons) برای آشنایی با نحوه کار با `Jetton` (گاهی اوقات به آنها `tokens` گفته می‌شود)
 3. [پردازش NFTها](/v3/guidelines/dapps/asset-processing/nft-processing/nfts) برای آشنایی با نحوه کار با `NFT` (که نوع خاصی از `jetton` است)
+
+<Feedback />
+
