@@ -1,6 +1,12 @@
+import Feedback from '@site/src/components/Feedback';
+
 # JavaScript SDK를 이용한 통합 매뉴얼
 
-여기서는 TON Connect 2.0 인증을 지원하는 샘플 웹앱을 만들어보겠습니다. 이 앱은 당사자 간 합의 없이도 신원 사칭을 방지하기 위한 서명 검증을 허용합니다.
+:::danger
+The page is outdated and will be deleted soon. Learn actual JS flow from [the guideline for web](/v3/guidelines/ton-connect/frameworks/web).
+:::
+
+In this tutorial, we’ll create a sample web app that supports TON Connect 2.0 authentication. It will allow for signature verification to eliminate the possibility of fraudulent identity impersonation without the need for agreement establishment between parties.
 
 ## 문서 링크
 
@@ -10,11 +16,11 @@
 
 ## 전제 조건
 
-앱과 지갑 간의 원활한 연결을 위해서는 지갑 앱이 접근할 수 있는 manifest가 웹앱에 있어야 합니다. 이를 위해서는 정적 파일을 호스팅할 수 있는 공간이 필요합니다. 예를 들어 개발자가 GitHub Pages를 사용하거나 자신의 컴퓨터에서 TON Sites로 웹사이트를 배포하는 경우, 웹앱 사이트는 공개적으로 접근 가능해야 합니다.
+In order for connectivity to be fluent between apps and wallets, the web app must make use of manifest that is accessible via wallet applications. The prerequisite to accomplish this is typically a host for static files. For example, if a developer wants to make use of GitHub pages, or deploy their website using TON Sites hosted on their computer. This would mean their web app site is publicly accessible.
 
 ## 지갑 지원 목록 가져오기
 
-TON 블록체인의 전반적인 채택을 늘리기 위해서는 TON Connect 2.0이 다양한 애플리케이션과 지갑 간의 연결 통합을 원활히 지원할 수 있어야 합니다. 최근 중요한 발전으로, TON Connect 2.0의 지속적인 개발을 통해 Tonkeeper, TonHub, MyTonWallet 및 기타 지갑들이 다양한 TON 생태계 애플리케이션과 연결될 수 있게 되었습니다. 우리의 목표는 TON Connect 프로토콜을 통해 애플리케이션과 TON 기반 모든 지갑 유형 간의 데이터 교환을 가능하게 하는 것입니다. 현재로서는 TON Connect가 TON 생태계 내에서 운영 중인 다양한 지갑 목록을 광범위하게 로드할 수 있는 기능을 제공함으로써 이를 실현하고 있습니다.
+To increase the overall adoption of TON Blockchain, it is necessary that TON Connect 2.0 is able to facilitate a vast number of application and wallet connectivity integrations. Of late and of significant importance, the ongoing development of TON Connect 2.0 has allowed for the connection of the Tonkeeper, TonHub, MyTonWallet and other wallets with various TON Ecosystem Apps. It is our mission to eventually allow for the exchange of data between applications and all wallet types built on TON via the TON Connect protocol. For now, this is achieved by enabling TON Connect to load an extensive list of available wallets currently operating within the TON Ecosystem.
 
 현재 샘플 웹앱은 다음과 같은 기능을 제공합니다:
 
@@ -44,7 +50,7 @@ TON 블록체인의 전반적인 채택을 늘리기 위해서는 TON Connect 2.
 </html>
 ```
 
-브라우저에서 이 페이지를 열고 콘솔을 확인하면 다음과 같은 결과를 볼 수 있습니다:
+If you load this page in a browser and check the console, you may see something like this:
 
 ```bash
 > Array [ {…}, {…} ]
@@ -233,7 +239,7 @@ https://app.tonkeeper.com/ton-connect?v=2&id=3c12f5311be7e305094ffbf5c9b830e53a4
 모바일폰 링크를 클릭하면 Tonkeeper가 자동으로 열린 다음 요청을 거부하며 닫힙니다. 또한 웹앱 페이지 콘솔에 다음과 같은 오류가 나타납니다:
 `Error: [TON_CONNECT_SDK_ERROR] Can't get null/tonconnect-manifest.json`.
 
-이는 애플리케이션 manifest를 다운로드할 수 있어야 함을 의미합니다.
+This indicates that the application manifest must be available for download.
 
 ## 앱 manifest를 사용한 연결
 
@@ -496,6 +502,11 @@ verify_key.verify(hashlib.sha256(signed).digest(), base64.b64decode(signature))
 nacl.exceptions.BadSignatureError: Signature was forged or corrupt.
 ```
 
+## See also
+
+- [Preparing Messages](/v3/guidelines/ton-connect/guidelines/preparing-messages)
+- [Sending Messages](/v3/guidelines/ton-connect/guidelines/sending-messages)
+
 ## 다음 단계
 
 dApp을 작성할 때는 다음 사항도 고려해야 합니다:
@@ -507,3 +518,6 @@ dApp을 작성할 때는 다음 사항도 고려해야 합니다:
   - 현재 사용자가 지갑 대신 다른 유형의 계약을 사용하여 로그인할 수 있습니다. 다행히도 이는 예상된 위치에 공개 키가 포함됩니다
 
 dApp 작성에 행운을 빕니다!
+
+<Feedback />
+
