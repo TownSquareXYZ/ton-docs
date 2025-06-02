@@ -1,45 +1,48 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 오버레이 서브네트워크
 
-구현:
+Please see the implementation:
 
-- https://github.com/ton-blockchain/ton/tree/master/overlay
+- [Overlay](https://github.com/ton-blockchain/ton/tree/master/overlay)
 
 ## 개요
 
-TON의 아키텍처는 여러 체인이 동시에 독립적으로 존재할 수 있도록 구축되었으며 - 이들은 private 또는 public일 수 있습니다.
-노드들은 어떤 샤드와 체인을 저장하고 처리할지 선택할 수 있습니다.
-동시에 통신 프로토콜은 그 보편성으로 인해 변경되지 않습니다. DHT, RLDP, Overlay와 같은 프로토콜이 이를 가능하게 합니다.
-처음 두 개는 이미 알고 있으므로 이 섹션에서는 Overlay가 무엇인지 알아보겠습니다.
+The architecture of the TON is designed to support multiple chains that can operate simultaneously and independently, whether they are private or public. Nodes have the flexibility to choose which shards and chains they store and process.
 
-오버레이는 단일 네트워크를 추가 서브네트워크로 분할하는 역할을 담당합니다. 오버레이는 누구나 연결할 수 있는 public 또는 특정 사람들에게만 알려진 추가 자격 증명이 필요한 private일 수 있습니다.
+Despite this variability, the communication protocol remains consistent due to its universal nature. Protocols such as DHT (Distributed Hash Table), RLDP (Reliable Layered Datagram Protocol), and overlays facilitate this functionality.
 
-마스터체인을 포함한 TON의 모든 체인은 자체 오버레이를 사용하여 통신합니다.
-오버레이에 참여하려면 이미 오버레이에 있는 노드를 찾아 데이터 교환을 시작해야 합니다.
-public 오버레이의 경우 DHT를 사용하여 노드를 찾을 수 있습니다.
+We are already familiar with the first two protocols; in this section, we will focus on overlays.
 
-## ADNL vs 오버레이 네트워크
+Overlays are responsible for partitioning a single network into additional subnetworks. These overlays can be public, allowing anyone to connect, or private, requiring specific credentials for access, which are known only to a limited group of individuals. All chains in the TON ecosystem, including the MasterChain, communicate using their respective overlays. To join an overlay, a node must locate other nodes that are already part of it and begin exchanging data with them.
 
-ADNL과 달리 TON 오버레이 네트워크는 일반적으로 다른 임의 노드로 데이터그램을 보내는 것을 지원하지 않습니다. 대신, 특정 노드들(해당 오버레이 네트워크와 관련하여 "이웃"이라고 함) 사이에 "반영구적 링크"가 설정되고 메시지는 보통 이러한 링크를 따라 전달됩니다(즉, 노드에서 이웃 중 하나로).
+For public overlays, you can discover nodes using the DHT protocol.
 
-각 오버레이 서브네트워크는 일반적으로 오버레이 네트워크 설명(TL-직렬화된 객체)의 SHA256과 같은 256비트 네트워크 식별자를 가집니다.
+## ADNL vs overlay networks
 
-오버레이 서브네트워크는 public 또는 private일 수 있습니다.
+In contrast to ADNL, TON overlay networks typically do not allow the sending of datagrams to arbitrary nodes. Instead, they establish "semi-permanent links" between specific nodes, known as "neighbors," within the overlay network. Messages are usually forwarded along these links, meaning communication happens from one node to one of its neighbors.
 
-오버레이 서브네트워크는 특별한 [가십](https://en.wikipedia.org/wiki/Gossip_protocol) 프로토콜에 따라 작동합니다.
+Each overlay subnetwork is assigned a 256-bit network identifier, which is usually equivalent to a SHA256 that describes the overlay network as a TL-serialized object.
+
+Overlay subnetworks can either be public or private.
+
+These subnetworks operate using a special [gossip](https://en.wikipedia.org/wiki/Gossip_protocol) protocol.
 
 ## 오버레이 노드와의 상호작용
 
-DHT에 대한 글의 [블록체인 상태를 저장하는 노드 검색](/v3/documentation/network/protocols/dht/dht-deep-dive#search-for-nodes-that-store-the-state-of-the-blockchain) 섹션에서 오버레이 노드를 찾는 예시를 이미 분석했습니다.
-이 섹션에서는 이들과의 상호작용에 중점을 둘 것입니다.
+We have already analyzed an example of finding overlay nodes in an article about Distributed Hash Tables (DHT). This was discussed in the section titled [Search for nodes that store the state of the blockchain](/v3/documentation/network/protocols/dht/dht-deep-dive#search-for-nodes-that-store-the-state-of-the-blockchain).
 
-DHT를 쿼리하면 오버레이 노드의 주소를 얻게 되며, [overlay.getRandomPeers](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L237) 쿼리를 사용하여 이 오버레이의 다른 노드들의 주소를 알아낼 수 있습니다.
-충분한 수의 노드에 연결하면 이들로부터 모든 블록 정보와 다른 체인 이벤트를 받을 수 있으며, 처리를 위해 우리의 트랜잭션을 보낼 수도 있습니다.
+In this section, we will focus on how to interact with these nodes.
+
+When querying the DHT, we will retrieve the addresses of the overlay nodes. From these addresses, we can discover the addresses of additional nodes within the overlay by using the [overlay.getRandomPeers](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L237) query.
+
+After connecting to a sufficient number of nodes, we will be able to receive information about all blocks and other chain events from them. Additionally, we can send our transactions to these nodes for processing.
 
 ### 더 많은 이웃 찾기
 
-오버레이에서 노드를 가져오는 예시를 살펴보겠습니다.
+To retrieve nodes in an overlay, send a request `overlay.getRandomPeers` to any known node.
 
-이를 위해 오버레이의 알려진 노드에 `overlay.getRandomPeers` 요청을 보내고 TL 스키마를 직렬화합니다:
+Make sure to serialize the TL schema:
 
 ```tlb
 overlay.node id:PublicKey overlay:int256 version:int signature:bytes = overlay.Node;
@@ -48,38 +51,37 @@ overlay.nodes nodes:(vector overlay.node) = overlay.Nodes;
 overlay.getRandomPeers peers:overlay.nodes = overlay.Nodes;
 ```
 
-`peers` - 우리가 아는 피어들을 포함해야 하므로 그들을 다시 받지 않지만, 아직 아는 피어가 없으므로 `peers.nodes`는 빈 배열이 될 것입니다.
+The `peers` array should include the peers we are aware of so that we do not receive messages from them again. Since we currently do not know any peers, `peers.nodes` will initially be an empty array.
 
-단순히 정보를 얻는 것이 아니라 오버레이에 참여하고 브로드캐스트를 받고 싶다면, `peers`에 요청을 하는 우리 노드에 대한 정보도 추가해야 합니다.
-피어들이 우리에 대한 정보를 얻으면 ADNL이나 RLDP를 사용하여 브로드캐스트를 보내기 시작할 것입니다.
+If we want to retrieve information, participate in the overlay, and receive broadcasts, we need to include information about our own node in the `peers` array during the request. Once the peers are aware of our presence, they will begin to send us broadcasts using ADNL or RLDP.
 
-오버레이 내의 각 요청은 TL 스키마로 접두사를 붙여야 합니다:
+Additionally, each request made within the overlay must be prefixed with the TL schema:
 
 ```tlb
 overlay.query overlay:int256 = True;
 ```
 
-`overlay`는 오버레이의 id여야 합니다 - `tonNode.ShardPublicOverlayId` 스키마 키의 id - DHT 검색에 사용한 것과 동일합니다.
+The `overlay` should be the overlay's ID, specifically the ID of the `tonNode.ShardPublicOverlayId` schema key, which we also used to search the DHT.
 
-2개의 직렬화된 스키마를 단순히 2개의 직렬화된 바이트 배열을 연결하여 합쳐야 합니다. `overlay.query`가 먼저 오고 `overlay.getRandomPeers`가 두 번째로 옵니다.
+To combine two serialized schemas, we should concatenate two serialized byte arrays: `overlay.query` will come first, followed by `overlay.getRandomPeers`.
 
-결과 배열을 `adnl.message.query` 스키마로 감싸고 ADNL을 통해 전송합니다. 응답으로는 `overlay.nodes`를 기다립니다 - 이는 우리가 연결할 수 있는 오버레이 노드의 목록이며, 필요한 경우 충분한 연결을 얻을 때까지 새로운 노드에 동일한 요청을 반복할 수 있습니다.
+We then wrap the resulting array in the `adnl.message.query` schema and send it via ADNL. In response, we expect `overlay.nodes`, which will be a list of overlay nodes that we can connect to. If necessary, we can repeat the request to any new nodes until we acquire enough connections.
 
 ### 기능 요청
 
-연결이 설정되면 [요청](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L413) `tonNode.*`을 사용하여 오버레이 노드에 접근할 수 있습니다.
+Once the connection is established, we can access the overlay nodes using `tonNode.*` via the [requests](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L413).
 
-이런 종류의 요청에는 RLDP 프로토콜이 사용됩니다. 그리고 `overlay.query` 접두사를 잊지 않는 것이 중요합니다 - 오버레이의 모든 쿼리에 사용해야 합니다.
+We utilize the RLDP protocol for these types of requests. It's crucial to remember that every query in the overlay must begin with the `overlay.query` prefix.
 
-요청 자체에는 특별한 것이 없으며, [ADNL TCP에 대한 글에서 했던 것](/v3/documentation/network/protocols/adnl/adnl-tcp#getmasterchaininfo)과 매우 유사합니다.
+The requests themselves are quite standard and resemble those we discussed in the article about ADNL TCP found [here](/v3/documentation/network/protocols/adnl/adnl-tcp#getmasterchaininfo).
 
-예를 들어, `downloadBlockFull` 요청은 이미 친숙한 블록 id 스키마를 사용합니다:
+For example, the `downloadBlockFull` request follows the familiar block ID schema:
 
 ```tlb
 tonNode.downloadBlockFull block:tonNode.blockIdExt = tonNode.DataFull;
 ```
 
-이를 전달하면 블록에 대한 전체 정보를 다운로드할 수 있으며, 응답으로 다음을 받게 됩니다:
+By passing this step, we can download complete information about the block, and in response, we will receive:
 
 ```tlb
 tonNode.dataFull id:tonNode.blockIdExt proof:bytes block:bytes is_link:Bool = tonNode.DataFull;
@@ -87,10 +89,13 @@ tonNode.dataFull id:tonNode.blockIdExt proof:bytes block:bytes is_link:Bool = to
 tonNode.dataFullEmpty = tonNode.DataFull;
 ```
 
-있다면 `block` 필드는 TL-B 형식의 데이터를 포함합니다.
+If the `block` field is present, it will contain data in TL-B format.
 
-이렇게 노드에서 직접 정보를 받을 수 있습니다.
+This allows us to receive information directly from the nodes.
 
 ## 참조
 
-*여기 [Oleg Baranov](https://github.com/xssnick)의 [원본 문서 링크](https://github.com/xssnick/ton-deep-doc/blob/master/Overlay-Network.md)가 있습니다.*
+Here is the [link to the original article](https://github.com/xssnick/ton-deep-doc/blob/master/Overlay-Network.md) - *[Oleg Baranov](https://github.com/xssnick).*
+
+<Feedback />
+
