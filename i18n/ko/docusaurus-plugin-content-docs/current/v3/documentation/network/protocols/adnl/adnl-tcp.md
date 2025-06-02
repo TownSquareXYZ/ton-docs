@@ -1,98 +1,101 @@
-# ADNL TCP - Liteserver
+import Feedback from '@site/src/components/Feedback';
 
-TON 네트워크의 모든 상호작용이 구축된 낮은 수준의 프로토콜입니다. 어떤 프로토콜 위에서도 작동할 수 있지만, 주로 TCP와 UDP 위에서 사용됩니다. UDP는 노드 간 통신에 사용되고, TCP는 라이트 서버와의 통신에 사용됩니다.
+# ADNL TCP - liteserver
 
-이제 TCP를 통해 실행되는 ADNL을 분석하고 라이트 서버와 직접 상호작용하는 방법을 알아보겠습니다.
+This is the low-level protocol that supports all interactions within the TON network. While it can operate on top of any protocol, it is most commonly used in conjunction with TCP and UDP. Typically, UDP facilitates communication between nodes, whereas TCP is employed for communication with liteservers.
 
-ADNL의 TCP 버전에서 네트워크 노드는 주소로 ed25519 공개키를 사용하고 타원곡선 디피-헬만(ECDH) 절차를 통해 얻은 공유 키를 사용하여 연결을 설정합니다.
+In this section, we will analyze how ADNL operates over TCP and learn how to interact directly with liteservers.
 
-## 패킷 구조
+In the TCP version of ADNL, network nodes utilize public keys (ed25519) as their addresses. Connections are established using a shared key obtained through the Elliptic Curve Diffie-Hellman (ECDH) procedure.
+
+## Packet structure
 
 핸드셰이크를 제외한 각 ADNL TCP 패킷은 다음과 같은 구조를 가집니다:
 
-- 리틀 엔디안의 4바이트 패킷 크기(N)
+- 4 bytes of packet size in little-endian (N)
 - 32바이트 논스(체크섬 공격 방지를 위한 무작위 바이트)
 - (N - 64) 페이로드 바이트
 - 논스와 페이로드의 32바이트 SHA256 체크섬
 
-패킷 전체는 크기를 포함하여 **AES-CTR**로 암호화됩니다.
-복호화 후 체크섬이 데이터와 일치하는지 확인해야 합니다. 체크섬을 직접 계산하여 패킷의 체크섬과 비교하면 됩니다.
+The entire packet, including its size, is encrypted using **AES-CTR**.
 
-핸드셰이크 패킷은 예외적으로 부분적으로 암호화되지 않은 형태로 전송되며 다음 장에서 설명합니다.
+After decrypting the packet, you must verify that the checksum matches the data. To do this, simply calculate the checksum yourself and compare it to the checksum provided in the packet.
+
+The handshake packet is an exception; it is transmitted partially unencrypted and is detailed in the next chapter.
 
 ## 연결 설정
 
-연결을 설정하려면 서버의 ip, 포트, 공개 키를 알아야 하며, 자체 ed25519 개인 키와 공개 키를 생성해야 합니다.
+To establish a connection, we need to know the server's IP, port, and public key and generate our own private and public key, ed25519.
 
-서버의 ip, 포트, 키와 같은 공개 데이터는 [global config](https://ton-blockchain.github.io/global.config.json)에서 얻을 수 있습니다. config의 IP는 숫자 형식이며 [이 도구](https://www.browserling.com/tools/dec-to-ip)를 사용하여 일반 형식으로 변환할 수 있습니다. config의 공개 키는 base64 형식입니다.
+Public server data such as IP, port, and key can be obtained from the [global config](https://ton-blockchain.github.io/global.config.json). The IP in the config, which is numerical, can be converted to normal form using,(for example) [this tool](https://www.browserling.com/tools/dec-to-ip). The public key in the config is in base64 format.
 
 클라이언트는 160바이트의 무작위 바이트를 생성하며, 이 중 일부는 AES 암호화의 기초로 사용됩니다.
 
-이 바이트로부터 핸드셰이크 이후 메시지 암호화/복호화에 사용될 2개의 영구 AES-CTR 암호기가 생성됩니다:
+Two permanent AES-CTR ciphers are created, which the parties will use to encrypt/decrypt messages after the handshake.
 
 - Cipher A - key 0-31바이트, iv 64-79바이트
 - Cipher B - key 32-63바이트, iv 80-95바이트
 
-암호기는 다음 순서로 적용됩니다:
+The ciphers are utilized in the following order:
 
 - Cipher A는 서버가 보내는 메시지를 암호화하는 데 사용
-- Cipher A는 클라이언트가 수신한 메시지를 복호화하는 데 사용
+- Cipher A is used by the client to decrypt messages it receives.
 - Cipher B는 클라이언트가 보내는 메시지를 암호화하는 데 사용
-- Cipher B는 서버가 수신한 메시지를 복호화하는 데 사용
+- Cipher B is used by the server to decrypt messages it receives.
 
 연결을 설정하기 위해 클라이언트는 다음을 포함하는 핸드셰이크 패킷을 보내야 합니다:
 
-- [32바이트] **서버 키 ID** [[상세]](#getting-key-id)
+- [32 bytes] **Server key ID** [[see details here]](#getting-key-id)
 - [32바이트] **우리의 ed25519 공개 키**
 - [32바이트] **우리의 160바이트의 SHA256 해시**
-- [160바이트] **암호화된 우리의 160바이트** [[상세]](#handshake-packet-data-encryption)
+- [160 bytes] **Our 160 bytes encrypted** [[see details here]](#handshake-packet-data-encryption)
 
-핸드셰이크 패킷을 수신할 때 서버도 동일한 작업을 수행하여 ECDH 키를 받고 160바이트를 복호화하여 2개의 영구 키를 생성합니다. 모든 것이 정상적으로 작동하면 서버는 영구 암호기 중 하나를 사용하여 복호화해야 하는 페이로드가 없는 빈 ADNL 패킷으로 응답합니다.
+When receiving a handshake packet, the server will do the same actions: receive an ECDH key, decrypt 160 bytes, and create 2 permanent keys. If everything works out, the server will respond with an empty ADNL packet, without payload, to decrypt which (as well as subsequent ones) we need to use one of the permanent ciphers.
 
 이 시점부터 연결이 설정된 것으로 간주됩니다.
 
-연결이 설정되면 정보 수신을 시작할 수 있습니다. 데이터 직렬화에는 TL 언어가 사용됩니다.
+After we have established a connection, we can start receiving information; the TL language serializes data.
 
-[TL에 대해 자세히 알아보기](/v3/documentation/data-formats/tl)
+[Learn more about TL here](/v3/documentation/data-formats/tl).
 
-## Ping&Pong
+## Ping and pong
 
 5초마다 한 번씩 핑 패킷을 보내는 것이 최적입니다. 이는 데이터가 전송되지 않는 동안 연결을 유지하기 위해 필요하며, 그렇지 않으면 서버가 연결을 종료할 수 있습니다.
 
-핑 패킷은 다른 모든 패킷과 마찬가지로 위에서 설명한 표준 스키마에 따라 구축되며, 페이로드 데이터로 요청 ID와 핑 ID를 전달합니다.
+Like all the others, the ping packet is built according to the standard schema described [above](#packet-structure) and carries the request ID and ping ID as payload data.
 
-[여기](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L35)에서 핑 요청에 대한 원하는 스키마를 찾고 스키마 ID를 `crc32_IEEE("tcp.ping random_id:long = tcp.Pong")`로 계산합니다. 리틀 엔디안 바이트로 변환하면 **9a2b084d**가 됩니다.
+Let's find the desired schema for the ping request [here](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L35) and calculate the schema id as `crc32_IEEE("tcp.ping random_id:long = tcp.Pong")`. When converted to little endian bytes, we get **9a2b084d**.
 
-따라서 ADNL 핑 패킷은 다음과 같이 구성됩니다:
+Therefore, our ADNL ping packet will look like this:
 
-- 리틀 엔디안의 4바이트 패킷 크기 -> 64 + (4+8) = **76**
+- 4 bytes of packet size in little-endian -> 64 + (4+8) = **76**
 - 32바이트 논스 -> 무작위 32바이트
 - 4바이트 TL 스키마 ID -> **9a2b084d**
-- 8바이트 요청 id -> 무작위 uint64 숫자
+- 8 bytes of request-id -> random uint64 number
 - 논스와 페이로드의 32바이트 SHA256 체크섬
 
 패킷을 보내고 [tcp.pong](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L23)을 기다립니다. `random_id`는 핑 패킷에서 보낸 것과 동일합니다.
 
-## 라이트서버에서 정보 수신
+## Receiving information from a liteserver
 
-블록체인에서 정보를 얻기 위한 모든 요청은 [Liteserver Query](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L83) 스키마로 래핑되고, 이는 다시 [ADNL Query](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L22) 스키마로 래핑됩니다.
+All requests that are aimed at obtaining information from the blockchain are wrapped in [Liteserver query](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L83) schema, which in turn is wrapped in [ADNL query](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L22) schema.
 
-LiteQuery:
-`liteServer.query data:bytes = Object`, id **df068c79**
+- LiteQuery:
+  `liteServer.query data:bytes = Object`, id **df068c79**
+- ADNLQuery:
+  `adnl.message.query query_id:int256 query:bytes = adnl.Message`, id **7af98bb4**
 
-ADNLQuery:
-`adnl.message.query query_id:int256 query:bytes = adnl.Message`, id **7af98bb4**
+LiteQuery is passed inside ADNLQuery as `query:bytes`, and the final query is passed inside LiteQuery as `data:bytes`.
 
-LiteQuery는 ADNLQuery 내부에 `query:bytes`로 전달되고, 최종 쿼리는 LiteQuery 내부에 `data:bytes`로 전달됩니다.
-
-[TL의 바이트 파싱 인코딩](/v3/documentation/data-formats/tl)
+[Learn more about parsing encoding bytes in TL here](/v3/documentation/data-formats/tl).
 
 ### getMasterchainInfo
 
-이제 Lite API용 TL 패킷을 생성하는 방법을 알았으니 현재 TON 마스터체인 블록에 대한 정보를 요청할 수 있습니다.
-마스터체인 블록은 정보가 필요한 상태(순간)를 나타내기 위해 많은 후속 요청에서 입력 매개변수로 사용됩니다.
+Since we already know how to generate TL packets for the lite API, we can request information about the current TON MasterChain block.
 
-[필요한 TL 스키마](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L60)를 찾아 ID를 계산하고 패킷을 구축합니다:
+The MasterChain block is used in many further requests as an input parameter to indicate the state (moment) in which we need information.
+
+We are looking for the [TL schema we require](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L60), calculate its ID and build the packet:
 
 - 리틀 엔디안의 4바이트 패킷 크기 -> 64 + (4+32+(1+4+(1+4+3)+3)) = **116**
 - 32바이트 논스 -> 무작위 32바이트
@@ -152,8 +155,9 @@ ac2253594c86bd308ed631d57a63db4ab21279e9382e416128b58ee95897e164     -> sha256
 
 ### runSmcMethod
 
-마스터체인 블록을 얻는 방법을 이미 알았으니 이제 라이트 서버의 모든 메서드를 호출할 수 있습니다.
-**runSmcMethod**를 분석해 보겠습니다 - 이는 스마트 컨트랙트의 함수를 호출하고 결과를 반환하는 메서드입니다. 여기서는 [TL-B](/v3/documentation/data-formats/tlb/tl-b-language), [Cell](/v3/documentation/data-formats/tlb/cell-boc#cell), [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells)와 같은 새로운 데이터 타입을 이해해야 합니다.
+We already know how to get the MasterChain block, so now we can call any liteserver methods.
+
+Let's analyze **runSmcMethod** - this is a method that calls a function from a smart contract and returns a result. Here we need to understand some new data types such as [TL-B](/v3/documentation/data-formats/tlb/tl-b-language), [Cell](/v3/documentation/data-formats/tlb/cell-boc#cell) and [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells).
 
 스마트 컨트랙트 메서드를 실행하려면 TL 스키마를 사용하여 요청을 작성하고 보내야 합니다:
 
@@ -169,19 +173,19 @@ liteServer.runMethodResult mode:# id:tonNode.blockIdExt shardblk:tonNode.blockId
 
 요청에서 다음 필드를 볼 수 있습니다:
 
-1. mode:# - 응답에서 보고 싶은 것의 uint32 비트마스크, 예를 들어 인덱스 2의 비트가 1로 설정된 경우에만 `result:mode.2?bytes`가 응답에 표시됩니다.
-2. id:tonNode.blockIdExt - 이전 장에서 얻은 마스터 블록 상태입니다.
-3. account:[liteServer.accountId](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L27) - 워크체인과 스마트 컨트랙트 주소 데이터.
-4. method_id:long - 8바이트, XMODEM 테이블을 사용한 호출된 메서드 이름의 crc16이 작성되고 17번째 비트가 설정됨 [[계산]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/ton/runmethod.go#L16)
-5. params:bytes - 메서드 호출 인수를 포함하는 [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells)에 직렬화된 [Stack](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783) [[구현 예시]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/tlb/stack.go)
+- mode:# - 응답에서 보고 싶은 것의 uint32 비트마스크, 예를 들어 인덱스 2의 비트가 1로 설정된 경우에만 `result:mode.2?bytes`가 응답에 표시됩니다.
+- id:tonNode.blockIdExt - our master block state that we got in the previous chapter.
+- account:[liteServer.accountId](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L27) - 워크체인과 스마트 컨트랙트 주소 데이터.
+- method_id:long - 8바이트, XMODEM 테이블을 사용한 호출된 메서드 이름의 crc16이 작성되고 17번째 비트가 설정됨 [[계산]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/ton/runmethod.go#L16)
+- params:bytes - 메서드 호출 인수를 포함하는 [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells)에 직렬화된 [Stack](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783) [[구현 예시]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/tlb/stack.go)
 
 예를 들어, `result:mode.2?bytes`만 필요한 경우 mode는 0b100, 즉 4가 됩니다. 응답으로 다음을 받습니다:
 
-1. mode:# -> 전송된 것 - 4
-2. id:tonNode.blockIdExt -> 메서드가 실행된 마스터 블록
-3. shardblk:tonNode.blockIdExt -> 컨트랙트 계정이 있는 샤드 블록
-4. exit_code:int -> 메서드 실행 시 종료 코드를 나타내는 4바이트. 성공하면 = 0, 실패하면 예외 코드와 같음
-5. result:mode.2?bytes -> 메서드가 반환한 값을 포함하는 [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells)에 직렬화된 [Stack](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783)
+- mode:# -> 전송된 것 - 4
+- id:tonNode.blockIdExt -> 메서드가 실행된 마스터 블록
+- shardblk:tonNode.blockIdExt -> 컨트랙트 계정이 있는 샤드 블록
+- exit_code:int -> 메서드 실행 시 종료 코드를 나타내는 4바이트. 성공하면 = 0, 실패하면 예외 코드와 같음
+- result:mode.2?bytes -> 메서드가 반환한 값을 포함하는 [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells)에 직렬화된 [Stack](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783)
 
 컨트랙트 `EQBL2_3lMiyywU17g-or8N7v9hDmPCpttzBPE2isF2GTzpK4`의 `a2` 메서드 호출과 결과 가져오기를 분석해 보겠습니다:
 
@@ -223,17 +227,15 @@ FunC의 메서드 코드:
 }
 ```
 
-파싱하면 우리의 FunC 메서드가 반환하는 cell 타입의 2개의 값을 얻을 수 있습니다.
-루트 cell의 처음 3바이트 `000002` - 스택의 깊이, 즉 2입니다. 이는 메서드가 2개의 값을 반환했다는 의미입니다.
+If we parse it, we will get 2 values of the cell type, which our FunC method returns. The first 3 bytes of the root cell `000002` - is the depth of the stack, that is 2. This means that the method returned 2 values.
 
-계속 파싱하면, 다음 8비트(1바이트)는 현재 스택 레벨의 값 타입입니다. 일부 타입의 경우 2바이트가 필요할 수 있습니다. 가능한 옵션은 [스키마](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L766)에서 확인할 수 있습니다.
-우리의 경우 `03`이 있는데, 이는 다음을 의미합니다:
+We continue parsing, the next 8 bits (1 byte) is the value type at the current stack level. For some types, it may take 2 bytes. Possible options can be seen in [schema](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L766). In our case, we have `03`, which means:
 
 ```tlb
 vm_stk_cell#03 cell:^Cell = VmStackValue;
 ```
 
-따라서 우리 값의 타입은 cell이며, 스키마에 따르면 값 자체를 참조로 저장합니다. 하지만 스택 요소 저장 스키마를 보면:
+Hence, the type of our value is - cell, and, according to the schema, it stores the value itself as a reference. However, if we look at the stack element storage schema:
 
 ```tlb
 vm_stk_cons#_ {n:#} rest:^(VmStackList n) tos:VmStackValue = VmStackList (n + 1);
@@ -254,7 +256,7 @@ vm_stk_cons#_ {n:#} rest:^(VmStackList n) tos:VmStackValue = VmStackList (n + 1)
 
 순서가 반대라는 점에 주의하세요. 함수를 호출할 때도 인수를 같은 방식으로 전달해야 합니다 - FunC 코드에서 보는 것과 반대 순서로요.
 
-[구현 예시](https://github.com/xssnick/tonutils-go/blob/46dbf5f820af066ab10c5639a508b4295e5aa0fb/ton/runmethod.go#L24)
+[Please see implementation example here](https://github.com/xssnick/tonutils-go/blob/46dbf5f820af066ab10c5639a508b4295e5aa0fb/ton/runmethod.go#L24)
 
 ### getAccountState
 
@@ -266,11 +268,11 @@ AccountState TL 스키마를 분석해 보겠습니다:
 liteServer.accountState id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_proof:bytes proof:bytes state:bytes = liteServer.AccountState;
 ```
 
-1. `id` - 데이터를 얻은 마스터 블록
-2. `shardblk` - 데이터를 받은 계정이 위치한 워크체인 샤드 블록
-3. `shard_proof` - 샤드 블록의 머클 증명
-4. `proof` - 계정 상태의 머클 증명
-5. `state` - [account state 스키마](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L232)의 [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells) TL-B
+- `id` - our master block, regarding which we got the data.
+- `shardblk` - WorkChain shard block where our account is located, regarding which we received data.
+- `shard_proof` - Merkle proof of a shard block.
+- `proof` - Merkle proof of account status.
+- `state` - [account state 스키마](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L232)의 [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells) TL-B
 
 이 모든 데이터 중에서 우리가 필요한 것은 state에 있으므로 이를 분석하겠습니다.
 
@@ -280,7 +282,7 @@ liteServer.accountState id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_
 b5ee9c720102350100051e000277c0021137b0bc47669b3267f1de70cbb0cef5c728b8d8c7890451e8613b2d899827026a886043179d3f6000006e233be8722201d7d239dba7d818134001020114ff00f4a413f4bcf2c80b0d021d0000000105036248628d00000000e003040201cb05060013a03128bb16000000002002012007080043d218d748bc4d4f4ff93481fd41c39945d5587b8e2aa2d8a35eaf99eee92d9ba96004020120090a0201200b0c00432c915453c736b7692b5b4c76f3a90e6aeec7a02de9876c8a5eee589c104723a18020004307776cd691fbe13e891ed6dbd15461c098b1b95c822af605be8dc331e7d45571002000433817dc8de305734b0c8a3ad05264e9765a04a39dbe03dd9973aa612a61f766d7c02000431f8c67147ceba1700d3503e54c0820f965f4f82e5210e9a3224a776c8f3fad1840200201200e0f020148101104daf220c7008e8330db3ce08308d71820f90101d307db3c22c00013a1537178f40e6fa1f29fdb3c541abaf910f2a006f40420f90101d31f5118baf2aad33f705301f00a01c20801830abcb1f26853158040f40e6fa120980ea420c20af2670edff823aa1f5340b9f2615423a3534e2a2d2b2c0202cc12130201201819020120141502016616170003d1840223f2980bc7a0737d0986d9e52ed9e013c7a21c2b2f002d00a908b5d244a824c8b5d2a5c0b5007404fc02ba1b04a0004f085ba44c78081ba44c3800740835d2b0c026b500bc02f21633c5b332781c75c8f20073c5bd0032600201201a1b02012020210115bbed96d5034705520db3c8340201481c1d0201201e1f0173b11d7420c235c6083e404074c1e08075313b50f614c81e3d039be87ca7f5c2ffd78c7e443ca82b807d01085ba4d6dc4cb83e405636cf0069006031003daeda80e800e800fa02017a0211fc8080fc80dd794ff805e47a0000e78b64c00015ae19574100d56676a1ec40020120222302014824250151b7255b678626466a4610081e81cdf431c24d845a4000331a61e62e005ae0261c0b6fee1c0b77746e102d0185b5599b6786abe06fedb1c68a2270081e8f8df4a411c4605a400031c34410021ae424bae064f613990039e2ca840090081e886052261c52261c52265c4036625ccd88302d02012026270203993828290111ac1a6d9e2f81b609402d0015adf94100cc9576a1ec1840010da936cf0557c1602d0015addc2ce0806ab33b50f6200220db3c02f265f8005043714313db3ced542d34000ad3ffd3073004a0db3c2fae5320b0f26212b102a425b3531cb9b0258100e1aa23a028bcb0f269820186a0f8010597021110023e3e308e8d11101fdb3c40d778f44310bd05e254165b5473e7561053dcdb3c54710a547abc2e2f32300020ed44d0d31fd307d307d33ff404f404d10048018e1a30d20001f2a3d307d3075003d70120f90105f90115baf2a45003e06c2170542013000c01c8cbffcb0704d6db3ced54f80f70256e5389beb198106e102d50c75f078f1b30542403504ddb3c5055a046501049103a4b0953b9db3c5054167fe2f800078325a18e2c268040f4966fa52094305303b9de208e1638393908d2000197d3073016f007059130e27f080705926c31e2b3e63006343132330060708e2903d08308d718d307f40430531678f40e6fa1f2a5d70bff544544f910f2a6ae5220b15203bd14a1236ee66c2232007e5230be8e205f03f8009322d74a9802d307d402fb0002e83270c8ca0040148040f44302f0078e1771c8cb0014cb0712cb0758cf0158cf1640138040f44301e201208e8a104510344300db3ced54925f06e234001cc8cb1fcb07cb07cb3ff400f400c9
 ```
 
-[이 BoC를 파싱하세요](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells)
+[Parse this BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells) and get:
 
 <details>
   <summary>large cell</summary>
@@ -420,7 +422,7 @@ account_active$1 _:StateInit = AccountState;
 account_frozen$01 state_hash:bits256 = AccountState;
 ```
 
-보다시피 cell에는 많은 데이터가 포함되어 있지만, 주요 사례와 잔액을 얻는 방법을 분석해 보겠습니다. 나머지는 비슷한 방식으로 분석할 수 있습니다.
+As we can see, the cell contains a lot of data, but we will analyze the main cases and get a balance. You can analyze the rest in a similar way.
 
 파싱을 시작해 보겠습니다. 루트 cell 데이터에는 다음이 있습니다:
 
@@ -434,7 +436,7 @@ C0021137B0BC47669B3267F1DE70CBB0CEF5C728B8D8C7890451E8613B2D899827026A886043179D
 11000000000000100001000100110111101100001011110001000111011001101001101100110010011001111111000111011110011100001100101110110000110011101111010111000111001010001011100011011000110001111000100100000100010100011110100001100001001110110010110110001001100110000010011100000010011010101000100001100000010000110001011110011101001111110110000000000000000000000110111000100011001110111110100001110010001000100000000111010111110100100011100111011011101001111101100000011000000100110
 ```
 
-우리의 메인 TL-B 구조를 보면 `account_none$0` 또는 `account$1`의 두 가지 옵션이 있습니다. $ 기호 뒤에 선언된 접두사를 읽어서 어떤 옵션인지 알 수 있습니다. 우리의 경우 1비트입니다. 데이터의 첫 번째 비트 = 1이므로 `account$1`로 작업하고 다음 스키마를 사용합니다:
+Let's look at our main TL-B structure, we see that we have two options for what can be there - `account_none$0` or `account$1`. We can understand which option we have by reading the prefix declared after the symbol $, in our case it is 1 bit. If there is 0, then we have `account_none`, or 1, then `account`.
 
 위 데이터에서 첫 번째 비트는 1이므로, 우리는 `account$1`과 작업하며 다음 스키마를 사용할 것입니다:
 
@@ -443,34 +445,34 @@ account$1 addr:MsgAddressInt storage_stat:StorageInfo
           storage:AccountStorage = Account;
 ```
 
-다음으로 `addr:MsgAddressInt`가 있습니다. MsgAddressInt에도 여러 옵션이 있습니다:
+Next, we have `addr:MsgAddressInt`, we see that for MsgAddressInt we also have several options:
 
 ```tlb
 addr_std$10 anycast:(Maybe Anycast) workchain_id:int8 address:bits256  = MsgAddressInt;
 addr_var$11 anycast:(Maybe Anycast) addr_len:(## 9) workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
 ```
 
-이전과 마찬가지로 접두사 비트를 읽어서 작업할 옵션을 결정합니다. 이번에는 2비트를 읽습니다. 이미 읽은 비트를 제외하고 `1000000...`이 남습니다. 처음 2비트를 읽으면 `10`이므로 `addr_std$10`로 작업합니다.
+To determine which structure to work with, we follow a similar approach as last time by reading the prefix bits. This time, we read 2 bits. After processing the first bit, we have `1000000...` remaining. Reading the first 2 bits yields `10`, indicating that we are working with `addr_std$10`.
 
-다음으로 `anycast:(Maybe Anycast)`를 파싱해야 합니다. Maybe는 1비트를 읽어야 하며, 1이면 Anycast를 읽고 그렇지 않으면 건너뜁니다. 남은 비트는 `00000...`, 1비트를 읽으면 0이므로 Anycast를 건너뜁니다.
+Next, we encounter `anycast:(Maybe Anycast)`. The "Maybe" indicates that we should read 1 bit; if it's 1, we read `Anycast`; if it's 0, we skip it. After processing, our remaining bits are `00000...`. We read 1 bit and find it to be 0, so we skip reading `Anycast`.
 
-다음은 `workchain_id:int8`입니다. 단순히 8비트를 읽으면 됩니다. 다음 8비트를 읽으면 모두 0이므로 워크체인은 0입니다.
+Now, we move on to `workchain_id: int8`. This is straightforward— we read 8 bits to obtain the WorkChain ID. The next 8 bits are all zeros, so the WorkChain ID is 0.
 
-다음으로 `address:bits256`를 읽습니다. 이는 주소의 256비트이며 `workchain_id`와 같은 방식으로 읽습니다. 읽으면 16진수로 `21137B0BC47669B3267F1DE70CBB0CEF5C728B8D8C7890451E8613B2D8998270`를 얻습니다.
+Following this, we read `address: bits256`, which consists of 256 bits for the address, similar to how we handled the `workchain_id`. Upon reading, we receive `21137B0BC47669B3267F1DE70CBB0CEF5C728B8D8C7890451E8613B2D8998270` in hexadecimal representation.
 
-주소 `addr:MsgAddressInt`를 읽었으니 메인 구조에서 `storage_stat:StorageInfo`가 있습니다. 스키마는 다음과 같습니다:
+Next, we read the address `addr: MsgAddressInt` and then proceed to `storage_stat: StorageInfo` from the main structure. Its schema is:
 
 ```tlb
 storage_info$_ used:StorageUsed last_paid:uint32 due_payment:(Maybe Grams) = StorageInfo;
 ```
 
-먼저 `used:StorageUsed`가 있고 스키마는 다음과 같습니다:
+First, we have `used:StorageUsed`, along with its schema:
 
 ```tlb
 storage_used$_ cells:(VarUInteger 7) bits:(VarUInteger 7) public_cells:(VarUInteger 7) = StorageUsed;
 ```
 
-이는 계정 데이터를 저장하는 데 사용된 cell과 비트의 수입니다. 각 필드는 `VarUInteger 7`로 정의되어 있는데, 이는 최대 7비트의 동적 크기 uint를 의미합니다. 스키마에 따라 구성 방식을 이해할 수 있습니다:
+This is the number of cells and bits used to store account data. Each field is defined as `VarUInteger 7`, which means a uint of dynamic size, but a maximum of 7 bits. You can understand how it is arranged according to the schema:
 
 ```tlb
 var_uint$_ {n:#} len:(#< n) value:(uint (len * 8)) = VarUInteger n;
@@ -494,8 +496,7 @@ account_storage$_ last_trans_lt:uint64 balance:CurrencyCollection state:AccountS
 currencies$_ grams:Grams other:ExtraCurrencyCollection = CurrencyCollection;
 ```
 
-여기서 나노톤 단위의 계정 잔액이 될 `grams:Grams`를 읽을 것입니다.
-`grams:Grams`는 `VarUInteger 16`입니다. 16을 저장하기 위해(이진수로 `10000`, 1을 빼면 `1111`), 먼저 4비트를 읽고 얻은 값에 8을 곱한 다음 받은 비트 수를 읽으면 그것이 우리의 잔액입니다.
+From here we will read `grams:Grams` which will be the account balance in nano-tones. `grams:Grams` is `VarUInteger 16`, to store 16 (in binary form `10000`, subtracting 1 we get `1111`), then we read the first 4 bits, and multiply the resulting value by 8, then we read the received number of bits, it is our balance.
 
 데이터에 따라 남은 비트를 분석해 보겠습니다:
 
@@ -509,7 +510,7 @@ currencies$_ grams:Grams other:ExtraCurrencyCollection = CurrencyCollection;
 
 ### 기타 메서드
 
-이제 모든 정보를 학습했으므로 다른 라이트서버 메서드도 호출하고 응답을 처리할 수 있습니다. 원리는 같습니다. :)
+After studying all the information, you can call and process responses for other liteserver methods using the same principle.
 
 ## 핸드셰이크의 추가 기술 세부사항
 
@@ -527,9 +528,9 @@ pub.unenc data:bytes = PublicKey   -- ID 0a451fb6
 pk.aes key:int256 = PrivateKey     -- ID 3751e8a5
 ```
 
-예를 들어, 핸드셰이크에 사용되는 ED25519 타입의 키의 경우 키 ID는 \*\*[0xC6, 0xB4, 0x13, 0x48]\*\*과 **공개 키**의 SHA256 해시가 됩니다(36바이트 배열, 접두사 + 키).
+As an example, for keys of type ed25519 that are used for handshake, the key ID will be the SHA256 hash from **[0xC6, 0xB4, 0x13, 0x48]** and **public key**, (36 byte array, prefix + key).
 
-[코드 예시](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L16)
+[Please see code example](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L16).
 
 ### 핸드셰이크 패킷 데이터 암호화
 
@@ -544,7 +545,7 @@ pk.aes key:int256 = PrivateKey     -- ID 3751e8a5
 
 암호기가 조립되면 160바이트를 암호화합니다.
 
-[코드 예시](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/connection.go#L361)
+[Please see code example](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/connection.go#L361).
 
 ### ECDH를 사용한 공유 키 얻기
 
@@ -552,20 +553,23 @@ pk.aes key:int256 = PrivateKey     -- ID 3751e8a5
 
 DH의 본질은 개인 정보를 공개하지 않고 공유 비밀 키를 얻는 것입니다. 가장 단순한 형태로 예를 들어 보겠습니다. 서버와 우리 사이에 공유 키를 생성해야 한다고 가정해 보겠습니다:
 
-1. 우리는 **6**과 **7**같은 비밀 및 공개 숫자를 생성합니다
-2. 서버는 **5**와 **15**같은 비밀 및 공개 숫자를 생성합니다
-3. 서버와 공개 숫자를 교환합니다. 서버에 **7**을 보내고, 서버는 우리에게 **15**를 보냅니다
-4. 우리는 계산합니다: **7^6 mod 15 = 4**
-5. 서버는 계산합니다: **7^5 mod 15 = 7**
-6. 받은 숫자를 교환합니다. 서버에 **4**를 주고, 서버는 우리에게 **7**을 줍니다
-7. 우리는 계산합니다: **7^6 mod 15 = 4**
-8. 서버는 계산합니다: **4^5 mod 15 = 4**
-9. 공유 키 = **4**
+- 우리는 **6**과 **7**같은 비밀 및 공개 숫자를 생성합니다
+- 서버는 **5**와 **15**같은 비밀 및 공개 숫자를 생성합니다
+- 서버와 공개 숫자를 교환합니다. 서버에 **7**을 보내고, 서버는 우리에게 **15**를 보냅니다
+- 우리는 계산합니다: **7^6 mod 15 = 4**
+- 서버는 계산합니다: **7^5 mod 15 = 7**
+- 받은 숫자를 교환합니다. 서버에 **4**를 주고, 서버는 우리에게 **7**을 줍니다
+- 우리는 계산합니다: **7^6 mod 15 = 4**
+- 서버는 계산합니다: **4^5 mod 15 = 4**
+- 공유 키 = **4**
 
 단순화를 위해 ECDH 자체의 세부 사항은 생략하겠습니다. 곡선상의 공통 점을 찾아 2개의 키, 개인 키와 공개 키를 사용하여 계산됩니다. 관심이 있다면 별도로 읽어보는 것이 좋습니다.
 
-[코드 예시](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L32)
+[Please see code example](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L32).
 
 ## 참조
 
-*여기 [Oleg Baranov](https://github.com/xssnick)의 [원본 문서 링크](https://github.com/xssnick/ton-deep-doc/blob/master/ADNL-TCP-Liteserver.md)가 있습니다.*
+Here is a [link to the original article](https://github.com/xssnick/ton-deep-doc/blob/master/ADNL-TCP-Liteserver.md) - *[Oleg Baranov](https://github.com/xssnick)*.
+
+<Feedback />
+
