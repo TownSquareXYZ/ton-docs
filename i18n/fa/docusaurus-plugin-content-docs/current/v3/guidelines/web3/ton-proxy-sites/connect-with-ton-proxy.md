@@ -1,18 +1,20 @@
+import Feedback from '@site/src/components/Feedback';
+
 # اتصال به پراکسی TON
 
-پراکسی TON با پراکسی HTTP معمولی سازگار است، بنابراین می‌توانید آن را مستقیماً در تنظیمات مرورگر یا سیستم‌عامل خود استفاده کنید.
+TON Proxy is fully compatible with standard HTTP proxy settings so that you can configure it directly through your browser or operating system.
 
 ## گوگل کروم
 
-بسته به سیستم‌عامل خود، دستورالعمل‌های مربوط به ویندوز، مک‌اواس، لینوکس، آی‌اواس یا اندروید را دنبال کنید.
+Follow the instructions specific to your device’s operating system: Windows, macOS, Linux, iOS, or Android.
 
 ## فایرفاکس
 
-تنظیمات -> عمومی -> تنظیمات شبکه -> پیکربندی -> تنظیمات پراکسی دستی -> پراکسی HTTP
-
-در فیلد "پراکسی HTTP"، آدرس یکی از پراکسی‌های ورود عمومی را وارد کنید و در فیلد "پورت"، "8080" را بدون گیومه وارد کنید.
-
-روی "تأیید" کلیک کنید.
+1. Go to **Settings → General → Network Settings → Configure**.
+2. Choose a "Manual proxy settings".
+3. In the "HTTP Proxy" field, enter the address of a public entry proxy.
+4. In the "Port" field, enter "8080" without quotes.
+5. روی "تأیید" کلیک کنید.
 
 ## سافاری
 
@@ -20,44 +22,42 @@
 
 ## آی‌اواس
 
-تنظیمات -> WiFi -> روی شبکه متصل فعلی کلیک کنید -> تنظیم پراکسی -> دستی
-
-در فیلد "سرور"، آدرس یکی از پراکسی‌های ورودی عمومی را وارد کنید و در فیلد "پورت"، "8080" را بدون گیومه وارد کنید.
-
-روی "ذخیره" کلیک کنید.
+1. Go to **Settings → Wi-Fi**.
+2. Tap your currently connected network.
+3. Scroll to "HTTP Proxy" and choose "Manual".
+4. In the "Server" field, enter the address of a public entry proxy.
+5. In the "Port" field, enter "8080" without quotes.
+6. Tap "Save".
 
 ## اندروید
 
-تنظیمات -> WiFi -> نام شبکه Wi-Fi را لمس کرده و نگه دارید -> تغییر شبکه -> گزینه‌های پیشرفته -> دستی
-
-در فیلد "سرور"، آدرس یکی از پراکسی‌های ورودی عمومی را وارد کنید و در فیلد "پورت"، "8080" را بدون گیومه وارد کنید.
-
-روی "ذخیره" کلیک کنید.
+1. Go to **Settings → Wi-Fi**.
+2. Tap and hold the Wi-Fi network name.
+3. Select **Modify Network → Advanced Options → Manual**.
+4. In the "Server" field, enter the address of a public entry proxy.
+5. In the "Port" field, enter "8080" without quotes.
+6. Tap "Save".
 
 ## ویندوز
 
-دکمه "شروع" را بزنید و سپس تنظیمات > شبکه و اینترنت > پراکسی را انتخاب کنید.
-
-در زیر "تنظیم پراکسی دستی"، کنار "استفاده از سرور پراکسی"، "تنظیم" را انتخاب کنید.
-
-در دیالوگ "ویرایش سرور پراکسی"، اقدامات زیر را انجام دهید:
-
-"استفاده از سرور پراکسی" را روشن کنید.
-
-آدرس یکی از پراکسی‌های ورودی عمومی را وارد کنید و در فیلد "پورت"، "8080" را بدون گیومه وارد کنید.
-
-روی "ذخیره" کلیک کنید.
+1. Click the "Start" button and select **Settings → Network & Internet → Proxy**.
+2. در زیر "تنظیم پراکسی دستی"، کنار "استفاده از سرور پراکسی"، "تنظیم" را انتخاب کنید.
+3. "استفاده از سرور پراکسی" را روشن کنید.
+4. Enter the address of one of the public entry proxies, in the "Port" field, and enter "8080" without quotes.
+5. روی "ذخیره" کلیک کنید.
 
 ## مک‌اواس
 
-تنظیمات -> شبکه -> پیشرفته -> پراکسی -> پراکسی وب (HTTP).
-
-در فیلد "سرور پراکسی وب"، آدرس یکی از پراکسی‌های ورودی عمومی را وارد کنید و پس از دو نقطه، "8080" را بدون گیومه وارد کنید.
-
-روی "تأیید" کلیک کنید.
+1. Go to **Settings → Network → Advanced → Web proxy (HTTP)**.
+2. In the "Web proxy server" field, enter the address of one of the public entry proxies; after the colon, enter "8080" without quotes.
+3. روی "تأیید" کلیک کنید.
 
 ## اوبونتو
 
-تنظیمات -> شبکه -> دکمه پراکسی شبکه -> دستی
+1. Go to **Settings → Network**.
+2. Click **Network Proxy → Manual**.
+3. In the "HTTP Proxy" field, enter the address of one of the public entry proxies.
+4. For the port, enter "8080" without quotes.
 
-در فیلد "پراکسی HTTP"، آدرس یکی از پراکسی‌های ورودی عمومی را وارد کنید و برای پورت، "8080" را بدون گیومه وارد کنید.
+<Feedback />
+
