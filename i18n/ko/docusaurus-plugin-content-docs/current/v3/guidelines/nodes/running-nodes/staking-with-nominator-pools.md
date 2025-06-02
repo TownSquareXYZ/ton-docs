@@ -1,34 +1,34 @@
-# 지명자 풀로 스테이킹하기
+import Feedback from '@site/src/components/Feedback';
+
+# Staking with nominator pools
 
 ## 개요
 
 TON 스마트 컨트랙트를 사용하면 원하는 모든 스테이킹 및 예치 방식을 구현할 수 있습니다.
 
-하지만 TON 블록체인에는 "네이티브 스테이킹"이 있습니다 - 검증에 대한 보상을 공유하고 스테이킹을 위해 검증자에게 Toncoin을 빌려줄 수 있습니다.
+However, there is native staking in TON Blockchain - you can lend Toncoin to validators for staking and share the reward for validation.
 
 검증자에게 빌려주는 사람을 **지명자**라고 합니다.
 
-[**지명자 풀**](/v3/documentation/smart-contracts/contracts-specs/nominator-pool)이라고 불리는 스마트 컨트랙트는 한 명 이상의 지명자가 검증자 스테이크에 Toncoin을 빌려줄 수 있게 하고, 검증자가 해당 Toncoin을 검증 목적으로만 사용할 수 있도록 보장합니다. 또한 스마트 컨트랙트는 보상의 분배를 보장합니다.
+A smart contract, called a [**nominator pool**](/v3/documentation/smart-contracts/contracts-specs/nominator-pool), provides the ability for one or more nominators to lend Toncoin in a validator stake, and ensures that the validator can use that Toncoin only for validation. This smart contract guarantees the distribution of the reward.
 
-## 검증자 vs 지명자
+If you are familiar with cryptocurrencies, you must have heard about **validators** and **nominators**. Now, the time has come to find out what they are — the two major actors ruling the blockchain.
 
-암호화폐에 익숙하다면 **검증자**와 **지명자**에 대해 들어보셨을 것입니다. 이 단어들은 암호화폐 관련 채널에서 자주 등장합니다(우리 채널도 예외는 아닙니다). 이제 블록체인을 관리하는 두 주요 행위자가 무엇인지 알아볼 시간입니다.
+## Validator
 
-### 검증자
+A validator is a network node that helps keep the blockchain running by verifying (or validating) suggested blocks and recording them on the blockchain.
 
-먼저 검증자에 대해 이야기해보겠습니다. 검증자는 제안된 블록을 검증(또는 유효성 검사)하고 블록체인에 기록함으로써 블록체인 운영을 돕는 네트워크 노드입니다.
+To become a validator, you must meet two requirements: have a high-performance server and obtain at least 300,000 Toncoins, in order to make a stake. At the time of writing, there are up to 400 validators per round on TON.
 
-검증자가 되기 위해서는 두 가지 요구사항을 충족해야 합니다: 고성능 서버를 보유하고 스테이크를 위한 상당한 양의 TON(600,000)을 확보해야 합니다. 이 글을 쓰는 시점에 TON에는 227명의 검증자가 있습니다.
-
-### 지명자
+## Nominator
 
 :::info
-새로운 버전의 지명자 풀이 사용 가능합니다. 자세한 내용은 단일 지명자 및 베스팅 컨트랙트 페이지를 참조하세요.
+New version of [nominator pool](/v3/documentation/smart-contracts/contracts-specs/nominator-pool/) available, read more in the [Single nominator pool](/v3/documentation/smart-contracts/contracts-specs/single-nominator-pool/) and [Vesting contract](/v3/documentation/smart-contracts/contracts-specs/vesting-contract/) pages.
 :::
 
 모든 사람이 수십만 Toncoin을 보유할 여유가 없다는 것은 분명합니다 - 여기서 지명자가 등장합니다. 간단히 말해서, 지명자는 자신의 TON을 검증자에게 빌려주는 사용자입니다. 검증자가 블록을 검증하여 보상을 얻을 때마다 이는 참여자들 사이에 분배됩니다.
 
-얼마 전에 Ton Whales는 최소 예치금 50 TON으로 TON의 첫 번째 스테이킹 풀을 운영했습니다. 이후 TON Foundation이 첫 번째 공개 지명자 풀을 출시했습니다. 이제 사용자들은 **10,000 TON**부터 시작하여 완전히 탈중앙화된 방식으로 Toncoin을 스테이킹할 수 있습니다.
+TON Whales pool allows a minimum deposit of 50 TON. TON Foundation open nominator pool allows users to stake Toncoin in a fully decentralized way, starting with **10,000 TON**.
 
 *[TON Community 게시물](https://t.me/toncoin/543)에서 발췌.*
 
@@ -36,7 +36,7 @@ TON 스마트 컨트랙트를 사용하면 원하는 모든 스테이킹 및 예
 
 ## 월 비용
 
-검증 라운드는 ~18시간 동안 지속되며, 검증 라운드당 약 **5 TON**이 필요하고 1개의 지명자 풀이 짝수 및 홀수 검증 라운드에 참여하므로 풀 운영에는 **월 ~105 TON**이 소요됩니다.
+Since validation round lasts ~18 hours, takes about 5 TON per validation round and 1 nominator pool takes part in even and odd validation rounds it will take **~105 TON per month** to operate the pool.
 
 ## 참여 방법
 
@@ -44,8 +44,16 @@ TON 스마트 컨트랙트를 사용하면 원하는 모든 스테이킹 및 예
 
 ## 소스 코드
 
-- [지명자 풀 스마트 컨트랙트 소스 코드](https://github.com/ton-blockchain/nominator-pool)
+- [Nominator pool smart contract source code](https://github.com/ton-blockchain/nominator-pool)
 
 :::info
 지명자 이론은 [TON 백서](https://docs.ton.org/ton.pdf)의 2.6.3, 2.6.25 장에서 설명됩니다.
 :::
+
+## See also
+
+- [Running validator node](/v3/guidelines/nodes/running-nodes/validator-node)
+- [Nominator pool](/v3/documentation/smart-contracts/contracts-specs/nominator-pool/)
+- [Single nominator pool](/v3/documentation/smart-contracts/contracts-specs/single-nominator-pool/)
+  <Feedback />
+
