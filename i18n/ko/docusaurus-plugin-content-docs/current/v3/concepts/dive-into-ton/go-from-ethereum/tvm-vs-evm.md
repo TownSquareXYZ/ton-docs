@@ -1,60 +1,66 @@
+import Feedback from '@site/src/components/Feedback';
+
 # TVM vs EVM
 
-이더리움 가상 머신(EVM)과 TON 가상 머신(TVM)은 모두 스마트 컨트랙트 코드를 실행하기 위해 개발된 스택 기반 가상 머신입니다. 공통된 특징이 있지만, 그들 사이에는 주목할 만한 차이점들이 있습니다.
+## Introduction
 
-## 데이터 표현
+**Ethereum Virtual Machine (EVM)** and **TON Virtual Machine (TVM)** are stack-based virtual machines developed for running smart contract code. Although they have standard features, there are notable distinctions between them.
 
-### 이더리움 가상 머신(EVM)
+## Differences of TVM and EVM
 
-1. 기본 데이터 단위
+### 데이터 표현
 
-- EVM은 주로 256비트 정수로 작동하며, 이는 이더리움의 암호화 함수(예: Keccak-256 해싱과 타원 곡선 연산)를 중심으로 한 설계를 반영합니다.
-- 데이터 타입은 주로 정수, 바이트, 때로는 이러한 타입의 배열로 제한되지만, 모두 256비트 처리 규칙을 준수해야 합니다.
+#### EVM
 
-2. 상태 저장소
+1. Fundamental data units
 
-- 이더리움 블록체인의 전체 상태는 256비트 주소를 256비트 값에 매핑한 것입니다. 이 매핑은 머클 패트리시아 트라이(MPT)라고 알려진 데이터 구조에서 유지됩니다.
+- The EVM operates primarily on 256-bit integers, reflecting its design around Ethereum's cryptographic functions, such as Keccak-256 hashing and elliptic curve operations.
+- Data types are limited mainly to integers, bytes, and occasionally arrays of these types, but all must conform to 256-bit processing rules.
+
+2. State storage
+
+- The entire state of the Ethereum blockchain is a mapping of 256-bit addresses to 256-bit values. A data structure known as the **Merkle Patricia Trie (MPT)** maintains this mapping.
 - MPT는 이더리움이 암호화 검증을 통해 블록체인 상태의 일관성과 무결성을 효율적으로 증명할 수 있게 해주며, 이는 이더리움과 같은 탈중앙화 시스템에서 매우 중요합니다.
 
-3. 데이터 구조 제한
+3. Data structure limitations
 
-- 256비트 워드 제약으로의 단순화는 EVM이 복잡하거나 사용자 정의 데이터 구조를 직접 처리하도록 설계되지 않았음을 의미합니다.
-- 개발자들은 종종 더 복잡한 데이터 구조를 시뮬레이션하기 위해 스마트 컨트랙트 내에 추가 로직을 구현해야 하며, 이는 가스 비용과 복잡성 증가로 이어질 수 있습니다.
+- The simplification to 256-bit word constraints means that the EVM is not inherently designed to handle complex or custom data structures directly.
+ Developers often need to implement additional logic within smart contracts to simulate more complex data structures, which can increase gas costs and complexity.
 
-### TON 가상 머신(TVM)
+#### TVM
 
-1. 셀 기반 아키텍처
+1. Cell-based architecture
 
-- TVM은 데이터를 표현하기 위해 독특한 "셀의 가방" 모델을 사용합니다. 각 셀은 최대 128 데이터 바이트를 포함할 수 있으며, 다른 셀에 대한 최대 4개의 참조를 가질 수 있습니다.
+- TVM uses a unique [bag of cells](/v3/documentation/data-formats/tlb/cell-boc/) model to represent data. Each cell can contain up to 128 data bytes and have up to 4 references to other cells.
 - 이 구조는 TVM이 임의의 대수적 데이터 타입과 트리나 방향성 비순환 그래프(DAG)와 같은 더 복잡한 구조를 저장소 모델 내에서 직접 기본적으로 지원할 수 있게 합니다.
 
-2. 유연성과 효율성
+2. Flexibility and efficiency
 
-- 셀 모델은 상당한 유연성을 제공하여 TVM이 EVM보다 더 자연스럽고 효율적으로 다양한 데이터 구조를 처리할 수 있게 합니다.
-- 예를 들어, 셀 참조를 통해 연결된 구조를 생성하는 능력은 탈중앙화 소셜 네트워크나 복잡한 탈중앙화 금융(DeFi) 프로토콜과 같은 특정 유형의 애플리케이션에 중요한 동적이고 잠재적으로 무한한 데이터 구조를 가능하게 합니다.
+- The cell model provides significant flexibility, enabling the TVM to handle various data structures more naturally and efficiently than the EVM.
+- For example, creating linked structures through cell references allows for dynamic and potentially infinite data structures, which is crucial for specific applications like decentralized social networks or complex decentralized finance (DeFi) protocols.
 
-3. 복잡한 데이터 처리
+3. Complex data handling
 
-- VM 아키텍처 내에서 복잡한 데이터 타입을 본질적으로 관리하는 능력은 스마트 컨트랙트에서 우회 구현의 필요성을 줄여, 잠재적으로 실행 비용을 낮추고 실행 속도를 증가시킵니다.
-- TVM의 설계는 복잡한 상태 관리나 상호 연결된 데이터 구조가 필요한 애플리케이션에 특히 유리하며, 개발자들이 정교하고 확장 가능한 탈중앙화 애플리케이션을 구축할 수 있는 강력한 기반을 제공합니다.
+- The ability to manage complex data types inherently within the VM architecture reduces the need for workaround implementations in smart contracts, potentially lowering the execution cost and increasing execution speed.
+ TVM's design is particularly advantageous for applications requiring complex state management or interlinked data structures. It provides a robust foundation for developers to build sophisticated and scalable decentralized applications.
 
-## 스택 머신
+### Stack machine
 
-### 이더리움 가상 머신(EVM)
+#### EVM
 
-- EVM은 연산을 관리하기 위해 후입선출(LIFO) 스택을 사용하는 전통적인 스택 기반 머신으로 작동합니다.
-- 스택의 모든 요소에 대한 표준 크기인 256비트 정수를 푸시하고 팝하여 연산을 처리합니다.
+- The EVM operates as a traditional stack-based machine, using a last-in, first-out (LIFO) stack to manage computation.
+- It processes operations by pushing and popping 256-bit integers, the standard size for all elements in the stack.
 
-### TON 가상 머신(TVM)
+#### TVM
 
-- TVM도 스택 기반 머신으로 작동하지만 중요한 차이가 있습니다: 257비트 정수와 셀에 대한 참조를 모두 지원합니다.
-- 이를 통해 TVM은 이 두 가지 distinct 타입의 데이터를 스택에 푸시하고 팝할 수 있어, 직접적인 데이터 조작에서 향상된 유연성을 제공합니다.
+- TVM also functions as a stack-based machine but with a key distinction: it supports both 257-bit integers and references to cells.
+- This allows TVM to push and pop these two distinct types of data onto/from the stack, providing enhanced flexibility in direct data manipulation.
 
-### 스택 연산 예시
+#### Example of stack operations
 
-EVM에서 두 숫자(2와 2)를 더하고 싶다고 가정해보겠습니다. 이 과정은 숫자들을 스택에 푸시하고 `ADD` 명령어를 호출하는 것을 포함합니다. 결과(4)는 스택의 맨 위에 남게 됩니다.
+Suppose we want to add two numbers, `2` and `2`, in EVM. The process would involve pushing the numbers onto the stack and calling the `ADD` instruction. The result, `4`, would be left on top of the stack.
 
-TVM에서도 같은 방식으로 이 연산을 수행할 수 있습니다. 하지만 해시맵과 셀 참조와 같은 더 복잡한 데이터 구조를 포함하는 다른 예시를 살펴보겠습니다. 키는 정수이고 값은 정수나 셀 참조인 키-값 쌍을 저장하는 해시맵이 있다고 가정해보겠습니다. 우리의 해시맵이 다음과 같은 항목들을 포함한다고 해보겠습니다:
+We can do this operation in the same way in TVM. But let’s look at another example with more complex data structures, such as hashmaps and cell references. Suppose we have a hashmap that stores key-value pairs, where keys are integers and values are either integers or cell references. Let’s say our hashmap contains the following entries:
 
 ```js
 {
@@ -63,16 +69,16 @@ TVM에서도 같은 방식으로 이 연산을 수행할 수 있습니다. 하�
 }
 ```
 
-키 1과 2에 연결된 값들을 더하고 결과를 키 3에 저장하고 싶습니다. 스택 연산을 살펴보겠습니다:
+We want to add the values associated with keys `1` and `2` and store the result with key `3`. Let’s look at stack operations:
 
-1. 키 1을 스택에 푸시: `stack` = (1)
-2. 키 1에 대해 `DICTGET` 호출(스택 맨 위의 키와 연결된 값을 검색): 값 10을 검색. `stack` = (10)
-3. 키 2를 스택에 푸시: `stack` = (10, 2)
-4. 키 2에 대해 `DICTGET` 호출: Cell_A에 대한 참조를 검색. `stack` = (10, Cell_A)
-5. Cell_A에서 값 로드: 셀 참조에서 값을 로드하는 명령어가 실행됨. `stack` = (10, 10)
-6. `ADD` 명령어 호출: `ADD` 명령어가 실행되면, TVM은 스택의 맨 위 두 요소를 팝하여 더하고 결과를 스택에 다시 푸시합니다. 이 경우, 맨 위 두 요소는 10과 10입니다. 더하기 후, 스택은 결과를 포함합니다: `stack` = (20)
-7. 키 3을 스택에 푸시: `stack` = (20, 3)
-8. `DICTSET` 호출: 키 3으로 20을 저장. 업데이트된 해시맵:
+1. Push key `1` onto the stack: `stack = (1)`
+2. Call `DICTGET` for key `1` (retrieves the value associated with the key at the top of the stack): Retrieves value 10. `stack = (10)`
+3. Push key `2` onto the stack: `stack = (10, 2)`
+4. Call `DICTGET` for key `2`: Retrieves reference to Cell_A. `stack = (10, Cell_A)`
+5. Load value from `Cell_A`: TVM executes an instruction to load the value from the cell reference. `stack = (10, 10)`
+6. Call the `ADD` instruction: When the `ADD` instruction is executed, the TVM will pop the top two elements from the stack, add them together, and push the result back onto the stack. In this case, the top two elements are `10` and `10`. After the addition, the stack will contain the result: `stack = (20)`
+7. Push key `3` onto the stack: `stack = (20, 3)`
+8. Call `DICTSET`: Stores `20` with key `3`. Updated hashmap:
 
 ```js
 {
@@ -82,52 +88,59 @@ TVM에서도 같은 방식으로 이 연산을 수행할 수 있습니다. 하�
 }
 ```
 
-EVM에서 동일한 작업을 수행하려면 키-값 쌍을 저장하는 매핑을 정의하고 매핑에 저장된 256비트 정수와 직접 작업하는 함수를 정의해야 합니다.
-EVM이 Solidity를 활용하여 복잡한 데이터 구조를 지원한다는 점에 주목하는 것이 중요하지만, 이러한 구조들은 EVM의 더 단순한 데이터 모델 위에 구축되며, 이는 TVM의 더 표현력 있는 데이터 모델과 근본적으로 다릅니다.
+To do the same in EVM, we need to define a mapping that stores key-value pairs and the function where we work directly with 256-bit integers stored in the mapping.
+It’s essential to note that the EVM supports complex data structures by leveraging Solidity, but these structures are built on top of the EVM’s simpler data model, which is fundamentally different from the TVM's more expressive data model.
 
-## 산술 연산
+### Arithmetic operations
 
-### 이더리움 가상 머신(EVM)
+#### EVM
 
-- 이더리움 가상 머신(EVM)은 256비트 정수를 사용하여 산술 연산을 처리하며, 이는 덧셈, 뺄셈, 곱셈, 나눗셈과 같은 연산이 이 데이터 크기에 맞춰져 있음을 의미합니다.
+- The **Ethereum Virtual Machine (EVM)** uses 256-bit integers to handle arithmetic operations such as addition, subtraction, multiplication, and division, tailoring them to this data size.
 
-### TON 가상 머신(TVM)
+#### TVM
 
-- TON 가상 머신(TVM)은 64비트, 128비트, 256비트 정수를 포함하여 더 다양한 범위의 산술 연산을 지원하며, 부호 있는 것과 없는 것 모두, 그리고 모듈로 연산도 지원합니다. TVM은 또한 곱하기-후-시프트와 시프트-후-나누기와 같은 연산으로 산술 기능을 더욱 향상시키며, 이는 고정 소수점 산술을 구현하는 데 특히 유용합니다. 이러한 다양성은 개발자들이 스마트 컨트랙트의 특정 요구사항에 기반하여 가장 효율적인 산술 연산을 선택할 수 있게 하여, 데이터 크기와 타입에 기반한 잠재적 최적화를 제공합니다.
+- The **TON Virtual Machine (TVM)** supports more diverse arithmetic operations, including 64-bit, 128-bit, and 256-bit integers, both unsigned and signed and modulo operations. TVM further enhances its arithmetic capabilities with multiplication-then-shift and shift-then-divide, which are particularly useful for implementing fixed-point arithmetic. This variety allows developers to select the most efficient arithmetic operations based on the specific requirements of their smart contracts, offering potential optimizations based on data size and type.
 
-## 오버플로우 검사
+### Overflow checks
 
-### 이더리움 가상 머신(EVM)
+#### EVM
 
-- EVM에서는 가상 머신 자체에서 오버플로우 검사가 본질적으로 수행되지 않습니다. Solidity 0.8.0의 도입으로, 보안을 향상시키기 위해 자동 오버플로우와 언더플로우 검사가 언어에 통합되었습니다. 이러한 검사들은 산술 연산과 관련된 일반적인 취약점을 예방하는 데 도움이 되지만 새로운 버전의 Solidity가 필요하며, 이전 버전에서는 이러한 안전장치를 수동으로 구현해야 합니다.
+- In the EVM, the virtual machine does not perform overflow checks inherently. With the introduction of Solidity 0.8.0, automatic overflow and underflow checks were integrated into the language to enhance security. These checks help prevent common vulnerabilities related to arithmetic operations but require newer versions of Solidity, as earlier versions necessitate manual implementation of these safeguards.
 
-### TON 가상 머신(TVM)
+#### TVM
 
-- 대조적으로, TVM은 모든 산술 연산에서 자동으로 오버플로우 검사를 수행하며, 이는 가상 머신에 직접 내장된 기능입니다. 이러한 설계 선택은 오류의 위험을 본질적으로 줄이고 코드의 전반적인 신뢰성과 보안을 향상시켜 스마트 컨트랙트의 개발을 단순화합니다.
+- In contrast, TVM automatically performs overflow checks on all arithmetic operations, a feature built directly into the virtual machine. This design choice simplifies the development of smart contracts by inherently reducing the risk of errors and enhancing the overall reliability and security of the code.
 
-## 암호화와 해시 함수
+### Cryptography and hash functions
 
-### 이더리움 가상 머신(EVM)
+#### EVM
 
-- EVM은 secp256k1 타원 곡선과 keccak256 해시 함수와 같은 이더리움 특화 암호화 체계를 지원합니다. 또한, EVM은 집합에서 요소의 멤버십을 검증하는 데 사용되는 암호화 증명인 머클 증명에 대한 내장 지원이 없습니다.
+EVM supports Ethereum-specific cryptography schemes, such as the secp256k1 elliptic curve and the keccak256 hash function. However, it does not have built-in support for Merkle proofs, which are cryptographic proofs used to verify the membership of an element in a set.
 
-### TON 가상 머신(TVM)
+#### TVM
 
-- TVM은 Curve25519와 같은 미리 정의된 곡선에 대해 256비트 타원 곡선 암호화(ECC)를 지원합니다. 또한 zk-SNARK(영지식 증명)의 빠른 구현에 유용한 일부 타원 곡선에서의 Weil 페어링도 지원합니다. sha256과 같은 인기 있는 해시 함수도 지원되어 암호화 연산을 위한 더 많은 옵션을 제공합니다. 추가로, TVM은 블록의 트랜잭션 포함 여부를 확인하는 것과 같은 특정 사용 사례에 유용할 수 있는 추가적인 암호화 기능을 제공하는 머클 증명과도 작업할 수 있습니다.
+- TVM supports 256-bit Elliptic Curve Cryptography (ECC) for predefined curves, like Curve25519. It also supports Weil pairings on some elliptic curves, which are helpful for the fast implementation of zk-SNARKs (zero-knowledge proofs). Popular hash functions like sha256 are also supported, providing more cryptographic operation options. In addition, TVM can work with Merkle proofs, providing additional cryptographic features that can be beneficial for specific use cases, such as verifying the inclusion of a transaction in a block.
 
-## 고수준 언어
+### High-level languages
 
-### 이더리움 가상 머신(EVM)
+#### EVM
 
-- EVM은 주로 JavaScript와 C++와 유사한 객체 지향적, 정적 타입 언어인 Solidity를 고수준 언어로 사용합니다. 또한 Vyper, Yul 등과 같은 다른 이더리움 스마트 컨트랙트 작성을 위한 언어들도 있습니다.
+EVM primarily uses Solidity as its high-level language, an object-oriented, statically typed language similar to JavaScript. Other languages, such as Vyper and Yul, are also used for writing Ethereum smart contracts.
 
-### TON 가상 머신(TVM)
+#### TVM
 
-- TVM은 TON 스마트 컨트랙트 작성을 위해 설계된 FunC를 고수준 언어로 사용합니다. FunC는 정적 타입과 대수적 데이터 타입을 지원하는 절차적 언어입니다. FunC는 Fift로 컴파일되며, 이는 다시 TVM 바이트코드로 컴파일됩니다.
+- TVM uses FunC as a high-level language for writing TON smart contracts. It is a procedural language with static types and support for algebraic data types. FunC compiles to Fift, which in turn compiles to TVM bytecode.
 
-## 결론
+## Conclusion
 
-요약하면, EVM과 TVM 모두 스마트 컨트랙트를 실행하도록 설계된 스택 기반 머신이지만, TVM은 더 많은 유연성, 더 넓은 범위의 데이터 타입과 구조 지원, 내장된 오버플로우 검사, 고급 암호화 기능을 제공합니다.
+In summary, while EVM and TVM are stack-based machines designed to execute smart contracts, TVM offers more flexibility, support for a broader range of data types and structures, built-in overflow checks, and advanced cryptographic features.
 
-TVM의 샤딩 인식 스마트 컨트랙트 지원과 독특한 데이터 표현 접근 방식은 특정 사용 사례와 확장 가능한 블록체인 네트워크에 더 적합합니다.
+TVM’s support for sharding-aware smart contracts and its unique data representation approach make it better suited for specific use cases and scalable blockchain networks.
+
+## See also
+
+- [Solidity vs FunC](/v3/concepts/dive-into-ton/go-from-ethereum/solidity-vs-func/)
+- [TVM overview](/v3/documentation/tvm/tvm-overview/)
+
+<Feedback />
 
