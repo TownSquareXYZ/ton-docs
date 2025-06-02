@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 import ThemedImage from '@theme/ThemedImage';
 
@@ -8,14 +10,19 @@ import ThemedImage from '@theme/ThemedImage';
 <br></br>
 <img src="https://storage.googleapis.com/ton-strapi/reason_Card5_19eeac1401/reason_Card5_19eeac1401.png" alt="Wallet Pay illustration"/>
 <br></br>
-Wallet Pay سیستم اصلی پرداخت برای برنامه‌های مینی تلگرام است که از تراکنش‌های رمزارز و فیات پشتیبانی می‌کند. آمار سفارشات خود را نظارت کنید و به سادگی وجوه برداشت کنید.
-درون اکوسیستم Wallet، سرویس Wallet Pay تبادلات مالی روان بین فروشندگان و مشتریانشان را تسهیل می‌کند.
+Wallet Pay is the primary payment system for Telegram Mini Apps, supporting both crypto and fiat transactions. Monitor your order statistics and withdraw funds easily.
+Embedded within the Wallet ecosystem, Wallet Pay facilitates seamless financial exchanges between merchants and their customers.
 
 لینک‌های مفید:
 
-- [پشتیبانی کسب‌وکار Wallet Pay](https://t.me/WalletPay_supportbot) یک ربات تلگرام برای ارتباط با تیم پشتیبانی Wallet Pay است.
-- [ربات فروشگاه دمو](https://t.me/PineAppleDemoWPStoreBot) یک ربات تلگرام برای معرفی قابلیت های Wallet Pay است. (توجه: همه پرداخت‌ها با دارایی‌های واقعی انجام می‌شوند)
-- [جامعه فروشندگان](https://t.me/+6TReWBEyZxI5Njli) گروه تلگرام برای به اشتراک گذاری تجارب و راه حل‌ها میان اعضای گروه است.
+- [Wallet Pay Business Support](https://t.me/WalletPay_supportbot) is a Telegram bot for contacting the Wallet Pay support team.
+- [Demo Store Bot](https://t.me/PineAppleDemoWPStoreBot) is a Telegram bot for demonstrating Wallet Pay functionality.
+
+:::note
+All payments are processed using real assets
+:::
+
+- [Merchant Community](https://t.me/+6TReWBEyZxI5Njli) is a Telegram group for members to share experiences and solutions.
 
 ## TON Connect
 
@@ -29,38 +36,40 @@ Wallet Pay سیستم اصلی پرداخت برای برنامه‌های می�
 />
 <br></br>
 
-TON Connect یک پروتکل ارتباطی بین **کیف‌پول‌ها** و **اپلیکیشن‌ها** در شبکه TON است.
+TON Connect is a communication protocol that links **wallets** and **apps** in TON.
 
-**اپلیکیشن‌هایی** که بر روی شبکه TON ساخته شده‌اند، عملکرد غنی و بالایی ارائه می‌دهند و برای حفاظت از دارایی‌های کاربران از طریق قراردادهای هوشمند طراحی شده‌اند. به دلیل اینکه اپلیکیشن‌ها با استفاده از فناوری‌های غیرمتمرکز مانند بلاک‌چین ساخته می‌شوند، به طور معمول به آنها نرم‌افزارهای غیرمتمرکز (dApps) گفته می‌شود.
+**Apps** built on TON provide rich functionality and high performance and are designed to protect user funds via smart contracts. Because these apps use decentralized technologies like blockchain, they are commonly referred to as decentralized applications (DApps).
 
-**کیف‌پول‌ها** رابط کاربری برای تأیید تراکنش‌ها را فراهم می‌کنند و کلیدهای رمزنگاری کاربران را به طور امن در دستگاه‌های شخصی آنها نگهداری می‌کنند. این جداسازی وظایف باعث نوآوری سریع و سطح امنیتی بالا برای کاربران می‌شود: کیف‌پول‌ها نیازی به ساخت اکوسیستم‌های بسته خود ندارند، در حالی که برنامه‌ها نیازی به پذیرش ریسک نگهداری حساب‌های کاربران نهایی ندارند.
+**Wallets** provide the interface to approving transactions securely store users’ cryptographic keys on their personal devices. This separation of responsibilities enables rapid innovation and ensures a high level of security for users. Wallets do not need to create closed ecosystems, while apps do not need to bear the risk of storing users' accounts.
 
-TON Connect هدف ارائه تجربه کاربری یکپارچه بین کیف‌پول‌ها و اپلیکیشن‌ها را دارد.
+TON Connect enhances the user experience by enabling seamless interaction between wallets and apps.
 
 <Button href="/v3/guidelines/ton-connect/overview" colorType={'primary'} sizeType={'sm'}>
 
-بررسی TON Connect
+Discover TON Connect
 
 </Button>
 
-## یکپارچه‌سازی توکن‌ها
+## Integrate tokens
 
-شما می‌توانید توکن خود را در شبکه بلاک‌چین TON ایجاد کنید و آن را در اپلیکیشن خود ادغام کنید. همچنین می‌توانید توکن‌های موجود را در اپلیکیشن خود ادغام کنید.
+You can create your own token on TON Blockchain and integrate it into your app. You can also integrate existing tokens into your app.
 
 <Button href="/v3/documentation/dapps/defi/tokens" colorType={'primary'} sizeType={'sm'}>
 
-درک DeFi
+Understand DeFi
 
 </Button>
 
-## اشتراک‌ها در شبکه TON
+## Subscriptions on TON
 
-با توجه به اینکه تراکنش‌ها در شبکه بلاک‌چین TON سریع هستند و هزینه‌های شبکه پایین است، شما می‌توانید پرداخت‌های تکراری را در زنجیره از طریق قراردادهای هوشمند پردازش کنید.
+Because transactions on the TON blockchain are fast and network fees are low, you can process recurring payments on-chain via smart contracts.
 
-برای مثال، کاربران می‌توانند برای محتوای دیجیتال (یا هر چیز دیگر) اشتراک بگیرند و به ازای آن هزینه ماهانه ۱ تون پرداخت کنند.
+For example, users can subscribe to digital content or other services and pay a monthly fee of 1 TON.
 
 <Button href="/v3/documentation/dapps/defi/subscriptions" colorType={'primary'} sizeType={'sm'}>
 
-بیشتر بخوانید
+Read more
 
 </Button>
+
+<Feedback />
