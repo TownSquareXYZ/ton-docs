@@ -1,50 +1,50 @@
-# 번역 스타일 가이드
+import Feedback from '@site/src/components/Feedback';
 
-이 번역 스타일 가이드는 웹사이트 로컬라이제이션을 돕기 위한 가장 중요한 지침, 지시사항, 팁을 포함하고 있습니다.
+# Translation style guide
 
-이 문서는 일반적인 가이드이며 특정 언어에 국한되지 않습니다.
+This translation style guide contains essential guidelines, instructions, and tips for translators, helping us localize the website.
+
+This document serves as a general guide and is not specific to any language.
 
 ## 메시지의 핵심 포착
 
 TON 문서를 번역할 때, 문자 그대로의 번역을 피하십시오.
 
-번역이 메시지의 핵심을 포착하는 것이 중요합니다. 이는 특정 문구를 재구성하거나 내용의 단어 대 단어 번역 대신 설명적인 번역을 사용하는 것을 의미할 수 있습니다.
+The translations must capture the essence of the message. This approach means rephrasing specific phrases or using descriptive translations instead of translating the content word for word.
 
-각 언어는 서로 다른 문법 규칙, 관습 및 단어 순서를 가지고 있습니다. 번역할 때는 대상 언어의 문장 구조에 유의하고, 영어 소스를 문자 그대로 번역하는 것을 피하십시오. 이는 문장 구조와 가독성을 떨어뜨릴 수 있습니다.
+Different languages have different grammar rules, conventions, and word order. When translating, please be mindful of structuring sentences in the target languages, and avoid word-for-word translation of the English source, as this can lead to poor sentence structure and readability.
 
-원문을 단어 대 단어로 번역하는 대신 전체 문장을 읽고 대상 언어의 관습에 맞게 조정하는 것이 좋습니다.
+Instead of translating the source text word for word, you should read the entire sentence and adapt it to fit the conventions of the target language.
 
 ## 격식 vs. 비격식
 
 우리는 방문자 모두에게 항상 정중하고 적절한 격식적인 대화 방식을 사용합니다.
 
-격식적인 대화 방식을 사용하면 비공식적이거나 공격적으로 들리지 않으며 방문자의 나이와 성별에 관계없이 사용할 수 있습니다.
+Using the formal address allows us to avoid sounding unofficial or offensive and works regardless of the reader’s age and gender.
 
-대부분의 인도유럽어 및 아프라시아어는 남성과 여성을 구별하는 성별에 따른 2인칭 대명사를 사용합니다. 사용자에게 말할 때나 소유 대명사를 사용할 때 방문자의 성별을 가정하지 않을 수 있습니다. 격식적인 대화 방식은 일반적으로 적용 가능하며 일관성 있습니다.
+Most Indo-European and Afro-Asiatic languages use gender-specific second-person personal pronouns, distinguishing between males and females. When addressing the user or using possessive pronouns, we can avoid assuming the reader’s gender, as the formal address is generally applicable and consistent, regardless of how they identify.
 
-## 간단하고 명확한 어휘와 의미
+## Straightforward vocabulary and meaning
 
 우리의 목표는 웹사이트의 내용을 가능한 한 많은 사람들이 이해할 수 있도록 하는 것입니다.
 
-대부분의 경우, 짧고 간단한 단어를 사용하여 쉽게 이해할 수 있습니다. 동일한 의미를 가진 여러 가지 번역 가능한 단어가 있는 경우, 가장 짧고 의미를 명확하게 반영하는 단어를 사용하는 것이 가장 좋습니다.
+In most cases, contributors can achieve this result by using short and simple words that are easily understandable. If multiple possible translations exist for a word in your language with the same meaning, the best option is often the shortest word reflecting the meaning.
 
 ## 문자 체계
 
-모든 콘텐츠는 대상 언어에 맞는 올바른 문자 체계를 사용하여 번역되어야 하며, 라틴 문자를 사용한 단어를 포함해서는 안 됩니다.
+All of the content should be translated using the correct writing system for your language and should not include any words written using Latin characters.
 
 번역할 때는 번역이 일관되고 라틴 문자를 포함하지 않도록 해야 합니다.
 
-**위 내용은 고유 명사는 번역하지 않는 것이 원칙인 언어에는 적용되지 않습니다.**
+**Do not translate proper names defined by glossary**
 
 ## 페이지 메타데이터 번역
 
-일부 페이지에는 'title', 'lang', 'description', 'sidebar' 등과 같은 메타데이터가 포함되어 있습니다.
+Some pages contain metadata, such as 'title', 'lang', 'description', 'sidebar', etc.
 
-새 페이지를 Crowdin에 업로드할 때 번역자가 번역해서는 안 되는 내용을 숨기기 때문에 Crowdin에서 번역자가 볼 수 있는 모든 메타데이터는 번역해야 합니다.
+When uploading new pages to Crowdin, we hide content that translators should never translate. This feature makes visible to translators in Crowdin only the text that should be translated.
 
-'source text'가 'en'인 문자열을 번역할 때 특히 주의해야 합니다. 이는 페이지가 제공되는 언어를 나타내며 [ISO 언어 코드](https://www.andiamo.co.uk/resources/iso-language-codes/)로 번역해야 합니다. 이러한 문자열은 대상 언어의 고유 문자 대신 라틴 문자를 사용하여 번역해야 합니다.
-
-어떤 언어 코드를 사용해야 할지 확신이 서지 않으면, Crowdin에서 번역 메모리를 확인하거나 Crowdin 온라인 편집기의 페이지 URL에서 해당 언어 코드를 찾을 수 있습니다.
+Please be especially careful when translating strings where the source text is 'en'. This represents the language page, which is available and should be translated to the [ISO language code for your language](https://www.andiamo.co.uk/resources/iso-language-codes/). These strings should always be translated using Latin characters, not the writing script, native to the target language.
 
 가장 많이 사용되는 언어의 언어 코드 예시:
 
@@ -57,61 +57,61 @@ TON 문서를 번역할 때, 문자 그대로의 번역을 피하십시오.
 
 ## 외부 기사 제목
 
-일부 문자열에는 외부 기사 제목이 포함되어 있습니다. 대부분의 개발자 문서 페이지에는 추가 읽기 자료를 위한 외부 기사 링크가 포함되어 있습니다. 기사 제목이 포함된 문자열은 일관된 사용자 경험을 위해 기사 언어에 관계없이 번역되어야 합니다.
+Some strings contain titles of external articles. Most of our developer documentation pages contain links to external articles for further reading. The strings containing article titles need to be translated, regardless of the article's language, to ensure a more consistent user experience for visitors viewing the page in their language.
 
 ## Crowdin 경고
 
-Crowdin에는 번역가가 실수를 할 때 경고하는 내장 기능이 있습니다. 태그를 포함하지 않거나, 번역해서는 안 되는 요소를 번역하거나, 여러 개의 연속적인 공백을 추가하거나, 종결 구두점을 잊는 경우 Crowdin은 저장하기 전에 자동으로 경고합니다. 이러한 경고가 표시되면 제안된 번역을 다시 확인하십시오.
+Crowdin has a built-in feature that warns translators when they are about to make a mistake. Crowdin will automatically alert you before saving your translation if you forget to include a tag from the source, translate elements that should not be translated, add several consecutive spaces, forget end punctuation, etc. If you see a warning like this, please double-check the suggested translation.
 
 :::warning
-이러한 경고를 무시하지 마십시오. 보통 무언가가 잘못되었거나 번역에서 소스 텍스트의 중요한 부분이 누락된 것을 의미합니다.
+Never ignore these warnings, as they usually mean something is wrong or the translation lacks a key part of the source text.
 :::
 
-## 단축형 vs. 전체형/약어
+## Short vs. complete forms and abbreviations
 
-웹사이트에는 dapps, NFT, DAO, DeFi 등 많은 약어가 사용됩니다. 이러한 약어는 영어로 널리 사용되며 대부분의 웹사이트 방문자가 익숙합니다.
+The website uses many abbreviations, such as apps, DApps, NFT, DAO, DeFi, etc. These abbreviations are standard in English, and most visitors are familiar with them.
 
-이러한 약어는 다른 언어로 정립된 번역이 없는 경우가 많으므로 이러한 용어와 유사한 용어에 접근하는 가장 좋은 방법은 전체 형태의 설명적인 번역을 제공하고 영어 약어를 괄호 안에 추가하는 것입니다.
+Since they usually don’t have established translations in other languages, the best approach to these and similar terms is to provide a descriptive translation of the entire form and add the English abbreviation in brackets.
 
-이러한 약어를 번역하지 마십시오. 대부분의 사람들이 익숙하지 않으며, 현지화된 버전은 대부분의 방문자에게 의미가 없을 것입니다.
+Do not translate these abbreviations since most people are unfamiliar with them, and the localized versions would not make much sense to most visitors.
 
-dapps 번역 예시:
+Example of how to translate DApps:
 
-- Decentralized applications (dapps) → 번역된 전체형 (영어 약어 괄호 안에)
+- Decentralized applications (DApps) → Translated in complete form (English abbreviation in brackets)
 
 ## 정립된 번역이 없는 용어
 
-일부 용어는 다른 언어로 정립된 번역이 없으며, 원래 영어 용어로 널리 알려져 있습니다. 이러한 용어는 주로 새로운 개념을 포함하며, 예를 들어 proof-of-work, proof-of-stake, Beacon Chain, staking 등이 있습니다.
+Some terms might not have established translations in other languages but are widely known by their original English names. Such terms include newer concepts, like proof-of-work, proof-of-stake, Beacon Chain, staking, etc.
 
-이러한 용어를 번역하면 부자연스러울 수 있지만, 영어 버전은 다른 언어에서도 일반적으로 사용되므로 번역하는 것이 좋습니다.
+While translating these terms can sound unnatural, since the English version is a basis for other languages, it is highly recommended that they be translated.
 
-번역할 때 창의적으로 설명적인 번역을 사용하거나 단순히 문자 그대로 번역해도 좋습니다.
+Feel free to get creative, use descriptive translations, or translate them literally.
 
-대부분의 용어를 영어로 남기기보다는 번역해야 하는 이유는 새로운 용어가 더 널리 퍼질 것이기 때문입니다. 더 많은 사람들이 TON 및 관련 기술을 사용하기 시작하면서, 더 많은 사람들이 쉽게 이해할 수 있는 용어를 다양한 언어로 제공해야 합니다.
+Most terms should be translated instead of leaving some in English, as this new terminology will become more widespread as more people start using TON and related technologies. To onboard more people to TON, we must provide understandable terminology in as many languages as possible, even if we need to create it ourselves.
 
 ## 버튼 및 CTA
 
-웹사이트에는 여러 버튼이 있으며, 다른 콘텐츠와는 다르게 번역되어야 합니다.
+Do not translate the website's contents, such as buttons.
 
-버튼 텍스트는 대부분의 문자열과 연결된 컨텍스트 스크린샷을 보거나 편집기에서 컨텍스트를 확인하여 식별할 수 있습니다. 여기에는 'button'이라는 구문이 포함됩니다.
+You may identify button text by viewing the context screenshots connected with most strings or by checking the context in the editor, which includes the phrase ‘’button’’.
 
-버튼 번역은 형식 불일치를 방지하기 위해 가능한 한 짧게 해야 합니다. 또한, 버튼 번역은 명령형, 즉 명령이나 요청을 제시해야 합니다.
+Button translations should be as short as possible to prevent formatting mismatches. Additionally, button translations, i.e., presenting a command or request, should be imperative.
 
 ## 포용성을 위한 번역
 
-TON 문서 방문자는 전 세계에서 다양한 배경을 가지고 있습니다. 웹사이트의 언어는 따라서 중립적이고 모두를 환영하며 배타적이지 않아야 합니다.
+TON docs visitors come from all over the world and from different backgrounds. Therefore, the language on the website should be neutral, welcoming to everyone, and not exclusive.
 
-중요한 측면 중 하나는 성 중립성입니다. 이는 공식적인 대화 방식을 사용하고 번역에서 성별에 특정한 단어를 피함으로써 쉽게 달성할 수 있습니다.
+Gender neutrality is an essential aspect of this. Use the formal address form and avoid gender-specific words in the translations.
 
-또 다른 형태의 포용성은 특정 국가, 인종 또는 지역에 국한되지 않고 글로벌 관객을 대상으로 번역하는 것입니다.
+Another form of inclusivity is trying to translate for a global audience, not specific to any country, race, or region.
 
 마지막으로, 언어는 모든 연령대와 청중에게 적합해야 합니다.
 
 ## 언어별 번역
 
-번역할 때는 소스를 복사하는 대신, 해당 언어에서 사용되는 문법 규칙, 관습 및 형식을 따르는 것이 중요합니다. 소스 텍스트는 영어 문법 규칙과 관습을 따르며, 이는 많은 다른 언어에 적용되지 않습니다.
+When translating, it is crucial to follow the grammar rules, conventions, and formatting used in your language instead of copying from the source. The source text follows English grammar rules and conventions, which do not apply to many other languages.
 
-자신의 언어에 대한 규칙을 알고 이에 따라 번역해야 합니다. 도움이 필요하면 저희에게 연락 주시면 해당 언어에서 이러한 요소가 어떻게 사용되어야 하는지에 대한 리소스를 찾는 데 도움을 드리겠습니다.
+You should be aware of the rules for your language and translate accordingly. If you need help, contact us; we will help you with resources on translating elements for your language.
 
 특히 주의해야 할 몇 가지 예시:
 
@@ -121,22 +121,22 @@ TON 문서 방문자는 전 세계에서 다양한 배경을 가지고 있습니
 
 - 다른 언어에서는 대문자 사용에 큰 차이가 있습니다.
 - 영어에서는 제목 및 이름, 월 및 요일, 언어 이름, 휴일 등을 모두 대문자로 쓰는 것이 일반적입니다. 그러나 많은 다른 언어에서는 이러한 대문자 사용이 문법적으로 틀립니다.
-- 일부 언어는 영어에서 대문자로 쓰지 않는 개인 대명사, 명사 및 특정 형용사를 대문자로 쓰는 규칙이 있습니다.
+- Some languages also have rules about capitalizing personal pronouns, nouns, and adjectives that you shouldn't capitalize in English.
 
 #### 공백
 
 - 철자 규칙은 각 언어의 공백 사용을 정의합니다. 공백은 어디에나 사용되기 때문에 이러한 규칙은 가장 두드러지며, 공백은 가장 오역된 요소 중 하나입니다.
 - 영어와 다른 언어 간의 공백 사용의 일반적인 차이점:
-  - 단위와 통화 앞의 공백 (예: USD, EUR, kB, MB)
-  - 온도 기호 앞의 공백 (예: °C, ℉)
-  - 일부 구두점, 특히 줄임표 (…) 앞의 공백
-  - 슬래시 (/) 전후의 공백
+  - Space before units of measure and currencies. Example: USD, EUR, kB, MB
+  - Space before degree signs. Example: °C, ℉
+  - Space before some punctuation marks, especially the ellipsis. Example: Then… in summary
+  - Space before and after slashes. Example: if / else
 
 #### 목록
 
-- 각 언어에는 다양한 목록 작성 규칙이 있으며, 이는 영어와 크게 다를 수 있습니다.
-- 일부 언어에서는 각 새로운 줄의 첫 단어를 대문자로 써야 하고, 다른 언어에서는 소문자로 시작해야 합니다. 많은 언어는 각 줄의 길이에 따라 목록에서 대문자 사용에 대한 다른 규칙을 가지고 있습니다.
-- 동일한 규칙이 항목의 끝 구두점에도 적용됩니다. 목록의 끝 구두점은 언어에 따라 마침표 (.), 쉼표 (,) 또는 세미콜론 (;)이 될 수 있습니다.
+- Every language has a diverse and complex set of rules for writing lists. These can be significantly different from English.
+- In some languages, the first word of each new line needs to be capitalized, while in others, new lines should start with lowercase letters. Many languages also have different rules about capitalization in lists, depending on the length of each line.
+- The same applies to the punctuation of line items. The end punctuation in lists can be a period (.), comma (,), or semicolon (;), depending on the language.
 
 #### 인용 부호
 
@@ -151,24 +151,27 @@ TON 문서 방문자는 전 세계에서 다양한 배경을 가지고 있습니
 
 #### 하이픈과 대시
 
-- 영어에서는 하이픈 (-)을 사용하여 단어를 연결하거나 단어의 다른 부분을 연결하며, 대시 (–)는 범위 또는 일시 중지를 나타내는 데 사용됩니다.
-- 많은 언어는 하이픈과 대시 사용에 대한 다른 규칙을 가지고 있습니다.
+- In English, a hyphen `-` is used to join words or different parts of a word, while a dash `—` indicates a range or a pause.
+  - Example: TON — is ... proof-of-stake.
+- Many languages have different rules for using hyphens and dashes that should be observed.
 
-### 형식
+### Formats
 
-#### 숫자
+#### Numbers
 
-- 각 언어의 숫자 작성에서 주요 차이점은 소수점 및 천 단위 구분 기호입니다. 천 단위의 경우, 이는 마침표, 쉼표 또는 공백이 될 수 있습니다. 비슷하게, 일부 언어는 소수점으로 마침표를, 다른 언어는 소수점으로 쉼표를 사용합니다.
-  - 큰 숫자의 예시:
-    - 영어 – **1,000.50**
-    - 스페인어 – **1.000,50**
-    - 프랑스어 – **1 000,50**
-- 숫자 번역 시 중요한 고려 사항은 퍼센트 기호입니다. 이는 다양한 방식으로 작성될 수 있습니다: **100%**, **100 %** 또는 **%100**.
-- 마지막으로, 음수는 언어에 따라 다르게 표시될 수 있습니다: -100, 100-, (100) 또는 [100].
+- The main difference in writing numbers in different languages is the separator for decimals and thousands. For thousands, this can be a period, comma, or space. Similarly, some languages use a decimal point, while others use a decimal comma.
+  - Example:
+    - English – **1,000.50**
+    - Spanish – **1.000,50**
+    - French – **1 000,50**
+- The percent sign is another critical consideration when translating numbers. Write numbers in the typical format for the corresponding language.
+  - Example: **100%**, **100 %**, or **%100**.
+- Finally, negative numbers can be displayed differently, depending on the language
+  - Example: -100, 100-, (100) or [100].
 
 #### 날짜
 
-- 날짜를 번역할 때는 날짜 형식, 구분 기호, 대문자 사용 및 선행 0과 같은 여러 가지 고려 사항이 있습니다. 전체 길이 날짜와 숫자 날짜 간에도 차이가 있습니다.
+- When translating dates, there are several considerations and differences based on the language. These include the date format, separator, capitalization, and leading zeros. There are also differences between full-length and numerical dates.
   - 다양한 날짜 형식 예시:
     - 영국 영어 (dd/mm/yyyy) – 2022년 1월 1일
     - 미국 영어 (mm/dd/yyyy) – 2022년 1월 1일
@@ -179,7 +182,7 @@ TON 문서 방문자는 전 세계에서 다양한 배경을 가지고 있습니
 
 #### 통화
 
-- 통화를 번역하는 것은 형식, 관습 및 변환의 차이로 인해 어려울 수 있습니다. 일반적으로 통화는 소스와 동일하게 유지하십시오. 독자를 위해 괄호 안에 현지 통화와 변환을 추가할 수 있습니다.
+- Translating currencies can be challenging due to the different formats, conventions, and conversions. As a general rule, please keep currencies the same as the source. You can add your local currency and conversion in brackets for the reader's benefit.
 - 다양한 언어에서 통화를 작성하는 주요 차이점은 기호 위치, 소수점과 소수점의 사용, 공백 및 약어 대 기호입니다.
   - 기호 위치: $100 또는 100$
   - 소수점 대 소수점: 100,50$ 또는 100.50$
@@ -188,11 +191,14 @@ TON 문서 방문자는 전 세계에서 다양한 배경을 가지고 있습니
 
 #### 단위
 
-- 일반적으로, 단위는 소스와 동일하게 유지하십시오. 귀하의 국가가 다른 시스템을 사용하는 경우, 독자를 위해 괄호 안에 변환을 추가할 수 있습니다.
-- 단위의 현지화 외에도 언어가 이러한 단위에 접근하는 방식의 차이점에 유의해야 합니다. 주요 차이점은 언어에 따라 숫자와 단위 사이의 공백입니다. 예시로는 100kB 대 100 kB 또는 50ºF 대 50 ºF가 있습니다.
+- As a general rule, please keep the units of measure as per the source. You can include the conversion in brackets if your country uses a different system.
+- Aside from the localization of units of measure, it is also important to note the differences in how languages approach these units. The main difference is the spacing between the number and unit, which can differ based on the language. Examples of this include 100kB vs. 100 kB or 50ºF vs. 50 ºF.
 
 ## 결론
 
 번역할 때 서두르지 마십시오. 천천히 하며 즐기십시오!
 
-번역 프로그램에 참여해 주셔서 감사합니다. TON 커뮤니티는 글로벌하며, 여러분이 그 일원이 되어 기쁩니다!
+Thank you for helping us localize the website and make it accessible to a wider audience. The TON community is global, and we are happy you are a part of it!
+
+<Feedback />
+
