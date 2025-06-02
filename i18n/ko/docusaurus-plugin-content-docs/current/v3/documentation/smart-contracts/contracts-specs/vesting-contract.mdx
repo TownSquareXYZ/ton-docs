@@ -1,28 +1,30 @@
-# 베스팅 컨트랙트
+import Feedback from '@site/src/components/Feedback';
 
-이 컨트랙트는 일정 기간 동안 특정 양의 Toncoin을 잠그고 점진적으로 잠금을 해제할 수 있게 합니다.
+# Vesting contract
 
-## 베스팅 매개변수
+The vesting contract is a smart contract implementation on the TON blockchain, enabling secure, scheduled distribution of Toncoin assets. This contract provides a robust framework for token management, ensuring the controlled release of funds based on predetermined schedules and conditions.
 
-베스팅 매개변수는 배포 시 설정되며 변경할 수 없습니다.
+## Core functionality
 
-`vesting_total_amount` - nanotons 단위, 잠긴 Toncoin의 총량.
+The contract is a secure escrow service that locks a specified amount of Toncoin for a defined period and gradually releases it according to configurable parameters. This mechanism ensures predictable token distribution while maintaining strict control over asset release schedules.
 
-`vesting_start_time` - unixtime, 베스팅 기간의 시작점, 이 시점까지 `vesting_total_amount`가 잠기고, 이후 다른 매개변수에 따라 잠금 해제 시작.
+## Contract parameters
 
-`vesting_total_duration` - 총 베스팅 기간(초) (예: 1년은 `31104000`).
+During deployment, the system establishes the following parameters, which cannot be changed and remain fixed throughout the entire duration of the contract:
 
-`unlock_period` - 잠금 해제 기간(초) (예: 한 달에 한 번은 `2592000`).
+| Parameter                | Description                                     | Example values       |
+| ------------------------ | ----------------------------------------------- | -------------------- |
+| `vesting_total_amount`   | Total locked Toncoins (in nanotons)             | 500 TON              |
+| `vesting_start_time`     | Unix timestamp marking vesting period beginning | Current time + delay |
+| `vesting_total_duration` | Total vesting period duration (seconds)         | 31104000 (one year)  |
+| `unlock_period`          | Time interval between releases (seconds)        | 2592000 (monthly)    |
+| `cliff_duration`         | Initial lock period before first release        | 5184000 (two months) |
+| `vesting_sender_address` | Authorized address for locked funds management  | Configurable         |
+| `owner_address`          | Beneficiary address for Toncoin distribution    | Configurable         |
 
-`cliff_duration` - 시작 cliff 기간(초) (예: 2개월은 `5184000`).
+You can acquire these specific parameters using the `get_vesting_data()` method.
 
-`vesting_sender_address` - 언제든지 Toncoin을 반환할 수 있는 주소(잠긴 경우에도); 또한 이 주소는 화이트리스트를 추가할 수 있음.
-
-`owner_address` - 베스팅이 발행된 대상, 이 주소에서 베스팅 컨트랙트의 Toncoin 전송을 시작할 수 있음.
-
-`get_vesting_data()` get-method로 이러한 매개변수를 얻을 수 있습니다.
-
-매개변수는 다음 조건을 만족해야 합니다:
+The parameters must satisfy these conditions:
 
 ```
 vesting_total_duration > 0
@@ -35,95 +37,79 @@ vesting_total_duration mod unlock_period == 0
 cliff_duration mod unlock_period == 0
 ```
 
-스마트 컨트랙트가 이러한 조건의 준수 여부를 확인하지는 않지만, 컨트랙트 배포 후 Toncoin을 보내기 전에 사용자는 get-method로 모든 매개변수가 정상인지 확인할 수 있습니다.
+Before sending Toncoins to the deployed smart contract, users can verify parameter compliance using the get method, even though the contract itself does not perform these checks.
 
-## 잠금
+## Lock mechanism
 
-`vesting_start_time` 이전에는 모든 `vesting_total_amount`가 잠깁니다.
+Before `vesting_start_time`, the contract locks the entire `vesting_total_amount`.
 
-`vesting_start_time`부터 금액은 비례적으로 잠금 해제되기 시작합니다.
+Starting at `vesting_start_time`, it unlocks the amount proportionately. For example, if the `vesting_total_duration` is 10 months, the `unlock_period` is 1 month, and the `vesting_total_amount` is 500 TON, then the contract unlocks 50 TON (500 \* 10/100) each month, fully releasing all 500 TON in 10 months.
 
-예를 들어 `vesting_total_duration`이 10개월이고 `unlock_period`가 1개월이며 `vesting_total_amount`가 500 TON이면 매월 500\*(10/100)=50 TON이 잠금 해제되고, 10개월 후에는 모든 500 TON이 잠금 해제됩니다.
+If a cliff period exists, no amount unlocks during that time. Once the cliff period ends, the contract unlocking according to the same formula. For instance, with a `cliff_period` of 3 months, the contract unlocks nothing in the first 3 months, then unlocks 150 TON at once, followed by 50 TON each month thereafter.
 
-cliff 기간이 있는 경우, 이 cliff 기간 동안에는 아무것도 잠금 해제되지 않으며, 기간이 지난 후에는 위 공식에 따라 금액이 잠금 해제됩니다.
-
-예를 들어 `cliff_period`가 3개월이고 다른 매개변수가 이전 예시와 같다면, 처음 3개월 동안은 아무것도 잠금 해제되지 않다가 3개월째에 150 TON이 한 번에 잠금 해제되고(그 후 매월 50 TON씩).
-
-get-method `get_locked_amount(int at_time)`로 특정 시점에 잠긴 금액을 계산할 수 있습니다.
-
-잠긴 Toncoin은 화이트리스트 주소나 `vesting_sender_address`로만 보낼 수 있습니다.
-
-잠금 해제된 Toncoin은 언제 어디로든 보낼 수 있습니다.
+You can use the `get_locked_amount(int at_time)` method to calculate how much will be locked at a specific time. The contract allows you to transfer locked Toncoins only to whitelisted addresses or the `vesting_sender_address`. Once unlocked, you can freely send the Toncoins wherever you like.
 
 ## 화이트리스트
 
-화이트리스트는 코인이 여전히 잠겨 있더라도 Toncoin을 보낼 수 있는 주소 목록입니다.
+A whitelist contains addresses to which you can send Toncoins, even if the coins remain locked.
 
-get-method `get_whitelist()`는 모든 화이트리스트 주소를 (wc, hash_part) 튜플 목록으로 반환합니다.
+The `get_whitelist()` method retrieves all whitelist addresses as a list of (wc, hash_part) tuples. You can use the `is_whitelisted(slice address)` method to check if a specific address is on the whitelist.
 
-get-method `is_whitelisted(slice address)`는 이 주소가 화이트리스트에 있는지 확인합니다.
-
-`vesting_sender_address`는 언제든지 `op::add_whitelist` 메시지로 새 주소를 화이트리스트에 추가할 수 있습니다.
-
-화이트리스트에서 주소를 제거할 수는 없습니다.
-
-또한 잠긴 코인은 항상 `vesting_sender_address`로 보낼 수 있습니다(화이트리스트에 별도로 추가할 필요 없음).
+The `vesting_sender_address` can add new addresses to the whitelist at any time using the `op::add_whitelist` message, but no addresses can be removed from the whitelist. You can always send locked coins to the `vesting_sender_address` without adding it to the whitelist.
 
 ## 충전
 
-어떤 주소에서든 베스팅 컨트랙트로 Toncoin을 보낼 수 있습니다.
+You can send Toncoins to the vesting contract from any address.
 
 ## 월렛 스마트 컨트랙트
 
-이 컨트랙트는 표준 월렛 V3 스마트 컨트랙트와 유사하게 설계되었습니다.
+This [contract](https://github.com/ton-blockchain/vesting-contract/blob/2a63cb96942332abf92ed8425b37645fe4f41f86/contracts/vesting_wallet.fc#L366) is similar to the [standard wallet V3 smart contract](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/wallet3-code.fc).
 
-데이터에는 `seqno`, `subwallet_id`, `public_key`를 저장하고 동일한 형식의 외부 메시지를 받습니다.
-
-get-methods `seqno()`, `get_subwallet_id()`, `get_public_key()`를 사용할 수 있습니다.
-
-표준 월렛과 달리 베스팅 컨트랙트는 한 번에 하나의 메시지만 보낼 수 있습니다.
+The contract maintains `seqno`, `subwallet_id`, and `public_key`, accepts external messages in the same format, and offers get-methods `seqno()`, `get_subwallet_id()`, and `get_public_key()`. Unlike standard wallets, this vesting contract restricts sending to one message at a time.
 
 ## 전송
 
-공개 키의 소유자는 표준 월렛처럼 외부 메시지로 베스팅 컨트랙트에서 Toncoin 전송을 시작할 수 있습니다.
+The public key owner can initiate the sending of Toncoins from the vesting contract by an external message, just like in standard wallets.
 
-Toncoin 전송은 `owner_address`에서 보낸 `op::send` 내부 메시지로도 시작할 수 있습니다.
-
-실제로 공개 키와 `owner_address`는 동일한 사용자가 소유합니다.
+The owner initiates Toncoin transfers by sending an `op::send` internal message from their owner address. In typical usage, the same user owns both the public key and the `owner address`.
 
 ## 화이트리스트 제한사항
 
-`vesting_sender_address`로 보낼 수 있는 메시지에는 다음과 같은 제한이 있습니다:
+The contract restricts messages sent to the `vesting_sender_address` by allowing only `send_mode == 3`.
 
-- `send_mode == 3`만 허용됨;
+Users typically add addresses to the whitelist to enable validation using locked coins or staking locked coins in pools.
 
-대부분의 경우 잠긴 코인으로 검증하거나 풀에 잠긴 코인을 스테이킹할 수 있도록 주소를 화이트리스트에 추가합니다.
+Whitelisted addresses must adhere to these restrictions to prevent Toncoin theft:
 
-Toncoin 도난을 방지하기 위해 화이트리스트로 보낼 수 있는 메시지에는 다음과 같은 제한이 있습니다:
+- Only `send_mode == 3` is permitted
+- Messages must be bounceable
+- No `state_init` attachments are allowed
 
-- `send_mode == 3`만 허용됨;
+System elector addresses accept only these operations:
 
-- 바운스 가능한 메시지만 허용됨;
+- `op::elector_new_stake`
+- `op::elector_recover_stake`
+- `op::vote_for_complaint`
+- `op::vote_for_proposal`
 
-- `state_init` 첨부 불허;
+System config addresses accept only:
 
-대상이 시스템 elector 주소인 경우:
+- `op::vote_for_proposal`
 
-- `op::elector_new_stake`, `op::elector_recover_stake`, `op::vote_for_complaint`, `op::vote_for_proposal` 작업만 허용됨;
+Other whitelisted destinations permit:
 
-대상이 시스템 config 주소인 경우:
+- Empty messages and empty text messages
+- Text messages starting with "d," "w," "D," or "W"
+- Specific operations:
+  - `op::single_nominator_pool_withdraw`
+  - `op::single_nominator_pool_change_validator`
+  - `op::ton_stakers_deposit`
+  - `op::jetton_burn`
+  - `op::ton_stakers_vote`
+  - `op::vote_for_proposal`
+  - `op::vote_for_complaint`
 
-- `op::vote_for_proposal` 작업만 허용됨;
-
-다른 대상의 경우:
-
-- 빈 메시지와 빈 텍스트 메시지 허용;
-- "d", "w", "D", "W"로 시작하는 텍스트 메시지만 허용;
-- `op::single_nominator_pool_withdraw`, `op::single_nominator_pool_change_validator`, `op::ton_stakers_deposit`, `op::jetton_burn`, `op::ton_stakers_vote`, `op::vote_for_proposal`, `op::vote_for_complaint` 작업 허용;
-
-화이트리스트에 포함되지 않은 주소에는 제한이 없습니다.
-
-잠금 해제된 Toncoin을 보낼 때는 화이트리스트나 `vesting_sender_address`로 보내더라도 제한이 적용되지 않습니다.
+Addresses outside the whitelist operate without restrictions. Unlocked Toncoins remain unrestricted regardless of destination, including whitelisted addresses and `vesting_sender_address`.
 
 ## 프로젝트 구조
 
@@ -136,21 +122,31 @@ Toncoin 도난을 방지하기 위해 화이트리스트로 보낼 수 있는 �
 
 ### 빌드
 
-`npx blueprint build` 또는 `yarn blueprint build`
+```bash
+npx blueprint build` or `yarn blueprint build`
+```
 
 ### 테스트
 
-`npx blueprint test` 또는 `yarn blueprint test`
+```bash
+npx blueprint test` or `yarn blueprint test`
+```
 
 ### 배포 또는 다른 스크립트 실행
 
-`npx blueprint run` 또는 `yarn blueprint run`
+```bash
+npx blueprint run` or `yarn blueprint run`
+```
 
 ### 새 컨트랙트 추가
 
-`npx blueprint create ContractName` 또는 `yarn blueprint create ContractName`
+```bash
+npx blueprint create ContractName` or `yarn blueprint create ContractName`
+```
 
-## 참조
+## See also
 
 - [Single Nominator](/v3/documentation/smart-contracts/contracts-specs/single-nominator-pool)
 - [vesting-contract](https://github.com/ton-blockchain/vesting-contract)
+
+<Feedback />
