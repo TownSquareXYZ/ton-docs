@@ -1,19 +1,32 @@
-# سلول‌ها بعنوان ذخیره‌ساز داده‌ها
+import Feedback from '@site/src/components/Feedback';
 
-همه چیز در TON در سلول‌ها ذخیره می‌شود. سلول یک ساختار داده است که شامل موارد زیر است:
+import ConceptImage from '@site/src/components/conceptImage';
+import ThemedImage from '@theme/ThemedImage';
 
-- حداکثر **1023 بیت** داده (نه بایت!)
+# Cells as data storage
+
+In TON, a **cell** is a built material for the entire blockchain. The cell is a data structure containing:
+
+- up to **1023 bits** of data
 - حداکثر **۴ مرجع** به سلول‌های دیگر
+- cell stores bits and references separately
+- cell forbids circular references: for any cell, none of its descendant cells can reference this original cell.
 
-بیت‌ها و مراجع با یکدیگر مخلوط نمی‌شوند (آن‌ها جداگانه ذخیره می‌شوند). مراجع حلقه‌ای ممنوع است: در هر سلول، هیچ یک از سلول‌های فرزند آن نمی‌تواند مرجعی به سلول اصلی داشته باشد.
+Thus, all cells constitute a directed acyclic graph (DAG). Here's a good picture to illustrate:
 
-بنابراین، تمام سلول‌ها یک گراف غیرحلقه‌ای جهت‌دار (DAG) را تشکیل می‌دهند. در اینجا یک تصویر خوب برای نمایش آن وجود دارد:
-
-![گراف غیرحلقه‌ای جهت‌دار](/img/docs/dag.png)
+<br></br>
+<ThemedImage
+alt=""
+sources={{
+light: '/img/docs/cells-as-data-storage/dag.png?raw=true',
+dark: '/img/docs/cells-as-data-storage/Cells-as-data-storage_1_dark.png?raw=true',
+}}
+/> <br></br>
 
 ## انواع سلول‌
 
-در حال حاضر، ۵ نوع سلول وجود دارد: *عادی* و ۴ نوع *عجیب‌وغریب*. انواع عجیب‌وغریب عبارتند از:
+Currently, there are five types of cells: one ordinary cell and four exotic cells.
+The exotic types are the following:
 
 - سلول شاخه هرس شده
 - سلول مرجع کتابخانه
@@ -21,31 +34,35 @@
 - سلول به‌روزرسانی مرکل
 
 :::tip
-برای اطلاعات بیشتر درباره سلول‌های عجیب‌وغریب، به اینجا مراجعه کنید: [**مقاله سفید TVM، بخش ۳**](https://ton.org/tvm.pdf).
+See [**Exotic cells**](https://ton.org/tvm.pdf).
 :::
 
 ## چاشنی های سلول
 
 یک سلول یک شیء مات بهینه‌شده برای ذخیره‌سازی فشرده است.
 
-به ویژه، داده‌ها را یکتا می‌کند: اگر چندین زیرسلول معادل در شاخه‌های مختلف مرجع داده شده باشند، محتوای آن‌ها فقط یک‌بار ذخیره می‌شود. با این حال، ماتی یعنی که یک سلول نمی‌تواند مستقیماً تغییر کند یا خوانده شود. بنابراین، ۲ چاشنی اضافی از سلول‌ها وجود دارد:
+It deduplicates data: it only stores the content of several equivalent sub-cells referenced in different branches once. However, one cannot modify or read a cell directly because of its opacity. Thus, there are two additional flavors of the cells:
 
-- *سازنده* برای سلول‌های نیمه‌ساخته‌شده، که برای آن‌ها عملیات سریع برای افزودن رشته‌های بیت، اعداد صحیح، سلول‌های دیگر و مراجع به سلول‌های دیگر تعریف می‌شود.
-- *برش* برای سلول‌های 'تشریح‌شده' که یا باقیمانده یک سلول نیمه‌پارسه‌شده را نشان می‌دهند یا یک مقدار (زیرسلول) که در داخل چنین سلولی قرار دارد و از طریق یک دستور پارسر از آن استخراج می‌شود.
+- **Builder** is a flavor for constructing cells
+- **Slice** for a flavor for reading cells
 
-یک چاشنی ویژه دیگر از سلول‌ها در TVM استفاده می‌شود:
+Another unique cell flavor in TVM:
 
-- *ادامه* برای سلول‌هایی که شامل کد عملیات ها (دستورها) برای ماشین مجازی TON هستند، به [نمای کلی TVM](/v3/documentation/tvm/tvm-overview) مراجعه کنید.
+- **Continuation**  for cells containing opcodes instructions for TON Virtual Machine, see [TVM bird's-eye overview](/v3/documentation/tvm/tvm-overview).
 
 ## سریالیز داده‌ها به سلول‌ها
 
-هر شیء در TON (پیام، صف پیام، بلوک، حالت کل بلاکچین، کد و داده قرارداد) به یک سلول سریالیز می‌شود.
+Any object in TON, like the message, block, or whole blockchain state, serializes to a cell.
 
-فرآیند سریالیز توسط یک طرح TL-B توصیف می‌شود: یک توصیف رسمی از اینکه چگونه این شیء می‌تواند به *سازنده* سریالیز شود یا چگونه یک شیء از نوع داده شده از *برش* استخراج شود.
-TL-B برای سلول‌ها همانند TL یا ProtoBuf برای جریان‌های بایتی است.
+A TL-B scheme describes the serialization process: a formal description of how this object can be serialized into *builder* or how to parse an object of a given type from the *Slice*.
+TL-B for cells is the same as TL or ProtoBuf for byte-streams.
 
-اگر می‌خواهید اطلاعات بیشتری درباره (دی)سریالیز سلول بدانید، می‌توانید مقاله [سلول و کیسه سلول‌ها](/v3/documentation/data-formats/tlb/cell-boc) را بخوانید.
+If you want more details about cell serialization and deserialization, read [Cell & bag of cells](/v3/documentation/data-formats/tlb/cell-boc) article.
 
-## همچنین ببینید
+## See also
 
-- [زبان TL-B](/v3/documentation/data-formats/tlb/tl-b-language)
+- [Blockchain of blockchains](docs/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains/)
+- [TL-B language](/v3/documentation/data-formats/tlb/tl-b-language)
+
+<Feedback />
+
