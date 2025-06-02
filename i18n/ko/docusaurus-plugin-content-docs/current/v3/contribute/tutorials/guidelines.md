@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 튜토리얼 스타일 가이드라인
+
+:::danger
+This page is outdated and will be updated soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 TON 문서를 위한 튜토리얼을 작성하기로 결정하셨나요?
 
@@ -17,7 +24,7 @@ TON 문서를 위한 튜토리얼을 작성하기로 결정하셨나요?
 1. 시작하려면 GitHub에서 [ton-docs](https://github.com/ton-community/ton-docs/) 리포지토리를 포크한 다음 복제하고 로컬 리포지토리에 새 브랜치를 만드세요.
 2. 품질과 가독성을 염두에 두고 튜토리얼을 작성하세요! 기존 튜토리얼을 살펴보고 무엇을 목표로 해야 하는지 알아보세요.
 3. 검토를 위해 제출할 준비가 되면 지점에서 [Pull Request를 열고](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) 제출하세요. 우리에게 알림이 전송되면 검토 절차가 시작됩니다:
-   1. **튜토리얼의 최종 초안을 제출하혀고 노력해 주세요**. 몇 가지 오타와 문법 수정은 허용되지만, 튜토리얼을 게시하기 전에 큰 변경이 필요한 경우, 리뷰와 수정에 훨씬 더 많은 시간이 걸릴 것입니다.
+  1. **튜토리얼의 최종 초안을 제출하혀고 노력해 주세요**. 몇 가지 오타와 문법 수정은 허용되지만, 튜토리얼을 게시하기 전에 큰 변경이 필요한 경우, 리뷰와 수정에 훨씬 더 많은 시간이 걸릴 것입니다.
 4. 제출하신 내용을 검토하고 필요한 모든 변경을 완료하면, Pull Request를 병합하고 TON Documentation에 튜토리얼을 게시할 것입니다. 그 후 곧 연락을 드리고 결제를 준비하겠습니다!
 5. 게시되면 소셜 미디어에서 튜토리얼을 **홍보**하는 것을 잊지 마세요! [문서 관리자](/v3/contribute/maintainers)들은 여러분이 우리와 협력하는 한 이러한 홍보를 확대하는 데 도움을 줄 수 있습니다.
 
@@ -133,3 +140,6 @@ import { useEffect, useState } from 'react';
   *예시*: `mkdir example && cd example`
 - `npm init`을 사용하여 프로젝트 디렉터리를 초기화하는 경우, 프롬프트를 설명하거나 `-y` 플래그를 사용합니다.
 - `npm install`을 사용하는 경우 `-save` 플래그를 사용합니다.
+
+<Feedback />
+
