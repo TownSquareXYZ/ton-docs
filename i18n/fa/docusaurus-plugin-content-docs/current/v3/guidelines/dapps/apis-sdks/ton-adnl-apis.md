@@ -1,47 +1,48 @@
+import Feedback from '@site/src/components/Feedback';
+
 # TON ADNL API
 
-:::tip
+There are several ways to connect to blockchain:
 
-راه‌های مختلفی برای اتصال به بلاکچین وجود دارد:
+1. RPC data provider or another API - In most cases, you must *rely* on its stability and security.
+2. **ADNL connection** - You connect to a [liteserver](/v3/guidelines/nodes/running-nodes/liteserver-node). While it may sometimes be inaccessible, a built-in validation mechanism (implemented in the library) ensures it cannot provide false data.
+3. Tonlib binary - Like ADNL, you connect to a liteserver and face the same benefits and downsides. However, your application also includes a dynamically loaded library compiled externally.
+4. Offchain-only – Some SDKs allow you to create and serialize cells, which you can then send to APIs.
 
-1. ارائه‌دهنده داده RPC یا یک API دیگر: در بیشتر موارد، شما باید به پایداری و امنیت آن اعتماد کنید.
-2. **اتصال ADNL**: شما در حال اتصال به یک [لایت‌سرور](/v3/guidelines/nodes/running-nodes/liteserver-node) هستید. ممکن است غیرقابل دسترسی باشند، اما با سطحی از معتبرسازی (که در کتابخانه پیاده‌سازی شده است)، نمی‌توانند دروغ بگویند.
-3. باینری Tonlib: شما همچنین به لایت‌سرور متصل می‌شوید، بنابراین تمامی مزایا و معایب آن اعمال می‌شود، اما برنامه شما همچنین شامل یک کتابخانه با بارگذاری پویا است که در خارج کامپایل شده است.
-4. فقط آف‌چین. این‌گونه SDKها اجازه می‌دهند تا سلول‌ها را ایجاد و سریالیز کنید که می‌توانید آنها را به API ارسال کنید.
+Clients connect directly to liteservers (nodes) using a binary protocol.
 
-:::
+The client downloads keyblocks, the current state of an account, and their **Merkle proofs**, ensuring the validity of received data.
 
-کلاینت‌ها به صورت مستقیم با استفاده از پروتکل باینری به لایت‌سرورها (گره‌ها) متصل می‌شوند.
+For read operations (such as get-method calls), the client launches a local TVM with a downloaded and verified state. There's no need to download the full blockchain state—the client only retrieves what’s required for the operation.
 
-کلاینت بلوک‌های کلیدی، وضعیت فعلی حساب و **اثبات‌های مرکل** آنها را دانلود می‌کند، که صحت داده‌های دریافت شده را تضمین می‌کند.
+You can connect to public liteservers from the global config ([Mainnet](https://ton.org/global-config.json) or [Testnet](https://ton.org/testnet-global.config.json)) or run your own [liteserver](/v3/documentation/infra/nodes/node-types) and manage it with [ADNL SDKs](/v3/guidelines/dapps/apis-sdks/sdk#overview).
 
-عملیات خواندن (مانند تماس‌های get-method) با راه‌اندازی یک TVM محلی با وضغیت دانلود شده و تأیید شده انجام می‌شود. شایان ذکر است که نیازی به دانلود وضعیت کامل بلاکچین نیست، کلاینت فقط آنچه را که برای عملیات مورد نیاز است دانلود می کند.
+Read more about [Merkle proofs](/v3/documentation/data-formats/tlb/proofs) at [TON whitepaper](https://ton.org/ton.pdf) 2.3.10, 2.3.11.
 
-می‌توانید از پیکربندی گلوبال ([مین‌نت](https://ton.org/global-config.json) یا [تست‌نت](https://ton.org/testnet-global.config.json)) به لایت‌سرورهای عمومی متصل شوید. یا [لایت‌سرور](/v3/documentation/infra/nodes/node-types) خود را اجرا کنید و این کار را با [ADNL SDKs](/v3/guidelines/dapps/apis-sdks/sdk#view) مدیریت کنید.
+Public liteservers (from the global config) help you quickly get started with TON. You can use them to learn TON programming or for applications and scripts that do not require 100% uptime.
 
-اطلاعات بیشتر در مورد [اثبات‌های مرکل](/v3/documentation/data-formats/tlb/proofs) را در [وایت‌پیپر TON](https://ton.org/ton.pdf) 2.3.10، 2.3.11 بخوانید.
+For production infrastructure, consider using a well-prepared setup:
 
-لایت‌سرورهای عمومی (از پیکربندی گلوبال) برای شروع سریع شما با TON وجود دارد. می توان از آنها برای یادگیری برنامه نویسی در TON یا برای استفاده در برنامه ها و اسکریپت هایی که به ۱۰۰٪ آپ‌تایم نیاز ندارند استفاده کرد.
+- [Run your own liteserver](/v3/guidelines/nodes/running-nodes/liteserver-node),
+- Use Liteserver premium providers via [@liteserver_bot](https://t.me/liteserver_bot)
 
-برای ساخت زیرساخت‌های تولید - پیشنهاد می‌شود از زیرساخت‌هایی که به خوبی آماده شده‌اند استفاده کنید:
+## Pros & cons
 
-- [راه‌اندازی لایت‌سرور اختصاصی](/v3/guidelines/nodes/running-nodes/liteserver-node),
-- از ارائه دهندگان پریمیوم لایت‌سرور [@liteserver_bot](https://t.me/liteserver_bot) استفاده کنید
+- ✅ Reliable - Uses an API with Merkle proof hashes to verify incoming binary data.
 
-## مزایا و معایب
+- ✅ Secure - Since it checks Merkle proofs, you can even use untrusted liteservers.
 
-- ✅ قابل اعتماد. از API با هش‌های اثبات مرکل برای تأیید داده‌های باینری ورودی استفاده می‌کند.
+- ✅ Fast - Connects directly to TON Blockchain nodes instead of relying on HTTP middleware.
 
-- ✅ ایمن. از آنجا که اثبات‌های مرکل را بررسی می‌کند، می‌توانید حتی از لایت‌سرورهای غیرقابل اعتماد استفاده کنید.
+- ❌ Complex - Requires time to set up and understand.
 
-- ✅ سریع. به طور مستقیم به گره‌های بلاکچین TON متصل می‌شود، به جای استفاده از میان‌افزار HTTP.
+- ❌ Back-end first - Not compatible with web frontends (built for a non-HTTP protocol) unless you use an HTTP-ADNL proxy.
 
-- ❌ پیچیده. زمان بیشتری برای درک مسائل نیاز است.
+## API reference
 
-- ❌ اولویت با بک‌اند. با رابط‌های کاربری وب سازگار نیست (برای پروتکل‌های غیر HTTP ساخته شده است) یا نیاز به سرور پراکسی HTTP-ADNL دارد.
+Requests and responses follow the [TL](/v3/documentation/data-formats/tl) schema, which allows you to generate a typed interface for a specific programming language.
 
-## منابع API
+[TonLib TL schema](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl)
 
-درخواست‌ها و پاسخ‌ها به سرور توسط طرح‌واره [TL](/v3/documentation/data-formats/tl) توصیف می‌شوند، که به شما اجازه می‌دهد یک رابط نوعی برای یک زبان برنامه‌نویسی خاص تولید کنید.
+<Feedback />
 
-[طرح‌واره TL برای TonLib](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl)
