@@ -1,56 +1,52 @@
-import ThemedImage from '@theme/ThemedImage';
+import Feedback from '@site/src/components/Feedback';
 
-# FunC에서 안전한 스마트 컨트랙트 프로그래밍
+import ThemedImage from "@theme/ThemedImage";
 
-이 섹션에서는 TON 블록체인의 흥미로운 특징들과 FunC에서 스마트 컨트랙트를 프로그래밍할 때 개발자들이 따라야 할 모범 사례들을 살펴보겠습니다.
+# Secure smart contract programming
 
-## 컨트랙트 샤딩
+In this section, we’ll explore some of the most interesting features of the TON blockchain and walk through a list of best practices for developers programming smart contracts in FunC.
 
-EVM 컨트랙트를 개발할 때는 편의성을 위해 프로젝트를 여러 컨트랙트로 나누는 것이 일반적입니다. 일부 경우에는 하나의 컨트랙트에서 모든 기능을 구현할 수 있고, 컨트랙트 분할이 필요한 경우에도(예: 자동화된 마켓 메이커의 유동성 페어) 특별한 어려움이 없었습니다. 트랜잭션은 전체적으로 실행됩니다: 모든 것이 성공하거나 모든 것이 되돌려집니다.
+## Contract sharding
 
-TON에서는 "제한 없는 데이터 구조"를 피하고 하나의 논리적 컨트랙트를 작은 조각들로 [분할](https://blog.ton.org/how-to-shard-your-ton-smart-contract-and-why-studying-the-anatomy-of-tons-jettons)하는 것이 강력히 권장됩니다. 각 조각은 소량의 데이터만 관리합니다. 기본적인 예시는 TON Jettons의 구현입니다. 이는 이더리움의 ERC-20 토큰 표준의 TON 버전입니다. 간단히 말하면:
+When developing contracts for the EVM, you typically split the project into multiple contracts for convenience. In some cases, it’s possible to implement all functionality in a single contract, and even when splitting is necessary, such as with Liquidity Pairs in an Automated Market Maker, it doesn’t introduce significant complexity. Transactions are executed entirely: either everything succeeds, or everything reverts.
 
-1. `total_supply`, `minter_address`, 그리고 토큰 설명(메타데이터)와 `jetton_wallet_code`라는 몇 개의 참조를 저장하는 하나의 `jetton-minter`
-2. jetton 소유자마다 하나씩 있는 많은 jetton-wallet. 각 지갑은 소유자의 주소, 잔액, jetton-minter 주소, jetton_wallet_code에 대한 링크만 저장합니다.
+In TON, it’s strongly recommended to avoid “unbounded data structures” and [split a single logical contract into smaller pieces](https://blog.ton.org/how-to-shard-your-ton-smart-contract-and-why-studying-the-anatomy-of-tons-jettons), each managing a small amount of data. A basic example is the implementation of TON Jettons, TON’s version of Ethereum’s ERC-20 token standard. In short:
 
-이는 Jettons의 전송이 지갑 간에 직접 일어나고 고부하 주소에 영향을 미치지 않도록 하기 위한 것으로, 트랜잭션의 병렬 처리에 필수적입니다.
+1. One `jetton-minter` stores `total_supply`, `minter_address`, and references to token metadata and `jetton_wallet_code`.
+2. Multiple `jetton-wallet` contracts, one for each token owner, store the owner’s address, their balance, the `jetton-minter` address, and a reference to `jetton_wallet_code`.
 
-즉, 당신의 컨트랙트가 "컨트랙트 그룹"으로 바뀌고 이들이 서로 활발하게 상호작용할 것이라는 점을 준비해야 합니다.
+This design ensures that Jetton transfers occur directly between wallets without affecting high-load addresses, enabling parallel transaction processing. As a result, your contract will likely become a “group of contracts” that actively interact with each other.
 
-## 트랜잭션의 부분 실행이 가능
-
-컨트랙트 로직에 새로운 고유한 속성이 나타납니다: 트랜잭션의 부분 실행.
-
-예를 들어 표준 TON Jetton의 메시지 흐름을 살펴보겠습니다:
+## Partial execution of transactions is possible
 
 ![smart1.png](/img/docs/security-measures/secure-programming/smart1.png)
 
-다이어그램에서 보듯이:
+A unique property of TON smart contracts is the possibility of partial transaction execution. For example, consider the message flow of a standard TON Jetton:
 
-1. sender가 자신의 지갑(`sender_wallet`)에 `op::transfer` 메시지를 보냅니다;
-2. `sender_wallet`이 토큰 잔액을 감소시킵니다;
-3. `sender_wallet`이 수신자의 지갑(`destination_wallet`)에 `op::internal_transfer` 메시지를 보냅니다;
-4. `destination_wallet`이 토큰 잔액을 증가시킵니다;
-5. `destination_wallet`이 소유자(`destination`)에게 `op::transfer_notification`을 보냅니다;
-6. `destination_wallet`이 초과 가스를 `op::excesses` 메시지와 함께 `response_destination`(보통 `sender`)으로 반환합니다.
+1. The sender sends an `op::transfer` message to its wallet (`sender_wallet`).
+2. `sender_wallet` reduces the token balance.
+3. `sender_wallet` sends an `op::internal_transfer` message to the recipient’s wallet (`destination_wallet`).
+4. `destination_wallet` increases its token balance.
+5. `destination_wallet` sends an `op::transfer_notification` to its owner (`destination`).
+6. `destination_wallet` returns excess gas with an `op::excesses` message to the `response_destination`, usually the sender.
 
-`destination_wallet`이 `op::internal_transfer` 메시지를 처리할 수 없는 경우(예외 발생 또는 가스 부족) 이 부분과 후속 단계는 실행되지 않지만, 첫 번째 단계(`sender_wallet`의 잔액 감소)는 완료된다는 점에 주목하세요. 결과적으로 트랜잭션이 부분적으로 실행되어 `Jetton`의 상태가 불일치하고 이 경우 금전 손실이 발생합니다.
+If `destination_wallet` fails to process the `op::internal_transfer` message, such as due to an exception or insufficient gas, this step and subsequent ones won’t execute. However, the first step, reducing the balance in `sender_wallet`, will still complete. This results in partial transaction execution, an inconsistent state of the `Jetton`, and potential loss of funds.
 
-최악의 경우, 모든 토큰이 이런 식으로 도난당할 수 있습니다. 먼저 사용자에게 보너스를 지급한 다음 그들의 Jetton 지갑에 `op::burn` 메시지를 보내지만 `op::burn`이 성공적으로 처리될 것이라고 보장할 수 없다고 상상해보세요.
+In the worst-case scenario, all tokens could be stolen this way. For example, if you first credit bonuses to a user and then send an `op::burn` message to their Jetton wallet, you cannot guarantee that the `op::burn` will succeed.
 
-## TON 스마트 컨트랙트 개발자는 가스를 제어해야 함
+## TON smart contract developers must control gas
 
-Solidity에서 가스는 컨트랙트 개발자에게 큰 관심사가 아닙니다. 사용자가 너무 적은 가스를 제공하면 모든 것이 아무 일도 없었던 것처럼 되돌려집니다(하지만 가스는 반환되지 않습니다). 충분히 제공하면 실제 비용이 자동으로 계산되어 잔액에서 차감됩니다.
+In Solidity, gas management is less of a concern for contract developers. If a user provides insufficient gas, the transaction reverts, though the gas is not refunded. If they provide enough gas, the actual costs are automatically calculated and deducted from their balance.
 
 TON에서는 상황이 다릅니다:
 
-1. 가스가 부족하면 트랜잭션이 부분적으로 실행됩니다;
-2. 가스가 너무 많으면 초과분을 반환해야 합니다. 이는 개발자의 책임입니다;
-3. "컨트랙트 그룹"이 메시지를 교환하는 경우 각 메시지에서 제어와 계산이 이루어져야 합니다.
+1. If there’s insufficient gas, the transaction may partially execute.
+2. If there’s excess gas, the developer must return it.
+3. If a “group of contracts” exchanges messages, gas control and calculation must occur in each message.
 
-TON은 가스를 자동으로 계산할 수 없습니다. 모든 결과를 포함한 트랜잭션의 완전한 실행에는 시간이 오래 걸릴 수 있으며, 마지막에는 사용자의 지갑에 toncoin이 부족할 수 있습니다. 여기서도 carry-value 원칙이 사용됩니다.
+TON cannot automatically calculate gas costs. Since transaction execution can take a long time, the user might run out of TON coins by the end. This is where the carry-value principle comes into play.
 
-## TON 스마트 컨트랙트 개발자는 저장소를 관리해야 함
+## TON smart contract developers must manage storage
 
 TON의 일반적인 메시지 핸들러는 다음과 같은 접근 방식을 따릅니다:
 
@@ -62,7 +58,7 @@ TON의 일반적인 메시지 핸들러는 다음과 같은 접근 방식을 따
 }
 ```
 
-불행히도 `<많은 변수>`가 모든 컨트랙트 데이터 필드의 실제 열거임을 확인하고 있습니다. 예시:
+Unfortunately, `<a lot of vars>` often involves enumerating all contract data fields. For example:
 
 ```func
 (
@@ -75,49 +71,46 @@ TON의 일반적인 메시지 핸들러는 다음과 같은 접근 방식을 따
 ) = load_data();
 ```
 
-이 접근 방식에는 여러 단점이 있습니다.
+This approach has several drawbacks:
 
-첫째, `is_paused`와 같은 다른 필드를 추가하기로 결정하면 컨트랙트 전체에서 `load_data()/save_data()` 문을 업데이트해야 합니다. 이는 노동 집약적일 뿐만 아니라 찾기 어려운 오류로 이어집니다.
+1. Adding a new field requires updating `load_data()/save_data()` statements throughout the contract, which is labor-intensive and error-prone.
+2. Namespace pollution can lead to bugs, such as shadowing a storage field with a local variable, which can overwrite the contract state.
+3. Parsing and repacking the entire storage on every function call increases gas costs.
 
-최근 CertiK 감사에서 개발자가 두 인수를 섞어 다음과 같이 작성한 것을 발견했습니다:
-
-```func
-save_data(total_supply, min_amount, swap_fee, ...)
-```
-
-전문가 팀이 수행한 외부 감사 없이는 이러한 버그를 찾기가 매우 어렵습니다. 함수는 거의 사용되지 않았고, 혼동된 두 매개변수는 보통 0 값을 가졌습니다. 이런 오류를 발견하려면 무엇을 찾는지 정말로 알아야 합니다.
-
-둘째, "네임스페이스 오염"이 있습니다. 다른 예시로 감사에서 발견한 문제를 설명해보겠습니다. 함수 중간에 입력 매개변수를 다음과 같이 읽었습니다:
-
-```func
-int min_amount = in_msg_body~load_coins();
-```
-
-즉, 로컬 변수에 의해 저장소 필드가 가려졌고, 함수 끝에서 이 대체된 값이 저장소에 저장되었습니다. 공격자는 컨트랙트의 상태를 덮어쓸 기회를 가졌습니다. FunC가 [변수 재선언](/v3/documentation/smart-contracts/func/docs/statements#variable-declaration)을 허용한다는 사실로 상황이 악화됩니다: "이것은 선언이 아니라 min_amount가 int 타입이라는 컴파일 타임 보험일 뿐입니다."
-
-마지막으로, 모든 함수를 호출할 때마다 전체 저장소를 파싱하고 다시 패킹하는 것은 가스 비용을 증가시킵니다.
+> In a recent CertiK audit, we discovered that the developer mixed up two arguments in the `save_data()` function:  
+>
+> ```func
+> save_data(total_supply, min_amount, swap_fee, ...)  
+> ```
+>
+> Without an external audit by a team of experts, detecting such a bug is challenging. The function was rarely used, and the confused parameters often had a value of zero. Identifying this type of error requires knowing exactly what to look for.\
+> Secondly, "namespace pollution" is a common issue. For example, in another audit, we found the following code in the middle of a function:  
+>
+> ```func
+> int min_amount = in_msg_body~load_coins();  
+> ```
+>
+> Here, a local variable shadowed a storage field, and at the end of the function, the overwritten value was stored in the contract state. This allowed an attacker to manipulate the contract’s state. The problem is exacerbated by FunC’s allowance of [variable redeclaration](https://docs.ton.org/develop/func/statements#variable-declaration): “This is not a declaration, but just a compile-time insurance that `min_amount` has type `int`.”  
 
 ## 팁
 
-### 1. 항상 메시지 흐름 다이어그램을 그리세요
+### 1. Always draw message flow diagrams
 
-TON Jetton과 같은 간단한 컨트랙트에서도 이미 상당히 많은 메시지, 발신자, 수신자, 메시지에 포함된 데이터들이 있습니다. 이제 한 워크플로우에서 메시지 수가 10개를 초과할 수 있는 탈중앙화 거래소(DEX)와 같은 조금 더 복잡한 것을 개발할 때는 어떨지 상상해보세요.
+Even in a simple contract like a TON Jetton, there are numerous messages, senders, receivers, and data pieces. For more complex contracts like decentralized exchanges (DEXs), the number of messages in a single workflow can exceed ten.
 
 ![smart2.png](/img/docs/security-measures/secure-programming/smart2.png)
 
-CertiK에서는 감사 과정 동안 이러한 다이어그램을 설명하고 업데이트하기 위해 [DOT](https://en.wikipedia.org/wiki/DOT_(graph_description_language)) 언어를 사용합니다. 우리 감사자들은 이것이 컨트랙트 내부와 컨트랙트 간의 복잡한 상호작용을 시각화하고 이해하는 데 도움이 된다고 합니다.
+At CertiK, we use the [DOT](https://en.wikipedia.org/wiki/DOT_(graph_description_language)) language to describe and update such diagrams during audits. This helps auditors visualize and understand complex interactions within and between contracts.
 
-### 2. 실패를 피하고 바운스된 메시지를 캐치하세요
+### 2. Avoid failures and handle bounced messages
 
-메시지 흐름을 사용하여 먼저 진입점을 정의하세요. 이것은 컨트랙트 그룹의 메시지 연쇄를 시작하는 메시지입니다("결과"). 여기서 후속 단계에서 실패 가능성을 최소화하기 위해 모든 것을 확인해야 합니다(페이로드, 가스 공급 등).
+Define the entry point in your message flow—the message that initiates the cascade of messages in your contract group. Perform all necessary checks (payload, gas supply, etc.) here to minimize the chance of failure in subsequent stages.
 
-모든 계획을 실행할 수 있을지 확실하지 않다면(예: 사용자가 거래를 완료하기에 충분한 토큰을 가지고 있는지) 메시지 흐름이 잘못 구축되었을 가능성이 높습니다.
+If you’re unsure whether all conditions will be met, such as whether the user has enough tokens, the message flow is likely designed incorrectly.
 
-후속 메시지(결과)에서 모든 `throw_if()/throw_unless()`는 실제로 무언가를 확인하는 것이 아니라 assert의 역할을 합니다.
+In subsequent messages, use `throw_if()/throw_unless()` as assertions rather than checks. Many contracts also handle bounced messages as a precaution.
 
-많은 컨트랙트가 만약을 위해 바운스된 메시지도 처리합니다.
-
-예를 들어 TON Jetton에서 수신자의 지갑이 토큰을 받을 수 없는 경우(수신 로직에 따라 다름) 발신자의 지갑이 바운스된 메시지를 처리하고 토큰을 자신의 잔액으로 반환합니다.
+For example, in TON Jetton, if the recipient’s wallet cannot accept tokens, the sender’s wallet processes the bounced message and returns the tokens to its balance.
 
 ```func
 () on_bounce (slice in_msg_body) impure {
@@ -137,109 +130,52 @@ CertiK에서는 감사 과정 동안 이러한 다이어그램을 설명하고 �
 }
 ```
 
-일반적으로 바운스된 메시지를 처리하는 것을 권장하지만, 메시지 처리 실패와 불완전한 실행으로부터의 완전한 보호 수단으로는 사용할 수 없습니다.
+While handling bounced messages is recommended, it’s not a complete solution. Bounced messages require gas, and if the sender doesn’t provide enough, the bounce won’t occur. Additionally, TON doesn’t support chain bounces, so a bounced message cannot be re-bounced.
 
-바운스된 메시지를 보내고 처리하는 데는 가스가 필요하며, 발신자가 충분히 제공하지 않으면 바운스되지 않습니다.
+### 3. Expect a man-in-the-middle attack
 
-둘째로, TON은 점프의 연쇄를 제공하지 않습니다. 이는 바운스된 메시지를 다시 바운스할 수 없다는 것을 의미합니다. 예를 들어, 두 번째 메시지가 진입 메시지 후에 전송되고 두 번째가 세 번째를 트리거하는 경우, 진입 컨트랙트는 세 번째 메시지의 처리 실패를 알 수 없습니다. 마찬가지로 첫 번째가 두 번째와 세 번째를 보내는 경우, 두 번째의 실패는 세 번째의 처리에 영향을 미치지 않습니다.
+A message cascade can span multiple blocks. Assume that while one message flow is running, an attacker can initiate a parallel flow. If a property, such as the user’s token balance, is checked at the start, don’t assume it will remain valid at later stages.
 
-### 3. 메시지 흐름 중간의 공격자를 예상하세요
+### 4. Use the carry-value pattern
 
-메시지 연쇄는 여러 블록에 걸쳐 처리될 수 있습니다. 한 메시지 흐름이 실행되는 동안 공격자가 두 번째 흐름을 병렬로 시작할 수 있다고 가정하세요. 즉, 처음에 속성을 확인했다면(예: 사용자가 충분한 토큰을 가지고 있는지) 같은 컨트랙트의 세 번째 단계에서도 이 속성을 여전히 만족할 것이라고 가정하지 마세요.
+Messages between contracts must carry valuables. In TON Jetton, `sender_wallet` subtracts the balance and sends it with an `op::internal_transfer` message to `destination_wallet`, which then adds the balance to its own or bounces it back.
 
-### 4. Carry-Value 패턴을 사용하세요
+An incorrect implementation would be querying the Jetton balance on-chain. By the time the response to `op::get_balance` arrives, the balance might have already been spent.
 
-이전 단락에서 알 수 있듯이 컨트랙트 간의 메시지는 가치를 전달해야 합니다.
+Instead, implement an alternative flow:
 
-TON Jetton에서도 이것이 입증됩니다: `sender_wallet`이 잔액을 차감하고 `op::internal_transfer` 메시지로 `destination_wallet`에 보내고, 이는 메시지와 함께 잔액을 받아 자신의 잔액에 추가합니다(또는 다시 바운스합니다).
+1. The master sends an `op::provide_balance` message to the wallet.
+2. The wallet zeroes its balance and sends back `op::take_balance`.
+3. The master receives the funds, decides if they’re sufficient, and either uses them or returns them to the wallet.
 
-잘못된 구현의 예시를 살펴보겠습니다. 왜 온체인에서 Jetton 잔액을 조회할 수 없을까요? 이러한 질문이 패턴에 맞지 않기 때문입니다. `op::get_balance` 메시지에 대한 응답이 요청자에게 도달할 때까지 이 잔액은 이미 누군가에 의해 소비되었을 수 있습니다.
+### 5. Return value instead of rejecting
 
-이 경우 대안을 구현할 수 있습니다:
-![smart3.png](/img/docs/security-measures/secure-programming/smart3.png)
+Contracts often receive requests with values. Instead of rejecting invalid requests via `throw_unless()`, return the value to the sender.
 
-1. master가 지갑에 `op::provide_balance` 메시지를 보냅니다;
-2. 지갑이 잔액을 0으로 만들고 `op::take_balance`를 돌려보냅니다;
-3. master가 돈을 받고 충분한지 결정한 다음 사용하거나(대신 무언가를 차감) 지갑으로 다시 보냅니다.
+For example, in TON Jetton:
 
-### 5. 거부하는 대신 값을 반환하세요
+1. The sender sends an `op::transfer` message via `sender_wallet` to `your_contract_wallet`, specifying `forward_ton_amount` and `forward_payload`.
+2. `sender_wallet` sends an `op::internal_transfer` message to `your_contract_wallet`.
+3. `your_contract_wallet` sends an `op::transfer_notification` message to `your_contract`, delivering `forward_ton_amount`, `forward_payload`, `sender_address`, and `jetton_amount`.
+4. Your contract processes the request in `handle_transfer_notification()`.
 
-이전 관찰에서 알 수 있듯이 컨트랙트 그룹은 종종 단순한 요청이 아닌 값과 함께 요청을 받게 됩니다. 따라서 단순히 요청 실행을 거부할 수 없고(`throw_unless()`를 통해) Jetton을 발신자에게 돌려보내야 합니다.
+At this stage, avoid `throw_if()/throw_unless()`, as it could result in lost Jettons. Use try-catch statements, available in FunC v0.4.0+, to handle errors and return Jettons if necessary.
 
-예를 들어 일반적인 흐름 시작(TON Jetton 메시지 흐름 참조):
+### 6. Calculate gas and check msg_value
 
-1. `sender`가 `sender_wallet`을 통해 컨트랙트용 `forward_ton_amount`와 `forward_payload`를 지정하여 `op::transfer` 메시지를 `your_contract_wallet`에 보냅니다;
-2. `sender_wallet`이 `op::internal_transfer` 메시지를 `your_contract_wallet`에 보냅니다;
-3. `your_contract_wallet`이 `op::transfer_notification` 메시지를 `your_contract`에 보내 `forward_ton_amount`, `forward_payload`, `sender_address`, `jetton_amount`를 전달합니다;
-4. 그리고 여기 당신의 컨트랙트에서 `handle_transfer_notification()`에서 흐름이 시작됩니다.
+Estimate the gas cost of each handler in your message flow and check the sufficiency of `msg_value`. Avoid demanding excessive gas, as it must be divided among subsequent messages. Recalculate gas requirements if your code starts sending more messages.
 
-거기서 어떤 종류의 요청인지, 완료할 가스가 충분한지, 페이로드의 모든 것이 올바른지 파악해야 합니다. 이 단계에서는 `throw_if()/throw_unless()`를 사용하지 말아야 합니다. 그러면 Jetton이 단순히 손실되고 요청이 실행되지 않을 것이기 때문입니다. [FunC v0.4.0부터 사용 가능한](/v3/documentation/smart-contracts/func/docs/statements#try-catch-statements) try-catch 문을 사용하는 것이 좋습니다.
+### 7. Return gas excesses carefully
 
-컨트랙트의 기대를 충족하지 않는다면 Jetton을 반환해야 합니다.
+If excess gas isn’t returned to the sender, funds will accumulate in your contracts. While not catastrophic, this is suboptimal. Popular contracts like TON Jetton return excess gas with an `op::excesses` message.
 
-최근 감사에서 이러한 취약한 구현의 예시를 발견했습니다.
+TON provides a useful mechanism: `SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE = 64`. This mode forwards remaining gas with the message. However, avoid this mode if:
 
-```func
-() handle_transfer_notification(...) impure {
-...
-    int jetton_amount = in_msg_body~load_coins();
-    slice from_address = in_msg_body~load_msg_addr();
-    slice from_jetton_address = in_msg_body~load_msg_addr();
+1. Your contract has no other non-linear handlers, as storage fees will deplete the contract balance.
+2. Your contract emits events, sending messages to external addresses, as the cost is deducted from the contract balance.
+3. Your contract attaches value to messages or uses `SEND_MODE_PAY_FEES_SEPARATELY = 1`, as these actions deduct from the contract balance.
 
-    if (msg_value < gas_consumption) { ;; not enough gas provided
-        if (equal_slices(from_jetton_address, jettonA_address)) {
-            var msg = begin_cell()
-                .store_uint(0x18, 6)
-                .store_slice(jettonA_wallet_address)
-                .store_coins(0)
-                .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-            ...
-        }
-    ...
-}
-```
-
-보시다시피, 여기서 "반환"은 `sender_address`가 아닌 `jettonA_wallet_address`로 보내집니다. 모든 결정이 `in_msg_body` 분석을 기반으로 이루어지므로, 공격자는 가짜 메시지를 위조하여 돈을 추출할 수 있습니다. 항상 반환을 `sender_address`로 보내세요.
-
-컨트랙트가 Jetton을 수락하는 경우, 예상한 Jetton이 왔는지 아니면 누군가의 단순한 `op::transfer_notification`인지 알 수 없습니다.
-
-컨트랙트가 예상치 못하거나 알 수 없는 Jetton을 받으면 이것들도 반환해야 합니다.
-
-### 6. 가스를 계산하고 msg_value를 확인하세요
-
-메시지 흐름 다이어그램에 따라 각 시나리오에서 각 핸들러의 비용을 추정하고 msg_value의 충분성을 확인할 수 있습니다.
-
-단순히 여유를 두고 요구할 수는 없습니다. 예를 들어 1 TON(이 글을 쓰는 시점의 mainnet gas_limit)을 요구하면 이 가스를 "결과" 사이에 나눠야 하기 때문입니다. 컨트랙트가 세 개의 메시지를 보낸다면 각각에 0.33 TON만 보낼 수 있습니다. 이는 그들이 더 적게 "요구"해야 한다는 것을 의미합니다. 전체 컨트랙트의 가스 요구사항을 신중하게 계산하는 것이 중요합니다.
-
-개발 중에 코드가 더 많은 메시지를 보내기 시작하면 상황이 더 복잡해집니다. 가스 요구사항을 재확인하고 업데이트해야 합니다.
-
-### 7. 초과 가스를 조심스럽게 반환하세요
-
-초과 가스가 발신자에게 반환되지 않으면 시간이 지남에 따라 자금이 컨트랙트에 누적될 것입니다. 원칙적으로 끔찍한 일은 아니며, 이는 그저 최적이 아닌 관행입니다. 초과분을 긁어내는 함수를 추가할 수 있지만, TON Jetton과 같은 인기 있는 컨트랙트는 여전히 `op::excesses` 메시지와 함께 발신자에게 반환합니다.
-
-TON에는 유용한 메커니즘이 있습니다: `SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE = 64`. `send_raw_message()`에서 이 모드를 사용할 때, 남은 가스가 메시지와 함께 새로운 수신자에게 전달됩니다(또는 되돌아갑니다). 메시지 흐름이 선형인 경우에 편리합니다: 각 메시지 핸들러가 하나의 메시지만 보냅니다. 하지만 이 메커니즘을 사용하지 않는 것이 좋은 경우가 있습니다:
-
-1. 컨트랙트에 비선형 핸들러가 없는 경우. storage_fee는 수신 가스가 아닌 컨트랙트 잔액에서 차감됩니다. 이는 들어오는 모든 것이 나가야 하기 때문에 시간이 지나면서 storage_fee가 전체 잔액을 소비할 수 있음을 의미합니다;
-2. 컨트랙트가 이벤트를 발생시키는 경우, 즉 외부 주소로 메시지를 보냅니다. 이 작업의 비용은 msg_value가 아닌 컨트랙트의 잔액에서 차감됩니다.
-
-```func
-() emit_log_simple (int event_id, int query_id) impure inline {
-    var msg = begin_cell()
-        .store_uint (12, 4)             ;; ext_out_msg_info$11 addr$00
-        .store_uint (1, 2)              ;; addr_extern$01
-        .store_uint (256, 9)            ;; len:(## 9)
-        .store_uint(event_id, 256);     ;; external_address:(bits len)
-        .store_uint(0, 64 + 32 + 1 + 1) ;; lt, at, init, body
-        .store_query_id(query_id)
-        .end_cell();
-
-    send_raw_message(msg, SEND_MODE_REGULAR);
-}
-```
-
-3. 컨트랙트가 메시지를 보낼 때 value를 첨부하거나 `SEND_MODE_PAY_FEES_SEPARETELY = 1`을 사용하는 경우. 이러한 작업은 컨트랙트 잔액에서 차감되므로 미사용분을 반환하는 것은 "손실을 보면서 작업하는" 것입니다.
-
-표시된 경우에는 잉여분의 수동 근사 계산이 사용됩니다:
+In these cases, manually calculate and return excess gas:
 
 ```func
 int ton_balance_before_msg = my_ton_balance - msg_value;
@@ -251,21 +187,20 @@ if(forward_ton_amount) {
 ...
 }
 
-if (msg_value > 0) {    ;; there is still something to return
-
-var msg = begin_cell()
-    .store_uint(0x10, 6)
-    .store_slice(response_address)
-    .store_coins(msg_value)
+if (msg_value > 0) {    ;; return excess gas
+    var msg = begin_cell()
+        .store_uint(0x10, 6)
+        .store_slice(response_address)
+        .store_coins(msg_value)
 ...
 }
 ```
 
-컨트랙트 잔액이 소진되면 트랜잭션이 부분적으로 실행되며, 이는 허용할 수 없다는 점을 기억하세요.
+Ensure the contract balance doesn’t run out, as this could lead to partial transaction execution.
 
-### 8. 중첩된 저장소를 사용하세요
+### 8. Use nested storage
 
-다음과 같은 저장소 구성 방식을 권장합니다:
+Organize storage into blocks of related data:
 
 ```func
 () handle_something(...) impure {
@@ -277,54 +212,17 @@ var msg = begin_cell()
 }
 ```
 
-저장소는 관련 데이터의 블록으로 구성됩니다. 매개변수가 각 함수에서 사용되는 경우(예: `is_paused`) `load_data()`에 의해 즉시 제공됩니다. 매개변수 그룹이 하나의 시나리오에서만 필요한 경우 언팩할 필요가 없어 더 이상 팩할 필요가 없고 네임스페이스를 복잡하게 만들지 않습니다.
+This approach minimizes changes when adding new fields and avoids namespace pollution. If storage contains many fields, group them hierarchically.
 
-저장소 구조를 변경해야 하는 경우(보통 새 필드 추가) 훨씬 적은 수정만 하면 됩니다.
+### 9. Use `end_parse()`
 
-더욱이 이 접근 방식을 반복할 수 있습니다. 컨트랙트에 저장소 필드가 30개 있다면 처음에는 4개의 그룹을 얻고, 첫 번째 그룹에서 몇 개의 변수와 다른 하위 그룹을 얻을 수 있습니다. 중요한 것은 과도하게 하지 않는 것입니다.
+Use `end_parse()` when reading data from storage or message payloads. This ensures you read as much as you write, preventing hard-to-debug issues.
 
-셀은 최대 1023비트의 데이터와 최대 4개의 참조를 저장할 수 있으므로 어쨌든 데이터를 여러 셀로 분할해야 합니다.
+### 10. Use helper functions and avoid magic numbers
 
-계층적 데이터는 TON의 주요 기능 중 하나이므로, 의도한 대로 사용합시다.
+Write wrappers, helper functions, and declare constants to improve code readability. Avoid magic numbers, as they make the code harder to understand and maintain.
 
-특히 컨트랙트에 무엇이 저장될지 완전히 명확하지 않은 프로토타이핑 단계에서는 전역 변수를 사용할 수 있습니다.
-
-```func
-global int var1;
-global cell var2;
-global slice var3;
-
-() load_data() impure {
-    var cs = get_data().begin_parse();
-    var1 = cs~load_coins();
-    var2 = cs~load_ref();
-    var3 = cs~load_bits(512);
-}
-
-() save_data() impure {
-    set_data(
-        begin_cell()
-            .store_coins(var1)
-            .store_ref(var2)
-            .store_bits(var3)
-            .end_cell()
-        );
-}
-```
-
-이렇게 하면 다른 변수가 필요하다는 것을 알게 되면 새 전역 변수를 추가하고 `load_data()`와 `save_data()`만 수정하면 됩니다. 컨트랙트 전체에 걸친 변경은 필요하지 않습니다. 하지만 전역 변수의 수가 제한되어 있기 때문에(31개 이하), 이 패턴을 위에서 권장한 "중첩된 저장소"와 결합할 수 있습니다.
-
-전역 변수는 또한 종종 스택에 모든 것을 저장하는 것보다 더 비쌉니다. 하지만 이는 스택 순열의 수에 따라 달라지므로, 전역 변수로 프로토타입을 만들고 저장소 구조가 완전히 명확해졌을 때 "중첩된" 패턴을 사용하는 스택 변수로 전환하는 것이 좋습니다.
-
-### 9. end_parse()를 사용하세요
-
-저장소와 메시지 페이로드에서 데이터를 읽을 때 가능한 한 `end_parse()`를 사용하세요. TON은 가변 데이터 형식의 비트 스트림을 사용하기 때문에 작성한 만큼 읽었는지 확인하는 것이 디버깅 시간을 절약할 수 있습니다.
-
-### 10. 더 많은 헬퍼 함수를 사용하고 매직 넘버를 피하세요
-
-이 팁은 FunC에만 국한된 것이 아니지만 여기서 특히 관련이 있습니다. 더 많은 래퍼와 헬퍼 함수를 작성하고 더 많은 상수를 선언하세요.
-
-FunC는 처음부터 엄청난 양의 매직 넘버를 가지고 있습니다. 개발자가 사용을 제한하기 위한 노력을 하지 않으면 다음과 같은 결과가 됩니다:
+For example, instead of:
 
 ```func
 var msg = begin_cell()
@@ -339,13 +237,11 @@ var msg = begin_cell()
 send_raw_message(msg.end_cell(), 1);
 ```
 
-이는 실제 프로젝트의 코드이며 초보자들을 겁먹게 합니다.
-
-다행히도 FunC의 최신 버전에서는 몇 가지 표준 선언으로 코드를 더 명확하고 표현력 있게 만들 수 있습니다. 예시:
+Use:
 
 ```func
 const int SEND_MODE_REGULAR = 0;
-const int SEND_MODE_PAY_FEES_SEPARETELY = 1;
+const int SEND_MODE_PAY_FEES_SEPARATELY = 1;
 const int SEND_MODE_IGNORE_ERRORS = 2;
 const int SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE = 64;
 
@@ -375,6 +271,6 @@ builder store_body_header(builder b, int op, int query_id) inline {
 
 ## 참조
 
-원문 작성: CertiK
+- [Original article](https://blog.ton.org/secure-smart-contract-programming-in-func) - _CertiK_
 
-- [원문](https://blog.ton.org/secure-smart-contract-programming-in-func)
+<Feedback />
