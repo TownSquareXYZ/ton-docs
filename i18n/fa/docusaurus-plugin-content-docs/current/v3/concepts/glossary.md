@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # واژه‌نامه
 
 ## معرفی
@@ -272,9 +274,9 @@ __________
 
 **Mainnet** — شبکه اصلی یک بلاکچین.
 
-### Market cap (capitalization)
+### Market cap
 
-**Market cap (capitalization)** — مجموع ارزش کل تعداد توکن‌های یک ارز دیجیتال.
+**Market capitalization (Market cap)** — the total value of a cryptocurrency’s combined number of tokens.
 
 ### Masterchain
 
@@ -410,7 +412,7 @@ ________
 
 ### TEP
 
-**TEP** — [پیشنهادهای بهبود TON](https://github.com/ton-blockchain/TEPs)، مجموعه‌ای استاندارد از راه‌های تعامل با بخش‌های مختلف اکوسیستم TON.
+**TON Enhancement Proposals (TEP)**—a [standard set](https://github.com/ton-blockchain/TEPs) of ways to interact with various parts of the TON ecosystem.
 
 ### Testnet
 
@@ -507,3 +509,6 @@ ___________
 ### Yolo
 
 **Yolo** — "شما فقط یک بار زندگی می‌کنید"، یک مخفف عامیانه که به عنوان دعوتی برای زندگی به طور کامل بدون در نظر گرفتن خطرات مطرح شده استفاده می‌شود.
+
+<Feedback />
+
