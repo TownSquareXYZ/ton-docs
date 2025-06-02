@@ -1,21 +1,24 @@
-# ADNL UDP - 노드 간 통신
+import Feedback from '@site/src/components/Feedback';
 
-ADNL over UDP는 노드와 TON 컴포넌트가 서로 통신하는 데 사용됩니다. DHT와 RLDP 같은 더 높은 수준의 TON 프로토콜이 작동하는 기반이 되는 낮은 수준의 프로토콜입니다.
-이 글에서는 노드 간 기본 통신을 위한 UDP 기반 ADNL의 작동 방식을 알아보겠습니다.
+# ADNL UDP - internode
 
-ADNL over TCP와 달리 UDP 구현에서는 핸드셰이크가 다른 형태로 이루어지고 채널 형태의 추가 레이어가 사용됩니다. 하지만 다른 원리는 비슷합니다:
-암호화 키는 우리의 개인 키와 미리 config에서 알고 있거나 다른 네트워크 노드로부터 받은 피어의 공개 키를 기반으로 생성됩니다.
+ADNL over UDP is a low-level protocol used by nodes and TON components to communicate with one another. It serves as the foundation for other higher-level TON protocols, such as DHT (Distributed Hash Table) and RLDP (Reliable Large Datagram Protocol).
 
-ADNL의 UDP 버전에서는 이니시에이터가 'create channel' 메시지를 보내면 동시에 피어로부터 초기 데이터를 수신하면서 연결이 설정됩니다. 채널 키가 계산되고 채널 생성이 확인됩니다.
-채널이 설정되면 이후의 통신은 그 안에서 계속됩니다.
+This article will explain how ADNL over UDP facilitates basic communication between nodes.
+
+Unlike ADNL over TCP, the UDP implementation involves a different form of handshake and includes an additional layer in the form of channels. However, the underlying principles remain similar: encryption keys are generated based on our private key and the peer's public key, which is either known in advance from the configuration or received from other network nodes.
+
+In the UDP version of ADNL, the connection is established simultaneously with the reception of initial data from the peer. If the initiator sends a **create channel** message, the channel’s key will be calculated, and the channel's creation will be confirmed.
+
+Once the channel is established, further communication continues within it.
 
 ## 패킷 구조와 통신
 
 ### 첫 번째 패킷
 
-프로토콜의 작동 방식을 이해하기 위해 DHT 노드와의 연결 초기화와 서명된 주소 목록 가져오기를 분석해 보겠습니다.
+Let's analyze the connection initialization with the DHT node and obtain a signed list of its addresses to understand how the protocol functions.
 
-[global config](https://ton-blockchain.github.io/global.config.json)의 `dht.nodes` 섹션에서 원하는 노드를 찾으세요. 예시:
+Find a node you prefer in the [global config](https://ton-blockchain.github.io/global.config.json), specifically in the `dht.nodes` section.  For example:
 
 ```json
 {
@@ -43,19 +46,21 @@ ADNL의 UDP 버전에서는 이니시에이터가 'create channel' 메시지를 
 }
 ```
 
-1. ED25519 키 `fZnkoIAxrTd4xeBgVpZFRm5SvVvSx7eN3Vbe8c83YMk`를 가져와서 base64에서 디코딩합니다
-2. IP 주소 `1091897261`를 [서비스](https://www.browserling.com/tools/dec-to-ip)를 사용하거나 리틀 엔디안 바이트로 변환하여 이해 가능한 형식으로 변환하면 `65.21.7.173`이 됩니다
-3. 포트와 결합하여 `65.21.7.173:15813`을 얻고 UDP 연결을 설정합니다.
+Let's take the ed25519 key, `fZnkoIAxrTd4xeBgVpZFRm5SvVvSx7eN3Vbe8c83YMk`, and decode it from base64.
 
-노드와 통신하기 위해 채널을 열고 정보를 얻고자 하며, 주요 작업으로 서명된 주소 목록을 받고자 합니다. 이를 위해 2개의 메시지를 생성할 것입니다. 첫 번째는 [채널 생성](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L129)입니다:
+Next, we will take its IP address, 1091897261, and convert it into a readable format using [this service](https://www.browserling.com/tools/dec-to-ip) or by converting it to little-endian bytes. This will give us the IP address `65.21.7.173`.
+
+Finally, we will combine this IP address with the port to obtain `65.21.7.173:15813` and establish a UDP connection.
+
+We aim to establish a communication channel with the node to obtain specific information, particularly a list of signed addresses. To achieve this, we will generate two messages. The first message will be to create the channel [(see the code)](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L129):
 
 ```tlb
 adnl.message.createChannel key:int256 date:int = adnl.Message
 ```
 
-여기에는 key와 date 두 가지 매개변수가 있습니다. date로는 현재 unix 타임스탬프를 지정합니다. key의 경우 - 채널용으로 새로운 ED25519 개인+공개 키 쌍을 생성해야 합니다. 이는 [공개 암호화 키](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-a-shared-key-using-ecdh) 초기화에 사용됩니다. 메시지의 `key` 매개변수에 생성한 공개 키를 사용하고 개인 키는 일단 저장해 둡니다.
+We have two parameters to consider: a key and a date. The date will be represented by the current Unix timestamp. For the key, we need to generate a new ed25519 private and public key pair specifically for the channel. This key pair will be used to initialize the public encryption key, as outlined in the [link here](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-a-shared-key-using-ecdh). We will use the generated public key as the value for the `key` parameter in the message, while we will store the private key for future use.
 
-채워진 TL 구조를 직렬화하면 다음과 같이 됩니다:
+Next, we will serialize the populated TL structure to get the final result:
 
 ```
 bbc373e6                                                         -- TL ID adnl.message.createChannel 
@@ -63,23 +68,23 @@ d59d8e3991be20b54dde8b78b3af18b379a62fa30e64af361c75452f6af019d7 -- key
 555c8763                                                         -- date
 ```
 
-다음으로 메인 쿼리 - [주소 목록 가져오기](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L198)로 넘어갑니다.
-실행하려면 먼저 TL 구조를 직렬화해야 합니다:
+Next, let's proceed to our main query - [retrieve a list of addresses](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L198).
+
+To execute it, we first need to serialize its TL structure:
 
 ```tlb
 dht.getSignedAddressList = dht.Node
 ```
 
-매개변수가 없으므로 ID만 직렬화하면 됩니다 - `ed4879a9`.
+There are no parameters to consider, so we will simply serialize it. The result will be just its ID: `ed4879a9`.
 
-다음으로 이것이 DHT 프로토콜의 더 높은 레벨 요청이므로 먼저 `adnl.message.query` TL 구조로 래핑해야 합니다:
+Next, since this is a higher-level request within the DHT protocol, we must first wrap it in an `adnl.message.query` TL structure:
 
 ```tlb
 adnl.message.query query_id:int256 query:bytes = adnl.Message
 ```
 
-`query_id`로 무작위 32바이트를 생성하고, `query`로는 [바이트 배열로 래핑된](/v3/documentation/data-formats/tl#encoding-bytes-array) 메인 요청을 사용합니다.
-다음과 같이 됩니다:
+We generate a random 32 bytes for `query_id`, and the `query` represents our main request, [wrapped as an array of bytes](/v3/documentation/data-formats/tl#encoding-bytes-array):
 
 ```
 7af98bb4                                                         -- TL ID adnl.message.query
@@ -89,7 +94,7 @@ d7be82afbc80516ebca39784b8e2209886a69601251571444514b7f17fcd8875 -- query_id
 
 ### 패킷 구축
 
-모든 통신은 [TL 구조](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L81)의 내용을 가진 패킷을 통해 이루어집니다:
+All communication is conducted using packets, which contain the following structure: [TL structure](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L81):
 
 ```tlb
 adnl.packetContents 
@@ -113,15 +118,19 @@ adnl.packetContents
         
 ```
 
-보내려는 모든 메시지를 직렬화했으니 패킷 구축을 시작할 수 있습니다.
-채널로 보내는 패킷은 채널 초기화 전에 보내는 패킷과 내용이 다릅니다.
-먼저 초기화에 사용되는 메인 패킷을 분석해 보겠습니다.
+Once we have serialized all the messages we wish to send, we can begin building the packet.
 
-초기 데이터 교환 중에는 채널 외부에서 직렬화된 패킷 내용 구조 앞에 피어의 공개 키 32바이트가 붙습니다.
-우리의 공개 키 32바이트, 직렬화된 TL 패킷 내용 구조의 sha256 해시 32바이트.
-패킷의 내용은 우리의 개인 키와 서버의 공개 키로부터 얻은 [공유 키](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-a-shared-key-using-ecdh)를 사용하여 암호화됩니다.
+Packets sent to a channel have a different content structure compared to packets sent before the channel is initialized.
 
-패킷 내용 구조를 직렬화하고 바이트별로 파싱해 보겠습니다:
+First, let’s examine the main packet used for initialization.
+
+During the initial data exchange, before the channel is established, the packet's serialized content structure is prefixed with the peer's public key, which is 32 bytes.
+
+Our public key is also 32 bytes, and the SHA-256 hash of the serialized TL of the packet's content structure is another 32 bytes.
+
+The content of the packet is encrypted using the [shared key](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-a-shared-key-using-ecdh), which is derived from our private key and the public key of the server.
+
+Let's serialize the structure of our packet content and parse it byte by byte:
 
 ```
 89cd42d1                                                               -- TL ID adnl.packetContents
@@ -154,8 +163,9 @@ c6b41348                                                                  -- TL 
 0f 2b6a8c0509f85da9f3c7e11c86ba22                                      -- rand2, 15 (0f) random bytes
 ```
 
-직렬화 후 - 이전에 생성하고 저장한 우리의 클라이언트(채널이 아닌) ED25519 개인 키로 결과 바이트 배열에 서명해야 합니다.
-서명(64바이트 크기)을 생성한 후에는 패킷에 추가하고 다시 직렬화해야 하는데, 이번에는 서명의 존재를 의미하는 11번째 비트를 플래그에 추가합니다:
+After serialization, we need to sign the resulting byte array using our private client's key, specifically ed25519, which we generated and saved earlier.
+
+Once we have created the signature (which is 64 bytes in size), we must add it to the packet and serialize it again. This time, we will also set the 11th bit in the flag to indicate the presence of the signature:
 
 ```
 89cd42d1                                                               -- TL ID adnl.packetContents
@@ -191,12 +201,13 @@ c6b41348                                                                  -- TL 
 0f 2b6a8c0509f85da9f3c7e11c86ba22                                      -- rand2, 15 (0f) random bytes
 ```
 
-이제 조립, 서명 및 직렬화된 패킷이 바이트 배열로 되어있습니다.
-수신자가 이후 무결성을 확인할 수 있도록 패킷의 sha256 해시를 계산해야 합니다. 예를 들어 `408a2a4ed623b25a2e2ba8bbe92d01a3b5dbd22c97525092ac3203ce4044dcd2`가 됩니다.
+We now have an assembled, signed, and serialized packet, which consists of an array of bytes.
 
-이제 우리의 개인 키와 피어의 공개 키(채널의 키가 아님)로부터 얻은 [공유 키](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-a-shared-key-using-ecdh)를 사용하여 AES-CTR 암호로 패킷의 내용을 암호화합니다.
+Next, we need to calculate the packet's SHA-256 hash, allowing the recipient to verify its integrity later. For instance, let’s say the hash is `408a2a4ed623b25a2e2ba8bbe92d01a3b5dbd22c97525092ac3203ce4044dcd2`.
 
-거의 전송할 준비가 되었고, ED25519 피어 키의 [ID를 계산](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-key-id)하고 모든 것을 함께 연결하기만 하면 됩니다:
+Now, we will encrypt the contents of our packet using the AES-CTR cipher, utilizing the [shared key](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-a-shared-key-using-ecdh) that is derived from our private key and the peer’s public key (not the channel's key).
+
+We are almost ready to send the packet; we just need to [calculate the ID](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-key-id) of the ed25519 peer key and concatenate everything together:
 
 ```
 daa76538d99c79ea097a67086ec05acca12d1fefdbc9c96a76ab5a12e66c7ebb  -- server Key ID
@@ -205,9 +216,9 @@ afc46336dd352049b366c7fd3fc1b143a518f0d02d9faef896cb0155488915d6  -- our public 
 ...                                                               -- encrypted content of the packet
 ```
 
-이제 구축된 패킷을 UDP를 통해 피어에게 보내고 응답을 기다릴 수 있습니다.
+We can now send our constructed packet to the peer via UDP and await a response.
 
-응답으로 비슷한 구조지만 다른 메시지를 가진 패킷을 받게 됩니다. 다음으로 구성됩니다:
+In response, we will receive a packet with a similar structure, but containing different messages. It will consist of:
 
 ```
 68426d4906bafbd5fe25baf9e0608cf24fffa7eca0aece70765d64f61f82f005  -- ID of our key
@@ -216,12 +227,12 @@ f32fa6286d8ae61c0588b5a03873a220a3163cad2293a5dace5f03f06681e88a  -- sha256 cont
 ...                                                               -- the encrypted content of the packet
 ```
 
-서버에서 오는 패킷의 역직렬화는 다음과 같이 진행됩니다:
+The process of deserializing the packet from the server is as follows:
 
-1. 패킷의 키 ID를 확인하여 패킷이 우리를 위한 것인지 확인합니다
-2. 패킷의 서버 공개 키와 우리의 개인 키를 사용하여 공유 키를 계산하고 패킷 내용을 복호화합니다
-3. 전송된 sha256 해시를 복호화된 데이터에서 얻은 해시와 비교하여 일치해야 합니다
-4. `adnl.packetContents` TL 스키마를 사용하여 패킷 내용 역직렬화를 시작합니다
+- We first check the ID of the key within the packet to confirm that the packet is intended for us.
+- Using the server's public key found in the packet along with our private key, we calculate a shared key to decrypt the packet's content.
+- We then compare the SHA-256 hash provided to us with the hash obtained from the decrypted data; they must match.
+- Finally, we begin deserializing the packet content using the `adnl.packetContents` TL schema.
 
 패킷의 내용은 다음과 같습니다:
 
@@ -255,13 +266,15 @@ ee354563                                                               -- reinit
 0f c3354d35749ffd088411599101deb2                                      -- rand2, 15 (0f) random bytes
 ```
 
-서버가 우리에게 두 개의 메시지로 응답했습니다: `adnl.message.confirmChannel`과 `adnl.message.answer`.
-`adnl.message.answer`는 단순합니다. 이는 우리의 `dht.getSignedAddressList` 요청에 대한 응답이며 DHT 관련 글에서 분석할 예정입니다.
+The server responded with two messages: `adnl.message.confirmChannel` and `adnl.message.answer`.
 
-`adnl.message.confirmChannel`에 집중해 보겠습니다. 이는 피어가 채널 생성을 확인하고 자신의 공개 채널 키를 보냈다는 의미입니다. 이제 우리의 개인 채널 키와 피어의 공개 채널 키가 있으므로 [공유 키](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-a-shared-key-using-ecdh)를 계산할 수 있습니다.
+The `adnl.message.answer` is straightforward; it is the response to our request for `dht.getSignedAddressList`, which we will explore further in the article about DHT.
 
-이제 공유 채널 키를 계산했으니, 이를 2개의 키로 만들어야 합니다 - 하나는 발신 메시지 암호화용, 다른 하나는 수신 메시지 복호화용입니다.
-2개의 키를 만드는 것은 꽤 간단합니다. 두 번째 키는 공유 키를 역순으로 쓴 것과 같습니다. 예시:
+Now, let’s focus on `adnl.message.confirmChannel`. This indicates that the peer has confirmed the creation of the channel and has sent us its public channel key. With our private channel key and the peer's public channel key, we can compute the [shared key](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-a-shared-key-using-ecdh).
+
+Once we have calculated the shared channel key, we need to derive two keys from it: one for encrypting outgoing messages and another for decrypting incoming messages.
+
+Deriving these two keys is quite simple. The second key is simply the shared key written in reverse order. For example:
 
 ```
 Shared key : AABB2233
@@ -270,7 +283,9 @@ First key: AABB2233
 Second key: 3322BBAA
 ```
 
-어떤 키를 어디에 사용할지 결정하는 것만 남았습니다. 우리의 공개 채널 키 ID와 서버 채널의 공개 키 ID를 uint256 숫자 형식으로 변환하여 비교하면 됩니다. 이 방식은 서버와 클라이언트가 어떤 키를 무엇에 사용할지 결정하는 것을 보장하기 위해 사용됩니다. 서버가 첫 번째 키를 암호화에 사용한다면 이 방식으로 클라이언트는 항상 그것을 복호화에 사용할 것입니다.
+We need to determine which key to use for specific purposes. To do this, we can compare the ID of our public key with the ID of the server's public key, converting both to a numerical format (uint256).
+
+This method ensures that both the server and the client agree on which key is used for what function. If the server uses the first key for encryption, this approach guarantees that the client will always use it for decryption.
 
 사용 조건:
 
@@ -288,14 +303,15 @@ Encryption: First Key
 Decryption: First Key
 ```
 
-[[구현 예시]](https://github.com/xssnick/tonutils-go/blob/46dbf5f820af066ab10c5639a508b4295e5aa0fb/adnl/adnl.go#L502)
+[[Please see implementation example]](https://github.com/xssnick/tonutils-go/blob/46dbf5f820af066ab10c5639a508b4295e5aa0fb/adnl/adnl.go#L502).
 
 ### 채널 내 통신
 
-이후의 모든 패킷 교환은 채널 내에서 이루어지며 채널 키가 암호화에 사용됩니다.
-차이점을 보기 위해 새로 생성된 채널 내에서 동일한 `dht.getSignedAddressList` 요청을 보내보겠습니다.
+All future packet exchanges will take place within the channel, and the channel keys will be utilized for encryption.
 
-동일한 `adnl.packetContents` 구조를 사용하여 채널용 패킷을 구축해 보겠습니다:
+Let's send the same `dht.getSignedAddressList` request within a newly created channel to observe the differences.
+
+We will construct the packet for the channel using the same `adnl.packetContents` structure:
 
 ```
 89cd42d1                                                               -- TL ID adnl.packetContents
@@ -310,10 +326,11 @@ fe3c0f39a89917b7f393533d1d06b605b673ffae8bbfab210150fe9d29083c35          -- que
 07 e4092842a8ae18                                                      -- rand2, 7 (07) random bytes
 ```
 
-채널 내 패킷은 꽤 단순하며 본질적으로 시퀀스(seqno)와 메시지로만 구성됩니다.
+The packets in a channel are quite straightforward and essentially consist of a sequence number (seqno) and the messages themselves.
 
-직렬화 후에는 이전처럼 패킷의 sha256 해시를 계산합니다. 그런 다음 채널의 발신 패킷을 위한 채널 키로 패킷을 암호화합니다.
-우리의 발신 메시지 암호화 키의 `pub.aes` [ID를 계산](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-key-id)하고 패킷을 구축합니다:
+After serialization, as we did last time, we calculate the SHA256 hash of the packet. Next, we encrypt the packet using the designated key for outgoing packets in the channel.
+
+To do this we [calculate](/v3/documentation/network/protocols/adnl/adnl-tcp#getting-key-id) `pub.aes` - ID of the encryption key for our outgoing messages and then build our packet:
 
 ```
 bcd1cf47b9e657200ba21d94b822052cf553a548f51f539423c8139a83162180 -- ID of encryption key of our outgoing messages 
@@ -321,15 +338,15 @@ bcd1cf47b9e657200ba21d94b822052cf553a548f51f539423c8139a83162180 -- ID of encryp
 ...                                                              -- the encrypted content of the packet
 ```
 
-UDP를 통해 패킷을 보내고 응답을 기다립니다. 응답으로 우리가 보낸 것과 동일한 타입의 패킷을 받게 되지만, `dht.getSignedAddressList` 요청에 대한 답변이 포함됩니다.
+We send a packet via UDP and wait for a response. In response, we receive a packet of the same type as the one we sent, containing the answer to our request for `dht.getSignedAddressList`.
 
 ## 기타 메시지 타입
 
-기본 통신을 위해서는 위에서 논의한 `adnl.message.query`와 `adnl.message.answer` 같은 메시지가 사용되지만, 특정 상황을 위한 다른 타입의 메시지도 있으며 이 섹션에서 설명하겠습니다.
+For basic communication, messages such as `adnl.message.query` and `adnl.message.answer` are utilized, which we discussed earlier. However, there are also other types of messages used for specific situations, which we will cover in this section.
 
 ### adnl.message.part
 
-이 메시지 타입은 `adnl.message.answer`와 같은 다른 가능한 메시지 타입의 일부입니다. 메시지가 단일 UDP 데이터그램으로 전송하기에 너무 큰 경우에 사용됩니다.
+This message type is part of another possible message type, such as `adnl.message.answer`. This method of data transfer is used when a message is too large to be sent in a single UDP datagram.
 
 ```tlb
 adnl.message.part 
@@ -340,8 +357,9 @@ data:bytes             -- piece of data of the original message
    = adnl.Message;
 ```
 
-따라서 원본 메시지를 조립하려면 여러 부분을 받아서 오프셋에 따라 단일 바이트 배열로 연결해야 합니다.
-그리고 나서 메시지로 처리합니다(이 바이트 배열의 ID 접두사에 따라).
+To reconstruct the original message, we need to gather several parts and concatenate them into a single-byte array based on the specified offsets.
+
+We will then process this array as a message using the ID prefix contained within it.
 
 ### adnl.message.custom
 
@@ -349,14 +367,13 @@ data:bytes             -- piece of data of the original message
 adnl.message.custom data:bytes = adnl.Message;
 ```
 
-이러한 메시지는 상위 레벨의 로직이 요청-응답 형식과 일치하지 않을 때 사용됩니다. 이 타입의 메시지는 query_id와 다른 필드 없이 바이트 배열만 전달하므로 처리를 완전히 상위 레벨로 이동할 수 있습니다.
-이 타입의 메시지는 예를 들어 RLDP에서 사용됩니다. 많은 요청에 대해 하나의 응답만 있을 수 있기 때문에 이 로직은 RLDP 자체에 의해 제어됩니다.
+Messages of this type are utilized when the logic at a higher level does not align with the typical request-response format. These messages allow for the complete relocation of processing to a higher level, as they consist solely of an array of bytes without including query IDs or other fields.
 
-### 결론
+For instance, in RLDP, such messages are used since there can be only one response to multiple requests. RLDP itself manages this logic.
 
-이후의 통신은 이 글에서 설명한 로직을 기반으로 이루어지지만,
-패킷의 내용은 DHT와 RLDP 같은 상위 레벨 프로토콜에 따라 달라집니다.
+Further communication occurs based on the logic outlined in this article, though the content of the packets relies on higher-level protocols like DHT and RLDP.
 
 ## 참조
 
-*여기 [Oleg Baranov](https://github.com/xssnick)의 [원본 문서 링크](https://github.com/xssnick/ton-deep-doc/blob/master/ADNL-UDP-Internal.md)가 있습니다.*
+Here is the [link to the original article](https://github.com/xssnick/ton-deep-doc/blob/master/ADNL-UDP-Internal.md) - *[Oleg Baranov](https://github.com/xssnick).* <Feedback />
+
