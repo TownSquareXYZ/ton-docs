@@ -1,51 +1,54 @@
-# راهنمای طراحی TMA
+import Feedback from '@site/src/components/Feedback';
+
+# TMA design guidelines
 
 :::info
-از نسخه **6.10** به بعد، تلگرام برای برنامه‌های مینی رنگ‌های جدیدی افزوده و برخی رنگ‌های قدیمی را اصلاح کرده است.
+Starting with version **6.10**, Telegram updated the Mini App color palette by fixing some old colors and adding new ones.
+
 :::
 
-برای درک بیشتر، تاریخچه به‌روزرسانی‌ها را به خاطر بیاوریم.
+For context, let's look back at the update history.
 
-فهرست تغییرات.
+### Changelog
 
-1. `bg_color` و `secondary_bg_color` به‌روزرسانی شده‌اند.
+1. `bg_color` and `secondary_bg_color` have been updated.
 
 ![](/img/docs/tma-design-guidelines/tma-design_1.png)
 
-دلیل‌ها چه هستند:
+### Reasons for these changes
 
-• این رنگ‌ها در ابتدا برای استفاده در پس‌زمینه صفحات طراحی شده بودند، نه کنترل‌های رابط کاربری.
+• These colors were originally intended for page backgrounds, not UI controls.
 
-• بنابراین، برای حفظ انسجام، آن‌ها به‌روزرسانی شده‌اند.
+• To maintain consistency, they have been updated.
 
-• برای رنگ‌آمیزی پس‌زمینه‌های بخش‌ها و کارت‌های مختلف، `section_bg_color` اضافه شده است.
+• `section_bg_color` was introduced to color the backgrounds of different sections and cards.
 
-برای بهبود ظاهر برنامه‌های خود، باید استفاده از متغیرهای رنگی را کمی تنظیم کنید.
+To enhance your app’s appearance, adjust how you use color variables.
 
-بالا یک مثال واضح است که دقیقاً توضیح می‌دهد برای iOS چه تغییر خواهد کرد. در Android نباید هیچ تغییری رخ دهد.
+The example above clearly shows what will change on iOS. There should be no changes on Android.
 
-رنگ‌های جدید.
-همچنین، بسیاری از رنگ‌های جدید اضافه شده‌اند. بیشتر آنها در Android بیشتر قابل مشاهده هستند. بنابراین، مثال‌های زیر بر اساس Android نشان داده می‌شوند، اما برای تمامی پلتفرم‌ها قابل استفاده هستند.
+1. New colors.
+   Many new colors have been added with most being noticeable on Android. The examples focus on Android but apply to all platforms.
 
 ![](/img/docs/tma-design-guidelines/tma-design_2.png)
 
-2. برای مینی‌اپ‌ها، امکان استفاده از رنگ‌های هدر تلگرام اکنون در دسترس است.
+2. Telegram header colors has become available for Mini Apps.
 
 ![](/img/docs/tma-design-guidelines/tma-design_3.png)
 
-3. توکن accent_text_color در دسترس قرار گرفته است که برای هر عنصر برجسته در برنامه‌های شما مفید است. قبلاً همه از لینک رنگ تیره که کمتر مناسب بود استفاده می‌کردند.
+3. accent_text_color is now available for highlighting accent elements in your apps. Previously, everyone used the less suitable dark link_color.
 
 ![](/img/docs/tma-design-guidelines/tma-design_4.png)
 
-4. برای برچسب‌های ثانویه سلول، بهتر است از `subtitle_text_color` استفاده کنید. این کار به داشتن برچسبی با کنتراست بیشتر کمک می‌کند و دسترسی‌پذیری برنامه‌های شما را بهبود می‌بخشد.
+4. For all secondary cell labels, use `subtitle_text_color` to create more contrast and improve the accessibility.
 
 ![](/img/docs/tma-design-guidelines/tma-design_5.png)
 
-5. برای سرصفحه‌های بخش‌ها، توکن اختصاصی `section_header_text_color` وجود دارد.
+5. A new token `section_header_text_color` is now available for section headers of cards.
 
 ![](/img/docs/tma-design-guidelines/tma-design_6.png)
 
-6. برای سلول‌هایی که فشردن آن‌ها به یک کار تخریبی منجر می‌شود، اکنون می‌توانید از `destructive_text_color` به جای رنگ‌های سفارشی استفاده کنید.
+6. For cells that trigger a destructive action, use `destructive_text_color` instead of custom color.
 
 <p align="center">
     <br />
@@ -53,10 +56,12 @@
     <br />
 </p>
 
-7. یک سؤال منطقی پیش می‌آید: اکنون `link_color` و `hint_color` باید چگونه استفاده شوند؟
+7. A reasonable question arises: how should `link_color` and `hint_color` be used now?
 
-من استفاده از آن‌ها به عنوان رنگ‌های بخش‌های راهنما زیر بخش‌ها و رنگ پیوند برای چنین پس‌زمینه‌هایی مانند `secondary_bg_color` را توصیه می‌کنم.
+Use `hint_color` for hint sections under different sections. For backgrounds like `secondary_bg_color`, use `link_color`.
 
-## همچنین ببینید
+## See also
 
-- [منبع اصلی](https://telegra.ph/Changes-in-Color-Variables-for-Telegram-Mini-Apps-11-20)
+- [Original source](https://telegra.ph/Changes-in-Color-Variables-for-Telegram-Mini-Apps-11-20)
+
+<Feedback />
