@@ -1,72 +1,88 @@
-# Blockchain łańcuchów bloków
+import Feedback from '@site/src/components/Feedback';
+
+# Blockchain of blockchains
 
 :::tip
-Terminy "**smart contract**", "**account**" i "**actor**" są używane zamiennie w tym dokumencie w celu opisania podmiotu blockchain.
+Terms '**smart contract**', '**account**', and '**actor**' are used interchangeably in this document to describe a blockchain entity.
 :::
 
 ## Pojedynczy aktor
 
 Rozważmy jeden inteligentny kontrakt.
 
-W TON jest to *rzecz* z właściwościami takimi jak `adres`, `kod`, `dane`, `bilans` i innymi. Innymi słowy, jest to obiekt, który posiada *storage* i *behavior*.
-To zachowanie ma następujący wzór:
+In TON, it is a *thing* with properties like `address`, `code`, `data`, `balance` and others. In other words, it is an object with some *storage* and *behavior*.
+That behavior has the following pattern:
 
-- coś się dzieje (najczęstszą sytuacją jest to, że umowa otrzymuje wiadomość)
-- Kontrakt obsługuje to zdarzenie zgodnie z jego własnymi właściwościami, wykonując swój "kod" w wirtualnej maszynie TON.
-- kontrakt modyfikuje swoje własne właściwości (`code`, `data` i inne)
+- contract receives a message
+- contract handles that event according to its properties by executing its `code` in TON Virtual Machine
+- contract modifies its properties consisting of `code`, `data`, and others
 - umowa opcjonalnie generuje wiadomości wychodzące
 - Kontrakt przechodzi w tryb czuwania do momentu wystąpienia kolejnego zdarzenia
 
-Kombinacja tych kroków nazywana jest **transakcją**. Ważne jest, aby zdarzenia były obsługiwane jedno po drugim, dlatego *transakcje* są ściśle uporządkowane i nie mogą się wzajemnie przerywać.
+A combination of these steps is called a **transaction**. Since it is essential to handle events one by one, transactions follow a strict order and cannot interrupt each other.
 
-Ten wzorzec zachowania jest dobrze znany i nazywany "aktorem".
+This behavior pattern is well known and called **actor**.
 
-### Najniższy poziom: Łańcuch kont
+### The lowest level: AccountChain
 
-Sekwencję *transakcji* `Tx1 -> Tx2 -> Tx3 -> ....` można nazwać **łańcuchem**. W rozważanym przypadku jest on nazywany **AccountChain**, aby podkreślić, że jest to *łańcuch* pojedynczego konta transakcji.
+A **chain** can be viewed as a sequence of transactions, such as `Tx1 → Tx2 → Tx3 → …`. When this transaction sequence pertains to a single account, it is specifically termed an **AccountChain**.
 
-Teraz, ponieważ węzły przetwarzające transakcje muszą od czasu do czasu koordynować stan inteligentnego kontraktu (aby osiągnąć *konsensus* co do stanu), te *transakcje* są grupowane:
-`[Tx1 -> Tx2] -> [Tx3 -> Tx4 -> Tx5] -> [] -> [Tx6]`.
-Batching nie ingeruje w sekwencjonowanie, każda transakcja nadal ma tylko jeden "prev tx" i co najwyżej jeden "next tx", ale teraz ta sekwencja jest pocięta na **bloki**.
+Since nodes processing these transactions periodically need to synchronize the smart contract state to achieve consensus, transactions are grouped into batches called **blocks**. For instance:
 
-Wskazane jest również dołączenie kolejek wiadomości przychodzących i wychodzących do *blocks*. W takim przypadku *block* będzie zawierał pełny zestaw informacji, które określają i opisują, co stało się z inteligentnym kontraktem podczas tego bloku.
+```
+[Tx1 → Tx2] → [Tx3 → Tx4 → Tx5] → [] → [Tx6]
+```
 
-## Wiele łańcuchów kont: Shards
+Batching does not alter the underlying sequence. Each transaction still references exactly one preceding transaction (`prev tx`) and at most one succeeding transaction (`next tx`). Batching simply organizes this sequence into manageable blocks for consensus purposes.
 
-Rozważmy teraz wiele kont. Możemy uzyskać kilka *AccountChains* i przechowywać je razem, taki zestaw *AccountChains* nazywany jest **ShardChain**. W ten sam sposób możemy podzielić **ShardChain** na **ShardBlocks**, które są agregacją poszczególnych *AccountBlocks*.
+Additionally, each block can contain queues of incoming and outgoing messages. Incorporating these queues ensures that a block fully encapsulates all events and state changes relevant to the smart contract within the block period.
 
-### Dynamiczne dzielenie i łączenie łańcuchów ShardChains
+## Many AccountChains: Shards
 
-Proszę zauważyć, że ponieważ *ShardChain* składa się z łatwo rozróżnialnych *AccountChains*, możemy go łatwo podzielić. W ten sposób, jeśli mamy 1 *ShardChain*, który opisuje zdarzenia, które mają miejsce z 1 milionem kont i jest zbyt wiele transakcji na sekundę, aby mogły być przetwarzane i przechowywane w jednym węźle, więc po prostu podzielimy (lub **split**) ten łańcuch na dwa mniejsze *ShardChains* z każdym łańcuchem odpowiadającym za pół miliona kont i każdym łańcuchem przetwarzanym na oddzielnym podzbiorze węzłów.
+Now let's consider many accounts. We can get a few AccountChains and store them together; such a set of AccountChains is called a **ShardChain**. In the same way, we can cut ShardChain into **ShardBlocks**, which are an aggregation of individual AccountBlocks.
 
-Analogicznie, jeśli niektóre odłamki stały się zbyt wolne, mogą zostać **połączone** w jeden większy odłamek.
+### Dynamic splitting and merging of ShardChains
 
-Istnieją oczywiście dwa ograniczające przypadki: gdy shard zawiera tylko jedno konto (a zatem nie może być dalej dzielony) i gdy shard zawiera wszystkie konta.
+Note that since a ShardChain consists of easily distinguished AccountChains, we can easily split it. That way, if we have one ShardChain that describes events that happen with one million accounts and there are too many transactions per second to be processed and stored in one node, so we just **split** that chain into two smaller ShardChains with each chain accounting for half a million accounts and each chain processed on a separate subset of nodes.
 
-Konta mogą wchodzić ze sobą w interakcje poprzez wysyłanie wiadomości. Istnieje specjalny mechanizm routingu, który przenosi wiadomości z kolejek wychodzących do odpowiednich kolejek przychodzących i zapewnia, że 1) wszystkie wiadomości zostaną dostarczone 2) wiadomości zostaną dostarczone kolejno (wiadomość wysłana wcześniej dotrze do celu wcześniej).
+Analogously, if some shards become too unoccupied, they can be **merged** into one more enormous shard.
 
-:::info UWAGA BOCZNA
-Aby podział i łączenie były deterministyczne, agregacja AccountChains w shardy opiera się na bitowej reprezentacji adresów kont. Na przykład, adres wygląda jak `(prefiks shardu, adres)`. W ten sposób wszystkie konta w shardchainie będą miały dokładnie taki sam prefiks binarny (na przykład wszystkie adresy będą zaczynać się od `0b00101`).
+There are two limiting cases: when the shard contains only one account (and thus cannot be split further) and when the shard contains all accounts.
+
+Accounts can interact with each other by sending messages.  A unique routing mechanism moves messages from outgoing queues to corresponding incoming queues and ensures:
+
+1. The delivery of all messages
+2. Consecutive delivery of messages — a message sent earlier will reach the destination earlier
+
+:::info SIDE NOTE
+An aggregation of AccountChains into shards is based on the bit-representation of account addresses to make splitting and merging deterministic. For example, an address looks like `(shard prefix, address)`. That way, all accounts in the ShardChain will have the same binary prefix (for instance, all addresses will start with `0b00101`).
 :::
 
 ## Blockchain
 
-Agregacja wszystkich odłamków, która zawiera wszystkie konta zachowujące się zgodnie z jednym zestawem reguł, nazywana jest **Blockchain**.
+An aggregation of all shards, which contains all accounts behaving according to one set of rules, is called a Blockchain.
 
-W TON może istnieć wiele zestawów reguł, a tym samym wiele łańcuchów bloków, które działają jednocześnie i mogą wchodzić ze sobą w interakcje poprzez wysyłanie wiadomości crosschain w taki sam sposób, w jaki konta jednego łańcucha mogą wchodzić ze sobą w interakcje.
+In TON, there can be many sets of rules, and thus, many blockchains operate simultaneously and can interact with each other by sending messages cross-chain in the same way that accounts of one chain can interact with each other.
 
-### Workchain: Blockchain z własnymi zasadami
+### WorkChain: a blockchain with your own rules
 
-Jeśli chcą Państwo dostosować zasady grupy Shardchainów, można utworzyć **Workchain**. Dobrym przykładem jest stworzenie łańcucha roboczego, który działa w oparciu o EVM, aby uruchamiać na nim inteligentne kontrakty Solidity.
+If you want to customize the rules of the ShardChains group, you could create a **WorkChain**. A good example is to make a workchain that works on the base of EVM to run Solidity smart contracts on it.
 
-Teoretycznie każdy w społeczności może stworzyć własny łańcuch roboczy. W rzeczywistości jest to dość skomplikowane zadanie, aby go zbudować, a następnie zapłacić (kosztowną) cenę za jego utworzenie i otrzymać 2/3 głosów od walidatorów, aby zatwierdzić utworzenie Workchaina.
+Theoretically, everyone in the community can create their own WorkChain. Building it isn't very easy, and then you have to pay a high price and receive 2/3 of votes from validators to approve it.
 
-TON pozwala na utworzenie do `2^32` łańcuchów roboczych, każdy podzielony na do `2^60` shardów.
+TON allows creating up to `2^32` workchains, subdivided into `2^60` shards.
 
-Obecnie w TON istnieją tylko 2 łańcuchy robocze: MasterChain i BaseChain.
+Nowadays, there are only two workchains in TON: MasterChain and BaseChain.
 
-BaseChain jest używany do codziennych transakcji między aktorami, ponieważ jest dość tani, podczas gdy MasterChain ma kluczową funkcję dla TON, więc omówmy, co robi!
+BaseChain is used for everyday transactions between actors because it's cheap, while MasterChain has a crucial function for TON.
 
-### Masterchain: Blockchain of Blockchains
+### MasterChain: blockchain of blockchains
 
-Istnieje konieczność synchronizacji routingu wiadomości i wykonywania transakcji. Innymi słowy, węzły w sieci potrzebują sposobu na ustalenie pewnego "punktu" w stanie multichain i osiągnięcie konsensusu co do tego stanu. W TON do tego celu wykorzystywany jest specjalny łańcuch o nazwie **MasterChain**. Bloki *masterchain* zawierają dodatkowe informacje (najnowsze skróty bloków) o wszystkich innych łańcuchach w systemie, dzięki czemu każdy obserwator jednoznacznie określa stan wszystkich systemów multichain w pojedynczym bloku masterchain.
+There is a necessity for the synchronization of message routing and transaction execution. In other words, nodes in the network need a way to fix some 'point' in a multichain state and reach a consensus about that state. In TON, a special chain called **MasterChain** is used for that purpose. Blocks of MasterChain contain additional information, like the latest block hashes, about all other chains in the system, thus any observer unambiguously determines the state of all multichain systems at a single MasterChain block.
+
+## See also
+
+- [Smart contract addresses](/v3/concepts/dive-into-ton/ton-blockchain/smart-contract-addresses/)
+
+<Feedback />
+
