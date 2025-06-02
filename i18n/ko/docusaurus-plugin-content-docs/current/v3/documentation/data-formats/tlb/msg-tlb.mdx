@@ -1,14 +1,16 @@
+import Feedback from '@site/src/components/Feedback';
+
 import ThemedImage from '@theme/ThemedImage';
 
 # 메시지 TL-B 스키마
 
-이 섹션에서는 메시지에 대한 TL-B 스키마를 자세히 설명합니다.
+This section provides a detailed explanation of the TL-B schemes used for messages.
 
 ## 메시지 TL-B
 
 ### TL-B
 
-주요 메시지 TL-B 스키마는 여러 중첩 구조의 조합으로 선언됩니다.
+The main TL-B scheme for messages is defined as a combination of several nested structures.
 
 ```tlb
 message$_ {X:Type} info:CommonMsgInfo
@@ -22,23 +24,26 @@ body:(Either X ^X) = MessageRelaxed X;
 _ (Message Any) = MessageAny;
 ```
 
-여기서 `Message X`는 일반 메시지 구조, `MessageRelaxed X`는 CommonMsgInfoRelaxed 본문이 있는 추가 유형, `Message Any`는 둘의 결합입니다.
-메시지 구조는 X:Type으로 통합되며, 이는 다른 말로 하면 Cell입니다.
-TL-B에 따라 모든 데이터를 한 셀(1023 비트에 맞는 경우)에 결합하거나 캐럿 `^`로 선언된 참조를 사용할 수 있습니다.
+- `Message X` refers to the standard message structure.
+- `MessageRelaxed X` is a variant that uses a `CommonMsgInfoRelaxed` body.
+- `Message Any` is a union of both structures.
 
-직렬화된 `Message X`는 FunC 메서드 send_raw_message()로 작업 목록에 배치되며, 스마트 계약이 이 작업을 실행하고 메시지를 보냅니다.
+The message structure is unified using X:Type, which in this context represents a cell.
+According to TL-B rules, all data can be stored within a single cell—if it fits within 1023 bits—or distributed across references using the caret symbol `^`.
+
+A serialized `Message X` is placed into the action list using the FunC method `send_raw_message()`. The smart contract then executes this action, and the message is sent.
 
 ### 명시적 직렬화 정의
 
-TL-B 구조에 따라 유효한 이진 데이터를 구축하기 위해서는 각 유형에 대해 반복적으로 정의되는 직렬화를 수행해야 합니다. 이는 Message X의 직렬화를 위해 `StateInit`, `CommonMsgInfo` 등의 직렬화 방법을 알아야 한다는 것을 의미합니다.
+To construct valid binary data according to a TL-B structure, serialization must be performed as defined recursively for each type. To serialize a `Message X`, you must also know how to serialize nested structures like `StateInit`, `CommonMsgInfo`, etc.
 
-모든 중첩 구조는 최상위 구조의 직렬화가 명시적이 될 때까지(모든 비트가 Boolean 또는 비트와 같은 유형(bits, uint, varuint)으로 정의됨) 재귀적으로 다른 TL-B 스키마에서 가져와야 합니다.
+Each nested structure is defined in a separate TL-B scheme, which must be referenced and resolved recursively. This continues until the serialization of the top-level structure becomes explicit—that is, every bit is defined by a boolean or a bit-representable type, e.g., `bits`, `uint`, `varuint`.
 
-일반 개발에서 현재 사용되지 않는 구조는 Type 열에 `*`로 표시됩니다. 예를 들어 \*Anycast는 일반적으로 직렬화에서 건너뜁니다.
+Structures not commonly used in regular development are marked with an asterisk `*` in the Type column. For example, `*Anycast` is typically omitted during serialization.
 
 ### message$_
 
-다음은 전체 메시지 `Message X`의 최상위 TL-B 스키마입니다:
+This is the top-level TL-B scheme for messages, referred to as `Message X`:
 
 ```tlb
 message$_ {X:Type} info:CommonMsgInfo
@@ -46,12 +51,12 @@ init:(Maybe (Either StateInit ^StateInit))
 body:(Either X ^X) = Message X;
 ```
 
-| 구조        | 유형                              | 필수 | 설명                                                      |   |
-| --------- | ------------------------------- | -- | ------------------------------------------------------- | - |
-| message$_ | 생성자                             |    | 생성자 규칙에 따라 정의됨. 비어있는 태그 `$_`는 시작 부분에 어떤 비트도 추가하지 않음을 의미 |   |
-| info      | [CommonMsgInfo](#commonmsginfo) | 필수 | 자세한 메시지 속성이 대상과 값을 정의. 항상 메시지 루트 셀에 위치                  |   |
-| init      | [StateInit](#stateinit-tl-b)    | 선택 | TON에서 새 계약 초기화에 사용되는 일반 구조. 셀 참조 또는 루트 셀에 작성될 수 있음      |   |
-| body      | X                               | 필수 | 메시지 페이로드. 셀 참조 또는 루트 셀에 작성될 수 있음                        |   |
+| 구조        | Type                            | 필수 | Description                                                                                                                     |   |
+| --------- | ------------------------------- | -- | ------------------------------------------------------------------------------------------------------------------------------- | - |
+| message$_ | Constructor                     |    | Defined according to the constructor rule. The empty tag `$_` indicates that no bits are added initially.                       |   |
+| info      | [CommonMsgInfo](#commonmsginfo) | 필수 | Contains detailed message properties such as destination and value. It is always stored in the message's root cell.             |   |
+| init      | [StateInit](#stateinit-tl-b)    | 선택 | The general structure is used in TON to initialize new contracts. It can be placed in either a cell reference or the root cell. |   |
+| body      | X                               | 필수 | Message payload. It can be placed in either a cell reference or the root cell.                                                  |   |
 
 ```tlb
 nothing$0 {X:Type} = Maybe X;
@@ -60,9 +65,9 @@ left$0 {X:Type} {Y:Type} value:X = Either X Y;
 right$1 {X:Type} {Y:Type} value:Y = Either X Y;
 ```
 
-`Maybe`와 `Either`가 어떻게 작동하는지 상기하면, 다음과 같이 다른 경우를 직렬화할 수 있습니다:
+Recall how `Maybe` and `Either` work—we can serialize different cases:
 
-- `[CommonMsgInfo][10][StateInit][0][X]` - 한 셀의 `Message X`
+- `[CommonMsgInfo][10][StateInit][0][X]` - a `Message X` fully serialized into a single cell.
 
 <br></br>
 <ThemedImage
@@ -74,7 +79,7 @@ dark: '/img/docs/data-formats/tl-b-docs-9-dark.png?raw=true',
 />
 <br></br>
 
-- `[CommonMsgInfo][11][^StateInit][1][^X]` - 참조가 있는 `Message X`
+- `[CommonMsgInfo][11][^StateInit][1][^X]` - a `Message X` with references.
 
 <br></br>
 <ThemedImage
@@ -90,7 +95,7 @@ dark: '/img/docs/data-formats/tl-b-docs-8-dark.png?raw=true',
 
 ### CommonMsgInfo
 
-`CommonMsgInfo`는 TON 블록체인에서 메시지가 어떻게 전달될지 정의하는 매개변수 목록입니다.
+`CommonMsgInfo` is a set of parameters that define how the message will be delivered on the TON blockchain.
 
 ```tlb
 //internal message
@@ -110,8 +115,8 @@ ext_out_msg_info$11 src:MsgAddressInt dest:MsgAddressExt
 
 ### int_msg_info$0
 
-`int_msg_info`는 내부 메시지의 경우입니다. 이는 계약 간에만, 그리고 오직 계약 간에만 보낼 수 있다는 것을 의미합니다.
-사용 사례 - 일반적인 계약 간 메시지.
+`int_msg_info` represents an internal message, meaning it can only be sent between smart contracts.
+Use case: regular cross-contract communication within the TON blockchain.
 
 ```tlb
 nanograms$_ amount:(VarUInteger 16) = Grams;
@@ -122,24 +127,24 @@ int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
   created_lt:uint64 created_at:uint32 = CommonMsgInfo;
 ```
 
-| 구조             | 유형                                        | 필수 | 설명                                                     |
-| -------------- | ----------------------------------------- | -- | ------------------------------------------------------ |
-| int_msg_info$0 | 생성자                                       | 필수 | $0 태그는 CommonMsgInfo 직렬화가 내부 메시지를 나타내는 0 비트로 시작함을 의미   |
-| ihr_disabled   | Bool                                      | 필수 | 하이퍼큐브 라우팅 플래그                                          |
-| bounce         | Bool                                      | 필수 | 처리 중 오류 발생 시 메시지가 반송되어야 함. 메시지의 플랫 바운스가 1이면 반송 가능이라고 함 |
-| bounced        | Bool                                      | 필수 | 메시지 자체가 반송의 결과임을 나타내는 플래그                              |
-| src            | [MsgAddressInt](#msgaddressint-tl-b)      | 필수 | 메시지 발신자 스마트 계약의 주소                                     |
-| dest           | [MsgAddressInt](#msgaddressint-tl-b)      | 필수 | 메시지 수신자 스마트 계약의 주소                                     |
-| value          | [CurrencyCollection](#currencycollection) | 필수 | 메시지로 전송된 총 자금을 포함한 통화 정보를 설명하는 구조                      |
-| ihr_fee        | [VarUInteger 16](#varuinteger-n)          | 필수 | 하이퍼 라우팅 전달에 대한 수수료                                     |
-| fwd_fee        | [VarUInteger 16](#varuinteger-n)          | 필수 | 검증자가 할당한 메시지 전달 수수료                                    |
-| created_lt     | uint64                                    | 필수 | 검증자가 할당한 메시지 전송의 논리적 시간. 스마트 계약의 작업 순서를 지정하는 데 사용      |
-| created_at     | uint32                                    | 필수 | 유닉스 시간                                                 |
+| 구조             | Type                                      | Required | Description                                                                                                                     |
+| -------------- | ----------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| int_msg_info$0 | Constructor                               | Required | The `$0` tag indicates that the `CommonMsgInfo` begins with a `0` bit in serialization, denoting an internal message.           |
+| ihr_disabled   | Bool                                      | Required | Flag indicating whether hypercube routing (IHR) is disabled.                                                                    |
+| bounce         | Bool                                      | Required | Specifies whether the message should be bounced if an error occurs during processing. If set to `1`, the message is bounceable. |
+| bounced        | Bool                                      | Required | Indicates that the message is a result of a bounce.                                                                             |
+| src            | [MsgAddressInt](#msgaddressint-tl-b)      | Required | The sender's smart contract address.                                                                                            |
+| dest           | [MsgAddressInt](#msgaddressint-tl-b)      | Required | The recipient's smart contract address.                                                                                         |
+| value          | [CurrencyCollection](#currencycollection) | Required | Describes the currency details, including the total funds transferred with the message.                                         |
+| ihr_fee        | [VarUInteger 16](#varuinteger-n)          | Required | Fee for delivering the message using hypercube routing.                                                                         |
+| fwd_fee        | [VarUInteger 16](#varuinteger-n)          | Required | Validators set the fee for forwarding the message.                                                                              |
+| created_lt     | uint64                                    | Required | Logic time of the message, used by validators to order actions in smart contracts.                                              |
+| created_at     | uint32                                    | 필수       | UNIX timestamp indicating when the message was created.                                                                         |
 
 ### ext_in_msg_info$10
 
-`ext_in_msg_info$10`는 외부 수신 메시지의 경우입니다. 이는 이 유형의 메시지가 체인 외부 공간에서 계약으로 전송된다는 것을 의미합니다.
-사용 사례 - 지갑 계약에 대한 지갑 애플리케이션 요청.
+`ext_in_msg_info$10` – represents an external incoming message. This message is sent from the off-chain world to a smart contract.
+Use case: a wallet application sending a request to a wallet contract.
 
 ```tlb
 nanograms$_ amount:(VarUInteger 16) = Grams;
@@ -148,36 +153,36 @@ ext_in_msg_info$10 src:MsgAddressExt dest:MsgAddressInt
   import_fee:Grams = CommonMsgInfo;
 ```
 
-| 구조                  | 유형                                   | 필수 | 설명                                                            |
-| ------------------- | ------------------------------------ | -- | ------------------------------------------------------------- |
-| ext_out_msg_info$10 | 생성자                                  | 필수 | `$10` 태그는 CommonMsgInfo 직렬화가 외부 수신 메시지를 나타내는 `10` 비트로 시작함을 의미 |
-| ihr_disabled        | Bool                                 | 필수 | 하이퍼 라우팅 플래그 (현재 항상 true)                                      |
-| src                 | [MsgAddressExt](#msgaddressext-tl-b) | 필수 | 메시지의 외부 발신자 주소                                                |
-| dest                | [MsgAddressInt](#msgaddressint-tl-b) | 필수 | 메시지 수신자 스마트 계약의 주소                                            |
-| import_fee          | [VarUInteger 16](#varuinteger-n)     | 필수 | 메시지 실행 및 전달에 대한 수수료                                           |
+| Structure          | 유형                                   | Required | Description                                                                                                                     |
+| ------------------ | ------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| ext_in_msg_info$10 | 생성자                                  | Required | The `$10` tag indicates that the `CommonMsgInfo` begins with `10` bits in serialization, denoting an external incoming message. |
+| ihr_disabled       | Bool                                 | Required | Flag indicating whether hyper routing is disabled. Currently, it is always set to `true`.                                       |
+| src                | [MsgAddressExt](#msgaddressext-tl-b) | Required | The external sender’s address.                                                                                                  |
+| dest               | [MsgAddressInt](#msgaddressint-tl-b) | Required | The destination smart contract address.                                                                                         |
+| import_fee         | [VarUInteger 16](#varuinteger-n)     | 필수       | The fee for executing and delivering the message.                                                                               |
 
 ### ext_out_msg_info$11
 
-`ext_out_msg_info$11`는 외부 발신 메시지의 경우입니다. 이는 계약에서 체인 외부 공간으로 보낼 수 있다는 것을 의미합니다.
-사용 사례 - 로그.
+`ext_out_msg_info$11` – represents an external outgoing message. This message is sent from a smart contract to the off-chain world.
+Use case: logs.
 
 ```tlb
-//internal message
+//external outgoing message
 ext_out_msg_info$11 src:MsgAddressInt dest:MsgAddressExt
   created_lt:uint64 created_at:uint32 = CommonMsgInfo;
 ```
 
-| 구조                  | 유형                                   | 필수 | 설명                                                            |
-| ------------------- | ------------------------------------ | -- | ------------------------------------------------------------- |
-| ext_out_msg_info$11 | 생성자                                  | 필수 | `$11` 태그는 CommonMsgInfo 직렬화가 외부 발신 메시지를 나타내는 `11` 비트로 시작함을 의미 |
-| src                 | [MsgAddressInt](#msgaddressint-tl-b) | 필수 | 하이퍼 라우팅 플래그                                                   |
-| dest                | [MsgAddressExt](#msgaddressext-tl-b) | 필수 | TON에서 새 계약 초기화에 사용되는 일반 구조. 셀 참조 또는 루트 셀에 작성될 수 있음            |
-| created_lt          | uint64                               | 필수 | 검증자가 할당한 메시지 전송의 논리적 시간. 스마트 계약의 작업 순서를 지정하는 데 사용             |
-| created_at          | uint32                               | 필수 | 유닉스 시간                                                        |
+| 구조                  | Type                                 | Required | Description                                                                                                                     |
+| ------------------- | ------------------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| ext_out_msg_info$11 | Constructor                          | Required | The `$11` tag indicates that the `CommonMsgInfo` begins with `11` bits in serialization, denoting an external outgoing message. |
+| src                 | [MsgAddressInt](#msgaddressint-tl-b) | Required | The sender’s smart contract address.                                                                                            |
+| dest                | [MsgAddressExt](#msgaddressext-tl-b) | Required | The external destination address for the message.                                                                               |
+| created_lt          | uint64                               | Required | Logic times of the message, assigned by the validator. Used for ordering actions in the smart contract.                         |
+| created_at          | uint32                               | 필수       | UNIX timestamp representing when the message was created.                                                                       |
 
 ## StateInit TL-B
 
-StateInit는 계약에 초기 데이터를 전달하고 계약 배포에 사용됩니다.
+`StateInit` – delivers initial data to a contract during its deployment.
 
 ```tlb
 _ split_depth:(Maybe (## 5)) special:(Maybe TickTock)
@@ -185,15 +190,15 @@ _ split_depth:(Maybe (## 5)) special:(Maybe TickTock)
   library:(HashmapE 256 SimpleLib) = StateInit;
 ```
 
-| 구조          | 유형                       | 필수 | 설명                                                                       |
-| ----------- | ------------------------ | -- | ------------------------------------------------------------------------ |
-| split_depth | (## 5)                   | 선택 | 고부하 계약을 위한 매개변수로, 여러 샤드의 여러 인스턴스로 분할하는 동작을 정의. 현재 StateInit는 이것 없이 사용됨   |
-| special     | TickTock\*               | 선택 | 블록체인의 모든 새 블록에서 스마트 계약을 호출하는 데 사용. 마스터체인에서만 사용 가능. 일반 사용자의 계약은 이것 없이 사용됨 |
-| code        | Cell                     | 선택 | 계약의 직렬화된 코드                                                              |
-| data        | Cell                     | 선택 | 계약 초기 데이터                                                                |
-| library     | HashmapE 256 SimpleLib\* | 선택 | 현재 라이브러리 없이 StateInit 사용됨                                                |
+| 구조          | 유형                       | 필수       | Description                                                                                                                                                                                                                                                                                                                                                              |
+| ----------- | ------------------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| split_depth | (## 5)                   | Optional | A parameter for high-load contracts that defines the behavior of splitting into multiple instances across different shards. Currently, `StateInit` is used without it.                                                                                                                                                                                                   |
+| special     | TickTock\*               | Optional | A structure used for invoking smart contracts in every new blockchain block. Available only in the MasterChain and not typically used in regular user contracts.                                                                                                                                                                                                         |
+| code        | Cell                     | Optional | The contract's serialized code.                                                                                                                                                                                                                                                                                                                                          |
+| data        | Cell                     | Optional | The initial data for the contract.                                                                                                                                                                                                                                                                                                                                       |
+| library     | HashmapE 256 SimpleLib\* | 선택       | Currently, `StateInit` is used without libraries.                                                                                                                                                                                                                                                                                                                        |
 
-[해시맵에 대한 일반적인 자세한 설명](/v3/documentation/data-formats/tlb/tl-b-types#hashmap)
+[General detailed explanations for Hashmaps](/v3/documentation/data-formats/tlb/tl-b-types#hashmap).
 
 ## MsgAddressExt TL-B
 
@@ -203,19 +208,19 @@ addr_extern$01 len:(## 9) external_address:(bits len)
 = MsgAddressExt;
 ```
 
-`MsgAddress`는 주소에 대한 다양한 직렬화의 스키마입니다. 메시지가 어떤 참가자(체인 외부 또는 스마트계약) 간에 전송되는지에 따라 다른 구조가 사용됩니다.
+`MsgAddress` is a scheme for various serializations of addresses. The structure depends on the participant, either off-chain or a smart contract, sending the message. Different structures are employed based on whether the message comes from an off-chain participant or a smart contract.
 
 ### addr_none$00
 
-`addr_none$00` - 체인 외부 참가자의 null 주소를 정의하는 데 사용됩니다. 이는 고유한 발신자 주소 없이 계약에 외부 메시지를 보낼 수 있음을 의미합니다.
+`addr_none$00` defines a null address for an off-chain participant. This indicates that an external message can be sent to a contract without specifying a unique sender's address.
 
 ```tlb
 addr_none$00 = MsgAddressExt;
 ```
 
-| 구조           | 유형  | 필수 | 설명                                                                    |
-| ------------ | --- | -- | --------------------------------------------------------------------- |
-| addr_none$00 | 생성자 | 필수 | `$00` 태그는 MsgAddressExt 직렬화가 `00` 비트로 시작함을 의미. 이는 전체 외부 주소가 `00`임을 의미 |
+| 구조           | 유형  | Required | Description                                                                                                                                   |
+| ------------ | --- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| addr_none$00 | 생성자 | 필수       | The `$00` tag in serialization indicates that `MsgAddressExt` starts with `00` bits. This signifies that the entire external address is `00`. |
 
 ### addr_extern$01
 
@@ -224,11 +229,11 @@ addr_extern$01 len:(## 9) external_address:(bits len)
 = MsgAddressExt;
 ```
 
-| 구조               | 유형         | 필수 | 설명                                                        |
-| ---------------- | ---------- | -- | --------------------------------------------------------- |
-| addr_extern$01   | 생성자        | 필수 | `$01` 태그는 MsgAddressExt 직렬화가 `01` 비트로 시작하여 외부 주소를 나타냄을 의미 |
-| len              | ## 9       | 필수 | uintN과 같음 - N비트 부호 없는 숫자를 의미                              |
-| external_address | (bits len) | 필수 | 주소는 이전 `len`과 같은 길이의 비트 문자열                               |
+| 구조               | 유형         | Required | Description                                                                                                            |
+| ---------------- | ---------- | -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| addr_extern$01   | 생성자        | Required | The `$01` tag in serialization indicates that `MsgAddressExt` starts with `01` bits and describes an external address. |
+| len              | ## 9       | Required | Represents an unsigned N-bit number, similar to `uintN`.                                                               |
+| external_address | (bits len) | 필수       | A bitstring address, where the length of the address equals the previously defined `len`.                              |
 
 ## MsgAddressInt TL-B
 
@@ -247,12 +252,12 @@ addr_std$10 anycast:(Maybe Anycast)
 workchain_id:int8 address:bits256  = MsgAddressInt;
 ```
 
-| 구조           | 유형        | 필수 | 설명                                                        |
-| ------------ | --------- | -- | --------------------------------------------------------- |
-| addr_std$10  | 생성자       | 필수 | `$10` 태그는 MsgAddressExt 직렬화가 `10` 비트로 시작하여 외부 주소를 나타냄을 의미 |
-| anycast      | Anycast\* | 선택 | 추가 주소 데이터, 현재 일반 내부 메시지에서 사용되지 않음                         |
-| workchain_id | int8      | 필수 | 대상 주소의 스마트 계약이 위치한 워크체인. 현재는 항상 0                         |
-| address      | (bits256) | 필수 | 스마트 계약 계정 ID 번호                                           |
+| 구조           | 유형        | Required | Description                                                                                                                                                                                                                                                |
+| ------------ | --------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| addr_std$10  | 생성자       | 필수       | The `$10` tag in serialization indicates that `MsgAddressInt` starts with `10` bits and describes an internal address.                                                                                                                                     |
+| anycast      | Anycast\* | 선택       | Represents additional address data. Currently not used in ordinary internal messages.                                                                                                                                                                      |
+| workchain_id | int8      | Required | The WorkChain where the smart contract of the destination address is located. Currently, this value always equals zero.                                                                                                                                    |
+| address      | (bits256) | 필수       | The smart contract account ID number.                                                                                                                                                                                                                      |
 
 ### addr_var$11
 
@@ -261,13 +266,13 @@ addr_var$11 anycast:(Maybe Anycast) addr_len:(## 9)
 workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
 ```
 
-| 구조           | 유형        | 필수 | 설명                                                           |
-| ------------ | --------- | -- | ------------------------------------------------------------ |
-| addr_var$11  | 생성자       | 필수 | `$11` 태그는 MsgAddressInt 직렬화가 `11` 비트로 시작하여 내부 계약 주소를 나타냄을 의미 |
-| anycast      | Anycast\* | 선택 | 추가 주소 데이터, 현재 일반 내부 메시지에서 사용되지 않음                            |
-| addr_len     | ## 9      | 필수 | uintN과 같음 - N비트 부호 없는 숫자를 의미                                 |
-| workchain_id | int32     | 필수 | 대상 주소의 스마트 계약이 위치한 워크체인. 현재는 항상 0                            |
-| address      | (bits256) | 필수 | 페이로드 주소(계정 ID일 수 있음)                                         |
+| 구조           | Type        | Required  | 설명                                                                                                                                                  |
+| ------------ | ----------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| addr_var$11  | Constructor | 필수        | The `$11` tag indicates that in the serialization of `MsgAddressInt`, the address starts with `11` bits, representing an internal contract address. |
+| anycast      | Anycast\*   | 선택        | Additional address data is not currently used in regular internal messages.                                                                         |
+| addr_len     | ## 9        | Required  | Same as `uintN` – represents an unsigned N-bit number.                                                                                              |
+| workchain_id | int32       | Required  | The WorkChain is where the smart contract for the destination address is located. Currently, this is always set to zero.                            |
+| address      | (bits256)   | 필수        | The payload address (this could be the account ID).                                                                                                 |
 
 ## 기본적으로 사용되는 타입
 
@@ -279,13 +284,13 @@ currencies$_ grams:Grams other:ExtraCurrencyCollection
 = CurrencyCollection;
 ```
 
-| 구조           | 유형                      | 필수 | 설명                                                     |
-| ------------ | ----------------------- | -- | ------------------------------------------------------ |
-| currencies$_ | 생성자                     | 필수 | `$_` 빈 태그는 CurrencyCollection 직렬화 시작 시 비트를 추가하지 않음을 의미 |
-| grams        | (VarUInteger 16)        | 필수 | 나노톤 단위의 메시지 값                                          |
-| other        | ExtraCurrencyCollection | 선택 | 일반적으로 비어 있는 추가 통화용 딕셔너리 ExtraCurrencyCollection        |
+| Structure    | 유형                      | Required | 설명                                                                                                                                  |
+| ------------ | ----------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| currencies$_ | 생성자                     | Required | The `$_` empty tag indicates that no bits are added at the beginning during the serialization of `CurrencyCollection`.              |
+| grams        | (VarUInteger 16)        | 필수       | Represents the message value, expressed in nanoTons.                                                                                |
+| other        | ExtraCurrencyCollection | 선택       | ExtraCurrencyCollection is a dictionary intended for additional, typically empty currencies.                                        |
 
-- ExtraCurrencyCollection은 일반적으로 메시지에서 빈 딕셔너리로 작성되는 복잡한 타입
+- ExtraCurrencyCollection is a complex type usually written as an empty dictionary in messages.
 
 ### VarUInteger n
 
@@ -296,11 +301,11 @@ var_int$_ {n:#} len:(#< n) value:(int (len * 8))
 = VarInteger n;
 ```
 
-| 구조         | 유형                | 필수 | 설명                                                             |
-| ---------- | ----------------- | -- | -------------------------------------------------------------- |
-| var_uint$_ | 생성자               | 필수 | `var_uint$_` 빈 태그는 CurrencyCollection 직렬화 시작 시 비트를 추가하지 않음을 의미 |
-| len        | uintN             | 필수 | 다음 값의 비트 길이 매개변수                                               |
-| value      | (uint (len \* 8)) | 선택 | (len \* 8) 비트로 작성된 정수의 uint 값                                  |
+| 구조         | 유형                | Required | Description                                                                                                                 |
+| ---------- | ----------------- | -------- | --------------------------------------------------------------------------------------------------------------------------- |
+| var_uint$_ | 생성자               | Required | The `var_uint$_` is an empty tag, indicating that no bits are added at the beginning of `CurrencyCollection` serialization. |
+| len        | uintN             | 필수       | Specifies the bit-length used to encode the next value.                                                                     |
+| value      | (uint (len \* 8)) | 선택       | An optional unsigned integer encoded in `(len * 8)` bits.                                                                   |
 
 ## 메시지 예제
 
@@ -329,7 +334,7 @@ var_int$_ {n:#} len:(#< n) value:(int (len * 8))
 
 ### 간단한 형태의 일반적인 func 메시지
 
-검증자에 의해 항상 덮어쓰이는 메시지 부분은 건너뛸 수 있습니다(0 비트로 채움). 여기서 메시지 발신자도 건너뛰어 `addr_none$00`으로 직렬화됩니다.
+Validators always overwrite message parts, which can be skipped and filled with zero bits. The message's sender is also skipped and serialized as `addr_none$00`.
 
 ```func
   cell msg = begin_cell()
@@ -340,3 +345,5 @@ var_int$_ {n:#} len:(#< n) value:(int (len * 8))
         .store_slice(message_body)
 .end_cell();
 ```
+
+<Feedback />
