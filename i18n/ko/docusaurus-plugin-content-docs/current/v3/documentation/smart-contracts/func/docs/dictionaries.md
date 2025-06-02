@@ -1,45 +1,58 @@
+import Feedback from '@site/src/components/Feedback';
+
 # TON의 딕셔너리
 
-스마트 컨트랙트는 딕셔너리(순서가 있는 키-값 매핑)를 사용할 수 있습니다. 내부적으로 셀 트리로 표현됩니다.
+Smart contracts in TON can utilize dictionaries structured as ordered key-value mappings. Internally, these dictionaries are represented as tree-like structures composed of cells.
 
 :::warning
-Working with potentially large trees of cells creates a couple of considerations:
+Handling potentially large trees of cells in TON introduces several important considerations:
 
-1. 모든 업데이트 작업은 상당한 양의 셀을 생성합니다(생성된 각 셀은 500 가스가 소비됨, [TVM 명령어](/v3/documentation/tvm/instructions#gas-prices) 참조). 즉, 주의 없이 사용하면 가스가 부족할 수 있습니다.
-    - 특히, Wallet 봇이 highload-v2 월렛 사용 시 이러한 문제를 겪었습니다. 무한 루프와 각 반복의 비싼 딕셔너리 업데이트가 결합되어 가스가 소진되었고, 결국 [fd78228f352f582a544ab7ad7eb716610668b23b88dae48e4f4dbd4404b5d7f6](https://tonviewer.com/transaction/fd78228f352f582a544ab7ad7eb716610668b23b88dae48e4f4dbd4404b5d7f6)와 같은 반복 트랜잭션으로 잔액이 소진되었습니다.
-2. N개의 키-값 쌍을 위한 이진 트리는 N-1개의 포크를 포함하므로, 총 최소 2N-1개의 셀이 필요합니다. 스마트 컨트랙트 저장소는 65536개의 고유 셀로 제한되어 있어, 딕셔너리의 최대 항목 수는 32768개이거나 반복되는 셀이 있는 경우 약간 더 많을 수 있습니다.
-    :::
+1. **Gas consumption for updates**
+
+- Every update operation generates many new cells, costing 500 gas, as detailed on the [TVM instructions](/v3/documentation/tvm/instructions#gas-prices) page.
+- Careless updates can lead to excessive gas usage, potentially causing operations to fail due to gas exhaustion.
+- Example: This issue occurred with the **Wallet bot** using the **highload-v2 wallet**. Each iteration's unbounded loop and expensive dictionary updates led to gas depletion. As a result, the bot triggered repeated transactions, eventually draining its balance ([see transaction details](https://tonviewer.com/transaction/fd78228f352f582a544ab7ad7eb716610668b23b88dae48e4f4dbd4404b5d7f6)).
+
+2. **Storage limitation**
+
+- A binary tree containing **N** key-value pairs requires **N-1 forks**, resulting in **at least 2N-1 cells**.
+- Since smart contract storage in TON is capped at 65,536 unique cells, the maximum number of dictionary entries is approximately 32,768. This limit may be slightly higher if some cells are reused within the structure.
+
+:::
 
 ## 딕셔너리 종류
 
-### "해시"맵
+### "Hash" map
 
-TON에서 가장 잘 알려지고 사용되는 딕셔너리 종류는 해시맵입니다. TVM 명령어에서 전체 섹션을 차지하며([TVM 명령어](/v3/documentation/tvm/instructions#quick-search) - 딕셔너리 조작) 스마트 컨트랙트에서 일반적으로 사용됩니다.
+Hashmaps are the most widely used dictionary type in TON. They have a dedicated set of TVM opcodes for manipulation and are commonly used in smart contracts (see [TVM instructions](/v3/documentation/tvm/instructions#quick-search) - Dictionary manipulation).
 
-이러한 딕셔너리는 동일한 길이의 키(모든 함수에 인수로 제공)를 값 슬라이스에 매핑합니다. 이름의 "해시"와 달리, 항목들은 순서가 있고 키별 요소, 이전 또는 다음 키-값 쌍의 저렴한 추출을 제공합니다. 값은 내부 노드 태그와 가능한 키 부분과 같은 셀에 위치하므로 1023비트를 모두 사용할 수 없습니다; 이런 경우 일반적으로 `~udict_set_ref`를 사용합니다.
+Hashmaps map fixed-length keys, which are defined as an argument to all functions, to value slices. Despite the "hash" in its name, entries are ordered and allow efficient access to elements by key and retrieval of the previous or next key-value pair. Since values share space with internal node tags and possibly key fragments within the same cell, they cannot utilize the full 1023 bits. In such cases, the `~udict_set_ref` function often helps.
 
-빈 해시맵은 TVM에서 `null`로 표현됩니다; 따라서 셀이 아닙니다. 셀에 딕셔너리를 저장하려면, 먼저 1비트(비어있으면 0, 그렇지 않으면 1)를 저장하고, 해시맵이 비어있지 않은 경우 참조를 추가합니다. 따라서 `store_maybe_ref`와 `store_dict`는 서로 교환 가능하며, 일부 스마트 컨트랙트 작성자는 `load_dict`를 사용하여 수신 메시지나 저장소에서 `Maybe ^Cell`을 로드합니다.
+An empty hashmap is represented as `null` in TVM, meaning it is not stored as a cell. A single bit is first saved to store a dictionary in a cell (0 for empty, 1 otherwise),
+followed by a reference if the hashmap is not empty. This makes `store_maybe_ref` and `store_dict` interchangeable. Some smart contract developers use `load_dict` to load a `Maybe ^Cell` from an incoming message or storage.
 
-해시맵에서 가능한 작업:
+**Available hashmap operations:**
 
-- 슬라이스에서 로드, 빌더에 저장
-- 키별 값 get/set/delete
-- 값 교체(키가 이미 있는 경우 새 값 설정) / 추가(키가 없는 경우)
-- 키 순서대로 다음/이전 키-값 쌍으로 이동(가스 제한이 문제가 되지 않는 경우 [딕셔너리 반복](/v3/documentation/smart-contracts/func/cookbook#how-to-iterate-dictionaries)에 사용 가능)
-- 최소/최대 키와 해당 값 검색
-- 키로 함수(continuation) 가져와서 즉시 실행
+- Load from a slice, store to a builder;
+- Get/Set/Delete a value by key;
+- Replace a value (update an existing key) or add a new value (if the key is absent);
+- Move to the next/previous key-value pair (entries are ordered by keys, enabling [iteration](/v3/documentation/smart-contracts/func/cookbook#how-to-iterate-dictionaries) if gas constraints allow);
+- Retrieve the minimal or maximal key with its value;
+- Fetch and execute a function (continuation) by key.
 
-가스 제한 초과로 인한 컨트랙트 중단을 방지하기 위해, 하나의 트랜잭션을 처리하는 동안 제한된 수의 딕셔너리 업데이트만 수행해야 합니다. 개발자의 조건에 따라 컨트랙트의 잔액이 맵을 유지하는 데 사용되는 경우, 컨트랙트는 정리를 계속하기 위해 자신에게 메시지를 보낼 수 있습니다.
+To prevent gas exhaustion, smart contracts should limit the number of dictionary updates per transaction. If a contract's balance is used to maintain the hashmap under specific conditions, it can send itself a message to continue processing in another transaction.
 
 :::info
-하위 딕셔너리(주어진 키 범위 내의 항목 하위 집합)를 검색하는 명령어가 있습니다. 이들은 테스트되지 않았으므로 TVM 어셈블리 형태로만 확인할 수 있습니다: `SUBDICTGET` 등.
+
+TVM provides instructions for retrieving a subdictionary—a subset of entries within a given key range. These operations (`SUBDICTGET` and similar) are currently untested and can only be explored at the TVM assembly level.
+
 :::
 
 #### 해시맵 예제
 
-257비트 정수 키를 빈 값 슬라이스에 매핑하는 해시맵(요소의 존재 여부만 표시)을 살펴보겠습니다.
+To illustrate, let's examine a hashmap that maps 257-bit integer keys to empty value slices. This type of hashmap serves as a presence indicator, storing only the existence of elements.
 
-Python에서 다음 스크립트를 실행하여 빠르게 확인할 수 있습니다(필요한 경우 `pytoniq`을 다른 SDK로 대체):
+You can quickly check this by running the following Python script. If needed, you can use a different SDK instead of `pytoniq`:
 
 ```python
 import pytoniq
@@ -52,7 +65,7 @@ k.set(6 - 2**256, em)
 print(str(pytoniq.begin_cell().store_maybe_ref(k.serialize()).end_cell()))
 ```
 
-구조는 이진 트리이며, 루트 셀을 제외하면 균형 잡힌 트리입니다.
+This structure forms a binary tree, which appears balanced except for the root cell:
 
 ```
 1[80] -> {
@@ -69,14 +82,17 @@ print(str(pytoniq.begin_cell().store_maybe_ref(k.serialize()).end_cell()))
 }
 ```
 
-문서에 [해시맵 파싱 예제](/v3/documentation/data-formats/tlb/tl-b-types#hashmap-parsing-example)가 더 있습니다.
+For further [examples of hashmap parsing](/v3/documentation/data-formats/tlb/tl-b-types#hashmap-parsing-example), refer to the official documentation.
 
-### 보강된 맵 (각 노드에 추가 데이터 포함)
+### Augmented maps
 
-TON 검증자들이 샤드의 모든 컨트랙트 총 잔액을 계산하기 위해 내부적으로 사용됩니다(각 노드에 서브트리 총 잔액이 있는 맵을 사용하면 업데이트를 매우 빠르게 검증할 수 있음). 이를 위한 TVM 기본 요소는 없습니다.
+Augmented maps with additional data in each node are used internally by TON validators to calculate the total balance of all contracts in a shard. By storing the total subtree balance in each node, validators can quickly validate updates. There are no TVM primitives for working with these maps.
 
 ### 접두사 딕셔너리
 
 :::info
-테스트 결과 접두사 딕셔너리를 만들기 위한 문서가 충분하지 않습니다. `PFXDICTSET` 등의 관련 명령어가 어떻게 작동하는지 완전히 알지 못하는 한 프로덕션 컨트랙트에서 사용하지 않는 것이 좋습니다.
+Testing shows that documentation on prefix dictionaries is insufficient. Avoid using them in production contracts unless you fully understand how the relevant opcodes, such as `PFXDICTSET`, work.
 :::
+
+<Feedback />
+
