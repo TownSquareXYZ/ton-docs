@@ -1,10 +1,12 @@
+import Feedback from '@site/src/components/Feedback';
+
 import ThemedImage from '@theme/ThemedImage';
 
-# 셀 & 셀의 가방(BoC)
+# Cell & bag of cells (BoC)
 
 ## 셀
 
-셀은 TON 블록체인의 데이터 구조를 나타냅니다. 셀은 최대 1023비트를 저장할 수 있고 다른 셀에 대한 최대 4개의 참조를 가질 수 있습니다.
+A cell is a fundamental data structure in the TON blockchain. Each cell can store up to 1023 bits of data and maintain up to 4 references to other cells.
 
 <br></br>
 <ThemedImage
@@ -16,9 +18,9 @@ sources={{
 />
 <br></br>
 
-## 셀의 가방
+## Bag of cells
 
-셀의 가방(BoC)은 셀을 바이트 배열로 직렬화하는 형식으로, [TL-B 스키마](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/tl/boc.tlb#L25)에 자세히 설명되어 있습니다.
+A Bag of Cells (BoC) is a serialization format that encodes cells into byte arrays, as defined by the [TL-B schema](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/tl/boc.tlb#L25).
 
 <br></br>
 <ThemedImage
@@ -30,7 +32,7 @@ sources={{
 />
 <br></br>
 
-TON에서는 계약 코드, 저장된 데이터, 블록을 포함한 모든 것이 셀로 구성되어 있어 프로세스에서 간소화되고 강력한 유연성을 제공합니다.
+In TON, everything is built from cells—smart contract code, stored data, and even entire blocks—enabling a highly flexible and modular architecture.
 
 <br></br>
 <ThemedImage
@@ -44,7 +46,7 @@ sources={{
 
 ### 셀 직렬화
 
-셀의 가방의 첫 번째 예제를 분석해보겠습니다:
+Let’s walk through a basic example of a BoC:
 
 <br></br>
 <ThemedImage
@@ -65,9 +67,12 @@ sources={{
 }
 ```
 
-이 예제에서는 1비트 크기의 루트 셀이 2개의 링크를 가지고 있습니다: 첫 번째는 24비트 셀로, 두 번째는 24비트 셀에 대한 1개의 링크를 가진 7비트 셀로 연결됩니다.
+In this case, we have a 0-bit root cell that references two other cells:
 
-이 프레임워크가 의도한 대로 작동하려면 셀들을 하나의 바이트 시퀀스로 변환해야 합니다. 이를 위해 먼저 고유한 셀 타입만 사용하며, 4개 중 3개는 다음과 같이 표현됩니다:
+- The first is a 24-bit cell.
+- The second is a 7-bit cell that itself references a 24-bit cell.
+
+To serialize this structure into a byte sequence, we first identify unique cells. In the example, we consider 3 unique cells out of 4 total.
 
 ```json
 1[8_]
@@ -76,8 +81,10 @@ sources={{
 ```
 
 :::note
-고유한 셀만 남기려면 비교가 필요합니다. 이를 위해 셀의 [해시](#cell-hash)를 비교해야 합니다.
+To filter out duplicates, cells must be compared by their [hashes](#cell-hash).
 :::
+
+Next, we arrange the cells in a specific order so that parent cells never reference cells that come before them in the list. In other words, any referenced cell must appear after the cells that reference it. We get:
 
 ```json
 1[8_]      -> index 0 (root cell)
@@ -85,11 +92,25 @@ sources={{
 24[0AAAAA] -> index 2
 ```
 
-이제 위의 3개 셀에 대한 설명을 계산해봅시다. 이 설명은 데이터 길이와 데이터 링크 수에 대한 정보로 구성된 플래그를 저장하는 2바이트로 이루어집니다.
+Now, let’s calculate the descriptors for each of the 3 cells mentioned earlier. These descriptors consist of 2 bytes that encode metadata about the cell’s data size and reference structure.
 
-첫 번째 바이트 - **참조 설명자** - 는 `r+8s+32l`로 계산됩니다. 여기서 `0 ≤ r ≤ 4`는 셀 참조(링크) 수, `0 ≤ s ≤ 1`은 [특수](#special-exotic-cells) 셀의 경우 1, 일반 셀의 경우 0, `0 ≤ l ≤ 3`은 셀의 [레벨](#cell-level)입니다.
+1. **Refs descriptor (1st byte)**
 
-두 번째 바이트 - **비트 설명자** - 는 `floor(b / 8) + ceil(b / 8)`와 같습니다. 여기서 `0 <= b <= 1023`은 셀의 비트 수입니다. 이 설명자는 셀 데이터의 완전한 4비트 그룹의 길이를 나타냅니다(비어있지 않다면 최소 1).
+  This byte is calculated using the formula: `r + 8·s + 32·l`.
+
+Where:
+
+- `r` is the number of cell's references (links) in the range `0 ≤ r ≤ 4`.
+- `s` is the exotic flag (1 for [exotic](#special-exotic-cells) cells, 0 for ordinary ones).
+- `l` is the  [level](#cell-level) of the cell in the range `0 ≤ l ≤ 3` .
+
+2. **Bits descriptor (2nd byte)**
+
+This byte indicates the size of the cell’s bitstring and is calculated as: `floor(b / 8) + ceil(b / 8)`.
+
+Where `0 <= b <= 1023` is the number of bits in the cell.
+
+This descriptor represents the length of full 4-bit groups in the cell’s data and is always at least 1 for non-empty data.
 
 결과는 다음과 같습니다:
 
@@ -99,7 +120,8 @@ sources={{
 24[0AAAAA] -> 0006 -> 0 refs, length 6
 ```
 
-불완전한 4비트 그룹의 데이터의 경우, 시퀀스 끝에 1비트가 추가됩니다. 이는 그룹의 끝 비트를 나타내며 불완전한 그룹의 실제 크기를 결정하는 데 사용됩니다. 아래와 같이 비트를 추가합니다:
+For data with incomplete 4-bit groups, 1 bit is added to the end of the sequence. This means it denotes the end bit of the group and is used to determine the actual size of incomplete groups. Let's add the bits below:
+Let’s add the end bits to each of the cells:
 
 ```json
 1[8_]      -> C0     -> 0b10000000->0b11000000
@@ -107,7 +129,7 @@ sources={{
 24[0AAAAA] -> 0AAAAA -> do not change (full groups)
 ```
 
-이제 참조 인덱스를 추가합니다:
+We now specify which cells each one references:
 
 ```json
 0 1[8_]      -> 0201 -> refers to 2 cells with such indexes
@@ -115,7 +137,7 @@ sources={{
 2 24[0AAAAA] -> no refs
 ```
 
-모두 합치면:
+Now we serialize the cells:
 
 ```json
 0201 C0     0201
@@ -123,8 +145,10 @@ sources={{
 0006 0AAAAA
 ```
 
-그리고 해당 문자열을 하나의 바이트 배열로 연결합니다:
-`0201c002010101ff0200060aaaaa`, 크기 14바이트.
+Finally, we concatenate all parts into a single-byte array:
+`0201c002010101ff0200060aaaaa`
+
+Size: 14 bytes.
 
 <details>
   <summary><b>예제 보기</b></summary>
@@ -148,15 +172,13 @@ func (c *Cell) descriptors() []byte {
 }
 ```
 
-[출처](https://github.com/xssnick/tonutils-go/blob/3d9ee052689376061bf7e4a22037ff131183afad/tvm/cell/serialize.go#L205)
+[View source](https://github.com/xssnick/tonutils-go/blob/3d9ee052689376061bf7e4a22037ff131183afad/tvm/cell/serialize.go#L205)
 
 </details>
 
-### 셀의 가방 패킹하기
+### Packing a bag of cells
 
-위 섹션의 셀을 패킹해보겠습니다. 이미 14바이트 배열로 직렬화했습니다.
-
-따라서 [스키마](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/tl/boc.tlb#L25)에 따라 헤더를 구성합니다.
+Now that we've serialized our cells into a flat 14-byte array, it's time to pack them into a complete BoC format by building the appropriate header according to its [schema](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/tl/boc.tlb#L25).
 
 ```
 b5ee9c72                      -> id tl-b of the BoC structure
@@ -173,24 +195,28 @@ b5ee9c72                      -> id tl-b of the BoC structure
 0201c002010101ff0200060aaaaa  -> serialized cells
 ```
 
-마지막으로 위의 모든 것을 바이트 배열로 연결하여 최종 BoC를 만듭니다:
+We now concatenate the header and the serialized cell content:
 `b5ee9c7201010301000e000201c002010101ff0200060aaaaa`
 
-셀의 가방 구현 예제: [직렬화](https://github.com/xssnick/tonutils-go/blob/master/tvm/cell/serialize.go), [역직렬화](https://github.com/xssnick/tonutils-go/blob/master/tvm/cell/parse.go)
+**BoC implementation examples**
 
-## 특수(이색) 셀
+- [Serialization](https://github.com/xssnick/tonutils-go/blob/master/tvm/cell/serialize.go)
+- [Deserialization](https://github.com/xssnick/tonutils-go/blob/master/tvm/cell/parse.go)
 
-일반적으로 TON에서 작동하는 셀은 두 가지 주요 유형으로 나뉩니다: 일반 셀과 특수 셀입니다. 사용자가 작업하는 대부분의 셀은 정보를 전달하는 일반 셀입니다.
+## Special (exotic) cells
 
-그러나 네트워크의 내부 기능을 구현하기 위해 특수 셀이 필요할 때가 있으며, 하위 유형에 따라 다양한 목적으로 사용됩니다.
+In general, cells operating on TON are categorized into two main types: **ordinary cells** and **special (exotic) cells**.
+Most user-facing cells are ordinary cells, which are responsible for carrying information.
 
-## 셀 레벨
+However, special cells are occasionally required to support the network's internal functionality. Depending on their specific subtype, these cells serve various purposes.
 
-모든 셀은 0에서 3까지의 정수로 표현되는 `레벨` 속성을 가집니다.
+## Cell level
+
+Every cell has an attribute called `Level`, represented by an integer from 0 to 3.
 
 ### 일반 셀 레벨
 
-일반 셀의 레벨은 항상 모든 참조의 레벨 중 최대값과 같습니다:
+The level of an ordinary cell is always equal to the maximum level among all of its references:
 
 ```cpp
 Lvl(c) = max(Lvl(r_0), ..., Lvl(r_i), ..., Lvl(r_e))
@@ -198,29 +224,29 @@ Lvl(c) = max(Lvl(r_0), ..., Lvl(r_i), ..., Lvl(r_e))
 
 여기서 `i`는 `c` 참조 인덱스, `e`는 `c` 참조 수입니다.
 
-_참조가 없는 일반 셀의 레벨은 0입니다_
+_If an ordinary cell has no references, its level is zero._
 
 ### 특수 셀 레벨
 
-특수 셀은 레벨을 설정하는 다른 규칙을 가지며, [이 문서](/v3/documentation/data-formats/tlb/exotic-cells)에 설명되어 있습니다.
+Exotic cells follow different rules for determining their level, which are described in [this](/v3/documentation/data-formats/tlb/exotic-cells) article.
 
 ## 셀 해시
 
-대부분의 경우 사용자는 하나의 해시(표현 해시 또는 무한 해시)만 가진 레벨 0의 일반 셀로 작업합니다.
+In most cases, users interact with ordinary cells at `level=0` with a single hash known as the representation hash, also called _infinity_.
 
-레벨 `Lvl(c) = l`인 셀 `c`는 `1 ≤ l ≤ 3`일 때 표현 해시와 `l`개의 **"상위"** 해시를 가집니다.
+For a cell `c` with level `Lvl(c) = l`, where `1 ≤ l ≤ 3`, it has one representation hash and `l` additional **"higher"** hashes.
 
-### 표준 셀 표현 해시 계산
+### Standard representation hash calculation
 
-먼저 셀 표현을 계산해야 합니다(위에서 설명한 셀 직렬화와 유사)
+To compute the representation hash of a cell, follow these steps:
 
-1. 설명자 바이트 계산
-2. 직렬화된 셀 데이터 추가
-3. 모든 셀 참조에 대해 깊이 추가
-4. 모든 셀 참조에 대해 표현 해시 추가
-5. 결과의 SHA256 해시 계산
+1. Compute descriptor bytes.
+2. Add serialized cell data.
+3. For each cell reference, add its depth.
+4. For each cell reference, add its representation hash.
+5. Compute the SHA-256 hash of the result
 
-다음 예제를 분석해보겠습니다:
+Let's analyze a simple example:
 
 #### 참조가 없는 셀
 
@@ -228,29 +254,31 @@ _참조가 없는 일반 셀의 레벨은 0입니다_
 32[0000000F]
 ```
 
-1. 설명자 계산
+1. **Descriptors computation**
 
-참조 설명자는 `r+8s+32l = 0 + 0 + 0 = 0 = 00`과 같습니다
+   - The reference descriptor is computed as `r + 8s + 32l = 0 + 0 + 0 = 0`, which equals `00`.
+   - The bits descriptor is calculated as `floor(b / 8) + ceil(b / 8) = 8`, which equals `08`.
+   - Combined descriptor bytes: `0008`.
 
-비트 설명자는 `floor(b / 8) + ceil(b / 8) = 8 = 08`과 같습니다
+2. **Cell data serialization**
 
-이 바이트들을 연결하면 `0008`이 됩니다
+   - We have a complete group of 4-bit values in this case, so no padding is needed.
+   - Serialized data: `0000000F`
 
-2. 셀 데이터 직렬화
+3. **Refs depth**
 
-이 경우 완전한 4비트 그룹을 가지고 있으므로 셀 데이터에 비트를 추가할 필요가 없습니다. 결과는 `0000000f`입니다
+   - This cell has no references, so we skip depth and reference hash steps.
 
-3. 참조 깊이
+4. **Refs hashes**
 
-셀에 참조가 없으므로 이 부분은 건너뜁니다
+   - This cell has no references, so we skip depth and reference hash steps.
 
-4. 참조 해시
+5. **SHA256 computation**
 
-셀에 참조가 없으므로 이 부분은 건너뜁니다
+   - Concatenate the bytes from the previous steps: `00080000000F`.
+   - Compute the SHA-256 hash of this byte string: `57b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`.
 
-5. SHA256 계산
-
-이전 단계의 바이트를 연결하면 `00080000000f`가 되고 이 바이트 문자열의 SHA256은 `57b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9` - 이것이 셀 표현 해시입니다.
+   This is the **representation hash** of the cell.
 
 #### 참조가 있는 셀
 
@@ -261,39 +289,54 @@ _참조가 없는 일반 셀의 레벨은 0입니다_
 }
 ```
 
-1. 설명자 계산
+1. **Descriptors computation**
 
-참조 설명자는 `r+8s+32l = 2 + 0 + 0 = 0 = 02`와 같습니다
+   - The reference descriptor is calculated as:
+     `r + 8s + 32l = 2 + 0 + 0 = 2`, which equals `02`.
+   - The bits descriptor is computed as:
+     `floor(b / 8) + ceil(b / 8) = 6`, which equals `06`.
+   - Combined descriptor bytes: `0206`.
 
-비트 설명자는 `floor(b / 8) + ceil(b / 8) = 6 = 06`과 같습니다
+2. **Cell data serialization**
 
-이 바이트들을 연결하면 `0206`이 됩니다
+   - The data consists of complete 4-bit groups, so no padding is needed.
+   - Serialized cell data: `00000B`.
 
-2. 셀 데이터 직렬화
+3. **Refs depth**
 
-이 경우 완전한 4비트 그룹을 가지고 있으므로 셀 데이터에 비트를 추가할 필요가 없습니다. 결과는 `00000b`입니다
+   - The depth of each reference is represented using 2 bytes.
+   - Since both references have a depth of 0, the result is: `00000000`.
 
-3. 참조 깊이
+4. **Refs hashes**
 
-깊이는 2바이트로 표현됩니다. 우리의 셀은 2개의 참조를 가지고 있고 각각의 깊이는 0이므로 이 단계의 결과는 `00000000`입니다.
+   - Each reference contributes its representation hash. From the previous example, the result is:
 
-4. 참조 해시
+     `57b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f957b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`
 
-각 참조에 대해 해시(위에서 계산)를 추가하므로 결과는 `57b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f957b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`입니다.
+5. **SHA256 computation**
 
-5. SHA256 계산
+   - By concatenating the bytes from the previous steps, we obtain the following byte string:
 
-이전 단계의 바이트를 연결하면 `020600000b0000000057b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f957b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`가 되고 이 바이트 문자열의 SHA256은 `f345277cc6cfa747f001367e1e873dcfa8a936b8492431248b7a3eeafa8030e7` - 이것이 셀 표현 해시입니다.
+   `020600000b0000000057b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f957b520dbcb9d135863fc33963cde9f6db2ded1430d88056810a2c9434a3860f9`.
+
+   - The SHA-256 hash of this byte string is:
+
+   `f345277cc6cfa747f001367e1e873dcfa8a936b8492431248b7a3eeafa8030e7`.
+
+   - This is the representation hash of the cell.
 
 ### 상위 해시 계산
 
-일반 셀 `c`의 상위 해시는 표현 해시와 유사하게 계산되지만, 참조의 표현 해시 대신 상위 해시를 사용합니다.
+The higher hashes of an ordinary cell `c` are computed similarly to its representation hash,
+but instead of using the representation hashes of its references, their respective higher hashes are used.
 
-특수 셀은 상위 해시를 계산하는 자체 규칙이 있으며, [이 문서](/v3/documentation/data-formats/tlb/exotic-cells)에 설명되어 있습니다.
+Exotic cells follow separate rules for computing their higher hashes. These are described in detail in [this](/v3/documentation/data-formats/tlb/exotic-cells) article.
 
-## 참고 항목
+## See also
 
 [//]: # "* [RU 원문 기사](https://github.com/xssnick/ton-deep-doc/blob/master/Cells-BoC.md)"
 
-- [특수(이국적인) 셀](/v3/documentation/data-formats/tlb/exotic-cells)
-- [머클 증명 검증](/v3/documentation/data-formats/tlb/proofs)
+- [Exotic (special) cells](/v3/documentation/data-formats/tlb/exotic-cells)
+- [Merkle proofs verifying](/v3/documentation/data-formats/tlb/proofs)
+
+<Feedback />
