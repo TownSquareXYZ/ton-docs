@@ -1,43 +1,66 @@
-# 리터럴과 식별자
+import Feedback from '@site/src/components/Feedback';
+
+# Literals and identifiers
 
 ## 숫자 리터럴
 
-FunC는 10진수와 16진수 정수 리터럴을 허용합니다(앞에 오는 0들도 허용).
+FunC supports decimal and hexadecimal integer literals, including those with leading zeros.
 
-예를 들어, `0`, `123`, `-17`, `00987`, `0xef`, `0xEF`, `0x0`, `-0xfFAb`, `0x0001`, `-0`, `-0x0`는 유효한 숫자 리터럴입니다.
+Examples of valid literals: `0`, `123`, `-17`, `00987`, `0xef`, `0xEF`, `0x0`, `-0xfFAb`, `0x0001`, `-0`, and `-0x0`.
 
 ## 문자열 리터럴
 
-FunC의 문자열은 `"this is a string"`처럼 큰따옴표 `"`로 감싸집니다. `\n`과 같은 특수 문자나 여러 줄 문자열은 지원되지 않습니다.
-선택적으로, 문자열 리터럴은 `"string"u`와 같이 그 뒤에 타입을 지정할 수 있습니다.
+In FunC, strings are enclosed in double quotes `"`, like `"this is a string"`.<br />
+You can optionally specify a type after the string literal, such as `"string"u`.<br />
+Special characters like `\n` are not supported, but you can create multi-line <br />  strings simply by writing the text across multiple lines, like this:
 
-다음과 같은 문자열 타입들이 지원됩니다:
+```
+;; somewhere inside of a function body
 
-- 타입 없음—asm 함수 정의와 ASCII 문자열로 슬라이스 상수를 정의하는 데 사용됨
-- `s`—내용으로 원시 슬라이스 상수를 정의 (16진수로 인코딩되고 선택적으로 비트 패딩됨)
-- `a`—지정된 주소로부터 `MsgAddressInt` 구조를 포함하는 슬라이스 상수를 생성
-- `u`—제공된 ASCII 문자열의 16진수 값에 해당하는 int 상수를 생성
-- `h`—문자열의 SHA256 해시의 처음 32비트인 int 상수를 생성
-- `H`—문자열의 SHA256 해시의 모든 256비트인 int 상수를 생성
-- `c`—문자열의 crc32 값인 int 상수를 생성
+var a = """
+   hash me baby one more time
+"""h;
+var b = a + 42;
 
-예를 들어, 다음 값들은 해당하는 상수로 변환됩니다:
+b; ;; 623173419
+```
 
-- `"string"`은 `x{737472696e67}` 슬라이스 상수가 됨
-- `"abcdef"s`는 `x{abcdef}` 슬라이스 상수가 됨
-- `"Ef8zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM0vF"a`는 `x{9FE6666666666666666666666666666666666666666666666666666666666666667_}` 슬라이스 상수가 됨 (`addr_std$10 anycast:none$0 workchain_id:int8=0xFF address:bits256=0x33...33`)
-- `"NstK"u`는 `0x4e73744b` int 상수가 됨
-- `"transfer(slice, int)"h`는 `0x7a62e8a8` int 상수가 됨
-- `"transfer(slice, int)"H`는 `0x7a62e8a8ebac41bd6de16c65e7be363bc2d2cbc6a0873778dead4795c13db979` int 상수가 됨
-- `"transfer(slice, int)"c`는 `2235694568` int 상수가 됨
+FunC supports the following string types:
 
-## 식별자
+- without type – Used for `asm` function definitions and defining a slice constant from an ASCII string.
+- `s`— Defines a raw slice constant using its contents (hex-encoded and optionally bit-padded).
+- `a`— Creates a slice constant containing a `MsgAddressInt` structure from a given address.
+- `u`— Converts an ASCII string into an integer constant, representing its hex values.
+- `h`— Generates an integer constant from the first 32 bits of the string's SHA-256 hash.
+- `H`— Generates an integer constant from the full 256-bit SHA-256 hash of the string.
+- `c`— Generates an integer constant from the `crc32` value of the string.
 
-FunC는 매우 넓은 범위의 식별자(함수와 변수 이름)를 허용합니다. 즉, 특수 문자 `;`, `,`, `(`, `)`, ` `(공백이나 탭), `~`, `.`를 포함하지 않고, 주석이나 문자열 리터럴(`"`)로 시작하지 않으며, 숫자 리터럴이 아니고, 밑줄 `_`이 아니며, 키워드가 아닌 모든 (한 줄) 문자열은 유효한 식별자입니다(`` ` ``로 시작하는 경우 같은 `` ` ``로 끝나야 하고 이 두 개를 제외한 다른 `` ` ``를 포함할 수 없다는 예외가 있습니다).
+**Examples**
+The following string literals produce these corresponding constants:
 
-또한, 함수 정의에서 함수 이름은 `.` 또는 `~`로 시작할 수 있습니다.
+- `"string"`  &rarr;  `x{737472696e67}` (slice constant)
+- `"abcdef"s` &rarr; `x{abcdef}` (slice constant)
+- `"Ef8zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM0vF"a` &rarr; `x{9FE6666666666666666666666666666666666666666666666666666666666666667_}` (slice constant representing an: `addr_std$10 anycast:none$0 workchain_id:int8=0xFF address:bits256=0x33...33`)
+- `"NstK"u` &rarr; `0x4e73744b` (integer constant)
+- `"transfer(slice, int)"h` &rarr; `0x7a62e8a8` (integer constant)
+- `"transfer(slice, int)"H` &rarr; `0x7a62e8a8ebac41bd6de16c65e7be363bc2d2cbc6a0873778dead4795c13db979` (integer constant)
+- `"transfer(slice, int)"c` &rarr; `2235694568` (integer constant)
 
-예를 들어, 다음은 유효한 식별자들입니다:
+## Identifiers
+
+FunC allows a broad range of identifiers for functions and variable names.
+Any **single-line string** that meets the following conditions qualifies as a valid identifier:
+
+- It **does not** contain special symbols: `;`, `,`, `(`, `)`, `[`, `]`, spaces including tabs, `~`, and `.`.
+- It **does not** start as a comment or a string literal (i.e., with `"` at the beginning).
+- It is **not** a number literal.
+- It is **not** an underscore `_`.
+- It is **not** a reserved keyword. Exception: if it starts with a backtick `` ` ``, it must also end with a backtick and cannot contain any additional backticks inside.
+- It is **not** a name of a [builtin](https://github.com/ton-blockchain/ton/blob/5c392e0f2d946877bb79a09ed35068f7b0bd333a/crypto/func/builtins.cpp#L1133).
+
+Additionally, **function** names in function definitions can start with `.` or `~`.
+
+Examples of valid identifiers:
 
 - `query`, `query'`, `query''`
 - `elem0`, `elem1`, `elem2`
@@ -46,22 +69,30 @@ FunC는 매우 넓은 범위의 식별자(함수와 변수 이름)를 허용합�
 - `message_found?`
 - `get_pubkeys&signatures`
 - `dict::udict_set_builder`
-- `_+_` (전위 표기법에서 `(int, int) -> int` 타입의 표준 덧셈 연산자, 이미 정의되어 있지만)
+- `_+_` (the standard addition operator for `(int, int) -> int` in prefix notation, although it is already defined).
 - `fatal!`
 
-변수 이름 끝의 `'`는 관례적으로 기존 값의 수정된 버전이 도입될 때 사용됩니다. 예를 들어, 해시맵 조작을 위한 거의 모든 수정 내장 프리미티브들(`~` 접두사가 있는 것들 제외)은 해시맵을 받아서 필요한 경우 다른 데이터와 함께 새로운 버전의 해시맵을 반환합니다. 이러한 값들은 같은 이름에 `'`를 붙여 명명하는 것이 편리합니다.
+**Naming conventions:**
 
-접미사 `?`는 보통 불리언 변수(TVM은 내장 불 타입을 가지고 있지 않습니다; 불은 정수로 표현됩니다: 0은 거짓이고 -1은 참)나 보통 연산의 성공을 나타내는 플래그를 반환하는 함수([stdlib.fc](/v3/documentation/smart-contracts/func/docs/stdlib)의 `udict_get?`와 같은)에 사용됩니다.
+- **Apostrophe `'` at the end:** used when a variable is a modified version of its original value.
 
-다음은 유효하지 않은 식별자들입니다:
+  - Example:
+    almost all modifying built-in primitives for hashmap manipulation
+    (except those with the prefix `~`) return a new version of the hashmap, often with extra data.
+    The updated version is typically named with the same identifier, adding a `'` suffix.
 
-- `take(first)Entry`
-- `"not_a_string`
-- `msg.sender`
-- `send_message,then_terminate`
-- `_`
+- **Question mark (?) at the end:** typically used for boolean variables or functions that return a success flag.
+  - Example: `udict_get?` from [stdlib.fc](/v3/documentation/smart-contracts/func/docs/stdlib), which checks if a value exists.
 
-더 특이한 유효한 식별자의 예시들:
+**Invalid identifiers:**
+
+- `take(first)Entry` - contains parentheses `()`
+- `"not_a_string` - starts with a `"` like a string literal
+- `msg.sender` - includes a `.` which is not allowed
+- `send_message,then_terminate` - contains a `,` which is not allowed
+- `_` - just an underscore, which is not valid on its own
+
+**Less common but valid identifiers:**
 
 - `123validname`
 - `2+2=2*2`
@@ -70,35 +101,48 @@ FunC는 매우 넓은 범위의 식별자(함수와 변수 이름)를 허용합�
 - `{hehehe}`
 - ``pa{--}in"`aaa`"``
 
-다음도 유효하지 않은 식별자들입니다:
+**More invalid identifiers:**
 
-- ``pa;;in"`aaa`"`` (`;`가 금지되어 있기 때문에)
-- `{-aaa-}`
-- `aa(bb`
-- `123` (이는 숫자입니다)
+- ``pa;;in"`aaa`"`` - contains `;`, which is prohibited
+- `{-aaa-}` - contains `{}` incorrectly
+- `aa(bb` - contains an opening parenthesis without closing it
+- `123` - a number literal, not an identifier
 
-또한, FunC는 백틱 `` ` ``으로 감싸지는 특별한 종류의 식별자를 가지고 있습니다.
-따옴표 안에서는 `\n`과 따옴표 자체를 제외한 모든 문자가 허용됩니다.
+**Special identifiers in backticks:**
 
-예를 들어, `` `I'm a variable too` ``는 `` `any symbols ; ~ () are allowed here...` ``와 마찬가지로 유효한 식별자입니다.
+FunC allows identifiers enclosed in backticks `` ` ``. These identifiers can contain any characters except:
 
-## 상수
+- Newline characters `\n`
+- Backticks `` ` `` themselves except the opening and closing ones.
 
-FunC는 컴파일 중에 대체되고 미리 계산되는 컴파일 타임 상수를 정의할 수 있게 합니다.
+**Examples of valid backtick-quoted identifiers:**
 
-상수는 `const optional-type identifier = value-or-expression;`로 정의됩니다.
+- `I'm a variable too`
+- `any symbols ; ~ () are allowed here...`
 
-`optional-type`은 특정 상수 타입을 강제하고 더 나은 가독성을 위해 사용될 수 있습니다.
+## Constants
 
-현재로서는 `int`와 `slice` 타입이 지원됩니다.
+FunC allows defining **compile-time constants** that are substituted and pre-computed during compilation.
 
-`value-or-expression`은 리터럴이나 리터럴과 상수의 미리 계산 가능한 표현식일 수 있습니다.
+**Syntax:**
 
-예를 들어, 상수는 다음과 같이 정의될 수 있습니다:
+```func
+const optional-type identifier = value-or-expression;
+```
 
-- `const int101 = 101;`은 숫자 리터럴 `101`과 동등한 `int101` 상수를 정의함
-- `const str1 = "const1", str2 = "aabbcc"s;`는 해당하는 문자열과 같은 두 상수를 정의함
-- `const int int240 = ((int1 + int2) * 10) << 3;`는 계산 결과와 같은 `int240` 상수를 정의함
-- `const slice str2r = str2;`는 `str2` 상수의 값과 같은 `str2r` 상수를 정의함
+- `optional-type` (e.g., `int` or `slice`) is optional but improves readability and ensures type correctness.
+- `value-or-expression`can be a literal or a pre-computable expression involving literals and constants.
 
-숫자 상수는 컴파일 중에 대체되므로, 컴파일 중에 수행되는 모든 최적화와 사전 계산이 성공적으로 수행됩니다(인라인 asm `PUSHINT`를 통한 옛 방식의 상수 정의와는 달리).
+**Example usage:**
+
+```func
+const int101 = 101;                 // Numeric constant
+const str1 = "const1", str2 = "aabbcc"s; // String constants
+const int int240 = ((int1 + int2) * 10) << 3; // Computed constant
+const slice str2r = str2;           // Constant referencing another constant
+```
+
+Since numeric constants are replaced during compilation,
+all optimizations and pre-computations apply efficiently—unlike the older approach using inline `PUSHINT` assembly.
+
+<Feedback />
