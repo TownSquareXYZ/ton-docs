@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # اصول یک آموزش خوب
+
+:::danger
+This page is outdated and will be updated soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 نظر اصلی با این اصول توسط [talkol](https://github.com/talkol):
 
@@ -25,3 +32,5 @@
 8. مخزن باید اسکریپت‌های کامپایل/راه‌اندازی آسان و قابل‌فهم خود را داشته باشد. کاربر باید بتواند فقط با `npm install` از آن‌ها استفاده کند.
 
 9. گاهی اوقات یک مخزن GitHub کافی است و نیازی به نوشتن یک مقاله کامل نیست. فقط یک README با تمام کدی که نیاز دارید در مخزن قرار دارد. در این حالت، کد باید به خوبی توضیح داده شود تا کاربر بتواند به راحتی آن را بخواند و درک کند.
+ <Feedback />
+
