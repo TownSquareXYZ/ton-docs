@@ -1,25 +1,27 @@
+import Feedback from '@site/src/components/Feedback';
+
 import ThemedImage from '@theme/ThemedImage';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import { BlockMath, InlineMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 
-# TON 요리책
+# TON cookbook
 
-제품 개발 중에는 TON의 다양한 컨트랙트와의 상호작용에 대한 여러 가지 질문이 자주 발생합니다.
-
-이 문서는 모든 개발자의 모범 사례를 수집하고 모두와 공유하기 위해 만들어졌습니다.
+During product development, various questions often arise regarding interactions with different contracts on TON. This document aims to gather the best practices from developers and share them with the community.
 
 ## 컨트랙트 주소 작업하기
 
 ### 주소를 변환하고(사용자 친화적 <-> raw), 조립하고, 문자열에서 추출하는 방법은?
 
-TON 주소는 블록체인에서 컨트랙트를 고유하게 식별하며, 워크체인과 원래 상태 해시를 나타냅니다. [두 가지 일반적인 형식](/v3/documentation/smart-contracts/addresses#raw-and-user-friendly-addresses)이 사용됩니다: **raw**(":"로 구분된 워크체인과 HEX로 인코딩된 해시)와 **사용자 친화적**(특정 플래그가 있는 base64로 인코딩된) 형식입니다.
+TON addresses uniquely identify contracts on the blockchain, indicating their workchain and original state hash. [Two common formats](/v3/documentation/smart-contracts/addresses#raw-and-user-friendly-addresses) are: **raw** (workchain and HEX-encoded hash separated by the ":" character) and **user-friendly** (base64-encoded with certain flags).
 
 ```
 User-friendly: EQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPrHF
 Raw: 0:ca6e321c7cce9ecedf0a8ca2492ec8592494aa5fb5ce0387dff96ef6af982a3e
 ```
 
-SDK에서 문자열로부터 주소 객체를 얻으려면 다음 코드를 사용할 수 있습니다:
+To obtain a TON address object from a string in your SDK, you can use the following code:
 
 <Tabs groupId="code-examples">
 <TabItem value="js-ton" label="JS (@ton)">
@@ -108,9 +110,9 @@ print(address2.to_str(is_user_friendly=False))  # 0:ca6e321c7cce9ecedf0a8ca2492e
 </TabItem>
 </Tabs>
 
-### 사용자 친화적 주소에는 어떤 플래그가 있나요?
+### Flags in user-friendly addresses
 
-**바운스 가능**/**바운스 불가능**과 **테스트넷**/**모든 넷**의 두 가지 플래그가 정의됩니다. 주소의 첫 글자를 보면 쉽게 감지할 수 있습니다. 첫 글자는 주소 인코딩의 처음 6비트를 나타내며, [TEP-2](https://github.com/ton-blockchain/TEPs/blob/master/text/0002-address.md#smart-contract-addresses)에 따라 거기에 플래그가 위치하기 때문입니다:
+There are two flags in user-friendly addresses: **bounceable**/**non-bounceable** and **testnet**/**any-net**. These flags are represented in the first character of the address, which corresponds to the first 6 bits of the address encoding. These flags can be detected by looking at the first character, according to [TEP-2](https://github.com/ton-blockchain/TEPs/blob/master/text/0002-address.md#smart-contract-addresses):
 
 |    주소 시작   |    이진 형식   |  바운스 가능 |   테스트넷 전용   |
 | :--------: | :--------: | :-----: | :---------: |
@@ -120,10 +122,10 @@ print(address2.to_str(is_user_friendly=False))  # 0:ca6e321c7cce9ecedf0a8ca2492e
 | 0...       | 110100.01  | 아니오     |   예         |
 
 :::tip
-테스트넷 전용 플래그는 블록체인에서 전혀 표현되지 않습니다. 바운스 불가능 플래그는 전송의 목적지 주소로 사용될 때만 차이를 만듭니다: 이 경우, 보낸 메시지에 대해 [바운스를 허용하지 않습니다](/v3/documentation/smart-contracts/message-management/non-bounceable-messages). 블록체인의 주소는 이 플래그를 포함하지 않습니다.
+The testnet-only flag does not appear in the blockchain. The non-bounceable flag only affects message transfers: when used as a destination, it prevents the message from being bounced.
 :::
 
-또한 일부 라이브러리에서는 `urlSafe`라는 직렬화 매개변수를 볼 수 있습니다. base64 형식은 URL에 안전하지 않습니다. 즉, 일부 문자(즉, `+`와 `/`)가 링크로 주소를 전송할 때 문제를 일으킬 수 있습니다. `urlSafe = true`일 때는 모든 `+` 기호가 `-`로, 모든 `/` 기호가 `_`로 대체됩니다. 다음 코드를 사용하여 이러한 주소 형식을 얻을 수 있습니다:
+Also, in some libraries, you may notice a serialization parameter called `urlSafe`. Тhe base64 format is not URL safe, which means that some characters (namely, `+` and `/`) can cause issues when transmitting an address in a link. When `urlSafe = true`, all `+` symbols are replaced with `-`, and all `/` symbols are replaced with `_`. You can obtain these address formats using the following code:
 
 <Tabs groupId="code-examples">
 <TabItem value="js-ton" label="JS (@ton)">
@@ -205,7 +207,7 @@ print(address.to_str(is_user_friendly=True, is_bounceable=False, is_url_safe=Tru
 </TabItem>
 </Tabs>
 
-### TON 주소의 유효성을 어떻게 확인하나요?
+### How to check the validity of a TON address?
 
 <Tabs groupId="address-examples">
 
@@ -267,9 +269,9 @@ try {
 </TabItem>
 </Tabs>
 
-## TON 생태계의 표준 지갑들
+## Standard wallets in TON Ecosystem
 
-### TON을 전송하는 방법? 다른 지갑에 텍스트 메시지를 보내는 방법?
+### How to transfer TON and send a text message to another wallet
 
 #### 메시지 보내기
 
@@ -299,12 +301,12 @@ try {
 </div>
 <br></br>
 
-대부분의 SDK는 다음과 같은 지갑에서 메시지를 보내는 과정을 제공합니다:
+Most SDKs follow a similar process for sending messages from your wallet:
 
-- 올바른 버전의 지갑 래퍼(프로그램의 객체)를 만듭니다(대부분의 경우 v3r2; [지갑 버전](/v3/documentation/smart-contracts/contracts-specs/wallet-contracts) 참조). 비밀 키와 워크체인을 사용합니다(보통 0으로, 이는 [베이스체인](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains#workchain-blockchain-with-your-own-rules)을 나타냅니다).
-- 또한 블록체인 래퍼나 "클라이언트" - API나 라이트서버에 요청을 라우팅할 객체를 만듭니다.
-- 그런 다음 블록체인 래퍼에서 컨트랙트를 _열기_합니다. 이는 컨트랙트 객체가 더 이상 추상적이지 않고 TON 메인넷이나 테스트넷의 실제 계정을 나타낸다는 의미입니다.
-- 그 후에는 원하는 메시지를 만들고 보낼 수 있습니다. [고급 매뉴얼](/v3/guidelines/smart-contracts/howto/wallet#sending-multiple-messages-simultaneously)에 설명된 대로 요청당 최대 4개의 메시지를 보낼 수도 있습니다.
+- Create a wallet wrapper (object) of the correct version, typically v3r2 (see also [wallet versions](/v3/documentation/smart-contracts/contracts-specs/wallet-contracts)), your secret key and workchain (usually 0 for the [BaseChain](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains#workchain-blockchain-with-your-own-rules)).
+- Create a blockchain wrapper (or "client")—an object that routes requests to the API or lite servers, depending on your setup.
+- **Open** the contract in the blockchain wrapper. This ensures that the contract object is linked to an actual account on either the TON Mainnet or Testnet.
+- Form messages you want to send and initiate the transaction. You can send up to 4 messages per request, as detailed in the [advanced manual](/v3/guidelines/smart-contracts/howto/wallet#sending-multiple-messages-simultaneously).
 
 <Tabs groupId="code-examples">
 <TabItem value="js-ton-v4" label="JS (@ton) for Wallet V4">
@@ -450,7 +452,7 @@ asyncio.run(main())
 
 ### 코멘트 작성하기: 스네이크 형식의 긴 문자열
 
-때로는 긴 문자열(또는 다른 큰 정보)을 저장해야 할 필요가 있지만 셀은 **최대 1023비트**만 보유할 수 있습니다. 이 경우에는 스네이크 셀을 사용할 수 있습니다. 스네이크 셀은 다른 셀에 대한 참조를 포함하는 셀이며, 그 셀은 다시 다른 셀에 대한 참조를 포함하는 식입니다.
+Sometimes, it's necessary to store large strings in cells, but the maximum size for a cell is 1023 bits. In these cases, you can use snake cells, which reference other cells recursively.
 
 <Tabs groupId="code-examples">
 <TabItem value="js-tonweb" label="JS (tonweb)">
@@ -490,18 +492,18 @@ console.log(text);
 </TabItem>
 </Tabs>
 
-많은 SDK에는 이미 긴 문자열을 파싱하고 저장하는 기능이 있습니다. 다른 SDK에서는 재귀를 사용하거나 "tail calls"라고 알려진 트릭을 사용하여 이러한 셀을 다룰 수 있습니다.
+Many SDKs already offer functions to parse and store long strings in this format. Alternatively, you can use recursion to handle these strings or optimize with "tail calls."
 
-코멘트 메시지의 앞에 32개의 0비트가 있다는 것을 잊지 마세요(opcode가 0이라고 할 수 있습니다)!
+Don't forget that the comment message in a snake cell has 32 zero bits (i.e., its opcode is 0).
 
-## TEP-74 (Jettons 표준)
+## TEP-74 (jettons standard)
 
-### 사용자의 Jetton 지갑 주소를 어떻게 계산하나요(오프체인)?
+### How to calculate the user's jetton wallet address (offchain)?
 
-사용자의 jetton 지갑 주소를 계산하기 위해서는 실제로 사용자 주소를 가진 jetton 마스터 컨트랙트의 "get_wallet_address" get-메소드를 호출해야 합니다. 이 작업을 위해 JettonMaster의 getWalletAddress 메소드를 쉽게 사용하거나 직접 마스터 컨트랙트를 호출할 수 있습니다.
+To calculate a user’s jetton wallet address, use the `get_wallet_address` method from the jetton master contract with the user's address. You can also call the master contract directly, or use the getWalletAddress method provided in the JettonMaster SDK.
 
 :::info
-`@ton/ton`의 `JettonMaster`는 많은 기능이 부족하지만 다행히도 _이 기능_은 있습니다.
+The `JettonMaster` in `@ton/ton` provides this functionality, although it lacks other features.
 :::
 
 <Tabs groupId="code-examples">
@@ -615,17 +617,17 @@ asyncio.run(main())
 
 </Tabs>
 
-### 사용자의 Jetton 지갑 주소를 어떻게 계산하나요(오프라인)?
+### How to calculate a user's jetton wallet address (offline)?
 
-지갑 주소를 얻기 위해 매번 GET 메소드를 호출하는 것은 많은 시간과 리소스가 필요할 수 있습니다. Jetton 지갑 코드와 그 저장소 구조를 미리 알고 있다면, 네트워크 요청 없이 지갑 주소를 얻을 수 있습니다.
+Calling the GET method every time to retrieve the wallet address can be slow and resource-intensive. If you know the jetton wallet code and storage structure, you can calculate the wallet address without making network requests.
 
-Tonviewer를 사용하여 코드를 얻을 수 있습니다. 예를 들어 `jUSDT`를 예로 들어보겠습니다. Jetton Master 주소는 `EQBynBO23ywHy_CgarY9NK9FTz0yDsG82PtcbSTQgGoXwiuA`입니다. [이 주소로 가서](https://tonviewer.com/EQBynBO23ywHy_CgarY9NK9FTz0yDsG82PtcbSTQgGoXwiuA?section=method) Methods 탭을 열면 이미 `get_jetton_data` 메소드가 있는 것을 볼 수 있습니다. 이를 호출하면 Jetton 지갑 코드가 있는 셀의 hex 형식을 얻을 수 있습니다:
+For example, using Tonviewer, you can get the jetton master contract address (e.g., `EQBynBO23ywHy_CgarY9NK9FTz0yDsG82PtcbSTQgGoXwiuA`). If we [go to this address](https://tonviewer.com/EQBynBO23ywHy_CgarY9NK9FTz0yDsG82PtcbSTQgGoXwiuA?section=method) and open the Methods tab, we can see that there is already a `get_jetton_data` method there. By calling it, we can get the hex form of the cell with the jetton wallet code:
 
 ```
 b5ee9c7201021301000385000114ff00f4a413f4bcf2c80b0102016202030202cb0405001ba0f605da89a1f401f481f481a9a30201ce06070201580a0b02f70831c02497c138007434c0c05c6c2544d7c0fc07783e903e900c7e800c5c75c87e800c7e800c1cea6d0000b4c7c076cf16cc8d0d0d09208403e29fa96ea68c1b088d978c4408fc06b809208405e351466ea6cc1b08978c840910c03c06f80dd6cda0841657c1ef2ea7c09c6c3cb4b01408eebcb8b1807c073817c160080900113e910c30003cb85360005c804ff833206e953080b1f833de206ef2d29ad0d30731d3ffd3fff404d307d430d0fa00fa00fa00fa00fa00fa00300008840ff2f00201580c0d020148111201f70174cfc0407e803e90087c007b51343e803e903e903534544da8548b31c17cb8b04ab0bffcb8b0950d109c150804d50500f214013e809633c58073c5b33248b232c044bd003d0032c032481c007e401d3232c084b281f2fff274013e903d010c7e800835d270803cb8b13220060072c15401f3c59c3e809dc072dae00e02f33b51343e803e903e90353442b4cfc0407e80145468017e903e9014d771c1551cdbdc150804d50500f214013e809633c58073c5b33248b232c044bd003d0032c0325c007e401d3232c084b281f2fff2741403f1c147ac7cb8b0c33e801472a84a6d8206685401e8062849a49b1578c34975c2c070c00870802c200f1000aa13ccc88210178d4519580a02cb1fcb3f5007fa0222cf165006cf1625fa025003cf16c95005cc2391729171e25007a813a008aa005004a017a014bcf2e2c501c98040fb004300c85004fa0258cf1601cf16ccc9ed5400725269a018a1c882107362d09c2902cb1fcb3f5007fa025004cf165007cf16c9c8801001cb0527cf165004fa027101cb6a13ccc971fb0050421300748e23c8801001cb055006cf165005fa027001cb6a8210d53276db580502cb1fcb3fc972fb00925b33e24003c85004fa0258cf1601cf16ccc9ed5400eb3b51343e803e903e9035344174cfc0407e800870803cb8b0be903d01007434e7f440745458a8549631c17cb8b049b0bffcb8b0b220841ef765f7960100b2c7f2cfc07e8088f3c58073c584f2e7f27220060072c148f3c59c3e809c4072dab33260103ec01004f214013e809633c58073c5b3327b55200087200835c87b51343e803e903e9035344134c7c06103c8608405e351466e80a0841ef765f7ae84ac7cbd34cfc04c3e800c04e81408f214013e809633c58073c5b3327b5520
 ```
 
-이제 Jetton 지갑 코드, Jetton Master 주소, 그리고 보관소 구조를 알고 있으므로 수동으로 지갑 주소를 계산할 수 있습니다:
+Knowing the jetton wallet code and its storage structure, you can manually compute the wallet address.
 
 <Tabs groupId="code-examples">
 <TabItem value="js-ton" label="JS (@ton/ton)">
@@ -697,11 +699,11 @@ def calculate_jetton_address(
 </TabItem>
 </Tabs>
 
-대부분의 주요 토큰들은 [TEP-74 표준의 표준 구현](https://github.com/ton-blockchain/token-contract/blob/main/ft/jetton-wallet.fc)을 사용하기 때문에 다른 저장소 구조를 가지고 있지 않습니다. 예외는 중앙화된 스테이블코인을 위한 새로운 [Jetton-with-governance 컨트랙트](https://github.com/ton-blockchain/stablecoin-contract)입니다. 이들의 차이점은 [지갑 상태 필드의 존재와 보관소에서의 코드 셀의 부재](https://github.com/ton-blockchain/stablecoin-contract/blob/7a22416d4de61336616960473af391713e100d7b/contracts/jetton-utils.fc#L3-L12)입니다.
+Major tokens typically use a standard implementation of the [ TEP-74 standard](https://github.com/ton-blockchain/token-contract/blob/main/ft/jetton-wallet.fc), except the new [Jetton-with-governance contracts](https://github.com/ton-blockchain/stablecoin-contract) for centralized stablecoins. The difference is [the presence of a wallet status field and the absence of a code cell in the vault](https://github.com/ton-blockchain/stablecoin-contract/blob/7a22416d4de61336616960473af391713e100d7b/contracts/jetton-utils.fc#L3-L12).
 
 ### 코멘트가 있는 jetton 전송을 위한 메시지를 어떻게 구성하나요?
 
-토큰 전송을 위한 메시지를 구성하는 방법을 이해하기 위해서는 토큰 표준을 설명하는 [TEP-74](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md#1-transfer)를 사용합니다.
+When constructing a message for a jetton transfer, refer to [TEP-74](https://github.com/ton-blockchain/TEPs/blob/master/text/0074-jettons-standard.md#1-transfer), which defines the token standard.
 
 #### Jettons 전송하기
 
@@ -718,7 +720,7 @@ def calculate_jetton_address(
 <br></br>
 
 :::warning
-When displayed, token doesn't usually show count of indivisible units user has; rather, amount is divided by `10 ^ decimals`. This value is commonly set to `9`, and this allows us to use `toNano` function. If decimals were different, we would **need to multiply by a different value** (for instance, if decimals are 6, then we would end up transferring thousand times the amount we wanted).
+When displaying token amounts, they are usually divided by `10^decimals` (often `9 decimals`). This allows for the use of the `toNano` function. If the number of decimals is different (e.g., 6), you will need to adjust accordingly.
 
 물론 항상 불가분 단위로 계산할 수도 있습니다.
 :::
@@ -874,27 +876,26 @@ asyncio.run(main())
 
 </Tabs>
 
-`forward_amount`가 0이 아닌 경우, 이 섹션의 상단에 있는 도식에서 볼 수 있듯이 목적지 컨트랙트로 jetton 수신에 대한 알림이 전송됩니다. `response_destination` 주소가 null이 아닌 경우, 남은 toncoins(이를 "excesses"라고 함)가 그 주소로 보내집니다.
+If the `forward_amount` is nonzero, a notification about the Jetton reception will be sent to the destination contract. Additionally, if the `response_destination` address is non-null, excess Toncoins (called "excesses") will be sent to that address.
 
 :::tip
-익스플로러는 일반 TON 전송과 마찬가지로 jetton 알림의 코멘트도 지원합니다. 형식은 32개의 0비트와 그 다음에 텍스트(가급적 UTF-8)입니다.
+Explorers support comments in Jetton notifications, similar to regular TON transfers. Comments are formatted as 32 zero bits followed by UTF-8 text.
 :::
 
 :::tip
-Jetton 전송에는 수수료와 나가는 메시지 뒤의 금액에 대한 신중한 고려가 필요합니다. 예를 들어, 0.2 TON으로 전송을 "호출"하면 0.1 TON을 전달하고 excess 반환 메시지로 0.1 TON을 받을 수 없습니다.
+Be careful when calculating fees and amounts for jetton transfer messages. For instance, transferring 0.2 TON with no excess may prevent you from receiving 0.1 TON in a response.
 :::
 
-## TEP-62 (NFT 표준)
+## TEP-62 (NFT standard)
 
-NFT 컬렉션은 매우 다양합니다. 실제로 TON의 NFT 컨트랙트는 "적절한 get-메소드를 가지고 있고 유효한 메타데이터를 반환하는 컨트랙트"로 정의될 수 있습니다. 전송 작업은 표준화되어 있고 [jetton의 것](/v3/guidelines/dapps/cookbook#how-to-construct-a-message-for-a-jetton-transfer-with-a-comment)과 매우 유사하므로, 이것에 대해서는 자세히 다루지 않고 대신 만날 수 있는 대부분의 컬렉션이 제공하는 추가 기능들을 살펴보겠습니다!
-
+NFT collections on TON are highly customizable. The NFT contract can be defined as any contract that provides a valid get-method to return metadata. The transfer operation is standardized similarly to [Jettons](/v3/guidelines/dapps/cookbook#how-to-construct-a-message-for-a-jetton-transfer-with-a-comment).
 :::warning
-주의사항: NFT에 대한 아래의 모든 메소드는 TEP-62에 의해 작동이 강제되지 않습니다. 이들을 시도하기 전에 NFT나 컬렉션이 예상대로 그러한 메시지를 처리할 것인지 확인하세요. 이 경우 지갑 앱 에뮬레이션이 유용할 수 있습니다.
+Reminder: all methods about NFT below are not bound by TEP-62 to work. Before trying them, check if your NFT or collection process those messages in an expected way. The wallet app emulation may be useful in this case.
 :::
 
-### NFT 일괄 배포를 어떻게 사용하나요?
+### How to use NFT batch deployment?
 
-컬렉션을 위한 스마트 컨트랙트는 단일 트랜잭션에서 최대 250개의 NFT를 배포할 수 있습니다. 하지만 1 ton의 계산 수수료 한도 때문에 실제로는 이 최대값이 100-130개의 NFT 정도라는 점을 고려해야 합니다. 이를 달성하기 위해서는 새로운 NFT에 대한 정보를 딕셔너리에 저장해야 합니다.
+NFT collection smart contracts allow batch deployment of up to 250 NFTs in a single transaction. However, due to the 1 TON computation fee limit, this number is practically reduced to 100-130 NFTs.
 
 #### NFT 일괄 발행하기
 
@@ -945,7 +946,7 @@ async function main() {
 </TabItem>
 </Tabs>
 
-먼저, 저장소 수수료를 위한 TON의 최소 금액이 `0.05`라고 가정해봅시다. 이는 NFT를 배포한 후 컬렉션의 스마트 컨트랙트가 이 만큼의 TON을 잔액으로 보낸다는 의미입니다. 다음으로 새로운 NFT의 소유자와 그들의 콘텐츠가 있는 배열을 얻습니다. 그 후에 GET 메소드 `get_collection_data`를 사용하여 `next_item_index`를 얻습니다.
+To deploy a batch, the contract stores information about new NFTs in a dictionary. The process involves: setting up storage fees (e.g., `0.05`), obtaining arrays with the new NFT owners and content, retrieving the `next_item_index` using the `get_collection_data` method.
 
 <Tabs groupId="code-examples">
 <TabItem value="js-ton" label="JS (@ton)">
@@ -1010,7 +1011,7 @@ main().finally(() => console.log("Exiting..."));
 
 ### 컬렉션 스마트 컨트랙트의 소유자를 어떻게 변경하나요?
 
-컬렉션의 소유자를 변경하는 것은 매우 간단합니다. **opcode = 3**, 임의의 query_id, 그리고 새로운 소유자의 주소를 지정하기만 하면 됩니다:
+Changing the owner of a collection is simple. Specify the `opcode = 3`, any `query_id`, and the new owner’s address.
 
 <Tabs groupId="code-examples">
 <TabItem value="js-ton" label="JS (@ton)">
@@ -1089,9 +1090,14 @@ main().finally(() => console.log("Exiting..."));
 
 ### 컬렉션 스마트 컨트랙트의 콘텐츠를 어떻게 변경하나요?
 
-스마트 컨트랙트의 컬렉션 콘텐츠를 변경하려면 어떻게 저장되어 있는지 이해해야 합니다. 컬렉션은 모든 콘텐츠를 단일 셀에 저장하며, 그 안에는 두 개의 셀이 있습니다: **컬렉션 콘텐츠**와 **NFT 공통 콘텐츠**. 첫 번째 셀은 컬렉션의 메타데이터를 포함하고, 두 번째 셀은 NFT 메타데이터를 위한 기본 URL을 포함합니다.
+The content of an NFT collection contract is stored in a single cell, which includes two parts:
 
-종종 컬렉션의 메타데이터는 `0.json`과 유사한 형식으로 저장되고 증가하며, 이 파일 앞의 주소는 동일하게 유지됩니다. NFT 공통 콘텐츠에 저장되어야 하는 것이 바로 이 주소입니다.
+- сollection metadata
+- NFT common content (base URL for metadata)
+
+The first cell contains the collection's metadata, while the second one contains the base URL for the NFT metadata.
+
+Often, the collection's metadata is stored in a format similar to `0.json` and continues incrementing, while the address before this file remains the same. This address should be stored in the NFT common content.
 
 <Tabs groupId="code-examples">
 <TabItem value="js-ton" label="JS (@ton)">
@@ -1211,17 +1217,17 @@ main().finally(() => console.log("Exiting..."));
 </TabItem>
 </Tabs>
 
-추가로, 로열티 정보를 메시지에 포함해야 합니다. 이들도 이 opcode를 사용하여 변경되기 때문입니다. 모든 값에 새로운 값을 지정할 필요가 없다는 것을 알아두는 것이 중요합니다. 예를 들어, NFT 공통 콘텐츠만 변경하려면 다른 모든 값을 이전과 동일하게 지정할 수 있습니다.
+When updating NFT metadata or content, royalty information must also be included, especially when using the appropriate opcode to modify this data. It’s important to remember that you don’t need to update all values if only certain elements are changing. For instance, if the only change is to the NFT common content, the other data remains the same and can be reused without modification.
 
-## 서드파티: 탈중앙화 거래소 (DEX)
+## Third-party: decentralized exchanges (DEX)
 
 ### DEX(DeDust)에 스왑 메시지를 어떻게 보내나요?
 
-DEX는 작업을 위해 다른 프로토콜을 사용합니다. 이 예제에서는 **DeDust**와 상호작용할 것입니다.
+DEXs (Decentralized Exchanges) operate using various protocols. In this section, we will focus on **DeDust**, a decentralized exchange built on TON.
 
 - [DeDust 문서](https://docs.dedust.io/).
 
-DeDust에는 두 가지 교환 경로가 있습니다: jetton <-> jetton 또는 TON <-> jetton입니다. 각각 다른 구조를 가지고 있습니다. 스왑하려면 특정 **vault**에 jettons(또는 toncoin)을 보내고 특별한 페이로드를 제공해야 합니다. 다음은 jetton을 jetton으로 또는 jetton을 toncoin으로 스왑하기 위한 구조입니다:
+DeDust provides two primary paths for exchanging assets: jetton \<-> jetton or TON \<-> jetton. Each has a different scheme. The process involves sending either jettons or Toncoins to specific vaults and including a special payload. Below is the process for both types of swaps:
 
 ```tlb
 swap#e3a0d482 _:SwapStep swap_params:^SwapParams = ForwardPayload;
@@ -1231,9 +1237,8 @@ swap#e3a0d482 _:SwapStep swap_params:^SwapParams = ForwardPayload;
                     fulfill_payload:(Maybe ^Cell) reject_payload:(Maybe ^Cell) = SwapParams;
 ```
 
-이 구조는 jettons 전송 메시지(`transfer#0f8a7ea5`)의 `forward_payload`에 있어야 할 내용을 보여줍니다.
-
-그리고 toncoin에서 jetton으로의 스왑 구조:
+Similarly, when swapping from TON to jetton, a transfer message to the TON vault must be sent, and the swap information will be contained in the forward_payload.
+And the scheme of toncoin to jetton swap:
 
 ```tlb
 swap#ea06185d query_id:uint64 amount:Coins _:SwapStep swap_params:^SwapParams = InMsgBody;
@@ -1254,34 +1259,36 @@ jetton$0001 workchain_id:int8 address:uint256 = Asset; // for jetton
 
 또한 교환 자체를 위해서는 **pool** 주소가 필요합니다 - get 메소드 `get_pool_address`에서 얻습니다. 인수로는 위 구조에 따른 자산 슬라이스를 사용합니다. 응답으로 두 메소드 모두 요청된 **vault** / **pool**의 주소 슬라이스를 반환합니다.
 
-이제 메시지를 만들 수 있습니다.
+This information is sufficient to construct the swap message.
 
 <Tabs groupId="code-examples">
 
 <TabItem value="js-ton" label="JS (@ton)">
-DEX는 작업을 위해 다른 프로토콜을 사용합니다. 우리는 주요 개념과 몇 가지 중요한 구성 요소를 파악해야 하며, 또한 스왑 프로세스를 올바르게 수행하기 위해 관련된 TL-B 스키마를 알아야 합니다. 이 튜토리얼에서는 TON에서 완전히 구현된 유명한 DEX 중 하나인 DeDust를 다룹니다.
-DeDust에서는 스왑 가능한 모든 자산 유형을 포함하는 추상 Asset 개념을 가지고 있습니다. 자산 유형에 대한 추상화는 자산 유형이 중요하지 않고 이 접근 방식에서는 추가 통화나 심지어 다른 체인의 자산도 쉽게 다룰 수 있기 때문에 스왑 프로세스를 단순화합니다.
+DEXs use different protocols for their work, we need to familiarize ourselves with key concepts and some vital components and also know the TL-B schema involved in doing our swap process correctly. In this tutorial, we deal with DeDust, one of the famous DEX implemented entirely in TON.
+DeDust introduced an abstract Asset concept, which includes any swappable asset type, simplifying the process because the type of asset doesn’t matter in the swap. This abstraction allows the exchange of extra currency or even assets from other chains in a straightforward manner.
 
 다음은 DeDust가 Asset 개념을 위해 도입한 TL-B 스키마입니다.
 
 ```tlb
 native$0000 = Asset; // for ton
 
-jetton$0001 workchain_id:int8 address:uint256 = Asset; // for any jetton,address refer to jetton master address
+// for any jetton,address refer to jetton master address
+jetton$0001 workchain_id:int8 address:uint256 = Asset;
 
 // Upcoming, not implemented yet.
 extra_currency$0010 currency_id:int32 = Asset;
 ```
 
-다음으로, DeDust는 Vault, Pool, Factory라는 세 가지 구성 요소를 도입했습니다. 이러한 구성 요소는 컨트랙트나 컨트랙트 그룹이며 스왑 프로세스의 일부를 담당합니다. factory는 다른 구성 요소의 주소(vault와 pool 같은)를 찾고 다른 구성 요소를 구축하는 역할을 합니다.
-Vault는 전송 메시지를 받고, 자산을 보유하고, 해당 pool에 "사용자 A가 100 X를 Y로 스왑하고 싶어한다"고 알리는 역할만 합니다.
+DeDust utilizes three key components for asset swaps:
 
-반면에 Pool은 사전 정의된 공식에 따라 스왑 금액을 계산하고, 자산 Y를 담당하는 다른 Vault에 알리고, 계산된 금액을 사용자에게 지불하라고 지시하는 역할을 합니다.
-스왑 금액의 계산은 수학적 공식을 기반으로 하며, 지금까지 우리는 두 가지 다른 pool을 가지고 있습니다. 하나는 일반적으로 사용되는 "Constant Product" 공식: x _ y = k를 기반으로 하는 Volatile이고, 다른 하나는 거의 동일한 가치를 가진 자산(예: USDT / USDC, TON / stTON)에 최적화된 Stable-Swap입니다. 이는 공식 x3 _ y + y3 \* x = k를 사용합니다.
-따라서 모든 스왑에는 해당하는 Vault가 필요하며, 이는 특정 자산 유형과 상호작용하기 위해 맞춤화된 특정 API만 구현하면 됩니다. DeDust는 세 가지 Vault 구현을 가지고 있습니다: 네이티브 코인(Toncoin)을 처리하는 Native Vault, jettons를 관리하는 Jetton Vault, 그리고 TON extra-currencies를 위해 설계된 Extra-Currency Vault(예정)입니다.
+- Factory: This component locates and constructs the vaults and pools required for the swap.
+- Vault: The vault is responsible for holding assets and receiving transfer messages. When a swap is requested, the vault informs the corresponding pool.
+- Pool: The pool calculates the swap amount based on predefined formulas and informs the vault, which in turn releases the swapped asset to the user.
 
-DeDust는 컨트랙트, 구성 요소, API와 작업하기 위한 특별한 SDK를 제공하며, 이는 typescript로 작성되었습니다.
-이론은 충분합니다. 이제 하나의 jetton을 TON과 스왑하기 위한 환경을 설정해봅시다.
+Calculations of swap amount are based on a mathematical formula, which means so far we have two different pools, one known as Volatile, that operates based on the commonly used "Constant Product" formula: <InlineMath math="x \cdot y = k" />, And the other known as Stable-Swap - Optimized for assets of near-equal value (e.g. USDT / USDC, TON / stTON). It uses the formula: <InlineMath math="x^3 \cdot y + y^3 \cdot x = k" />.
+So for every swap we need the corresponding Vault and it needs just implement a specific API tailored for interacting with a distinct asset type. DeDust has three implementations of Vault, Native Vault - Handles the native coin (Toncoin). Jetton Vault - Manages jettons and Extra-Currency Vault (upcoming) - Designed for TON extra-currencies.
+
+DeDust provides an SDK, written in TypeScript, to interact with the contracts, components, and APIs needed for the swap. Before swapping any assets, the environment must be set up and the necessary objects initialized.
 
 ```bash
 npm install --save @ton/core @ton/ton @ton/crypto
@@ -1307,7 +1314,7 @@ const factory = tonClient.open(Factory.createFromAddress(MAINNET_FACTORY_ADDR));
 //The Factory contract  is used to  locate other contracts.
 ```
 
-스왑 과정에는 몇 가지 단계가 있습니다. 예를 들어 TON을 Jetton으로 스왑하려면 먼저 해당하는 Vault와 Pool을 찾고 그들이 배포되었는지 확인해야 합니다. 우리의 예제인 TON과 SCALE의 경우 코드는 다음과 같습니다:
+The swap process involves finding the corresponding vault and pool for the assets to be swapped. For instance, swapping TON for SCALE (a jetton token) involves:
 
 ```typescript
 import { Asset, VaultNative } from "@dedust/sdk";
@@ -1317,7 +1324,7 @@ const tonVault = tonClient.open(await factory.getNativeVault());
 //We use the factory to find our native coin (Toncoin) Vault.
 ```
 
-다음 단계는 해당하는 Pool을 찾는 것입니다. 여기서는 (TON과 SCALE)입니다.
+Finding the Vault and Pool for both TON and SCALE.
 
 ```typescript
 import { PoolType } from "@dedust/sdk";
@@ -1334,7 +1341,7 @@ const pool = tonClient.open(
 );
 ```
 
-이제 이러한 컨트랙트들이 존재하는지 확인해야 합니다. 비활성 컨트랙트로 자금을 보내면 복구할 수 없는 손실이 발생할 수 있기 때문입니다.
+Ensure that the contracts are deployed: Always check that the contracts for the vault and pool are active, as sending funds to inactive contracts may result in permanent loss.
 
 ```typescript
 import { ReadinessStatus } from "@dedust/sdk";
@@ -1350,7 +1357,7 @@ if ((await tonVault.getReadinessStatus()) !== ReadinessStatus.READY) {
 }
 ```
 
-그 후에 TON 금액으로 전송 메시지를 보낼 수 있습니다.
+Sending transfer messages: Once the vault and pool are confirmed, send the transfer message with the amount of TON to be swapped for SCALE.
 
 ```typescript
 import { toNano } from "@ton/core";
@@ -1499,7 +1506,7 @@ runBlocking {
 
 <TabItem value="py" label="Python">
 
-이 예제는 Toncoins을 Jettons로 스왑하는 방법을 보여줍니다.
+This example shows how to swap Toncoins to jettons.
 
 ```py
 from pytoniq import Address, begin_cell, LiteBalancer, WalletV4R2
@@ -1571,7 +1578,7 @@ asyncio.run(main())
 
 ## 메시지 처리 기본사항
 
-### 계정의 트랜잭션을 어떻게 파싱하나요(전송, Jettons, NFTs)?
+### How to parse transactions of an account (transfers, jettons, NFTs)?
 
 계정의 트랜잭션 목록은 `getTransactions` API 메소드를 통해 가져올 수 있습니다. 이는 `Transaction` 객체의 배열을 반환하며, 각 항목은 많은 속성을 가지고 있습니다. 하지만 가장 일반적으로 사용되는 필드는 다음과 같습니다:
 
@@ -1841,19 +1848,18 @@ asyncio.run(main())
 
 </Tabs>
 
-이 예제는 단일 계정의 트랜잭션만 가져오면 충분한 가장 단순한 경우의 들어오는 메시지만 다룹니다. 더 깊이 들어가서 더 복잡한 트랜잭션과 메시지 체인을 처리하고 싶다면, `tx.outMessages` 필드를 고려해야 합니다. 이는 이 트랜잭션의 결과로 스마트 컨트랙트가 보낸 출력 메시지의 목록을 포함합니다. 전체 로직을 더 잘 이해하려면 다음 글을 읽어보세요:
+Note that this example covers only the simplest case with incoming messages, where it is enough to fetch the transactions on a single account. If you want to go deeper and handle more complex chains of transactions and messages, you should take `tx.outMessages` field into account. It contains the list of the output messages sent by smart-contract in the result of this transaction. To understand the whole logic better, you can read these articles:
 
-- [메시지 개요](/v3/documentation/smart-contracts/message-management/messages-and-transactions)
+- [Message overview](/v3/documentation/smart-contracts/message-management/messages-and-transactions)
 - [내부 메시지](/v3/documentation/smart-contracts/message-management/internal-messages)
 
-이 주제는 [결제 처리](/v3/guidelines/dapps/asset-processing/payments-processing) 글에서 더 깊이 다루어집니다.
+This topic is explored in depth in the [Payments processing](/v3/guidelines/dapps/asset-processing/payments-processing) article.
 
 ### 특정 TON Connect 결과에 대한 트랜잭션을 어떻게 찾나요?
 
-TON Connect 2는 블록체인에 보낸 셀만 반환하고 생성된 트랜잭션 해시는 반환하지 않습니다(외부 메시지가 손실되거나 시간 초과되면 그 트랜잭션이 발생하지 않을 수 있기 때문입니다). 하지만 제공된 BOC를 통해 우리 계정 내역에서 그 정확한 메시지를 검색할 수 있습니다.
-
+TON Connect 2 only returns the cell sent to the blockchain, not the transaction hash itself, as the transaction may not be confirmed. To track a transaction from TON Connect, you can search for it in your account history using an indexer.
 :::tip
-검색을 더 쉽게 하기 위해 인덱서를 사용할 수 있습니다. 제공된 구현은 RPC에 연결된 `TonClient`용입니다.
+You can use an indexer to make the search easier. The provided implementation is for `TonClient` connected to a RPC.
 :::
 
 블록체인 청취를 위한 시도에 `retry` 함수 준비:
@@ -1877,7 +1883,7 @@ export async function retry<T>(fn: () => Promise<T>, options: { retries: number,
 
 ```
 
-boc의 메시지 본문과 동일한 특정 들어오는 외부 메시지가 있는 특정 계정의 특정 트랜잭션을 주장할 리스너 함수를 만듭니다:
+Create a listener function that will assert specific transaction on certain account with specific incoming external message, equal to body message in boc:
 
 <Tabs>
 <TabItem value="ts" label="@ton/ton">
@@ -1944,10 +1950,11 @@ export async function getTxByBOC(exBoc: string): Promise<string> {
 ### 트랜잭션 또는 메시지 해시를 찾는 방법
 
 :::info
-해시 정의에 주의하세요. 트랜잭션 해시와 메시지 해시는 서로 다른 것입니다.
+Be careful with the hash definition. It can be either a transaction hash or a message hash.
 :::
 
-트랜잭션 해시를 얻으려면 트랜잭션의 `hash` 메서드를 사용하세요. 외부 메시지 해시를 얻으려면 `storeMessage` 메서드를 사용하여 메시지 셀을 만든 다음 이 셀의 `hash` 메서드를 사용하세요.
+To get transaction hash you need to use a `hash` method of a transaction. To get external message hash you need
+to build a message cell using a `storeMessage` method and then use a `hash` method of this cell.
 
 <Tabs>
   <TabItem value="ts" label="@ton/ton">
@@ -1982,7 +1989,7 @@ for (const transaction of transactions) {
 
 </Tabs>
 
-메시지를 생성할 때도 해시를 얻을 수 있습니다. 이는 이전 예제에서처럼 트랜잭션을 시작하기 위해 전송된 메시지의 해시와 동일합니다.
+Also you can get a hash of message when building it. Note that this is the same hash as the hash of the message sent to initiate the transaction, as in the previous example.
 
 <Tabs>
   <TabItem value="ts" label="@ton/ton">
@@ -2013,3 +2020,5 @@ const inMessageHash = transfer.hash();
 </TabItem>
 
 </Tabs>
+
+<Feedback />
