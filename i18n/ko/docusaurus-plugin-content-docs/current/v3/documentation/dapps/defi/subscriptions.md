@@ -1,4 +1,6 @@
-# 콘텐츠 구독
+import Feedback from '@site/src/components/Feedback';
+
+# Content subscriptions
 
 TON 블록체인의 거래가 빠르고 네트워크 수수료가 낮기 때문에 스마트 컨트랙트를 통해 온체인에서 정기 결제를 처리할 수 있습니다.
 
@@ -35,4 +37,5 @@ Subscription contract requires authorization exactly once, on installation; then
 
 ## 구현
 
-좋은 구현 예시는 [@donate](https://t.me/donate) 봇과 [Tonkeeper 지갑](https://tonkeeper.com)을 통한 텔레그램 비공개 채널의 톤코인 탈중앙화 구독입니다.
+A good example of implementation is decentralized subscriptions for Toncoin to private channels in Telegram by the [@donate](https://t.me/donate) bot and the [Tonkeeper wallet](https://tonkeeper.com). <Feedback />
+
