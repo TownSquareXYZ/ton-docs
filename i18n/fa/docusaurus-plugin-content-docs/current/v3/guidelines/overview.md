@@ -1,3 +1,6 @@
+import Feedback from '@site/src/components/Feedback';
+
 # مرور کلی
 
-// TODO: نیاز به نوشتن دارد
+// TODO: need to be written <Feedback />
+
