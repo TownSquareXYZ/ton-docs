@@ -1,8 +1,12 @@
+import Feedback from '@site/src/components/Feedback';
+import { BlockMath, InlineMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
+
 # NFT 컬렉션 만들기 단계별 가이드
 
 ## 👋 소개
 
-대체불가능 토큰(NFT)은 디지털 아트와 수집품 세계에서 가장 뜨거운 주제 중 하나가 되었습니다. NFT는 블록체인 기술을 사용하여 소유권과 진위성을 검증하는 고유한 디지털 자산입니다. NFT는 창작자와 수집가들이 디지털 아트, 음악, 비디오 및 기타 디지털 콘텐츠를 수익화하고 거래할 수 있는 새로운 가능성을 열었습니다. 최근 몇 년간 NFT 시장이 급성장하여 일부 유명 작품은 수백만 달러에 거래되고 있습니다. 이 글에서는 TON에서 단계별로 NFT 컬렉션을 만들어보겠습니다.
+Non-fungible tokens (NFTs) have become one of the hottest topics in the world of digital art and collectibles. NFTs are unique digital assets that use blockchain technology to verify ownership and authenticity. They have opened new possibilities for creators and collectors to monetize and trade digital art, music, videos, and other forms of digital content. In recent years, the NFT market has exploded, with some high-profile sales reaching millions of dollars. In this article, we will build an NFT collection on TON step by step.
 
 **이 튜토리얼이 끝나면 만들게 될 아름다운 오리 컬렉션입니다:**
 
@@ -10,56 +14,60 @@
 
 ## 🦄 배울 내용
 
-1. TON에서 NFT 컬렉션을 발행합니다.
-2. TON의 NFT 작동 방식을 이해합니다.
-3. NFT를 판매합니다.
+1. You will mint an NFT collection on TON.
+2. You will understand how NFTs on TON work.
+3. You will put an NFT on sale.
 4. 메타데이터를 [pinata.cloud](https://pinata.cloud)에 업로드합니다.
 
 ## 💡 전제 조건
 
-최소 2 TON이 있는 테스트넷 지갑이 필요합니다. [@testgiver_ton_bot](https://t.me/testgiver_ton_bot)에서 테스트넷 코인을 받을 수 있습니다.
+You must already have a testnet wallet with at least 2 TON. You can get testnet coins from [@testgiver_ton_bot](https://t.me/testgiver_ton_bot).
 
-:::info Tonkeeper 지갑의 테스트넷 버전을 여는 방법?\
-Tonkeeper의 테스트넷을 열려면 설정으로 가서 하단의 Tonkeeper 로고를 5번 클릭하세요. 그런 다음 "mainnet" 대신 "testnet"을 선택하세요.
-:::
+:::info How to open the testnet version of my Tonkeeper wallet?
 
-IPFS 스토리지 시스템으로 Pinata를 사용할 것이므로 [pinata.cloud](https://pinata.cloud)에 계정을 만들고 api_key와 api_secret을 받아야 합니다. 공식 Pinata [문서 튜토리얼](https://docs.pinata.cloud/account-management/api-keys)이 도움이 될 수 있습니다. API 토큰을 받았다면, 여기서 계속하시죠!
+1. Open settings and click the Tonkeeper logo at the bottom  5 times.
+2. Activate Dev mode.
+3. Return to the main menu and create a new Testnet wallet: Add wallet → Add Testnet Account.
+ :::
 
-## 💎 TON의 NFT란 무엇인가요?
+We will use Pinata as our IPFS storage system, so you also need to create an account on [pinata.cloud](https://pinata.cloud) and get api_key and api_secret. The official Pinata [documentation](https://docs.pinata.cloud/account-management/api-keys) can help with that. Once you have these API tokens, I’ll be waiting for you here!
 
-튜토리얼의 메인 파트를 시작하기 전에 TON의 NFT가 일반적으로 어떻게 작동하는지 이해해야 합니다. 의외로 TON의 NFT 구현이 업계의 다른 블록체인과 비교하여 어떻게 독특한지 이해하기 위해 Ethereum(ETH)의 NFT 작동 방식부터 설명하겠습니다.
+## 💎 What is an NFT on TON?
+
+Before starting the main part of our tutorial, we need to understand how NFTs work on TON. Unexpectedly, we will first explain of how NFTs work on Ethereum (ETH), to highlight the uniqueness of NFT implementation on TON compared to other blockchains.
 
 ### ETH의 NFT 구현
 
-ETH의 NFT 구현은 매우 단순합니다 - 컬렉션의 메인 컨트랙트 하나가 있고, 이 컨트랙트는 해당 컬렉션의 NFT 데이터를 저장하는 간단한 해시맵을 가지고 있습니다. 이 컬렉션과 관련된 모든 요청(사용자가 NFT를 전송하거나 판매하려는 경우 등)은 특별히 이 단일 컬렉션 컨트랙트로 보내집니다.
+The implementation of the NFT in ETH is extremely simple. There is 1 main contract for the collection, which stores a simple hashmap containing the NFT data for that collection. All requests related to this collection (such as transferring an NFT, putting it up for sale, etc.) are sent directly to the single contract.
 
 ![](/img/tutorials/nft/eth-collection.png)
 
-### TON에서 이러한 구현의 발생 가능한 문제점
+### Problems with such implementation on TON
 
-TON의 [NFT 표준](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md)은 이러한 구현의 문제점을 완벽하게 설명합니다:
+The [NFT standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md) in TON describes the issues of using this model:
 
-- 예측할 수 없는 가스 소비. TON에서는 딕셔너리 작업의 가스 소비가 정확한 키 집합에 따라 달라집니다. 또한 TON은 비동기 블록체인입니다. 이는 스마트 컨트랙트에 메시지를 보내면 다른 사용자의 메시지가 얼마나 많이 당신의 메시지보다 먼저 스마트 컨트랙트에 도달할지 모른다는 의미입니다. 따라서 당신의 메시지가 스마트 컨트랙트에 도달할 때 딕셔너리의 크기가 어떨지 알 수 없습니다. 이는 단순한 지갑 -> NFT 스마트 컨트랙트 상호작용에서는 괜찮지만, 지갑 -> NFT 스마트 컨트랙트 -> 경매 -> NFT 스마트 컨트랙트와 같은 스마트 컨트랙트 체인에서는 받아들일 수 없습니다. 가스 소비를 예측할 수 없다면, NFT 스마트 컨트랙트에서 소유자가 변경되었지만 경매 작업을 위한 Toncoin이 충분하지 않은 상황이 발생할 수 있습니다. 딕셔너리가 없는 스마트 컨트랙트를 사용하면 가스 소비를 결정적으로 만들 수 있습니다.
+- Unpredictable gas consumption. In TON, gas consumption for dictionary operations depends on exact set of keys. TON is an asynchronous blockchain, meaning you cannot predict how many messages from other users will reach a smart contract before yours. This uncertainty makes it difficult to determine gas costs, especially in smart contract chains like wallet → NFT smart contract → auction → NFT smart contract. If gas costs cannot be predicted, issues may arise where ownership of the NFT smart contract changes, but there are not enough Toncoins for the auction operation. Using smart contracts without dictionaries allows for deterministic gas consumption.
 
-- 확장이 안 됨(병목현상이 됨). TON의 확장성은 샤딩 개념을 기반으로 합니다. 즉, 부하 시 네트워크가 자동으로 샤드체인으로 분할됩니다. 인기 있는 NFT의 단일 대형 스마트 컨트랙트는 이 개념과 모순됩니다. 이 경우 많은 트랜잭션이 하나의 단일 스마트 컨트랙트를 참조하게 됩니다. TON 아키텍처는 샤드된 스마트 컨트랙트(화이트페이퍼 참조)를 제공하지만, 현재는 구현되어 있지 않습니다.
+- Scalability issues (becomes a bottleneck). TON scales through sharding, which partitions the network into shardchains under load. A single, large smart contract for a popular NFT contradicts this concept because many transactions would refer to one contract, creating a bottleneck. Although TON supports sharded smart contracts (see the whitepaper), they are not yet implemented.
 
-*TL;DR ETH 솔루션은 확장성이 없고 TON과 같은 비동기 블록체인에는 적합하지 않습니다.*
+**TL;DR**
+The ETH solution is not scalable and is unsuitable for an asynchronous blockchain like TON.
 
 ### TON NFT 구현
 
-TON에서는 마스터 컨트랙트 하나가 있습니다 - 우리 컬렉션의 스마트 컨트랙트로, 메타데이터와 소유자 주소를 저장하고 가장 중요한 점은 새로운 NFT 아이템을 만들고("mint") 싶을 때 이 컬렉션 컨트랙트에 메시지를 보내기만 하면 된다는 것입니다. 이 컬렉션 컨트랙트는 우리가 제공하는 데이터를 사용하여 새로운 NFT 아이템 컨트랙트를 배포할 것입니다.
+On TON, there is one master contract—the collection’s smart contract—which stores its metadata, the owner's address, and, most importantly, the logic for minting new NFTs. To create ("mint") a new NFT, you simply send a message to the collection contract. This contract then deploys a new NFT item contract using the data you provide.
 
 ![](/img/tutorials/nft/ton-collection.png)
 
 :::info
-이 주제에 대해 더 자세히 알고 싶다면 [TON의 NFT 처리](/v3/guidelines/dapps/asset-processing/nft-processing/nfts) 글을 확인하거나 [NFT 표준](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md)을 읽어보세요.
+You can check out the article on [NFT processing on TON](/v3/guidelines/dapps/asset-processing/nft-processing/nfts) or read the [NFT standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md) for a deeper understanding.
 :::
 
 ## ⚙ 개발 환경 설정
 
 빈 프로젝트를 만드는 것부터 시작해보겠습니다:
 
-1. 새 폴더 만들기
+1. Create a new folder
 
 ```bash
 mkdir MintyTON
@@ -71,25 +79,25 @@ mkdir MintyTON
 cd MintyTON
 ```
 
-3. 프로젝트 초기화
+3. Initialize the project
 
 ```bash
 yarn init -y
 ```
 
-4. typescript 설치
+4. Install TypeScript
 
 ```bash
 yarn add typescript @types/node -D
 ```
 
-5. TypeScript 프로젝트 초기화
+5. Initialize the TypeScript project
 
 ```bash
 tsc --init
 ```
 
-6. 이 설정을 tsconfig.json에 복사
+6. Copy this configuration into tsconfig.json
 
 ```json
 {
@@ -111,7 +119,7 @@ tsc --init
 }
 ```
 
-7. `package.json`에 앱을 빌드하고 시작하는 스크립트 추가
+7. Add a script to build & start the app in `package.json`
 
 ```json
 "scripts": {
@@ -125,7 +133,7 @@ tsc --init
 yarn add @pinata/sdk dotenv @ton/ton @ton/crypto @ton/core buffer
 ```
 
-9. `.env` 파일을 만들고 이 템플릿을 기반으로 자신의 데이터 추가
+9. Create a `.env` file and add your own data based on this template
 
 ```
 PINATA_API_KEY=your_api_key
@@ -134,15 +142,15 @@ MNEMONIC=word1 word2 word3 word4
 TONCENTER_API_KEY=aslfjaskdfjasasfas
 ```
 
-[@tonapibot](https://t.me/tonapibot)에서 toncenter api 키를 받을 수 있으며 메인넷이나 테스트넷을 선택할 수 있습니다. `MNEMONIC` 변수에는 컬렉션 소유자 지갑의 24단어 시드 구문을 저장합니다.
+You can get a TON Center API key from [@tonapibot](https://t.me/tonapibot) and choose mainnet or testnet. Store the 24-word seed phrase of the collection owner’s wallet in the MNEMONIC variable.
 
 좋습니다! 이제 프로젝트의 코드를 작성할 준비가 되었습니다.
 
 ### 헬퍼 함수 작성
 
-먼저 `src/utils.ts`에 `openWallet` 함수를 만들어 니모닉으로 지갑을 열고 publicKey/secretKey를 반환하도록 하겠습니다.
+First, let's create the `openWallet` function in `src/utils.ts`. This function will open our wallet using a mnemonic and return its  publicKey/secretKey.
 
-24단어(시드 구문)를 기반으로 키 쌍을 얻습니다:
+We get a pair of keys based on 24 words (a seed phrase):
 
 ```ts
 import { KeyPair, mnemonicToPrivateKey } from "@ton/crypto";
@@ -171,7 +179,7 @@ toncenter와 상호작용하기 위한 클래스 인스턴스를 만듭니다:
   });
 ```
 
-마지막으로 지갑을 엽니다:
+Finally, open our wallet:
 
 ```ts
   const wallet = WalletContractV4.create({
@@ -184,9 +192,9 @@ toncenter와 상호작용하기 위한 클래스 인스턴스를 만듭니다:
 }
 ```
 
-좋습니다. 그 다음 프로젝트의 메인 엔트리포인트인 `src/app.ts`를 만듭니다.
-여기서는 방금 만든 `openWallet` 함수를 사용하고 메인 함수 `init`을 호출합니다.
-지금은 이 정도면 충분합니다.
+Nice! After that, we'll create the main entry point for our project—`src/app.ts`.
+Here, we will use the newly created `openWallet` function and call our main function, `init`.
+Thats enough for now.
 
 ```ts
 import * as dotenv from "dotenv";
@@ -203,7 +211,7 @@ async function init() {
 void init();
 ```
 
-마지막으로 `src` 디렉토리에 `delay.ts` 파일을 만들어 `seqno`가 증가할 때까지 기다리는 함수를 만듭니다.
+Next, let's create a `delay.ts` file in the `src` directory, which will contain a function that waits until `seqno` increases.
 
 ```ts
 import { OpenedWallet } from "./utils";
@@ -222,31 +230,30 @@ export function sleep(ms: number): Promise<void> {
 ```
 
 :::info seqno가 무엇인가요?
-간단히 말해서, seqno는 지갑이 보낸 나가는 트랜잭션의 카운터입니다.
-seqno는 재생 공격을 방지하는 데 사용됩니다. 트랜잭션이 지갑 스마트 컨트랙트로 전송되면, 트랜잭션의 seqno 필드와 저장소 내부의 seqno를 비교합니다. 일치하면 수락되고 저장된 seqno가 1 증가합니다. 일치하지 않으면 트랜잭션이 폐기됩니다. 이것이 모든 나가는 트랜잭션 후에 잠시 기다려야 하는 이유입니다.
+Simply put, seqno is a counter that tracks outgoing transactions from a wallet. It helps prevent Replay Attacks. hen a transaction is sent to a wallet smart contract, it compares the seqno field in the transaction with the one stored in the wallet. If they match, the transaction is accepted, and the stored seqno increments by one. If they don't match, the transaction is discarded. This is why we need to wait a bit after every outgoing transaction.
 :::
 
 ## 🖼 메타데이터 준비
 
-메타데이터는 우리의 NFT나 컬렉션을 설명하는 간단한 정보입니다. 예를 들어 이름, 설명 등입니다.
+Metadata is simple information that describes an NFT or an NFT collection (e.g., name, description, etc.).
 
-먼저 우리 NFT의 이미지를 `/data/images`에 `0.png`, `1.png`, ... 형식으로 아이템 사진을, 그리고 컬렉션의 아바타로 `logo.png`를 저장해야 합니다. [오리 이미지 팩](/img/tutorials/nft/ducks.zip)을 쉽게 다운로드하거나 자신의 이미지를 해당 폴더에 넣을 수 있습니다. 또한 모든 메타데이터 파일을 `/data/metadata/` 폴더에 저장할 것입니다.
+First, we need to store NFT images in /data/images/ and name them `0.png`, `1.png`, ... for photos, and `logo.png` for avatars of our collection. You can either [download pack](/img/tutorials/nft/ducks.zip) of ducks images or use your own images. Store metadata files in `/data/metadata/`.
 
 ### NFT 명세
 
-TON의 대부분 제품은 NFT 컬렉션에 대한 정보를 저장하기 위해 다음과 같은 메타데이터 명세를 지원합니다:
+Most projects on TON follow these metadata specifications for NFT collections:
 
-| 이름                                | 설명                                                                                    |
-| --------------------------------- | ------------------------------------------------------------------------------------- |
-| name                              | 컬렉션 이름                                                                                |
-| description                       | 컬렉션 설명                                                                                |
-| image                             | 아바타로 표시될 이미지 링크. 지원되는 링크 형식: https, ipfs, TON Storage |
-| cover_image  | 컬렉션의 커버 이미지로 표시될 이미지 링크                                                               |
-| social_links | 프로젝트의 소셜 미디어 프로필 링크 목록. 최대 10개 링크                                     |
+| 이름                                | 설명                                                                                                                     |
+| --------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| name                              | 컬렉션 이름                                                                                                                 |
+| description                       | 컬렉션 설명                                                                                                                 |
+| image                             | Link to the avatar image. Supported formats: https, ipfs, TON Storage. |
+| cover_image  | Link to the collection cover image.                                                                    |
+| social_links | List of up to 10 links to the project's social media profiles.                                         |
 
 ![image](/img/tutorials/nft/collection-metadata.png)
 
-이 정보를 바탕으로 우리 컬렉션의 메타데이터를 설명하는 `collection.json` 파일을 만들어봅시다!
+Based on this, let's create our own metadata file, `collection.json`, to describe the NFT collection!
 
 ```json
 {
@@ -256,21 +263,21 @@ TON의 대부분 제품은 NFT 컬렉션에 대한 정보를 저장하기 위해
 }
 ```
 
-"image" 파라미터를 쓰지 않았다는 점에 주목하세요. 곧 이유를 알게 될 것입니다!
+Note: We’re not adding the "image" parameter just yet—you’ll see why later!
 
-컬렉션 메타데이터 파일을 만든 후에는 NFT의 메타데이터를 만들어야 합니다.
+Once done, you can create as many NFT metadata files as you like.
 
-NFT 아이템 메타데이터 명세:
+Each NFT item follows these metadata specifications:
 
-| 이름                                | 설명                                                                                                                                    |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| name                              | NFT 이름. 권장 길이: 15-30자 이내                                                                              |
-| description                       | NFT 설명. 권장 길이: 500자 이내                                                                                |
-| image                             | NFT 이미지 링크                                                                                                                            |
-| attributes                        | NFT 속성. trait_type(속성 이름)과 value(속성에 대한 간단한 설명)가 지정된 속성 목록 |
-| lottie                            | Lottie 애니메이션이 있는 json 파일 링크. 지정된 경우 NFT 페이지에서 이 링크의 Lottie 애니메이션이 재생됩니다.                              |
-| content_url  | 추가 콘텐츠 링크                                                                                                                             |
-| content_type | content_url 링크를 통해 추가된 콘텐츠의 타입. 예: video/mp4 파일                                  |
+| 이름                                | 설명                                                                                                                                                                                    |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| name                              | NFT name. Recommended length: 15-30 characters                                                                                                        |
+| description                       | NFT 설명. 권장 길이: 500자 이내                                                                                                                                |
+| image                             | Link to the NFT image.                                                                                                                                                |
+| attributes                        | List of NFT attributes, where a trait_type (attribute name) and value (a short description) are specified. |
+| lottie                            | Link to a JSON file with Lottie animation (if specified, the animation will play on the NFT’s page).                                               |
+| content_url  | 추가 콘텐츠 링크                                                                                                                                                                             |
+| content_type | Type of content from the content_url link (e.g., video/mp4).                                  |
 
 ![image](/img/tutorials/nft/item-metadata.png)
 
@@ -282,11 +289,11 @@ NFT 아이템 메타데이터 명세:
 }
 ```
 
-이제 원하는 만큼 메타데이터가 있는 NFT 아이템 파일을 만들 수 있습니다.
+After that, you can create as many files of an NFT item with their metadata as you want.
 
 ### 메타데이터 업로드
 
-이제 메타데이터 파일을 IPFS에 업로드하는 코드를 작성해보겠습니다. `src` 디렉토리에 `metadata.ts` 파일을 만들고 필요한 임포트를 모두 추가합니다:
+Now let's write some code, that will upload our metadata files to IPFS. Create a `metadata.ts` file in `src` directory and add all needed imports:
 
 ```ts
 import pinataSDK from "@pinata/sdk";
@@ -295,7 +302,7 @@ import { writeFile, readFile } from "fs/promises";
 import path from "path";
 ```
 
-그 다음, 우리 폴더의 모든 파일을 IPFS에 업로드하는 함수를 만듭니다:
+After that, we need to create a function that will actually upload all files from our folder to IPFS:
 
 ```ts
 export async function uploadFolderToIPFS(folderPath: string): Promise<string> {
@@ -309,8 +316,7 @@ export async function uploadFolderToIPFS(folderPath: string): Promise<string> {
 }
 ```
 
-훌륭합니다! 다시 질문으로 돌아가보겠습니다: 왜 메타데이터 파일에서 "image" 필드를 비워뒀을까요? 컬렉션에 1000개의 NFT를 만들고 싶은 상황을 상상해보세요. 각 아이템을 수동으로 하나씩 확인하고 사진 링크를 직접 삽입해야 합니다.
-이는 매우 불편하고 잘못된 방법입니다. 따라서 이를 자동으로 수행하는 함수를 작성해보겠습니다!
+Great! Back to the question at hand: why did we leave the "image" field in the metadata files empty? Imagine a situation where you want to create 1000 NFTs in your collection and, accordingly, you have to manually go through each item and manually insert a link to your image. This is really inconvenient and wrong, so let's write a function that will do this automatically!
 
 ```ts
 export async function updateMetadataFiles(metadataFolderPath: string, imagesIpfsHash: string): Promise<void> {
@@ -331,7 +337,7 @@ export async function updateMetadataFiles(metadataFolderPath: string, imagesIpfs
 }
 ```
 
-먼저 지정된 폴더의 모든 파일을 읽습니다:
+Here we first read all of the files in the specified folder:
 
 ```ts
 const files = readdirSync(metadataFolderPath);
@@ -346,7 +352,7 @@ const file = await readFile(filePath);
 const metadata = JSON.parse(file.toString());
 ```
 
-그 다음, 폴더의 마지막 파일이 아니라면 이미지 필드에 `ipfs://{IpfsHash}/{index}.jpg` 값을 할당하고, 그렇지 않다면 `ipfs://{imagesIpfsHash}/logo.jpg`를 할당하고 실제로 새 데이터로 파일을 다시 작성합니다.
+After that, we assign the value `ipfs://{IpfsHash}/{index}.jpg` to the image field. If this file is mnot the last one in the folder, assign `ipfs://{imagesIpfsHash}/logo.jpg` and rewrite the file with new data.
 
 metadata.ts의 전체 코드:
 
@@ -384,14 +390,14 @@ export async function updateMetadataFiles(metadataFolderPath: string, imagesIpfs
 }
 ```
 
-좋습니다. app.ts 파일에서 이 메소드들을 호출해보겠습니다.
-우리 함수의 임포트를 추가합니다:
+Great, let's call these methods in our app.ts file.
+Add the imports of our functions:
 
 ```ts
 import { updateMetadataFiles, uploadFolderToIPFS } from "./src/metadata";
 ```
 
-메타데이터/이미지 폴더 경로의 변수를 저장하고 메타데이터를 업로드하는 함수를 호출합니다.
+Save the variables with the path to the metadata/images folder and call our functions to load the metadata.
 
 ```ts
 async function init() {
@@ -415,14 +421,14 @@ async function init() {
 }
 ```
 
-이제 `yarn start`를 실행하면 배포된 메타데이터의 링크를 볼 수 있습니다!
+After that you can run `yarn start` and see the link to your deployed metadata!
 
 ### 오프체인 콘텐츠 인코딩
 
-우리 메타데이터 파일의 링크가 스마트 컨트랙트에 어떻게 저장될까요? 이 질문에 대한 답은 [Token Data Standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md)에서 찾을 수 있습니다.
-어떤 경우에는 단순히 원하는 플래그를 제공하고 링크를 ASCII 문자로 제공하는 것만으로는 충분하지 않을 수 있습니다. 이것이 스네이크 포맷을 사용하여 링크를 여러 부분으로 나누어야 하는 옵션을 고려해야 하는 이유입니다.
+How will our metadata files stored in the smart contract be referenced? This question can be fully answered by the [Token Data Standart](https://github.com/ton-blockchain/TEPs/blob/master/text/0064-token-data-standard.md).
+In some cases, it is not enough to simply provide the desired flag and the link as ASCII characters. That is why let's consider splitting our link into several parts using the snake format.
 
-먼저 `./src/utils.ts`에서 버퍼를 청크로 변환하는 함수를 만듭니다:
+First, create the function in `./src/utils.ts`. The function that will convert our buffer into chunks:
 
 ```ts
 function bufferToChunks(buff: Buffer, chunkSize: number) {
@@ -435,7 +441,7 @@ function bufferToChunks(buff: Buffer, chunkSize: number) {
 }
 ```
 
-그리고 모든 청크를 하나의 스네이크 셀로 묶는 함수를 만듭니다:
+And create a function that will bind all the chunks into 1 snake-cell:
 
 ```ts
 function makeSnakeCell(data: Buffer): Cell {
@@ -467,7 +473,7 @@ function makeSnakeCell(data: Buffer): Cell {
 }
 ```
 
-마지막으로, 이 함수들을 사용하여 오프체인 콘텐츠를 셀로 인코딩하는 함수를 만들어야 합니다:
+Finally, we need to create a function that will encode the offchain content into cells using this functions:
 
 ```ts
 export function encodeOffChainContent(content: string) {
@@ -478,11 +484,11 @@ export function encodeOffChainContent(content: string) {
 }
 ```
 
-## 🚢 NFT 컬렉션 배포
+## 🚢 Deploy NFT collection
 
-메타데이터가 준비되고 IPFS에 업로드되었으므로 컬렉션 배포를 시작할 수 있습니다!
+Once our metadata is ready and uploaded to IPFS, we can proceed with deploying our collection!
 
-`/contracts/NftCollection.ts` 파일에 우리 컬렉션과 관련된 모든 로직을 저장할 것입니다. 늘 그렇듯이 임포트부터 시작합니다:
+We will create a file to store all logic related to our collection in `/contracts/NftCollection.ts`. As always, we start with imports:
 
 ```ts
 import {
@@ -497,7 +503,7 @@ import {
 import { encodeOffChainContent, OpenedWallet } from "../utils";
 ```
 
-그리고 우리 컬렉션에 필요한 초기 데이터를 설명하는 타입을 선언합니다:
+Next, we declare a type that describes the initial data required for our collection:
 
 ```ts
 export type collectionData = {
@@ -510,16 +516,16 @@ export type collectionData = {
 }
 ```
 
-| 이름                   | 설명                                                             |
-| -------------------- | -------------------------------------------------------------- |
-| ownerAddress         | 우리 컬렉션의 소유자로 설정될 주소. 소유자만이 새로운 NFT를 발행할 수 있습니다 |
-| royaltyPercent       | 각 판매 금액의 몇 퍼센트가 지정된 주소로 갈지                                     |
-| royaltyAddress       | 이 NFT 컬렉션의 판매에서 로열티를 받을 지갑 주소                                  |
-| nextItemIndex        | 다음 NFT 아이템이 가져야 할 인덱스                                          |
-| collectionContentUrl | 컬렉션 메타데이터의 URL                                                 |
-| commonContentUrl     | NFT 아이템 메타데이터의 기본 url                                          |
+| 이름                   | 설명                                                                                        |
+| -------------------- | ----------------------------------------------------------------------------------------- |
+| ownerAddress         | The address set as the collection owner. Only the owner can mint new NFTs |
+| royaltyPercent       | The percentage of each sale that goes to the specified address                            |
+| royaltyAddress       | The wallet address that receives royalties from sales of this NFT collection              |
+| nextItemIndex        | The index assigned to the next NFT item                                                   |
+| collectionContentUrl | The URL of the collection metadata                                                        |
+| commonContentUrl     | he base URL for NFT item metadata                                                         |
 
-먼저 우리 컬렉션의 코드가 있는 셀을 반환하는 private 메소드를 작성해보겠습니다.
+First, let's write a private method that returns a cell containing our collection's code.
 
 ```ts
 export class NftCollection {
@@ -537,10 +543,9 @@ export class NftCollection {
 }
 ```
 
-이 코드에서는 컬렉션 스마트 컨트랙트의 base64 표현에서 Cell을 읽기만 합니다.
+In this method, we simply read the cell from the base64 representation of the collection smart contract.
 
-좋습니다. 이제 우리 컬렉션의 초기 데이터가 있는 셀만 남았습니다.
-기본적으로 collectionData의 데이터를 올바른 방식으로 저장하기만 하면 됩니다. 먼저 빈 셀을 만들고 거기에 컬렉션 소유자 주소와 발행될 다음 아이템의 인덱스를 저장해야 합니다. 다음 private 메소드를 작성해보겠습니다:
+Now, we need to create the cell containing our collection’s initial data. Essentially, we must store collectionData correctly. First, we create an empty cell and store the collection owner's address and the index of the next item to be minted. Let’s define the next private method:
 
 ```ts
 private createDataCell(): Cell {
@@ -551,7 +556,7 @@ private createDataCell(): Cell {
   dataCell.storeUint(data.nextItemIndex, 64);
 ```
 
-그 다음, 우리 컬렉션의 콘텐츠를 저장할 빈 셀을 만들고, 우리 컬렉션의 인코딩된 콘텐츠에 대한 참조를 저장합니다. 그리고 바로 그 후에 contentCell에 대한 참조를 우리의 메인 데이터 셀에 저장합니다.
+Next, we create an empty cell to store the collection’s content. We then store a reference to the encoded content cell within our main data cell.
 
 ```ts
 const contentCell = beginCell();
@@ -566,7 +571,7 @@ contentCell.storeRef(commonContent.asCell());
 dataCell.storeRef(contentCell);
 ```
 
-그 다음 우리 컬렉션에서 생성될 NFT 아이템의 코드 셀을 만들고 이 셀에 대한 참조를 dataCell에 저장합니다.
+After that, we create a cell containing the NFT item code and store a reference to this cell in dataCell.
 
 ```ts
 const NftItemCodeCell = Cell.fromBase64(
@@ -575,14 +580,15 @@ const NftItemCodeCell = Cell.fromBase64(
 dataCell.storeRef(NftItemCodeCell);
 ```
 
-로열티 파라미터는 스마트 컨트랙트에 royaltyFactor, royaltyBase, royaltyAddress로 저장됩니다. 로열티의 백분율은 `(royaltyFactor / royaltyBase) * 100%` 공식으로 계산할 수 있습니다. 따라서 royaltyPercent를 알고 있다면 royaltyFactor를 구하는 것은 문제가 되지 않습니다.
+The smart contract stores royalty parameters using royaltyFactor, royaltyBase, and royaltyAddress. The royalty percentage is calculated using the formula: <InlineMath math="\left( \frac{\text{royaltyFactor}}{\text{royaltyBase}} \right) \times 100\%" />
+. If we know royaltyPercent, calculating royaltyFactor is straightforward.
 
 ```ts
 const royaltyBase = 1000;
 const royaltyFactor = Math.floor(data.royaltyPercent * royaltyBase);
 ```
 
-계산 후에는 로열티 데이터를 별도의 셀에 저장하고 이 셀에 대한 참조를 dataCell에 제공해야 합니다.
+After performing these calculations, we store the royalty data in a separate cell and reference it in dataCell.
 
 ```ts
 const royaltyCell = beginCell();
@@ -595,7 +601,7 @@ return dataCell.endCell();
 }
 ```
 
-이제 우리 컬렉션의 StateInit을 반환하는 getter를 실제로 작성해보겠습니다:
+Now, let's write a getter that returns the `StateInit` of our collection.
 
 ```ts
 public get stateInit(): StateInit {
@@ -606,7 +612,7 @@ public get stateInit(): StateInit {
 }
 ```
 
-그리고 우리 컬렉션의 주소를 계산하는 getter를 작성합니다(TON의 스마트 컨트랙트 주소는 단순히 그것의 StateInit의 해시입니다).
+We also need a getter that calculates the collection’s address. In TON, a smart contract’s address is simply the hash of its `StateInit`.
 
 ```ts
 public get address(): Address {
@@ -614,7 +620,7 @@ public get address(): Address {
   }
 ```
 
-이제 블록체인에 스마트 컨트랙트를 배포하는 메소드만 작성하면 됩니다!
+The final step is writing a method to deploy the smart contract to the blockchain!
 
 ```ts
 public async deploy(wallet: OpenedWallet) {
@@ -635,9 +641,8 @@ public async deploy(wallet: OpenedWallet) {
   }
 ```
 
-우리의 경우 새로운 스마트 컨트랙트의 배포는 StateInit이 있는 컬렉션 주소(StateInit이 있으면 계산할 수 있음)로 우리 지갑에서 메시지를 보내는 것뿐입니다!
-
-소유자가 새로운 NFT를 발행할 때, 컬렉션은 소유자의 메시지를 받고 생성된 NFT 스마트 컨트랙트로 새로운 메시지를 보냅니다(이는 수수료를 지불해야 함). 따라서 발행할 nft 수에 기반하여 컬렉션의 잔액을 충전하는 메소드를 작성해보겠습니다:
+Deploying a new smart contract in our case means sending a message from our wallet to the collection address, which we can calculate if we have `StateInit`, along with its `StateInit`.
+When the owner mints a new NFT, the collection accepts the owner's message and sends a new message to the created NFT smart contract, which requires a fee. Let’s write a method to replenish the collection’s balance based on the number of NFTs to be minted:
 
 ```ts
 public async topUpBalance(
@@ -665,14 +670,14 @@ public async topUpBalance(
   }
 ```
 
-완벽합니다. 이제 `app.ts`에 몇 가지를 추가해보겠습니다:
+Now, let’s add a few include statements to `app.ts`:
 
 ```ts
 import { waitSeqno } from "./delay";
 import { NftCollection } from "./contracts/NftCollection";
 ```
 
-그리고 새로운 컬렉션을 배포하기 위해 `init()` 함수 끝에 몇 줄을 추가합니다:
+Finally, we add a few lines to the end of the `init()` function to deploy the new collection:
 
 ```ts
 console.log("Start deploy of nft collection...");
@@ -690,11 +695,11 @@ console.log(`Collection deployed: ${collection.address}`);
 await waitSeqno(seqno, wallet);
 ```
 
-## 🚢 NFT 아이템 배포
+## 🚢 Deploy NFT items
 
-우리 컬렉션이 준비되었으니, NFT 발행을 시작할 수 있습니다! 코드는 `src/contracts/NftItem.ts`에 저장할 것입니다.
+Once our collection is ready, we can start minting our NFTs! We will store the code in `src/contracts/NftItem.ts`
 
-의외로, 이제 `NftCollection.ts`로 돌아가야 합니다. 그리고 파일 상단의 `collectionData` 옆에 이 타입을 추가합니다.
+Unexpectedly, we need to return to `NftCollection.ts `and add the following type near `collectionData` at the top of the file.
 
 ```ts
 export type mintParams = {
@@ -706,14 +711,14 @@ export type mintParams = {
 }
 ```
 
-| 이름               | 설명                                                                       |
-| ---------------- | ------------------------------------------------------------------------ |
-| itemOwnerAddress | 아이템의 소유자로 설정될 주소                                                         |
-| itemIndex        | NFT 아이템의 인덱스                                                             |
-| amount           | NFT와 함께 배포될 TON의 양                                                       |
-| commonContentUrl | 아이템 URL의 전체 링크는 컬렉션의 "commonContentUrl" + 이 commonContentUrl로 표시될 수 있습니다 |
+| Name             | Explanation                                                                                          |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| itemOwnerAddress | The address set as the item's owner                                                                  |
+| itemIndex        | The index of the NFT item                                                                            |
+| amount           | The amount of TON sent to the NFT upon deployment                                                    |
+| commonContentUrl | The full link to the item URL, which is "commonContentUrl" of the collection + this commonContentUrl |
 
-그리고 NftCollection 클래스에 우리의 NFT 아이템 배포를 위한 본문을 구성하는 메소드를 만듭니다. 먼저 새로운 NFT를 만들고 싶다는 것을 컬렉션 스마트 컨트랙트에 알리는 비트를 저장합니다. 그 다음 queryId와 이 NFT 아이템의 인덱스를 저장합니다.
+Next, we create a method in the NftCollection class to construct the body for deploying an NFT item. First, we store a bit to indicate to the collection smart contract that we want to create a new NFT. Then, we store the queryId and the index of the NFT item.
 
 ```ts
 public createMintBody(params: mintParams): Cell {
@@ -724,14 +729,14 @@ public createMintBody(params: mintParams): Cell {
     body.storeCoins(params.amount);
 ```
 
-나중에 빈 셀을 만들고 이 NFT의 소유자 주소를 저장합니다:
+After that, we create an empty cell and store the owner's address:
 
 ```ts
     const nftItemContent = beginCell();
     nftItemContent.storeAddress(params.itemOwnerAddress);
 ```
 
-그리고 이 아이템의 메타데이터에 대한 참조를 이 셀(NFT 아이템 콘텐츠가 있는)에 저장합니다:
+We store a reference in this cell (containing the NFT item content) to the item's metadata.
 
 ```ts
     const uriContent = beginCell();
@@ -739,7 +744,7 @@ public createMintBody(params: mintParams): Cell {
     nftItemContent.storeRef(uriContent.endCell());
 ```
 
-우리 본문 셀에 아이템 콘텐츠가 있는 셀에 대한 참조를 저장합니다:
+We store a reference to the cell with the item content in our body cell.
 
 ```ts
     body.storeRef(nftItemContent.endCell());
@@ -747,7 +752,7 @@ public createMintBody(params: mintParams): Cell {
 }
 ```
 
-훌륭합니다! 이제 `NftItem.ts`로 돌아갈 수 있습니다. 해야 할 일은 우리 NFT의 본문으로 우리 컬렉션 컨트랙트에 메시지를 보내는 것뿐입니다.
+Now, we return to `NftItem.ts`. The only step left is to send a message to our collection contract with the body of our NFT.
 
 ```ts
 import { internal, SendMode, Address, beginCell, Cell, toNano } from "@ton/core";
@@ -784,9 +789,9 @@ export class NftItem {
 }
 ```
 
-마지막으로, NFT의 인덱스로 주소를 얻는 간단한 메소드를 작성하겠습니다.
+At the end, we write a short method to retrieve an NFT’s address by its index:
 
-컬렉션의 get-메소드를 호출하는데 도움이 될 client 변수를 만드는 것부터 시작합니다:
+Create a client variable to call the collection’s get-method.
 
 ```ts
 static async getAddressByIndex(
@@ -799,7 +804,7 @@ static async getAddressByIndex(
   });
 ```
 
-그런 다음 해당 인덱스를 가진 이 컬렉션의 NFT 주소를 반환하는 컬렉션의 get-메소드를 호출합니다:
+Call the get-method to return the NFT address based on its index.
 
 ```ts
   const response = await client.runMethod(
@@ -809,21 +814,21 @@ static async getAddressByIndex(
   );
 ```
 
-...그리고 이 주소를 파싱합니다!
+Parse the returned address.
 
 ```ts
     return response.stack.readAddress();
 }
 ```
 
-이제 각 NFT의 발행 프로세스를 자동화하기 위해 `app.ts`에 코드를 추가해보겠습니다:
+Now, let's add some code to `app.ts` to automate the NFT minting process:
 
 ```ts
   import { NftItem } from "./contracts/NftItem";
   import { toNano } from '@ton/core';
 ```
 
-먼저 우리 메타데이터가 있는 폴더의 모든 파일을 읽습니다:
+First, read all files in the metadata folder.
 
 ```ts
 const files = await readdir(metadataFolderPath);
@@ -831,7 +836,7 @@ files.pop();
 let index = 0;
 ```
 
-두 번째로 우리 컬렉션의 잔액을 충전합니다:
+Next, top up the collection’s balance.
 
 ```ts
 seqno = await collection.topUpBalance(wallet, files.length);
@@ -839,7 +844,7 @@ await waitSeqno(seqno, wallet);
 console.log(`Balance top-upped`);
 ```
 
-마지막으로, 메타데이터가 있는 각 파일을 확인하고, `NftItem` 인스턴스를 만들고 deploy 메소드를 호출합니다. 그 후에는 seqno가 증가할 때까지 잠시 기다려야 합니다:
+Finally, iterate through each metadata file, create an `NftItem` instance, and call the deploy method. After that, wait until the seqno increases.
 
 ```ts
 for (const file of files) {
@@ -860,16 +865,16 @@ for (const file of files) {
   }
 ```
 
-## 🏷 NFT 판매하기
+## 🏷 Put the NFT on sale
 
-NFT를 판매하기 위해서는 두 개의 스마트 컨트랙트가 필요합니다.
+To list an NFT for sale, we need two smart contracts:
 
-- 새로운 판매를 생성하는 로직만 담당하는 마켓플레이스
-- 판매 구매/취소 로직을 담당하는 판매 컨트랙트
+- **Marketplace** - Handles the logic for creating new sales.
+- **Sale contract** - Manages the logic for buying and canceling sales.
 
-### 마켓플레이스 배포
+### Deploy the marketplace
 
-`/contracts/NftMarketplace.ts`에 새 파일을 만듭니다. 평소처럼 이 마켓플레이스의 소유자 주소를 받는 기본 클래스를 만들고 이 스마트 컨트랙트의 코드([NFT-Marketplace 스마트 컨트랙트의 기본 버전](https://github.com/ton-blockchain/token-contract/blob/main/nft/nft-marketplace.fc))가 있는 셀과 초기 데이터를 만듭니다.
+Create a new file: `/contracts/NftMarketplace.ts`. Create a basic class that accepts the marketplace owner’s address and generates a cell with the smart contract code and initial data (we will use [basic version of NFT-Marketplace smart contract](https://github.com/ton-blockchain/token-contract/blob/main/nft/nft-marketplace.fc)).
 
 ```ts
 import {
@@ -913,7 +918,7 @@ export class NftMarketplace {
 }
 ```
 
-그리고 StateInit을 기반으로 우리 스마트 컨트랙트의 주소를 계산하는 메소드를 만듭니다:
+Implement a method to calculate the smart contract address based on `StateInit`.
 
 ```ts
 public get address(): Address {
@@ -921,7 +926,7 @@ public get address(): Address {
   }
 ```
 
-그 다음 실제로 우리 마켓플레이스를 배포하는 메소드를 만듭니다:
+Write a method to deploy the marketplace.
 
 ```ts
 public async deploy(wallet: OpenedWallet): Promise<number> {
@@ -942,15 +947,15 @@ public async deploy(wallet: OpenedWallet): Promise<number> {
   }
 ```
 
-보시다시피, 이 코드는 다른 스마트 컨트랙트(nft-item 스마트 컨트랙트, 새로운 컬렉션의 배포)의 배포와 다르지 않습니다. 단 한 가지 다른 점은 우리가 마켓플레이스를 초기에 0.05 TON이 아닌 0.5 TON으로 충전한다는 것입니다. 이유는 무엇일까요? 새로운 판매 스마트 컨트랙트가 배포될 때, 마켓플레이스는 요청을 받고, 처리하고, 새로운 컨트랙트로 메시지를 보냅니다(예, NFT 컬렉션과 비슷한 상황입니다). 이것이 수수료를 지불하기 위해 약간의 추가 톤이 필요한 이유입니다.
+The deployment process is similar to other smart contracts (such as NftItem or a new collection). However, we initially fund the marketplace with 0.5 TON instead of 0.05 TON. Why? When deploying a new sales contract, the marketplace processes the request and sends a message to the new contract. Since this process involves additional transaction fees, we need extra TON.
 
-마지막으로, 우리 마켓플레이스를 배포하기 위해 `app.ts` 파일에 몇 줄의 코드를 추가해봅시다:
+Finally, add a few lines of code to `app.ts` to deploy the marketplace.
 
 ```ts
 import { NftMarketplace } from "./contracts/NftMarketplace";
 ```
 
-그리고:
+Then:
 
 ```ts
 console.log("Start deploy of new marketplace  ");
@@ -960,11 +965,11 @@ await waitSeqno(seqno, wallet);
 console.log("Successfully deployed new marketplace");
 ```
 
-### 판매 컨트랙트 배포
+### Deploying the sale contract
 
-좋습니다! 이제 우리의 NFT 판매 스마트 컨트랙트를 배포할 수 있습니다. 어떻게 작동할까요? 새 컨트랙트를 배포하고 그 후에 우리의 nft를 판매 컨트랙트로 "이전"해야 합니다(다시 말해, 아이템 데이터에서 우리 NFT의 소유자를 판매 컨트랙트로 변경하기만 하면 됩니다). 이 튜토리얼에서는 [nft-fixprice-sale-v2](https://github.com/getgems-io/nft-contracts/blob/main/packages/contracts/sources/nft-fixprice-sale-v2.fc) 판매 스마트 컨트랙트를 사용할 것입니다.
+Now, we can deploy the NFT sale smart contract. How does it work?Transfer the NFT to the sale contract by changing its owner in the item data. In this tutorial, we will use [nft-fixprice-sale-v2](https://github.com/getgems-io/nft-contracts/blob/main/packages/contracts/sources/nft-fixprice-sale-v2.fc) smart contract.
 
-`/contracts/NftSale.ts`에 새 파일을 만듭니다. 먼저 우리의 판매 스마트 컨트랙트의 데이터를 설명하는 새로운 타입을 선언합니다:
+Create a new file: `/contracts/NftSale.ts`. Declare a type that describes the sale contract data.
 
 ```ts
 import {
@@ -994,7 +999,7 @@ export type GetGemsSaleData = {
 };
 ```
 
-이제 클래스를 만들고 우리 스마트 컨트랙트의 초기 데이터 셀을 만드는 기본 메소드를 만들어보겠습니다.
+Create a class and a method to generate the initial data cell for the smart contract.
 
 ```ts
 export class NftSale {
@@ -1006,7 +1011,12 @@ export class NftSale {
 }
 ```
 
-수수료 정보가 있는 셀을 만드는 것부터 시작하겠습니다. 마켓플레이스의 수수료로 받을 주소와 수수료로 보낼 TON의 양을 저장해야 합니다. 판매의 로열티를 받을 주소와 로열티 금액을 저장합니다.
+We will begin with creating a cell with fee details:
+
+- The address receiving the marketplace fee.
+- The TON amount sent as a marketplace fee.
+- The address receiving the royalty from the sale.
+- The royalty amount.
 
 ```ts
 private createDataCell(): Cell {
@@ -1020,7 +1030,7 @@ private createDataCell(): Cell {
   feesCell.storeCoins(saleData.royaltyAmount);
 ```
 
-그 다음 빈 셀을 만들고 saleData의 정보를 올바른 순서로 저장한 다음 수수료 정보가 있는 셀에 대한 참조를 저장합니다:
+Following that we can create an empty cell and just store information from saleData in the correct order. Right after that, store the reference to the cell with the fees information:
 
 ```ts
   const dataCell = beginCell();
@@ -1037,7 +1047,7 @@ private createDataCell(): Cell {
 }
 ```
 
-그리고 늘 그렇듯이 stateInit을 가져오고, 코드 셀을 초기화하고 우리 스마트 컨트랙트의 주소를 가져오는 메소드를 추가합니다.
+And as always, add methods to get stateInit, the initial code cell, and the smart contract address.
 
 ```ts
 public get address(): Address {
@@ -1059,9 +1069,9 @@ private createCodeCell(): Cell {
 }
 ```
 
-이제 우리의 마켓플레이스에 판매 컨트랙트를 배포하기 위해 보낼 메시지를 구성하고 실제로 이 메시지를 보내야 합니다.
+To deploy the sale contract, we must form a message and send it to the marketplace:
 
-먼저 우리의 새로운 판매 컨트랙트의 StateInit을 저장할 셀을 만듭니다:
+First, create a cell storing the StateInit of the new sale contract
 
 ```ts
 public async deploy(wallet: OpenedWallet): Promise<number> {
@@ -1070,7 +1080,12 @@ public async deploy(wallet: OpenedWallet): Promise<number> {
       .endCell();
 ```
 
-우리 메시지의 본문을 위한 셀을 만듭니다. 먼저 op-code를 1로 설정해야 합니다(마켓플레이스에 새로운 판매 스마트 컨트랙트를 배포하고 싶다는 것을 알리기 위해). 그 다음 우리의 새로운 판매 스마트 컨트랙트로 보낼 코인을 저장합니다. 마지막으로 새로운 스마트 컨트랙트의 stateInit과 이 새로운 스마트 컨트랙트로 보낼 본문에 대한 2개의 참조를 저장해야 합니다.
+Create a cell with the message body.
+
+- Set op-code = 1 to indicate a new sale contract deployment.
+- Store the coins sent to the new sale contract.
+- Store two references: StateInit of the new contract; the body sent to the new contract.
+- Send the message to deploy the contract.
 
 ```ts
   const payload = beginCell();
@@ -1080,7 +1095,7 @@ public async deploy(wallet: OpenedWallet): Promise<number> {
   payload.storeRef(new Cell());
 ```
 
-그리고 마지막으로 우리의 메시지를 보냅니다:
+Finally, let's send our message:
 
 ```ts
   const seqno = await wallet.contract.getSeqno();
@@ -1100,15 +1115,15 @@ public async deploy(wallet: OpenedWallet): Promise<number> {
 }
 ```
 
-완벽합니다. 판매 스마트 컨트랙트가 배포되면 우리 NFT 아이템의 소유자를 이 판매의 주소로 변경하기만 하면 됩니다.
+Once the sale contract is deployed, the only step left is to transfer ownership of the NFT item to the sale contract’s address.
 
-### 아이템 이전
+### Transferring the item
 
-아이템을 이전한다는 것은 무엇을 의미할까요? 단순히 누가 아이템의 새로운 소유자인지에 대한 정보와 함께 소유자의 지갑에서 스마트 컨트랙트로 메시지를 보내는 것입니다.
+Transferring an item means sending a message from the owner’s wallet to the smart contract with the new owner's information.
 
-`NftItem.ts`로 가서 NftItem 클래스에 이러한 메시지의 본문을 만드는 새로운 static 메소드를 만듭니다:
+Go to `NftItem.ts` and create a new static method in NftItem class to construct the transfer message body:
 
-빈 셀을 만들고 데이터를 채우기만 하면 됩니다.
+Create an empty cell and populate it with data.
 
 ```ts
 static createTransferBody(params: {
@@ -1122,7 +1137,13 @@ static createTransferBody(params: {
     msgBody.storeAddress(params.newOwner);
 ```
 
-op-code, query-id, 새 소유자의 주소 외에도, 성공적인 전송 확인에 대한 응답을 보낼 주소와 들어오는 메시지 코인의 나머지 부분도 저장해야 합니다. 새 소유자에게 갈 TON의 양과 텍스트 페이로드를 받을지 여부를 저장합니다.
+Include the following details:
+
+- Op-code, query-id, and the new owner's address.
+- The address where a confirmation response will be sent.
+- The remaining incoming message coins.
+- The amount of TON sent to the new owner.
+- Whether the recipient will receive a text payload.
 
 ```ts
   msgBody.storeAddress(params.responseTo || null);
@@ -1134,7 +1155,7 @@ op-code, query-id, 새 소유자의 주소 외에도, 성공적인 전송 확인
 }
 ```
 
-그리고 NFT를 이전하기 위한 이전 함수를 만듭니다.
+Create a transfer function to execute the NFT transfer.
 
 ```ts
 static async transfer(
@@ -1164,21 +1185,21 @@ static async transfer(
   }
 ```
 
-좋습니다, 이제 거의 끝에 가까워졌습니다. `app.ts`로 돌아가서 판매하고 싶은 nft의 주소를 가져옵시다:
+Nice, we are almost done! Go back to `app.ts`  and retrieve the address of the NFT we want to sell:
 
 ```ts
 const nftToSaleAddress = await NftItem.getAddressByIndex(collection.address, 0);
 ```
 
-우리 판매에 대한 정보를 저장할 변수를 만듭니다.
+Create a variable to store sale information.
 
-`app.ts`의 시작 부분에 추가:
+At beggining of the `app.ts`, add:
 
 ```ts
 import { GetGemsSaleData, NftSale } from "./contracts/NftSale";
 ```
 
-그리고:
+And then:
 
 ```ts
 const saleData: GetGemsSaleData = {
@@ -1195,9 +1216,9 @@ const saleData: GetGemsSaleData = {
 };
 ```
 
-참고로, `nftOwnerAddress`를 null로 설정했습니다. 이렇게 하면 우리의 판매 컨트랙트는 배포 시 우리의 코인을 받기만 할 것입니다.
+Note, that you set `nftOwnerAddress` to null. This ensures that the sale contract accepts coins upon deployment.
 
-우리의 판매를 배포합니다:
+Deploy our sale:
 
 ```ts
 const nftSaleContract = new NftSale(saleData);
@@ -1205,33 +1226,36 @@ seqno = await nftSaleContract.deploy(wallet);
 await waitSeqno(seqno, wallet);
 ```
 
-...그리고 이전합니다!
+... and transfer it!
 
 ```ts
 await NftItem.transfer(wallet, nftToSaleAddress, nftSaleContract.address);
 ```
 
-이제 프로젝트를 실행하고 과정을 즐길 수 있습니다!
+Finally, we can launch our project and enjoy the process!
 
 ```
 yarn start
 ```
 
-https://testnet.getgems.io/collection/{YOUR_COLLECTION_ADDRESS_HERE}로 가서 이 멋진 오리들을 보세요!
+Go to https://testnet.getgems.io/collection/{YOUR_COLLECTION_ADDRESS_HERE} and look to this perfect ducks!
 
-## 결론
+## Conclusion
 
-오늘 TON에 대한 많은 새로운 것을 배웠고 심지어 테스트넷에서 자신만의 아름다운 NFT 컬렉션도 만들었습니다! 여전히 질문이 있거나 오류를 발견했다면 작성자에게 자유롭게 문의하세요 - [@coalus](https://t.me/coalus)
+Today, you learned a lot about TON and successfully created your own NFT collection on the testnet! If you have any questions or spot an error, feel free to contact the author: [@coalus](https://t.me/coalus)
 
-## 참고자료
+## References
 
 - [GetGems NFT-contracts](https://github.com/getgems-io/nft-contracts)
-- [NFT 표준](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md)
+- [NFT standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md)
 
-## 작성자 소개
+## About the author
 
-- Coalus: [텔레그램](https://t.me/coalus) 또는 [GitHub](https://github.com/coalus)
+- *Coalus* on [Telegram](https://t.me/coalus) or [GitHub](https://github.com/coalus)
 
-## 참고
+## See also
 
-- [NFT 사용 사례](/v3/documentation/dapps/defi/nft)
+- [NFT use cases](/v3/documentation/dapps/defi/nft)
+
+<Feedback />
+
