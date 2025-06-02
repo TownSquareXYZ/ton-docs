@@ -1,17 +1,19 @@
+import Feedback from '@site/src/components/Feedback';
+
 # CRC32
 
 ## 개요
 
-CRC(Cyclic Redundancy Check)는 디지털 데이터의 무결성을 검증하는 데 일반적으로 사용되는 방법입니다. 전송이나 저장 중 디지털 데이터에서 오류가 발생했는지 확인하는 오류 감지 알고리즘입니다. CRC는 전송되거나 저장되는 데이터의 짧은 체크섬이나 해시를 생성하여 데이터에 추가합니다. 데이터를 받거나 검색할 때 CRC를 재계산하여 원래 체크섬과 비교합니다. 두 체크섬이 일치하면 데이터가 손상되지 않은 것으로 간주됩니다. 일치하지 않으면 오류가 발생했음을 나타내며 데이터를 다시 전송하거나 검색해야 합니다.
+CRC stands for **Cyclic Redundancy Check**, a widely used method for verifying the integrity of digital data. An error-detecting algorithm checks whether data has been altered during transmission or storage. CRC generates a short checksum or hash from the original data, which is appended to it. The checksum is recalculated and compared with the original upon retrieval or receipt. If the values match, the data is considered intact; if not, it indicates corruption and the data must be resent or recovered.
 
-TL-B 스키마에는 CRC32 IEEE 버전이 사용됩니다. [NFT 작업 코드](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md#tl-b-schema) 예제를 보면 다양한 메시지에 대한 TL-B 계산을 더 명확하게 이해할 수 있습니다.
+The CRC32 IEEE variant is used in TL-B schemes. You can refer to this [NFT op code](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md#tl-b-schema)example to better understand how CRC32 values are calculated for various TL-B messages.
 
 ## 도구
 
 ### 온라인 계산기
 
 - [온라인 계산기 예제](https://emn178.github.io/online-tools/crc32.html)
-- [Tonwhales 인트로스펙션 ID 생성기](https://tonwhales.com/tools/introspection-id)
+- [Tonwhales introspection ID generator](https://tonwhales.com/tools/introspection-id)
 
 ### VS Code 확장
 
@@ -58,4 +60,6 @@ function calculateResponseOpcode_2(str: string): string {
     return ((a | b) < 0 ? (a | b) + BigInt('4294967296') : a | b).toString(16);
 }
 ```
+
+<Feedback />
 
