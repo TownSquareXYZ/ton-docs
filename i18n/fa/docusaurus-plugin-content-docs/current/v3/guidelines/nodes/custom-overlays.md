@@ -1,39 +1,39 @@
+import Feedback from '@site/src/components/Feedback';
+
 # پوشش های سفارشی
 
-گره‌های TON با تشکیل زیرشبکه‌هایی به نام *پوشش‌ها* با یکدیگر ارتباط برقرار می‌کنند. تعدادی پوشش مشترک وجود دارد که گره‌ها در آنها مشارکت می‌کنند، مانند: پوشش‌های عمومی برای هر شارد، اعتبارسنج‌ها همچنین در پوشش عمومی اعتبارسنج‌ها و پوشش‌هایی خاص برای مجموعه‌های خاص اعتبارسنج‌ها شرکت می‌کنند.
+TON nodes communicate with each other by forming subnets called **overlay**. A few common overlay nodes participate, such as public overlays for each shard. Validators also participate in general validator overlays and overlays for specific validator sets.
 
-گره‌ها همچنین می‌توانند برای پیوستن به پوشش‌های سفارشی تنظیم شوند.
-در حال حاضر این پوشش‌ها می‌توانند برای دو منظور استفاده شوند:
+Nodes can also be configured to join custom overlays for two primary purposes: broadcasting external messages and broadcasting block candidates.
 
-- پخش پیام‌های خارجی
-- پخش کاندیدهای بلاک.
+Participation in custom overlays allows for the avoidance of uncertainty of public overlays and improves delivery reliability and delays.
 
-شرکت در پوشش‌های سفارشی به اجتناب از عدم قطعیت پوشش‌های عمومی و بهبود قابلیت اطمینان و کاهش تأخیر در تحویل کمک می‌کند.
+Each custom overlay has a strictly determined list of participants with predefined permissions, particularly permission to send external messages and blocks. The overlay's configuration should be the same on all participating nodes.
 
-هر پوشش سفارشی دارای فهرست شرکت‌کنندگان به‌صورت دقیق تعریف‌شده با مجوزهای پیش‌فرض است، به ویژه مجوز برای ارسال پیام‌های خارجی و بلاک‌ها. پیکربندی پوشش باید بر روی تمام گره‌های شرکت‌کننده یکسان باشد.
-
-اگر چندین گره تحت کنترل شما هستند، منطقی است که آنها را به یک پوشش سفارشی متحد کنید، جایی که همه اعتبارسنج‌ها قادر به ارسال کاندیدهای بلاک و همه LS قادر به ارسال پیام‌های خارجی باشند. به این ترتیب، همگام‌سازی LS سریع‌تر خواهد بود در حالی که همزمان نرخ تحویل پیام‌های خارجی بالاتر خواهد بود (و به طور کلی تحویل قوی‌تر خواهد شد). توجه داشته باشید که پوشش اضافی ترافیک شبکه اضافی ایجاد می‌کند.
+If you have multiple nodes under your control, it is expedient to unite them into a custom overlay, where all validators can send block candidates and all LS can send external messages. That way, LS will synchronize faster while simultaneously increasing the external message delivery rate (and delivery more robust in general). Note that additional overlay causes additional network traffic.
 
 ## پوشش های سفارشی پیش‌فرض
 
-Mytonctrl از پوشش‌های سفارشی پیش‌فرض در https://ton-blockchain.github.io/fallback_custom_overlays.json استفاده می‌کند. این پوشش بیشتر مواقع استفاده نمی‌شود و برای مواقع اضطراری در صورت بروز مشکل در اتصال پوشش عمومی منظور شده است.
-برای متوقف کردن شرکت در پوشش‌های سفارشی پیش‌فرض فرمان‌های زیر را اجرا کنید
+MyTonCtrl utilizes default custom overlays, which can be found [here](https://ton-blockchain.github.io/fallback_custom_overlays.json). These overlays are typically not in use and are meant for emergency situations when there are connectivity issues with the public overlay.
+
+If you wish to stop participating in default custom overlays, please run the following commands:
 
 ```bash
 MyTonCtrl> set useDefaultCustomOverlays false
 MyTonCtrl> delete_custom_overlay default
 ```
 
-## ایجاد پوشش سفارشی
+## Creating a custom overlay
 
-### جمع آوری آدرس‌های adnl
+### Collect ADNL  addresses
 
-برای اضافه کردن اعتبارسنج‌ها به یک پوشش سفارشی، می‌توانید از شناسه `fullnode adnl` آنها که با `validator-console -c getconfig` بدست می‌آید یا شناسه `validator adnl` که در وضعیت mytonctrl پیدا می‌شود، استفاده کنید.
-برای اضافه کردن لایت‌سرورها به یک پوشش سفارشی، باید از شناسه `fullnode adnl` آنها استفاده کنید.
+To add validators to a custom overlay, you can use either their `fullnode adnl id` available with `validator-console -c getconfig` or `validator adnl id`, which can be found in MyTonCtrl's status.
+
+To add liteservers to a custom overlay, you must use their `fullnode adnl id`.
 
 ### ایجاد یک فایل پیکربندی
 
-یک فایل پیکربندی در این قالب ایجاد کنید:
+Create a config file in the following format:
 
 ```json
 {
@@ -52,35 +52,44 @@ MyTonCtrl> delete_custom_overlay default
 }
 ```
 
-`msg_sender_priority` تعیین کننده ترتیب گنجاندن پیام‌های خارجی در بلاک‌ها است: پیام‌ها ابتدا از منبع با اولویت بالاتر پردازش می‌شوند. پیام‌ها از پوشش عمومی و LS محلی اولویت ۰ دارند.
+`msg_sender_priority` determines the order of external message inclusion in blocks: messages from higher-priority sources are first processed. Messages from the public overlay and local LS have priority 0.
 
-**توجه کنید که تمام گره‌های لیست شده در پیکربندی باید در پوشش شرکت کنند (به عبارت دیگر، آنها باید پوشش را با همین پیکربندی اضافه کنند)، وگرنه اتصال ضعیف خواهد بود و پخش ناموفق خواهد شد**
+:::caution
+All nodes listed in the configuration **must** participate in the overlay; if they do not add an overlay with the exact same configuration, connectivity will be poor and broadcasts may fail.
+:::
 
-یک واژه خاص به نام `@validators` وجود دارد که می‌تواند پوشش سفارشی پویا ایجاد کند که mytonctrl به صورت خودکار هر دور همه اعتبارسنج‌های کنونی را اضافه می‌کند.
+There is a special word `@validators` to create a dynamic custom overlay that MyTonCtrl will generate automatically each round adding all current validators.
 
 ### افزودن پوشش سفارشی
 
-از فرمان mytonctrl برای افزودن پوشش سفارشی استفاده کنید:
+Use the following MyTonCtrl command to add a custom overlay:
 
 ```bash
 MyTonCtrl> add_custom_overlay <name> <path_to_config>
 ```
 
-توجه کنید که نام و فایل پیکربندی **باید** در تمام اعضای پوشش یکسان باشد. با استفاده از فرمان `list_custom_overlays` mytonctrl بررسی کنید که پوشش ایجاد شده است یا نه.
+:::caution
+The name and config file **must** be the same on all overlay members. Check that the overlay has been created using MyTonCtrl's `list_custom_overlays` command.
+:::
 
 ### اشکال‌یابی
 
-می‌توانید سطح گزارش‌نویسی گره را به ۴ تنظیم کنید و لاگ‌ها را با واژه "CustomOverlay" پیدا کنید.
+You can set the node verbosity level equal to 4, and grep logs with the **CustomOverlay** word.
 
-## حذف پوشش سفارشی
+## Deleting a custom overlay
 
-برای حذف پوشش سفارشی از یک گره، از فرمان `delete_custom_overlay <name>` mytonctrl استفاده کنید. اگر پوشش پویا باشد (یعنی در پیکربندی واژه `@validators` وجود دارد) ظرف یک دقیقه حذف می‌شود، در غیر اینصورت بلافاصله حذف می‌شود. برای اطمینان از اینکه گره، پوشش سفارشی را حذف کرده است، فرمان‌های `list_custom_overlays` mytonctrl و `showcustomoverlays` validator-console را بررسی کنید.
+To remove a custom overlay from a node, use the MyTonCtrl command `delete_custom_overlay <name>.`
+
+If the overlay is dynamic (i.e., there is a `@validators` word in the config), it will be deleted within one minute; otherwise, it will be removed instantly.
+
+To make sure that the node has deleted the custom overlay, check MyTonCtrl's `list_custom_overlays`  and `showcustomoverlays` validator-console commands.
 
 ## سطح پایین
 
-فهرست دستورات کنسول اعتبارسنج برای کار با پوشش‌های سفارشی:
+List of validator-console commands for managing custom overlays:
 
-- `addcustomoverlay <path_to_config>` - افزودن پوشش سفارشی به گره محلی. توجه کنید که این پیکربندی باید در قالبی غیر از پیکربندی برای mytonctrl باشد:
+- `addcustomoverlay <path_to_config>`: Adds a custom overlay to the local node. Note that this configuration must be in a format different from the config used for MyTonCtrl:
+
   ```json
   {
     "name": "OverlayName",
@@ -97,7 +106,10 @@ MyTonCtrl> add_custom_overlay <name> <path_to_config>
     ]
   }
   ```
-- `delcustomoverlay <name>` - حذف پوشش سفارشی از گره.
-- `showcustomoverlays` - نمایش فهرست پوشش‌های سفارشی که گره درباره آنها می‌داند.
 
+- `delcustomoverlay <name>`: Removes the custom overlay from the node.
+
+- `showcustomoverlays`: Displays a list of custom overlays known to the node.
+
+<Feedback />
 
