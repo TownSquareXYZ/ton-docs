@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # TON 挖矿指南
 
 :::warning 已弃用
@@ -197,3 +199,6 @@ TON在区块中是以每100进行开采的，你要么猜中一个区块并获�
 #### <a id="faq-software-build"></a>你能帮我在我的操作系统上构建软件吗？
 
 这超出了本指南的范围，请参阅[完整节点操作指南](https://ton.org/#/howto/full-node)以及[Mytonctrl安装脚本](https://github.com/igroman787/mytonctrl/blob/master/scripts/toninstaller.sh#L44)，以获取有关依赖项和过程的信息。
+
+<Feedback />
+
