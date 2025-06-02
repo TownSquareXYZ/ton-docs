@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # POW Givers
 
 :::warning 已弃用
@@ -197,3 +199,6 @@ account balance is 99995640998ng
 ## 3. 在失败的情况下自动化挖矿过程
 
 如果您长时间无法获得Toncoin，这可能是因为太多其他用户同时从同一个 proof-of-work giver 智能合约进行挖矿。也许您应该从上面给出的列表中选择另一个 proof-of-work giver 智能合约。或者，您可以编写一个简单的脚本，自动运行`pow-miner`，使用正确的参数一遍又一遍地运行，直到成功（通过检查`pow-miner`的 exit code 来检测），并调用带有参数`-c 'sendfile mined.boc'`的轻客户端，以便在找到后立即给他发送外部消息。
+
+<Feedback />
+
