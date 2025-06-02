@@ -1,24 +1,31 @@
-# شاردینگ در بلاکچین TON
+import Feedback from '@site/src/components/Feedback';
 
-[//]: # "TODO, این توسط GPT ایجاد شده است"
+# Sharding in TON
 
-بلاکچین TON از مکانیزم‌های پیشرفته شاردینگ برای افزایش مقیاس‌پذیری و عملکرد استفاده می‌کند و به آن امکان می‌دهد تا تعداد زیادی تراکنش را به‌طور مؤثر پردازش کند.
-مفهوم اصلی، تقسیم بلاکچین به قطعات کوچکتر و مستقل به نام **شارد** است. این شاردها می‌توانند تراکنش‌ها را به صورت موازی مدیریت کنند و حتی با رشد شبکه نیز به حفظ بهره‌وری بالا کمک می‌کنند.
+Sharding in TON refers to dividing the blockchain into smaller, manageable pieces, or shards, for scalability. An independent set of validators operates and maintains a shard as a smaller piece of the blockchain.
 
-در TON، شاردینگ بسیار پویا است. برخلاف دیگر بلاکچین‌ها که تعداد ثابتی از شاردها دارند، TON می‌تواند شاردهای جدید را بر اساس نیاز ایجاد کند.
-با افزایش بار تراکنش‌ها، شاردها تقسیم می‌شوند و با کاهش بار، آن‌ها ادغام می‌شوند.
-این انعطاف‌پذیری تضمین می‌کند که سیستم می‌تواند به حجم‌های مختلف کاری سازگار شود در حالی که بهره‌وری را حفظ می‌کند.
+Validators in separate shards can handle transactions in parallel, ensuring high throughput even as the network grows. This approach unlocks the execution of a massive number of transactions.
 
-**مسترچین** نقش مهمی ایفا می‌کند و پیکربندی شبکه و وضعیت نهایی تمام **ورک‌چین‌ها** و **شاردچین‌ها** را حفظ می‌کند.
-در حالی که مسترچین مسئول هماهنگی کلی است، **ورک‌چین‌ها** تحت قوانین خاص خود عمل می‌کنند که هر کدام می‌توانند بیشتر به شاردچین‌ها تقسیم شوند.
-در حال حاضر، تنها یک ورک‌چین (به نام **بیس‌چین**) در TON فعالیت می‌کند.
+In TON, sharding is highly dynamic. Unlike other blockchains with a fixed number of shards, TON can create new shards on demand.
+Shards split as the transaction load increases, and as the load decreases, they merge.
+This flexibility ensures the system can adapt to varying workloads while maintaining efficiency.
 
-در قلب بهره‌وری TON، **پارادایم شاردینگ بی‌نهایت** قرار دارد که هر حساب را به عنوان بخشی از "زنجیره حساب" خود می‌بیند.
-این زنجیره‌های حساب سپس به بلوک‌های شاردچین تجمیع می‌شوند و پردازش تراکنش‌ها را به طور مؤثر تسهیل می‌کنند.
+![](/img/docs/blockchain-fundamentals/scheme.png)
 
-علاوه بر ایجاد پویا شاردها، TON از قابلیت **تقسیم و ادغام** استفاده می‌کند که به شبکه اجازه می‌دهد تا به طور مؤثر به بار تراکنش‌های متغیر پاسخ دهد. این سیستم با تمرکز بر کارایی و ثبات جهانی، مقیاس‌پذیری و تعامل در شبکه بلاکچین را افزایش می‌دهد.
+The **MasterChain** is crucial in maintaining the network configuration and the final state of all **WorkChains** and **ShardChains**.
+While the MasterChain is responsible for overall coordination, WorkChains operate under their specific rules, each of which can be split further into SharChains.
+Only one WorkChain - the **BaseChain**, currently operates on TON.
 
-## همچنین ببینید
+At the heart of TON's efficiency is the [Infinity sharding paradigm](/v3/documentation/smart-contracts/shards/infinity-sharding-paradigm/), which treats each account as part of its own AccountChain.
+These AccountChains are then aggregated into ShardChain blocks, facilitating efficient transaction processing.
 
-- [ورود به شاردها](/v3/documentation/smart-contracts/shards/shards-intro)
-- [# پارادایم شاردینگ بی‌نهایت](/v3/documentation/smart-contracts/shards/infinity-sharding-paradigm)
+In addition to dynamically creating shards, TON uses **split merge** functionality, which allows the network to efficiently respond to changing transaction loads. This system enhances scalability and interaction within the blockchain network, exemplifying TON's approach to resolving typical blockchain challenges with a focus on efficiency and global consistency.
+
+## See also
+
+- [Blockchain of blockchains](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains/)
+- [Shards dive in](/v3/documentation/smart-contracts/shards/shards-intro/)
+- [Infinity sharding paradigm](/v3/documentation/smart-contracts/shards/infinity-sharding-paradigm/)
+
+<Feedback />
+
