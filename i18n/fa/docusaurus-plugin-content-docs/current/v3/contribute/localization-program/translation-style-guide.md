@@ -1,50 +1,50 @@
-# راهنمای سبک ترجمه
+import Feedback from '@site/src/components/Feedback';
 
-این راهنمای سبک ترجمه شامل برخی از مهمترین دستورالعمل‌ها، راهنمایی‌ها و نکاتی برای مترجمان است که به ما کمک می‌کند وب‌سایت را بومی‌سازی کنیم.
+# Translation style guide
 
-این سند به عنوان یک راهنمای کلی عمل می‌کند و مخصوص یک زبان خاص نیست.
+This translation style guide contains essential guidelines, instructions, and tips for translators, helping us localize the website.
+
+This document serves as a general guide and is not specific to any language.
 
 ## دریافت ماهیت پیام
 
 هنگام ترجمه محتوای مستندات TON، از ترجمه‌های لفظی خودداری کنید.
 
-مهم است که ترجمه‌ها ماهیت پیام را بگیرند. این می‌تواند به معنای تعبیر مجدد بعضی از عبارات یا استفاده از ترجمه های توصیفی به جای ترجمه واو به واو محتوا باشد.
+The translations must capture the essence of the message. This approach means rephrasing specific phrases or using descriptive translations instead of translating the content word for word.
 
-زبان‌های مختلف دارای قوانین گرامری، تفاسیر و ترتیب واژه‌های مختلف هستند. هنگام ترجمه، به نحوه ساختار جملات در زبان‌های مقصد توجه کنید و از ترجمه لفظی منبع انگلیسی خودداری کنید، زیرا این می‌تواند به ساختار ضعیف جمله و خوانایی کم منجر شود.
+Different languages have different grammar rules, conventions, and word order. When translating, please be mindful of structuring sentences in the target languages, and avoid word-for-word translation of the English source, as this can lead to poor sentence structure and readability.
 
-به جای ترجمه منبع واو به واو، توصیه می‌شود که کل جمله را بخوانید و آن را به نحوی تطبیق دهید که با رسوم زبان مقصد هماهنگ باشد.
+Instead of translating the source text word for word, you should read the entire sentence and adapt it to fit the conventions of the target language.
 
 ## رسمی و غیررسمی
 
 ما از فرم رسمی خطاب استفاده می‌کنیم که همیشه برای همه بازدیدکنندگان محترمانه و مناسب است.
 
-استفاده از خطاب رسمی به ما اجازه می‌دهد که لحن غیررسمی یا تهاجمی نداشته باشیم و بدون توجه به سن و جنسیت بازدیدکننده، کار می کند.
+Using the formal address allows us to avoid sounding unofficial or offensive and works regardless of the reader’s age and gender.
 
-بیشتر زبان‌های هندواروپایی و افروآسیایی از ضمایر شخصی دوم شخص خاص جنسیتی استفاده می‌کنند که بین مرد و زن تفاوت قائل می‌شود. هنگامی که به کاربر خطاب می‌کنیم یا از ضمایر ملکی استفاده می‌کنیم، می‌توانیم از فرض جنسیت بازدیدکننده اجتناب کنیم، زیرا فرم رسمی خطاب بدون توجه به اینکه چگونه شناسایی کنند، به طور عمومی قابل‌اجرا و پایدار است.
+Most Indo-European and Afro-Asiatic languages use gender-specific second-person personal pronouns, distinguishing between males and females. When addressing the user or using possessive pronouns, we can avoid assuming the reader’s gender, as the formal address is generally applicable and consistent, regardless of how they identify.
 
-## معنای ساده و روشن واژگان
+## Straightforward vocabulary and meaning
 
 هدف ما این است که محتوای وب‌سایت برای تعداد بیشتری از مردم قابل‌درک باشد.
 
-در بیشتر موارد، این را می‌توان به سادگی با استفاده از کلمات کوتاه و ساده که به‌آسانی قابل‌درک هستند، بدست آورد. اگر در زبان شما برای یک کلمه خاص چندین ترجمه با معنای یکسان وجود دارد، بهترین گزینه معمولاً کوتاه‌ترین کلمه است که به وضوح معنا را منعکس می‌کند.
+In most cases, contributors can achieve this result by using short and simple words that are easily understandable. If multiple possible translations exist for a word in your language with the same meaning, the best option is often the shortest word reflecting the meaning.
 
 ## سیستم نگارش
 
-تمامی محتوا باید با استفاده از سیستم نگارش صحیح برای زبان شما ترجمه شود و نباید شامل هیچ کلمه‌ای با حروف لاتین باشد.
+All of the content should be translated using the correct writing system for your language and should not include any words written using Latin characters.
 
 هنگام ترجمه محتوا، باید اطمینان حاصل کنید که ترجمه‌ها همخوان و بدون حروف لاتین باشند.
 
-**موارد بالا برای زبان‌هایی که طبق قاعده نباید اسامی خاص ترجمه شوند، قابل اعمال نیست.**
+**Do not translate proper names defined by glossary**
 
 ## ترجمه متادیتا صفحه
 
-برخی صفحات شامل متادیتا روی صفحه هستند، مانند 'title', 'lang', 'description', 'sidebar' و غیره.
+Some pages contain metadata, such as 'title', 'lang', 'description', 'sidebar', etc.
 
-ما محتوایی را که مترجمان نباید ترجمه کنند هنگام بارگزاری صفحات جدید در Crowdin مخفی می‌کنیم، به این معنی که همه متادیتا قابل‌مشاهده برای مترجمان در Crowdin باید ترجمه شود.
+When uploading new pages to Crowdin, we hide content that translators should never translate. This feature makes visible to translators in Crowdin only the text that should be translated.
 
-لطفاً هنگام ترجمه هر رشته‌ای که متن منبع آن 'en' است، توجه ویژه کنید. این 'en' زبان در دسترس صفحه را نشان می‌دهد و باید به [کد زبان ISO برای زبان شما](https://www.andiamo.co.uk/resources/iso-language-codes/) ترجمه شود. این رشته‌ها باید همیشه با استفاده از حروف لاتین ترجمه شوند، نه سیستم نوشتاری بومی زبان هدف.
-
-اگر مطمئن نیستید که از کدام کد زبان استفاده کنید، می‌توانید در Crowdin حافظه ترجمه را بررسی کنید یا کد زبان خود را در URL صفحه در ویرایشگر آنلاین Crowdin پیدا کنید.
+Please be especially careful when translating strings where the source text is 'en'. This represents the language page, which is available and should be translated to the [ISO language code for your language](https://www.andiamo.co.uk/resources/iso-language-codes/). These strings should always be translated using Latin characters, not the writing script, native to the target language.
 
 برخی نمونه‌های کد زبان برای رایج‌ترین زبان‌ها:
 
@@ -57,61 +57,61 @@
 
 ## عناوین مقالات خارجی
 
-برخی رشته‌ها حاوی عناوین مقالات خارجی هستند. بیشتر صفحات مستندات توسعه‌دهندگان ما شامل لینک‌هایی به مقالات خارجی برای مطالعه بیشتر هستند. رشته‌های حاوی عناوین مقالات فارغ از زبان مقاله باید ترجمه شوند تا تجربه کاربری یکسان‌تری برای بازدیدکنندگانی که صفحه را به زبان خود مشاهده می‌کنند، فراهم شود.
+Some strings contain titles of external articles. Most of our developer documentation pages contain links to external articles for further reading. The strings containing article titles need to be translated, regardless of the article's language, to ensure a more consistent user experience for visitors viewing the page in their language.
 
 ## هشدارهای Crowdin
 
-Crowdin ویژگی داخلی دارد که به مترجمان هنگامی که در حال انجام اشتباه هستند، هشدار می‌دهد. اگر فراموش کنید که تگی از منبع اضافه کنید، عناصر را ترجمه کنید که نباید ترجمه شوند، چند فضای خالی متوالی اضافه کنید، نقطه‌گذاری انتهایی را فراموش کنید و غیره، Crowdin به طور خودکار قبل از ذخیره ترجمه‌تان به شما هشدار خواهد داد. اگر این‌گونه هشداری دیدید، لطفاً برگردید و ترجمه پیشنهادی را دوباره بررسی کنید.
+Crowdin has a built-in feature that warns translators when they are about to make a mistake. Crowdin will automatically alert you before saving your translation if you forget to include a tag from the source, translate elements that should not be translated, add several consecutive spaces, forget end punctuation, etc. If you see a warning like this, please double-check the suggested translation.
 
 :::warning
-هرگز این هشدارها را نادیده نگیرید، زیرا اغلب به معنای این است که چیزی اشتباه است یا ترجمه قسمتی مهم از متن منبع را ندارد.
+Never ignore these warnings, as they usually mean something is wrong or the translation lacks a key part of the source text.
 :::
 
-## اختصارات و فرم‌های کامل/مخفف
+## Short vs. complete forms and abbreviations
 
-بسیاری از اختصارات در وب‌سایت استفاده می‌شود، مثلاً dapps، NFT، DAO، DeFi و غیره. این اختصارات به طور معمول در انگلیسی استفاده می‌شوند و بیشتر بازدیدکنندگان وب‌سایت با آنها آشنا هستند.
+The website uses many abbreviations, such as apps, DApps, NFT, DAO, DeFi, etc. These abbreviations are standard in English, and most visitors are familiar with them.
 
-از آنجا که آنها معمولاً در سایر زبان‌ها ترجمه‌های مشخصی ندارند، بهترین روش برای برخورد با این و اصطلاحات مشابه، این است که ترجمه توصیفی از فرم کامل ارائه دهید و اختصار انگلیسی را در پرانتز اضافه کنید.
+Since they usually don’t have established translations in other languages, the best approach to these and similar terms is to provide a descriptive translation of the entire form and add the English abbreviation in brackets.
 
-این اختصارات را ترجمه نکنید، زیرا اکثر مردم با آنها آشنا نیستند، و نسخه‌های بومی‌سازی شده نیز برای بسیاری از بازدیدکنندگان معنای خاصی نخواهند داشت.
+Do not translate these abbreviations since most people are unfamiliar with them, and the localized versions would not make much sense to most visitors.
 
-نمونه‌ای از نحوه ترجمه dapps:
+Example of how to translate DApps:
 
-- برنامه‌های غیرمتمرکز (dapps) → فرم کامل ترجمه شده (اختصار انگلیسی در پرانتز)
+- Decentralized applications (DApps) → Translated in complete form (English abbreviation in brackets)
 
 ## اصطلاحاتی بدون ترجمه‌های مشخص
 
-برخی اصطلاحات ممکن است در سایر زبان‌ها ترجمه‌های مشخصی نداشته باشند، و به عنوان اصطلاحات انگلیسی اصلی شناخته شده باشند. این اصطلاحات عمدتاً مفاهیم جدیدتری مانند اثبات کار، اثبات سهام، زنجیره بیکن، استکینگ و غیره را شامل می‌شوند.
+Some terms might not have established translations in other languages but are widely known by their original English names. Such terms include newer concepts, like proof-of-work, proof-of-stake, Beacon Chain, staking, etc.
 
-در حالی که ترجمه این اصطلاحات ممکن است غیرطبیعی به نظر برسد، زیرا نسخه انگلیسی آن در زبان‌های دیگر نیز معمولاً استفاده می‌شود، اکیداً توصیه می‌شود که آنها ترجمه شوند.
+While translating these terms can sound unnatural, since the English version is a basis for other languages, it is highly recommended that they be translated.
 
-هنگام ترجمه آنها، از خلاقیت استفاده کنید، از ترجمه‌های توصیفی استفاده کنید، یا صرفاً آنها را به صورت لفظی ترجمه کنید.
+Feel free to get creative, use descriptive translations, or translate them literally.
 
-دلیل اینکه بیشتر اصطلاحات باید ترجمه شوند، به جای اینکه برخی را به زبان انگلیسی باقی بگذاریم، این است که این واژه‌شناسی جدید در آینده گسترده‌تر خواهد شد، زیرا افراد بیشتری شروع به استفاده از TON و فناوری‌های مرتبط خواهند کرد. اگر می‌خواهیم افراد بیشتری از سراسر جهان را به این فضا وارد کنیم، باید واژه‌شناسی قابل فهمی را به بیشترین زبان‌های ممکن ارائه دهیم، حتی اگر لازم باشد خودمان آن را ایجاد کنیم.
+Most terms should be translated instead of leaving some in English, as this new terminology will become more widespread as more people start using TON and related technologies. To onboard more people to TON, we must provide understandable terminology in as many languages as possible, even if we need to create it ourselves.
 
 ## دکمه‌ها و CTAها
 
-سایت شامل دکمه‌های متعددی است که باید به گونه‌ای متفاوت از محتوای دیگر ترجمه شوند.
+Do not translate the website's contents, such as buttons.
 
-متن دکمه را می‌توان با مشاهده اسکرین‌شات‌های زمینه، که به بیشتر رشته‌ها متصل هستند، یا با بررسی زمینه در ویرایشگر که شامل عبارت «دکمه» است، شناسایی کرد.
+You may identify button text by viewing the context screenshots connected with most strings or by checking the context in the editor, which includes the phrase ‘’button’’.
 
-ترجمه‌ها برای دکمه‌ها باید تا حد ممکن کوتاه باشند تا از عدم تطابق های قالب‌بندی جلوگیری شود. علاوه بر این، ترجمه دکمه‌ها باید امری باشد، یعنی دستوری یا خواسته‌ای را ارائه دهد.
+Button translations should be as short as possible to prevent formatting mismatches. Additionally, button translations, i.e., presenting a command or request, should be imperative.
 
 ## ترجمه برای شمولیت
 
-بازدیدکنندگان اسناد TON از سراسر جهان و از زمینه‌های مختلف آمده‌اند. بنابراین، زبان در وب‌سایت باید خنثی، خوش‌آمد و غیر انحصاری باشد.
+TON docs visitors come from all over the world and from different backgrounds. Therefore, the language on the website should be neutral, welcoming to everyone, and not exclusive.
 
-یکی از جنبه‌های مهم این موضوع بی‌طرفی جنسیتی است. این را می‌توان به راحتی با استفاده از فرم رسمی خطاب و اجتناب از هرگونه کلمات خاص جنسیتی در ترجمه‌ها به دست آورد.
+Gender neutrality is an essential aspect of this. Use the formal address form and avoid gender-specific words in the translations.
 
-شکلی دیگر از شمولیت تلاش برای ترجمه برای مخاطبان جهانی است، نه مخصوص به هیچ کشور، نژاد یا منطقه خاصی.
+Another form of inclusivity is trying to translate for a global audience, not specific to any country, race, or region.
 
 در نهایت، زبان باید مناسب تمامی مخاطبان و سنین باشد.
 
 ## ترجمه‌های خاص زبان
 
-هنگام ترجمه، مهم است که قوانین دستور زبان، قراردادها و قالب‌بندی که در زبان شما استفاده می‌شود را دنبال کنید، به‌جای اینکه از منبع کپی کنید. متن اصلی از قوانین دستور زبان و قراردادهای انگلیسی پیروی می‌کند که برای بسیاری دیگر از زبان‌ها قابل اجرایی نمی‌باشد.
+When translating, it is crucial to follow the grammar rules, conventions, and formatting used in your language instead of copying from the source. The source text follows English grammar rules and conventions, which do not apply to many other languages.
 
-شما باید از قوانین زبان خود آگاه باشید و به‌صورت مقتضی ترجمه کنید. اگر نیاز به کمک دارید، با ما در تماس باشید و ما به شما در پیدا کردن منابعی کمک خواهیم کرد که این مؤلفه‌ها چگونه باید در زبان شما استفاده شوند.
+You should be aware of the rules for your language and translate accordingly. If you need help, contact us; we will help you with resources on translating elements for your language.
 
 برخی از مثال‌هایی که باید به‌ویژه به آنها توجه کرد:
 
@@ -121,22 +121,22 @@ Crowdin ویژگی داخلی دارد که به مترجمان هنگامی ک�
 
 - تفاوت‌های فراوانی در حروف بزرگ در زبان‌های مختلف وجود دارد.
 - در زبان انگلیسی، معمولاً همه کلمات در عناوین و نام‌ها، ماه‌ها و روزها، نام زبان‌ها، تعطیلات و غیره با حروف بزرگ نوشته می‌شود. در بسیاری دیگر از زبان‌ها، این از لحاظ دستوری نادرست است، زیرا قوانین حروف بزرگ متفاوتی دارند.
-- برخی زبان‌ها نیز قوانین مربوط به حروف بزرگ برای ضمایر شخصی، اسم‌ها و بعضی صفت‌ها دارند که در انگلیسی با حروف بزرگ نوشته نمی‌شوند.
+- Some languages also have rules about capitalizing personal pronouns, nouns, and adjectives that you shouldn't capitalize in English.
 
 #### فاصله‌گذاری
 
 - قوانین املا استفاده از فضا را برای هر زبان تعریف می‌کنند. از آنجا که فضاها همه‌جا استفاده می‌شوند، این قوانین یکی از متمایزترین‌ها هستند و فضاها یکی از اشتباه‌ترین عناصر ترجمه‌شده هستند.
 - برخی از تفاوت‌های رایج در فاصله‌گذاری بین انگلیسی و سایر زبان‌ها:
-  - فضا قبل از واحدهای اندازه‌گیری و ارزها (مثلاً USD، EUR، kB، MB)
-  - فضا قبل از علائم درجه (مثلاً °C، ℉)
-  - فضا قبل از برخی علائم نگارشی، به‌ویژه نقطه‌چین (…)
-  - فضا قبل و بعد از اسلش‌ها (/)
+  - Space before units of measure and currencies. Example: USD, EUR, kB, MB
+  - Space before degree signs. Example: °C, ℉
+  - Space before some punctuation marks, especially the ellipsis. Example: Then… in summary
+  - Space before and after slashes. Example: if / else
 
 #### لیست‌ها
 
-- هر زبان دارای یک مجموعه متنوع و پیچیده از قوانین برای نوشتن لیست‌ها است. این‌ها می‌توانند به‌طور قابل‌توجهی با انگلیسی متفاوت باشند.
-- در برخی زبان‌ها، اولین کلمه هر خط جدید باید با حروف بزرگ نوشته شود، در حالی که در سایر زبان‌ها خطوط جدید باید با حروف کوچک شروع شوند. بسیاری از زبان‌ها نیز قوانین مختلفی در مورد استفاده از حروف بزرگ در لیست‌ها دارند، بسته به طول هر خط.
-- همین امر به نشانه‌گذاری موارد خطی نیز می‌باشد. نقطه پایان در لیست‌ها می‌تواند بسته به زبان نقطه (.), ویرگول (,) یا نقطه‌ویرگول (;) باشد.
+- Every language has a diverse and complex set of rules for writing lists. These can be significantly different from English.
+- In some languages, the first word of each new line needs to be capitalized, while in others, new lines should start with lowercase letters. Many languages also have different rules about capitalization in lists, depending on the length of each line.
+- The same applies to the punctuation of line items. The end punctuation in lists can be a period (.), comma (,), or semicolon (;), depending on the language.
 
 #### نقل‌قول‌ها
 
@@ -151,24 +151,27 @@ Crowdin ویژگی داخلی دارد که به مترجمان هنگامی ک�
 
 #### خط تیره و فاصله‌گذاری
 
-- در زبان انگلیسی، خط تیره (-) برای پیوستن کلمات یا قسمت‌های مختلف کلمه استفاده می‌شود، در حالی که خط فاصله (–) برای نشان دادن یک دامنه یا مکث استفاده می‌شود.
-- بسیاری از زبان‌ها قوانین مختلفی برای استفاده از خط تیره و خط فاصله دارند که باید رعایت شوند.
+- In English, a hyphen `-` is used to join words or different parts of a word, while a dash `—` indicates a range or a pause.
+  - Example: TON — is ... proof-of-stake.
+- Many languages have different rules for using hyphens and dashes that should be observed.
 
-### قالب‌ها
+### Formats
 
-#### اعداد
+#### Numbers
 
-- تفاوت اصلی در نوشتن اعداد در زبان‌های مختلف، جداکننده‌ای است که برای اعشار و هزارگان استفاده می‌شود. برای هزارگان، این می‌تواند یک نقطه، ویرگول یا فاصله باشد. به‌طور مشابه، برخی زبان‌ها از نقطه برای اعشار استفاده می‌کنند، در حالی که برخی دیگر از ویرگول برای اعشار استفاده می‌کنند.
-  - برخی از نمونه‌های اعداد بزرگ:
-    - انگلیسی – **1,000.50**
-    - اسپانیایی – **1.000,50**
-    - فرانسوی – **1 000,50**
-- یکی دیگر از موارد مهم در ترجمه اعداد، علامت درصد است. این می‌تواند به روش‌های مختلف نوشته شود: **۱۰۰٪**، **۱۰۰ ٪** یا **٪۱۰۰**.
-- در نهایت، اعداد منفی بسته به زبان می‌توانند به‌طور متفاوت نمایش داده شوند: -۱۰۰، ۱۰۰-، (۱۰۰) یا [۱۰۰].
+- The main difference in writing numbers in different languages is the separator for decimals and thousands. For thousands, this can be a period, comma, or space. Similarly, some languages use a decimal point, while others use a decimal comma.
+  - Example:
+    - English – **1,000.50**
+    - Spanish – **1.000,50**
+    - French – **1 000,50**
+- The percent sign is another critical consideration when translating numbers. Write numbers in the typical format for the corresponding language.
+  - Example: **100%**, **100 %**, or **%100**.
+- Finally, negative numbers can be displayed differently, depending on the language
+  - Example: -100, 100-, (100) or [100].
 
 #### تاریخ‌ها
 
-- هنگام ترجمه تاریخ‌ها، بر اساس زبان، تعدادی ملاحظات و تفاوت‌ها وجود دارد. این‌ها شامل قالب تاریخ، جداکننده، حروف بزرگ و صفرهای پیشرو است. همچنین تفاوت‌هایی بین تاریخ‌های کامل و عددی وجود دارد.
+- When translating dates, there are several considerations and differences based on the language. These include the date format, separator, capitalization, and leading zeros. There are also differences between full-length and numerical dates.
   - برخی از مثال‌های فرمت‌های مختلف تاریخ:
     - انگلیسی بریتانیا (dd/mm/yyyy) – 1st January, 2022
     - انگلیسی امریکا (mm/dd/yyyy) – January 1st, 2022
@@ -179,7 +182,7 @@ Crowdin ویژگی داخلی دارد که به مترجمان هنگامی ک�
 
 #### واحدهای پولی
 
-- ترجمه واحدهای پولی می‌تواند چالش‌برانگیز باشد. به دلیل تفاوت‌های موجود در فرمت‌ها، قراردادها و تبدیل‌ها، معمولاً بهتر است واحد پولی را به همان شکلی که در منبع است، حفظ کنید. برای راحتی بیشتر مخاطبان، می‌توانید تبدیل آن به واحد پولی محلی را در پرانتز اضافه کنید.
+- Translating currencies can be challenging due to the different formats, conventions, and conversions. As a general rule, please keep currencies the same as the source. You can add your local currency and conversion in brackets for the reader's benefit.
 - تفاوت‌های اصلی در نوشتن واحدهای پولی در زبان‌های مختلف شامل موقعیت نماد، استفاده از ویرگول یا نقطه به جای جداکننده اعشاری، فاصله‌گذاری، و استفاده از اختصارات یا نمادها است.
   - موقعیت نماد: $100 یا 100$
   - ویرگول یا نقطه به عنوان جداکننده اعشاری: ۱۰۰,۵۰$ یا ۱۰۰.۵۰$
@@ -188,11 +191,14 @@ Crowdin ویژگی داخلی دارد که به مترجمان هنگامی ک�
 
 #### واحدهای اندازه‌گیری
 
-- به طور کلی، لطفاً واحدهای اندازه‌گیری را مطابق با منبع حفظ کنید. اگر کشور شما از سیستم متفاوتی استفاده می‌کند، می‌توانید تبدیل را در پرانتز درج کنید.
-- علاوه بر بومی‌سازی واحدهای اندازه‌گیری، مهم است که به تفاوت‌های زبانی در نحوه استفاده از این واحدها نیز توجه شود. تفاوت اصلی در فاصله بین عدد و واحد است که می‌تواند بر اساس زبان متفاوت باشد. مثال‌هایی از این موضوع شامل ۱۰۰kB در مقابل ۱۰۰ kB یا ۵۰ºF در مقابل ۵۰ ºF است.
+- As a general rule, please keep the units of measure as per the source. You can include the conversion in brackets if your country uses a different system.
+- Aside from the localization of units of measure, it is also important to note the differences in how languages approach these units. The main difference is the spacing between the number and unit, which can differ based on the language. Examples of this include 100kB vs. 100 kB or 50ºF vs. 50 ºF.
 
 ## نتیجه‌گیری
 
 هنگام ترجمه، سعی کنید عجله نکنید. صبور باشید و لذت ببرید!
 
-از شما بابت شرکت در برنامه ترجمه و کمک به دسترسی کاربران بیشتر به وب‌سایت تشکر می‌کنیم. جامعه TON جهانی است و خوشحالیم که شما نیز بخشی از آن هستید!
+Thank you for helping us localize the website and make it accessible to a wider audience. The TON community is global, and we are happy you are a part of it!
+
+<Feedback />
+
