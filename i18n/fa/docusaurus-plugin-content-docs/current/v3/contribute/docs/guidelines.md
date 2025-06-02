@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # اصول مستندسازی عمومی
+
+:::danger
+This page is outdated and will be deleted soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 برای تجربه کاربری بهینه و شفافیت، لطفاً هنگام ایجاد محتوای جدید در docs.ton.org به فهرست الزامات عمومی و مهمی که ما قصد داریم به تمام مستندات اعمال کنیم، توجه داشته باشید.
 
@@ -21,4 +28,5 @@
 
 ## بازخورد دریافت کنید
 
-قبل از انتشار مستندات، دریافت بازخورد از سایر همکاران یا کاربران ایده خوبی است. این می‌تواند به شناسایی بخش‌هایی که ممکن است گیج‌کننده یا نامشخص باشند کمک کند و به شما اجازه دهد که قبل از انتشار مستندات، بهبودهایی ایجاد کنید.
+Before publishing the documentation, it is a good idea to get feedback from other contributors or users. This can help identify areas that may be confusing or unclear, and allow you to make improvements before the documentation is released. <Feedback />
+
