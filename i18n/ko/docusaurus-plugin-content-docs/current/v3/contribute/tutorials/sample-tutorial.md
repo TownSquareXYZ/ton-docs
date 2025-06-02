@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 샘플 튜토리얼 구조
+
+:::danger
+This page is outdated and will be updated soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 ## 소개
 
@@ -125,4 +132,5 @@
 
 가능한 경우 문서 이름과 링크를 추가하여 출처를 표시하세요.
 
-디지털 문서가 아닌 경우 ISBN 또는 다른 형태의 참고 자료를 포함하세요.
+If it is not a digital document, include an ISBN or other form of reference. <Feedback />
+
