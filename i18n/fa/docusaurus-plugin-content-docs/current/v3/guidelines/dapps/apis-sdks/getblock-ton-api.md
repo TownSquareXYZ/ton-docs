@@ -1,66 +1,66 @@
-# TON API توسط GetBlock
+import Feedback from '@site/src/components/Feedback';
 
-این راهنما به مراحل ضروری برای دریافت و استفاده از نقاط پایانی خصوصی RPC توسط GetBlock برای دسترسی به بلاکچین TON می‌پردازد.
+# HTTP API by GetBlock
+
+:::tip TON infrastructure status
+
+- [status.toncenter](https://status.toncenter.com/) - Provides various statistics of node activity in the last hour.
+- [Tonstat.us](https://tonstat.us/) - A real-time Grafana dashboard that updates every 5 minutes.
+  :::
+
+This guide covers essential steps in acquiring and using private RPC endpoints by GetBlock to access TON Blockchain.
 
 :::info
-[GetBlock](https://getblock.io/) یک ارائه‌دهنده زیرساخت Web3 می‌باشد که نقاط پایانی API مبتنی بر HTTP را برای تعامل با شبکه‌های مختلف بلاکچین، از جمله TON، به کاربران ارائه می‌دهد.
+[GetBlock](https://getblock.io/) is a Web3 infrastructure provider that offers HTTP-based API endpoints for clients to interact with multiple blockchain networks, including TON.
 :::
 
-## چگونه به نقاط پایانی بلاکچین TON دسترسی پیدا کنیم
+## How to access TON Blockchain endpoints
 
-برای شروع استفاده از نقاط پایانی GetBlock، کاربران باید به حساب خود وارد شوند، یک URL نقطه پایانی TON دریافت کنند و آماده شروع هستند. برای راهنمایی‌های دقیق‌تر ادامه دهید.
+To start using GetBlock’s endpoints, users need to log in to their accounts, and retrieve a TON endpoint URL. Follow these instructions:
 
-### ۱. ایجاد حساب کاربری GetBlock
+### 1. Create a GetBlock account
 
-به [وب‌سایت GetBlock](https://getblock.io/?utm_source=external\&utm_medium=article\&utm_campaign=ton_docs) مراجعه کرده و دکمه "شروع رایگان" را در صفحه اصلی پیدا کنید. با استفاده از ایمیل خود یا اتصال به کیف‌پول MetaMask ثبت‌نام کنید.
+Visit the GetBlock website and click on the "Get Started for Free" button. Sign up using your email address or by connecting your MetaMask wallet.
 
-![GetBlock.io\_main\_page](/img/docs/getblock-img/unnamed-2.png?=RAW)
+![GetBlock.io_main_page](/img/docs/getblock-img/unnamed-2.png?=RAW)
 
-### ۲. انتخاب بلاکچین TON
+### 2. Select TON Blockchain
 
-پس از ورود به سیستم، به داشبورد هدایت می‌شوید. بخش "My Endpoints" را پیدا کنید و در منوی کشویی "Protocols" گزینه "TON" را انتخاب کنید.
+After signing in, go to the "My Endpoints" section. Choose TON from the "Protocols" dropdown menu and select the desired network and API type (JSON-RPC or JSON-RPC(v2)).
 
-شبکه و نوع API مورد نظر را انتخاب کنید (JSON-RPC یا JSON-RPC(v2)).
+![GetBlock_account__dashboard](/img/docs/getblock-img/unnamed-4.png)
 
-![GetBlock\_account\_\_dashboard](/img/docs/getblock-img/unnamed-4.png)
+### 3. Generate your endpoint URL
 
-### ۳. تولید URL نقطه پایانی شما
+Click the **Get** button to generate your TON Blockchain endpoint URL. The structure of the endpoint will be: `https://go.getblock.io/[ACCESS TOKEN]/`.
 
-برای تولید URL نقطه پایانی بلاکچین TON، بر روی دکمه “Get” کلیک کنید.
-
-تمام نقاط پایانی API در GetBlock دارای ساختاری ثابت هستند: `https://go.getblock.io/[ACCESS TOKEN]/`.
-
-این توکن‌های دسترسی به عنوان شناسه‌های منحصر به فرد برای هر کاربر یا برنامه عمل می‌کنند و حاوی اطلاعات لازم برای هدایت درخواست به نقاط پایانی مناسب بدون افشای جزئیات حساس هستند. این اساساً نیاز به هدرهای مجوز جداگانه یا کلیدهای API را جایگزین می‌کند.
+Access tokens act as unique identifiers for your requests, eliminating the need for separate API keys or authorization headers.
 
 کاربران می‌توانند به راحتی چندین نقطه پایانی ایجاد کنند، توکن‌های خود را در صورت افشا شدن تغییر دهند یا نقاط پایانی غیر استفاده را حذف کنند.
 
-![GetBlock\_account\_endpoints](/img/docs/getblock-img/unnamed-3.png)
+![GetBlock_account_endpoints](/img/docs/getblock-img/unnamed-3.png)
 
-اکنون می‌توانید از این URL‌ها استفاده کنید تا با بلاکچین TON تعامل کنید، داده‌ها را بپرسید، تراکنش‌ها را ارسال کنید و برنامه‌های غیرمتمرکز بسازید و نیازی به راه‌اندازی و نگهداری زیرساخت ندارید.
+Now, you can use these URLs to interact with TON Blockchain, query data, send transactions, and build decentralized applications without the hassle of infrastructure setup and maintenance.
 
-### درخواست‌های رایگان و محدودیت‌های کاربر
+### Free requests and user limits
 
-لطفاً توجه داشته باشید که هر کاربر ثبت‌ شده GetBlock تعداد ۴۰٬۰۰۰ درخواست رایگان با سقف ۶۰ RPS (درخواست در ثانیه) دریافت می‌کند. بالانس درخواست‌ها روزانه تجدید می‌شود و می‌توان آن را در هر نقطه پایانی، به‌صورت مشترک در بلاکچین‌های پشتیبانی شده، استفاده کرد.
+Each registered user receives 40,000 free requests per day, with a cap of 60 requests per second (RPS). This balance is renewed daily and can be used for any supported blockchain.
 
-برای قابلیت‌ها و ویژگی‌های ارتقاء یافته، کاربران می‌توانند گزینه‌های پرداختی که در زیر شرح داده شده را بررسی کنند.
-
-GetBlock.io دو نوع پلن ارائه می‌کند: نود‌های مشترک و نود‌های اختصاصی. مشتریان می‌توانند تعرفه را بر اساس نیاز و بودجه خود انتخاب کنند.
-
-### نود‌های مشترک
+### Shared nodes
 
 - فرصتی ابتدایی که در آن نود‌ها به طور همزمان توسط چندین مشتری استفاده می‌شوند؛
 - محدودیت نرخ به ۲۰۰ RPS افزایش یافته است؛
 - بسیار مناسب برای استفاده فردی یا برای برنامه‌هایی که حجم تراکنش و نیازهای منابع کمتری نسبت به برنامه‌های تولید کاملاً مقیاس‌پذیر دارند؛
 - گزینه‌ای مقرون به صرفه‌تر برای توسعه‌دهندگان فردی یا تیم‌های کوچک با بودجه محدود.
 
-نود‌های مشترک یک راه‌حل اقتصادی برای دسترسی به زیرساخت بلاکچین TON بدون نیاز به سرمایه‌گذاری اولیه قابل توجه یا تعهد ارائه می‌دهند.
+Shared nodes provide a cost-effective solution for accessing TON Blockchain infrastructure without the need for significant upfront investment or commitment.
 
 همانطور که توسعه‌دهندگان برنامه‌های خود را گسترده می‌کند و به منابع بیشتری نیاز پیدا می‌کنند، می‌توانند به راحتی طرح‌های اشتراک خود را ارتقاء دهند یا در صورت نیاز به نود‌های اختصاصی تغییر دهند.
 
-### نود‌های اختصاصی
+### Dedicated nodes
 
-- یک نود به‌طور انحصاری به یک مشتری تخصیص داده می‌شود؛
-  بدون محدودیت در درخواست‌ها؛
+- One node is exclusively allocated to a single client;
+- No request limits;
 - دسترسی به نود‌های آرشیوی، مکان‌های سرور مختلف، و تنظیمات سفارشی را فراهم می‌کند؛
 - خدمات و پشتیبانی سطح برتر را به مشتریان تضمین می‌کند.
 
@@ -68,44 +68,44 @@ GetBlock.io دو نوع پلن ارائه می‌کند: نود‌های مشت�
 
 ## چگونه از TON HTTP API توسط GetBlock استفاده کنیم
 
-در این بخش، به کاربری عملی از TON HTTP API ارائه شده توسط GetBlock می‌پردازیم. با مثال‌هایی که نحوه استفاده مؤثر از نقاط پایانی تولید شده برای تعاملات بلاکچین شما را نشان می‌دهند، آشنا می‌شویم.
+In this section, we delve into the practical usage of the TON HTTP API provided by GetBlock. We explore the examples to showcase how to effectively utilize the generated endpoints for your blockchain interactions.
 
 ### مثال‌هایی از تماس‌های متداول API
 
-با یک مثال ساده با استفاده از روش ‘/getAddressBalance’ برای بازیابی موجودی یک آدرس خاص با استفاده از فرمان curl شروع کنیم.
+You can use the `/getAddressBalance` method to get the balance for a specific TON address:
 
 ```
-curl --location --request GET 'https://go.getblock.io/[ACCESS-TOKEN]/getAddressBalance?address=EQDXZ2c5LnA12Eum-DlguTmfYkMOvNeFCh4rBD0tgmwjcFI-' \
-
---header 'Content-Type: application/json'
+curl --location --request GET 'https://go.getblock.io/[ACCESS-TOKEN]/getAddressBalance?address=EQDXZ2c5LnA12Eum-DlguTmfYkMOvNeFCh4rBD0tgmwjcFI-' \    
+--header 'Content-Type: application/json' 
 ```
 
 اطمینان حاصل کنید که `ACCESS-TOKEN` را با توکن دسترسی واقعی خود که توسط GetBlock ارائه شده است جایگزین کنید.
 
 این موجودی را در واحد nanotons نمایش می‌دهد.
 
-![getAddressBalance\_response\_on\_TON\_blockchain](/img/docs/getblock-img/unnamed-2.png)
+![getAddressBalance_response_on_TON_Blockchain](/img/docs/getblock-img/unnamed-2.png)
 
 برخی دیگر از روش‌های موجود برای پرس‌وجوی بلاکچین TON:
 
-| # | متد  | نقطه پایانی        | توضیحات                                                                                           |
-| - | ---- | ------------------ | ------------------------------------------------------------------------------------------------- |
-| ۱ | GET  | getAddressState    | وضعیت فعلی (غیرفعال، فعال یا مسدود) یک آدرس مشخص در بلاکچین TON را برمی‌گرداند |
-| ۲ | GET  | getMasterchainInfo | اطلاعاتی درباره وضعیت مسترچین دریافت می‌کند                                                       |
-| ۳ | GET  | getTokenData       | جزئیات مربوط به یک NFT یا Jetton مرتبط با حساب مشخص شده TON را بازیابی می‌کند                     |
-| ۴ | GET  | packAddress        | آدرس TON را از قالب خام به قالبی که برای انسان قابل خواندن است تبدیل می‌کند                       |
-| ۵ | POST | sendBoc            | فایل‌های سریالیزشده BOC را به همراه پیام‌های خارجی برای اجرا به بلاکچین ارسال می‌کند              |
+| # | متد  | نقطه پایانی        | توضیحات                                                                                                                 |
+| - | ---- | ------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| ۱ | GET  | getAddressState    | Returns the current state of a specified address (uninitialized, active, or frozen). |
+| ۲ | GET  | getMasterchainInfo | Fetches the state of the masterchain.                                                                   |
+| ۳ | GET  | getTokenData       | Retrieves details about an NFT or jetton associated with the address.                                   |
+| ۴ | GET  | packAddress        | Converts a TON address from raw format to human-readable format.                                        |
+| ۵ | POST | sendBoc            | Sends serialized BOC files with external messages for blockchain execution.                             |
 
-لطفاً برای کسب اطلاعات جامع و مثال‌ها و فهرست روش‌های اضافی به [مستندات](https://getblock.io/docs/ton/json-rpc/ton_jsonrpc/) GetBlock مراجعه کنید.
+For a comprehensive list of methods and detailed API documentation, please refer to GetBlock's [documentation](https://getblock.io/docs/ton/json-rpc/ton_jsonrpc/).
 
 ### استقرار قراردادهای هوشمند
 
-توسعه‌دهندگان می‌توانند از همان URLهای نقطه پایانی استفاده کنند تا قراردادها را به طور یکپارچه بر روی بلاکچین TON با استفاده از کتابخانه TON استقرار دهند.
-
-کتابخانه یک کلاینت برای اتصال به شبکه از طریق نقاط پایانی GetBlock HTTP API را مقداردهی اولیه می‌کند.
+Developers can utilize the TON library to deploy and interact with contracts. The library will initialize a client to connect to the network via the GetBlock HTTP API endpoints.
 
 ![تصویر از TON Blueprint IDE](/img/docs/getblock-img/unnamed-6.png)
 
-این آموزش باید یک راهنمای جامع برای توسعه دهندگانی که به دنبال استفاده مؤثر از API GetBlock با بلاکچین TON هستند، فراهم کند.
+By following this guide, developers can easily access TON Blockchain using GetBlock's infrastructure. Whether you're working on decentralized applications (dApps) or simply querying data, GetBlock simplifies the process by offering ready-to-use HTTP API endpoints with various features.
 
-احساس راحتی کنید که از [وب‌سایت](https://getblock.io/?utm_source=external\&utm_medium=article\&utm_campaign=ton_docs) بیشتر یاد بگیرید یا یک خط به پشتیبانی GetBlock از طریق چت زنده، [تلگرام](https://t.me/GetBlock_Support_Bot) یا فرم وب‌سایت ارسال کنید.
+Feel free to learn more at the website or drop a line to GetBlock’s support via live chat, Telegram, or a website form.
+
+<Feedback />
+
