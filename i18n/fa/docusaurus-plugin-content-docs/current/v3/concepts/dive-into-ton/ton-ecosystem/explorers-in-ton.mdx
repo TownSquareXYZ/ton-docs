@@ -1,12 +1,13 @@
-import Player from '@site/src/components/player'
+import Feedback from "@site/src/components/Feedback";
+import Player from "@site/src/components/player";
 
 # کاوشگرها در TON
 
-در این مقاله، کاوشگرهای TON، قابلیت‌ها و ویژگی‌های آن‌ها از دیدگاه توسعه‌دهنده را بررسی خواهیم کرد.
+This article will consider TON explorers and their capabilities and features from the user's perspective.
 
 ## کاوشگر چیست؟
 
-کاوشگر یک وب‌سایت است که به شما امکان می‌دهد اطلاعاتی را در یک بلاکچین مشاهده کنید، مانند موجودی حساب، تاریخچه تراکنش‌ها، بلوک‌ها و غیره.
+An explorer is a website that allows you to view information in a blockchain, such as the account balance, transaction history, and blocks.
 
 <Player url="https://www.youtube.com/watch?v=i5en19kzX6M" />
 
@@ -18,151 +19,152 @@ import Player from '@site/src/components/player'
 - با اطلاعات گسترده برای توسعه‌دهندگان
 - اختصاصی
 
-این تقسیم‌بندی به دسته‌بندی‌ها عمدتاً شرطی است و یک کاوشگر می‌تواند به چندین دسته‌بندی به طور همزمان تعلق داشته باشد. بنابراین بیایید به این موضوع توجه زیادی نکنیم.
+This division into categories is mainly conditional, and one explorer can belong to several categories simultaneously. So let's not pay too much attention to this.
 
-## نام مستعار آدرس در کاوشگرها
+## عملکرد کلی
+
+Blockchain explorers allow you to view and search the blockchain, similarly to how you might use a banking app to check transaction history and account balances. They provide a user-friendly interface to access real-time data about blockchain transactions, blocks, and addresses.
+
+Just as you use a banking app to track where your money goes, who sends you payments, and when transactions occur, blockchain explorers let you see this information for digital assets on the blockchain. They are essential for transparency, allowing anyone to verify transactions independently, see the flow of cryptocurrency, and analyze the activity on the blockchain.
+
+Typically, an explorer allows you to find a transaction or an account by its identifier. Some explorers also support DNS extensions or their own [address book](/v3/concepts/dive-into-ton/ton-ecosystem/explorers-in-ton#address-alias-in-explorers), which adds a human-readable label to a specific account. Example: [TON Foundation](https://tonviewer.com/UQAFmjUoZUqKFEBGYFEMbv-m61sFStgAfUR8J6hJDwUU04VW).
+
+## Native explorers
+
+### Tonscan
+
+It is a good explorer for everyday use. It provides a comprehensive view of the TON Blockchain, allowing users to search for transactions, addresses, blocks, and more.
+
+- Mainnet: [tonscan.org](https://tonscan.org/)
+- Testnet: [testnet.tonscan.org](https://testnet.tonscan.org/)
+
+#### ویژگی‌ها
+
+- Convenient for everyday use and developers
+- Advanced jetton and nominator pools pages for users
+- Contract types and disassembler
+- User-friendly search uses DNS and [address book](https://github.com/catchain/address-book) labels.
+
+### Tonviewer
+
+It is a good explorer for everyday use with a balanced UI for users and developers.
+
+- Mainnet: [tonviewer.com](https://tonviewer.com/)
+- Testnet: [testnet.tonviewer.com](https://testnet.tonviewer.com/)
+
+#### ویژگی‌ها
+
+- Convenient for everyday use and developers
+- Advanced information for developers with traces
+- Contract types and disassembler
+- User-friendly search uses DNS and [tonkeeper/ton-assets](https://github.com/tonkeeper/ton-assets) labels.
+
+### Tonscan by Bastion
+
+- Mainnet: [tonscan.com](https://tonscan.com/)
+
+#### ویژگی‌ها
+
+- تجزیه و تحلیل تجمیع تراکنش‌ها
+- Transaction traces
+
+### کاوشگر DTON
+
+DTON یک کاوشگر دیگر برای توسعه‌دهندگان است. اطلاعات زیادی درباره تراکنش‌ها به شکلی مناسب فراهم می‌کند.
+
+It also has a feature that allows you to see the computation phase of the transaction step by step.
+
+- Mainnet: [dton.io](https://dton.io/)
+
+#### ویژگی‌ها
+
+- مناسب برای توسعه‌دهندگان
+- اطلاعات گسترده درباره مرحله محاسبه
+- Contract types and disassembler
+
+### Ton Whales explorer
+
+Explorer for developers.
+
+- Mainnet: [tonwhales.com/explorer](https://tonwhales.com/explorer)
+
+#### ویژگی‌ها
+
+- مناسب برای توسعه‌دهندگان
+- Contract types and disassembler
+- Simple and convenient validator details
+
+### کاوشگر NFT TON
+
+This explorer specializes in NFTs but is also suitable as a regular explorer.
+
+- Mainnet: [explorer.tonnft.tools](https://explorer.tonnft.tools/)
+- Testnet: [testnet.explorer.tonnft.tools](https://testnet.explorer.tonnft.tools/)
+
+When viewing the wallet address, you can find out which NFT it stores, and when viewing the NFT, you can find the metadata, collection address, owner, and transaction history.
+
+#### ویژگی‌ها
+
+- مناسب برای توسعه‌دهندگان
+- Specialized in NFT
+- انواع قرارداد
+
+## Crosschain explorers
+
+### OKX TON explorer
+
+This explorer is designed to provide comprehensive and detailed data insights into TON. Whether you're tracking wallet addresses, exploring Jetton tokens, or delving into NFT collections, it offers a user-friendly experience tailored for both beginners and developers.
+
+- Mainnet: [web3.okx.com/explorer/ton](https://web3.okx.com/explorer/ton)
+
+#### ویژگی‌ها
+
+- مناسب برای استفاده روزمره
+- پشتیبانی از TON DNS
+- Jetton and NFT data
+
+### کاوشگر TON NFTscan
+
+This explorer is designed explicitly for Non-Fungible Tokens (NFTs) on the TON Blockchain. It allows users to explore, track, and verify NFT transactions, contracts, and metadata.
+
+- Mainnet: [ton.nftscan.com](https://ton.nftscan.com/)
+
+#### ویژگی‌ها
+
+- مناسب برای کاربران عادی
+- رتبه‌بندی کلکسیون‌های NFT
+- اطلاعات مفید برای معامله‌گران، مانند حجم روزانه
+
+## Analytics explorers
+
+### کاوشگر TonStat
+
+- Mainnet: [tonstat.com](https://www.tonstat.com/)
+
+It displays various statistics, such as the number of registered network addresses and wallets, the volume of Toncoin burned, the volume of Toncoin staked, the volume of NFTs issued, the number of validators, and other metrics.
+
+#### Features
+
+- مناسب برای کاربران عادی
+- اطلاعات DeFi
+- اطلاعات مفید برای معامله‌گران، مانند حجم روزانه
+
+## Address alias in explorers
 
 آدرس سرویس خود را با استفاده از نام مستعار آدرس کاربرپسندتر کنید. درخواست‌های کششی (PRs) را بر اساس راهنماهای ارائه شده ایجاد کنید:
 
 - [tonkeeper/ton-assets](https://github.com/tonkeeper/ton-assets) - نام مستعار Tonviewer.com
 - [catchain/address-book](https://github.com/catchain/address-book) - نام مستعار Tonscan.org
+- [ton-labels](https://github.com/ton-studio/ton-labels) - Public dataset of labeled TON blockchain addresses
 
-## عملکرد کلی
+## Want to be on this list?
 
-بیایید با عملکرد کلی که در همه کاوشگرها موجود است شروع کنیم.
+Please write to one of the [maintainers](/v3/contribute/maintainers).
 
-تقریباً همه کاوشگرها امکان اطلاع از موجودی‌ها، تاریخچه تراکنش‌ها و اطلاعات مربوط به قرارداد هوشمند، در صورت استقرار در آدرس را دارند.
+## See also
 
-بعد، چندین کاوشگر را بررسی خواهیم کرد که می‌توان آن‌ها را به هر یک از این دسته‌ها نسبت داد.
+- [TON wallet apps](/v3/concepts/dive-into-ton/ton-ecosystem/wallet-apps/)
+- [ton.app/explorers](https://ton.app/explorers)
+- [Awesome TON repository](https://github.com/ton-community/awesome-ton)
 
-## کاوشگر TON Scan.org
-
-کاوشگر خوب برای استفاده روزمره. دید جامعی از بلاکچین TON ارائه می‌دهد، به کاربران امکان می‌دهد تراکنش‌ها، آدرس‌ها، بلوک‌ها و موارد دیگر را جستجو کنند. هر جستجو بر اساس کتاب آدرس عمومی انجام می‌شود [address book](https://github.com/catchain/tonscan/blob/master/src/addrbook.json) (بنیاد TON، OKX و غیره.)
-
-### ویژگی‌ها
-
-- **مناسب برای استفاده روزمره**
-- مناسب برای توسعه‌دهندگان
-- پشتیبانی از TON DNS
-- انواع قرارداد
-- پویشگر قرارداد
-
-### پیوندها
-
-- آدرس: https://tonscan.org
-- آدرس تست نت: https://testnet.tonscan.org
-
-## کاوشگر TON Scan.com
-
-### ویژگی‌ها
-
-- تجزیه و تحلیل تجمیع تراکنش‌ها
-- ردیابی تراکنش‌ها
-
-### پیوندها
-
-- آدرس: https://tonscan.com
-
-## کاوشگر Ton Whales
-
-این کاوشگر بیشتر به توسعه‌دهندگان نسبت به کاربران عادی متمایل است.
-
-### ویژگی‌ها
-
-- **مناسب برای توسعه‌دهندگان**
-- انواع قرارداد
-- پویشگر قرارداد
-
-### پیوندها
-
-- آدرس: https://tonwhales.com/explorer
-
-## کاوشگر Tonviewer
-
-این کاوشگر جدیدترین است و ویژگی‌های منحصر به فرد خود را دارد. به عنوان مثال، ردیابی. این ویژگی به شما امکان می‌دهد تا کل دنباله تراکنش‌ها بین قراردادهای هوشمند را ببینید، حتی اگر تراکنش‌های بعدی شامل آدرس شما نباشد.
-
-اطلاعات تراکنش به اندازه، به عنوان مثال، در TON Whales تفصیل نیافته است.
-
-### ویژگی‌ها
-
-- مناسب برای توسعه‌دهندگان
-- مناسب برای استفاده روزمره
-- تاریخچه تراکنش‌های Jetton
-- **ردیابی**
-- پشتیبانی از TON DNS
-
-### پیوندها
-
-- آدرس: https://tonviewer.com
-- آدرس تست نت: https://testnet.tonviewer.com
-
-## کاوشگر NFT TON
-
-این کاوشگر در NFT‌ها تخصص دارد، اما می‌توان از آن به عنوان یک کاوشگر معمولی نیز استفاده کرد.
-
-هنگام مشاهده آدرس کیف پول، می‌توانید بفهمید که کدام NFT را ذخیره می‌کند و هنگام مشاهده NFT، می‌توانید متادیتا، آدرس مجموعه، مالک و تاریخچه تراکنش را بفهمید.
-
-### ویژگی‌ها
-
-- مناسب برای توسعه‌دهندگان
-- انواع قرارداد
-- **تخصصی در NFT**
-
-### پیوندها
-
-- آدرس: https://explorer.tonnft.tools
-- آدرس تست نت: https://explorer.tonnft.tools
-
-## کاوشگر DTON
-
-DTON یک کاوشگر دیگر برای توسعه‌دهندگان است. اطلاعات زیادی درباره تراکنش‌ها به شکلی مناسب فراهم می‌کند.
-
-همچنین، ویژگی‌ای دارد که به شما امکان می‌دهد فاز محاسبه تراکنش را به صورت مرحله به مرحله مشاهده کنید.
-
-### ویژگی‌ها
-
-- مناسب برای توسعه‌دهندگان
-- اطلاعات گسترده درباره مرحله محاسبه
-- انواع قرارداد
-- پویشگر قرارداد
-
-### پیوندها
-
-- آدرس: https://dton.io
-
-## کاوشگر TON NFTscan
-
-این کاوشگر به طور خاص برای توکن‌های غیرقابل تعویض (NFT) در بلاکچین TON طراحی شده است. به کاربران امکان می‌دهد تراکنش‌ها، قراردادها و متادیتاهای NFT را کاوش، ردیابی و تأیید کنند.
-
-### ویژگی‌ها
-
-- مناسب برای کاربران عادی
-- اطلاعات مفید برای معامله‌گران، مانند حجم روزانه
-- رتبه‌بندی کلکسیون‌های NFT
-
-### پیوندها
-
-- آدرس: https://ton.nftscan.com
-
-## کاوشگر TonStat
-
-آمارهای مختلفی را نمایش می‌دهد مانند تعداد آدرس‌ها و کیف‌های ثبت شده در شبکه، حجم تون‌کوین سوخته، حجم تون‌کوین استیک شده، حجم NFT‌های صادر شده، تعداد اعتبارسنج‌ها و تعدادی دیگر از معیارها.
-
-### ویژگی‌ها
-
-- مناسب برای کاربران عادی
-- اطلاعات مفید برای معامله‌گران، مانند حجم روزانه
-- اطلاعات DeFi
-
-### پیوندها
-
-- آدرس: https://www.tonstat.com
-
-## می‌خواهید در این لیست باشید؟
-
-لطفاً به یکی از [نگهدارندگان](/v3/contribute/maintainers) بنویسید.
-
-## منابع
-
-- [کاوشگر ها](https://ton.app/explorers)
-- [عالی های TON](https://github.com/ton-community/awesome-ton)
+<Feedback />
