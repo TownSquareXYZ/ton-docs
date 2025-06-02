@@ -1,4 +1,6 @@
-# 关于预言机
+import Feedback from '@site/src/components/Feedback';
+
+# About oracles
 
 预言机是将区块链与外部系统连接在一起的实体，允许智能合约根据现实世界的输入和输出执行。
 
@@ -56,6 +58,8 @@
 
 ## TON 中的预言机列表
 
-- [RedStone Oracles](/develop/oracles/red_stone)
-- [RedStone Oracles](/v3/documentation/dapps/oracles/red_stone)
+- [Pyth oracles](/v3/documentation/dapps/oracles/pyth)
+- [RedStone oracles](/v3/documentation/dapps/oracles/red_stone)
+
+<Feedback />
 
