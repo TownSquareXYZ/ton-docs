@@ -1,14 +1,16 @@
-# TON DNS و دامنه‌ها
+import Feedback from '@site/src/components/Feedback';
 
-TON DNS یک سرویس برای ترجمه نام‌های دامنه قابل خواندن برای انسان (مانند `test.ton` یا `mysite.temp.ton`) به آدرس‌های قرارداد هوشمند TON، آدرس‌های ADNL استفاده شده توسط سرویس‌های اجرایی در شبکه TON (مانند سایت‌های TON) و غیره است.
+# TON DNS & domains
+
+TON DNS is a service that translates human-readable domain names like `test.ton` or `mysite.temp.ton` into TON smart contract addresses, ADNL addresses used by services on the TON Network such as TON Sites, and more.
 
 ## استاندارد
 
-[استاندارد TON DNS](https://github.com/ton-blockchain/TIPs/issues/81) قالب نام‌های دامنه، فرآیند تفسیر یک دامنه، نمایه قراردادهای هوشمند DNS و قالب رکوردهای DNS را توصیف می‌کند.
+The [TON DNS standard](https://github.com/ton-blockchain/TIPs/issues/81) outlines the domain name format, the domain resolution process, the interface for DNS smart contracts, and the structure of DNS records.
 
 ## SDK
 
-کار با TON DNS در SDK جاوااسکریپت [TonWeb](https://github.com/toncenter/tonweb) و [TonLib](https://ton.org/#/apis/?id=_2-ton-api) پیاده‌سازی شده است.
+Support for working with TON DNS is available through the JavaScript SDK [TonWeb](https://github.com/toncenter/tonweb) and [TonLib](https://ton.org/#/apis/?id=_2-ton-api).
 
 ```js
 const address: Address = await tonweb.dns.getWalletAddress('test.ton');
@@ -18,28 +20,29 @@ const address: Address = await tonweb.dns.getWalletAddress('test.ton');
 const address: Address = await tonweb.dns.resolve('test.ton', TonWeb.dns.DNS_CATEGORY_WALLET);
 ```
 
-همچنین `lite-client` و `tonlib-cli` توسط درخواست‌های DNS پشتیبانی می‌شود.
+Also, `lite-client` and `tonlib-cli` are supported by DNS queries.
 
 ## دامنه سطح اول
 
-در حال حاضر، تنها دامنه‌هایی که با `.ton` به پایان می‌رسند به عنوان دامنه‌های معتبر TON DNS شناسایی می‌شوند.
+Only domains ending in `.ton` are currently recognized as valid TON DNS domains.
 
-سورس کد قرارداد هوشمند ریشه DNS - https://github.com/ton-blockchain/dns-contract/blob/main/func/root-dns.fc.
+You can view the root DNS smart contract source code [here](https://github.com/ton-blockchain/dns-contract/blob/main/func/root-dns.fc).
 
-این ممکن است در آینده تغییر کند. افزودن یک دامنه سطح اول جدید نیاز به قرارداد هوشمند ریشه جدید و رأی‌گیری عمومی برای تغییر [پیکربندی شبکه #۴](https://ton.org/#/smart-contracts/governance?id=config) دارد.
+This may change in the future. Adding a new top-level domain would require deploying a new root DNS smart contract and a community vote to update the [network config #4](https://ton.org/#/smart-contracts/governance?id=config).
 
 ## دامنه‌های \*.ton
 
-دامنه‌های \*.ton به صورت یک NFT پیاده‌سازی شده‌اند. از آنجا که آن‌ها استاندارد NFT را پیاده‌سازی می‌کنند، با خدمات NFT معمول (مانند بازارهای NFT) و کیف پول‌هایی که قادر به نمایش NFT هستند، سازگارند.
+`.ton` domains are implemented as NFTs. Because they follow the standard NFT format, they're compatible with most NFT marketplaces and wallets that support NFTs.
 
-سورس کد دامنه‌های \*.ton - https://github.com/ton-blockchain/dns-contract.
+The source code for `.ton` domains is available [here](https://github.com/ton-blockchain/dns-contract).
 
-مفسر دامنه‌ها یک نمایه کلکسیون NFT و دامنه .ton یک نمایه آیتم NFT را پیاده‌سازی می‌کنند.
+The `.ton` domain resolver acts as an NFT collection, while each individual `.ton` domain functions as an NFT item.
 
-فروش اولیه دامنه‌های \*.ton از طریق یک مزایده باز غیرمتمرکز در https://dns.ton.org انجام می‌شود. سورس کد - https://github.com/ton-blockchain/dns.
+Primary sales of `.ton` domains occur through a decentralized open auction at [dns.ton.org](https://dns.ton.org). The auction's source code can be found [here](https://github.com/ton-blockchain/dns).
 
 ## زیر دامنه‌ها
 
-مالک دامنه می‌تواند زیر دامنه‌هایی را با تنظیم آدرس قرارداد هوشمند مسئول برای تفسیر زیر دامنه‌ها در رکورد سرویس نام دامنه `sha256("dns_next_resolver")` بسازد.
+Domain owners can create subdomains by setting the smart contract address responsible for subdomain resolution in the DNS record using the key `sha256("dns_next_resolver")`.
 
-این می‌تواند هر قرارداد هوشمندی باشد که استاندارد DNS را پیاده‌سازی می‌کند.
+This address can point to any smart contract implementing the TON DNS standard. <Feedback />
+
