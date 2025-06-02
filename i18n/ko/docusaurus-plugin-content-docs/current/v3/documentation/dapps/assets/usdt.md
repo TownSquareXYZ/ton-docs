@@ -1,12 +1,14 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 
-# USDT 처리
+# USDT processing
 
 ## 테더
 
-스테이블코인은 가치가 법정화폐나 금과 같은 자산에 1:1로 고정된 암호화폐입니다. 최근까지 bridge.ton.org를 통해 브리지된 ERC-20 이더리움 토큰인 jUSDT가 있었습니다. 하지만 2023년 4월 18일 Tether사가 발행한 **네이티브** USD₮ 토큰이 공개 출시되었습니다. USD₮ 출시 이후 jUSDT는 2순위로 밀렸지만 여러 서비스에서 USD₮의 대안이나 보완으로 계속 사용되고 있습니다.
+[Apr 18, 2023](https://t.me/toncoin/824), the public launch of native USD₮ token issued by the company <a href="https://tether.to/en/" target="_blank">Tether</a>.
 
-TON 블록체인에서 USD₮는 [제톤 자산](/v3/guidelines/dapps/asset-processing/jettons)으로 지원됩니다.
+In TON Blockchain USD₮ supported as a [Jetton asset](/v3/guidelines/dapps/asset-processing/jettons).
 
 :::info
 TON 블록체인에서 Tether의 USD₮ 토큰을 통합하려면 다음 컨트랙트 주소를 사용하세요:
@@ -14,8 +16,8 @@ TON 블록체인에서 Tether의 USD₮ 토큰을 통합하려면 다음 컨트�
 :::
 
 <Button href="https://github.com/ton-community/assets-sdk" colorType="primary" sizeType={'sm'}>Assets SDK</Button>
-<Button href="/v3/guidelines/dapps/asset-processing/jettons" colorType={'secondary'} sizeType={'sm'}>제톤 처리</Button>
-<Button href="https://github.com/ton-community/tma-usdt-payments-demo?tab=readme-ov-file#tma-usdt-payments-demo" colorType={'secondary'} sizeType={'sm'}>TMA USDT 결제 데모</Button>
+<Button href="/v3/guidelines/dapps/asset-processing/jettons" colorType={'secondary'} sizeType={'sm'}>Jetton processing</Button>
+<Button href="https://github.com/ton-community/tma-usdt-payments-demo?tab=readme-ov-file#tma-usdt-payments-demo" colorType={'secondary'} sizeType={'sm'}>TMA USDT payments demo</Button>
 
 ## TON의 USD₮ 장점
 
@@ -40,13 +42,16 @@ transaction_fee = gas_used * gas_price
 
 TON의 높은 처리량과 빠른 확인 시간으로 USD₮ 거래가 그 어느 때보다 빠르게 처리됩니다.
 
-## 고급 세부사항
+## Advanced details
 
 :::caution 중요
 
 중요 [권장사항](/v3/guidelines/dapps/asset-processing/jettons)을 참조하세요.
 :::
 
-## 참고
+## See also
 
-- [결제 처리](/v3/guidelines/dapps/asset-processing/payments-processing)
+- [Payments processing](/v3/guidelines/dapps/asset-processing/payments-processing)
+
+<Feedback />
+
