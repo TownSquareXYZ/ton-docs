@@ -1,69 +1,142 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 타입
 
 :::info
 
-FunC 문서는 처음에 [@akifoq](https://github.com/akifoq)가 작성했습니다.
+FunC documentation was initially written by *[@akifoq](https://github.com/akifoq/)*.
 
 :::
 
-FunC는 다음과 같은 내장 타입을 가지고 있습니다.
+FunC includes several built-in types that serve as the foundation of the language.
 
 ## 원자적 타입
 
-- `int`는 257비트 부호 있는 정수의 타입입니다. 기본적으로 오버플로우 체크가 활성화되어 있으며, 정수 오버플로우 예외가 발생합니다.
-- `cell`은 TVM 셀의 타입입니다. TON 블록체인의 모든 영구 데이터는 셀의 트리에 저장됩니다. 각 셀은 최대 1023비트의 임의 데이터와 다른 셀에 대한 최대 4개의 참조를 가질 수 있습니다. 셀은 스택 기반 TVM의 메모리 역할을 합니다.
-- `slice`는 셀 슬라이스의 타입입니다. 셀은 슬라이스로 변환될 수 있으며, 그 후 셀의 데이터 비트와 다른 셀에 대한 참조는 슬라이스에서 로드하여 얻을 수 있습니다.
-- `builder`는 셀 빌더의 타입입니다. 데이터 비트와 다른 셀에 대한 참조를 빌더에 저장할 수 있으며, 그 후 빌더를 새로운 셀로 완성할 수 있습니다.
-- `tuple`은 TVM 튜플의 타입입니다. 튜플은 서로 다를 수 있는 임의의 값 타입을 가진 최대 255개의 컴포넌트로 이루어진 정렬된 컬렉션입니다.
-- `cont`는 TVM 연속체의 타입입니다. 연속체는 TVM 프로그램 실행 흐름을 제어하는 데 사용됩니다. FunC의 관점에서는 상당히 저수준 객체이지만, 역설적으로 꽤 일반적입니다.
+- `int` is a 257-bit signed integer type. Overflow checks are enabled by default and trigger an exception if exceeded.
 
-위의 타입들은 모두 TVM 스택의 단일 항목만을 차지한다는 점에 주목하세요.
+- `cell` is a TVM cell type used to store persistent data in the TON Blockchain. Data is organized in trees of cells, with each cell containing up to 1023 bits of arbitrary data and up to four references to other cells. Cells function as memory units in stack-based TVMs.
 
-### 불리언 타입의 부재
+- `slice` is a read-only view of a cell that allows sequential access to its data and references. A cell can be converted into a slice, extracting stored bits and references without modifying the original cell.
 
-FunC에서 불리언은 정수로 표현됩니다; `false`는 `0`으로, `true`는 `-1`(이진 표기법으로 257개의 1)로 표현됩니다. 논리 연산은 비트 단위 연산으로 수행됩니다. 조건을 검사할 때는 0이 아닌 모든 정수가 `true` 값으로 간주됩니다.
+- `builder` is a mutable structure used to construct cells by adding data and references before finalizing them into a new cell.
+
+- `tuple` is an ordered collection of up to 255 elements, each capable of holding a value of any type.
+
+- `cont` is a TVM continuation used to manage execution flow in TVM programs. Although a low-level construct, it provides flexible execution control.
+
+Each of these types occupies a single slot in the TVM stack.
+
+### No boolean type
+
+FunC does not have a dedicated boolean type.
+Instead, booleans are represented as integers:
+
+- `false` is `0`, `true` is `-1` (a 257-bit integer with all bits set to 1).
+- Logical operations are performed using bitwise operations.
+- In conditional checks, any nonzero integer is treated as `true`.
 
 ### Null 값
 
-TVM 타입 `Null`의 값 `null`로, FunC는 일부 원자적 타입 값의 부재를 나타냅니다. 표준 라이브러리의 일부 프리미티브는 원자적 타입을 반환하는 것으로 타입이 지정되어 있지만 실제로는 일부 경우에 `null`을 반환할 수 있습니다. 다른 프리미티브는 원자적 타입의 값을 기대하지만 `null` 값과도 잘 작동할 수 있습니다. 이러한 동작은 프리미티브 명세에 명시적으로 기술되어 있습니다. 기본적으로 `null` 값은 금지되어 있으며 런타임 예외를 발생시킵니다.
+In FunC, the `null` value of the TVM type `Null` represents the absence of a value for a given atomic type. While `null` is generally not allowed, some standard library functions handle it in specific ways:
 
-이러한 방식으로, 원자적 타입 `A`는 암시적으로 타입 `A^?` 또는 `Maybe A`로 변환될 수 있습니다(타입 체커는 이러한 변환을 인식하지 못합니다).
+- Some functions that return an atomic type may return `null` in some instances.
+- Others may expect an atomic type as input but can also accept `null` without errors.
+- This behavior is explicitly defined in the function specification.
+ By default, `null` values are not permitted and will cause a runtime exception.
+
+Additionally, an atomic type `A` can be implicitly transformed into `A^?` (also known as `Maybe A`),
+allowing a variable of type `A` to store either a valid value or `null`.
+This transformation happens automatically and is not enforced by the type checker.
 
 ## 홀 타입
 
 FunC는 타입 추론을 지원합니다. `_`와 `var` 타입은 타입 체크 중에 나중에 실제 타입으로 채워질 수 있는 타입 "홀"을 나타냅니다. 예를 들어, `var x = 2;`는 `2`와 같은 변수 `x`의 정의입니다. `2`가 `int` 타입을 가지고 있고 할당의 왼쪽과 오른쪽은 같은 타입을 가져야 하기 때문에, 타입 체커는 `x`가 `int` 타입을 가진다고 추론할 수 있습니다.
 
+FunC supports type inference. The hole types `_` and `var` serve as placeholders that are resolved during type checking.
+For example, in the declaration:
+
+```func
+var x = 2;
+```
+
+The type checker determines that `x` is of type `int` since `2` is an `int`,
+and both sides of the assignment must have matching types.
+
 ## 복합 타입
 
-타입은 더 복잡한 타입으로 조합될 수 있습니다.
+Types can be combined to form more complex structures.
 
 ### 함수 타입
 
-`A -> B` 형태의 타입은 지정된 도메인과 코도메인을 가진 함수를 나타냅니다. 예를 들어, `int -> cell`은 하나의 정수 인수를 받아 TVM 셀을 반환하는 함수의 타입입니다.
+A functional type is written in the form `A -> B`, where:
 
-내부적으로 이러한 타입의 값은 연속체로 표현됩니다.
+- `A` is the input type, which is called domain.
+- `B` is the output type, which is called codomain.
+
+**Example:**
+The type `int -> cell` represents a function that:
+
+- Takes an integer as input.
+- Returns a TVM cell as output.
+
+Internally, values of functional types are represented as **continuations**.
 
 ### 텐서 타입
 
-`(A, B, ...)` 형태의 타입은 기본적으로 TVM 스택 항목을 하나 이상 차지하는 `A`, `B`, `...` 타입의 값들의 정렬된 컬렉션을 나타냅니다.
+Tensor types represent ordered collections of values and are written in the form `(A, B, ...)`.
+These types occupy multiple TVM stack entries, unlike atomic types, which use a single entry.
 
-예를 들어, 함수 `foo`가 `int -> (int, int)` 타입을 가지고 있다면, 이 함수는 하나의 정수를 받아 두 개의 정수 쌍을 반환한다는 의미입니다.
+**Example:**
 
-이 함수의 호출은 `(int a, int b) = foo(42);`와 같이 보일 수 있습니다. 내부적으로 함수는 하나의 스택 항목을 소비하고 두 개를 남깁니다.
+If a function `foo` has the type `int -> (int, int)`,
+it takes one integer as input and returns a pair of integers as output.
+A call to this function may look like: `(int a, int b) = foo(42);`.
+Internally, the function consumes one stack entry and produces two.
 
-`(int, (int, int))` 타입의 값 `(2, (3, 9))`와 `(int, int, int)` 타입의 값 `(2, 3, 9)`는 저수준 관점에서 스택 항목 `2`, `3`, `9` 세 개로 동일하게 표현된다는 점에 주목하세요. FunC 타입 체커에서는 이들이 **서로 다른** 타입의 값입니다. 예를 들어, `(int a, int b, int c) = (2, (3, 9));` 코드는 컴파일되지 않을 것입니다.
+**Type representation**
+Although the values `(2, (3, 9))` of type `(int, (int, int))` and `(2, 3, 9)` of type `(int, int, int)` are stored identically as three stack entries `(2, 3, and 9)`, FunC treats them as distinct types.
+For instance, the following code **will not compile**:
 
-텐서 타입의 특별한 경우는 **단위 타입** `()`입니다. 이는 일반적으로 함수가 값을 반환하지 않거나 인수가 없다는 사실을 나타내는 데 사용됩니다. 예를 들어, `print_int` 함수는 `int -> ()` 타입을 가지고 `random` 함수는 `() -> int` 타입을 가집니다. 이는 스택 항목을 0개 차지하는 유일한 값 `()`를 가집니다.
+```func
+(int a, int b, int c) = (2, (3, 9));
+```
+
+Since FunC strictly enforces type consistency, these structures cannot be mixed.
+
+**Special case: unit type`()`**
+
+The unit type `()` is used to indicate that:
+
+- A function does not return a value or
+- A function takes no arguments
+
+**Examples**
+
+- `print_int` has the type `int -> ()`, meaning it takes an integer but returns nothing.
+- random has the type `() -> int`, meaning it takes no arguments but returns an integer.
+- The unit type `()` has a single value, also written as `()`, occupying **zero stack** entries.
 
 `(A)` 형태의 타입은 타입 체커에 의해 `A`와 동일한 타입으로 간주됩니다.
 
+**Note:** A type written as `(A)` is treated as identical to `A` by the FunC type checker.
+
 ### 튜플 타입
 
-`[A, B, ...]` 형태의 타입은 컴파일 시간에 알려진 특정 길이와 컴포넌트 타입을 가진 TVM 튜플을 나타냅니다. 예를 들어, `[int, cell]`은 길이가 정확히 2이고, 첫 번째 컴포넌트는 정수이고 두 번째는 셀인 TVM 튜플의 타입입니다. `[]`는 빈 튜플의 타입입니다(유일한 값으로 빈 튜플을 가짐). 단위 타입 `()`와는 달리, `[]`의 값은 하나의 스택 항목을 차지한다는 점에 주목하세요.
+Tuple types in FunC are written in the form `[A, B, ...]` and represent TVM tuples with a fixed length and known component types at compile time.
+
+For example, `[int, cell]` defines a tuple with exactly two elements:
+
+- The first element is an integer.
+- The second element is a cell.
+
+The type `[]` represents an empty tuple with a unique value—the empty tuple itself.
+
+**Note:** unlike the unit type `()`, an empty tuple `[]` occupies one stack entry.
 
 ## 타입 변수를 사용한 다형성
 
-FunC는 다형성 함수를 지원하는 Miller-Rabin 타입 시스템을 가지고 있습니다. 예를 들어, 다음 함수:
+FunC features a  **Miller-Rabin-type system** with support for polymorphic functions.
+For example, consider the following function:
 
 ```func
 forall X -> (X, X) duplicate(X value) {
@@ -73,14 +146,24 @@ forall X -> (X, X) duplicate(X value) {
 
 는 (단일 스택 항목) 값을 받아 이 값의 두 복사본을 반환하는 다형성 함수입니다. `duplicate(6)`은 값 `6 6`을 생성하고, `duplicate([])`는 빈 튜플의 두 복사본 `[] []`을 생성합니다.
 
-이 예제에서 `X`는 타입 변수입니다.
+This **polymorphic function** takes a single stack entry and returns two copies of the input value.
 
-이 주제에 대한 자세한 내용은 [함수](/v3/documentation/smart-contracts/func/docs/functions#polymorphism-with-forall) 섹션을 참조하세요.
+- Calling `duplicate(6)` produces `6 6`.
+- Calling `duplicate([])` produces two copies of an empty tuple: `[] []`.
+
+In this example, `X` is a type variable that allows the function to operate on values of any type.
+
+For more details, see the [Functions](/v3/documentation/smart-contracts/func/docs/functions#polymorphism-with-forall) section.
 
 ## 사용자 정의 타입
 
-현재 FunC는 위에서 설명한 타입 구성 외에는 타입을 정의하는 것을 지원하지 않습니다.
+Currently, FunC does not support defining custom types beyond the type constructions described above.
 
 ## 타입 너비
 
-보셨듯이, 타입의 모든 값은 일정 수의 스택 항목을 차지합니다. 타입의 모든 값에 대해 이 수가 동일한 경우, 이 수를 **타입 너비**라고 합니다. 다형성 함수는 현재 타입 너비가 고정되어 있고 미리 알려진 타입에 대해서만 정의될 수 있습니다.
+Every value in FunC occupies a certain number of stack entries.
+If this number is consistent for all values of a given type, it is called the **type width**.
+At the moment, polymorphic functions can only be defined for types with a fixed and predefined type width.
+
+<Feedback />
+

@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # به عنوان یک نگهدارنده مشارکت کنید
 
 رویداد Hacktoberfest بهترین زمان در سال برای دریافت حمایت از جامعه است!
@@ -37,3 +39,6 @@
     اضافه کردن یک مخزن به لیست
   </a>
 </span>
+
+<Feedback />
+

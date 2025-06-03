@@ -1,125 +1,343 @@
-# 검증자/콜레이터 분리
+import Feedback from '@site/src/components/Feedback';
+
+# Accelerator update
 
 :::caution 개발 중
-이 기능은 현재 테스트넷 전용입니다! 자신의 책임 하에 참여하세요.
+This feature is currently available only on the Testnet! Participate at your own risk.
 :::
 
-TON 블록체인의 핵심 기능은 네트워크 노드에 걸쳐 트랜잭션 처리를 분산하고, "모두가 모든 트랜잭션을 확인"하는 방식에서 "각 트랜잭션은 안전한 검증자 부분집합이 확인"하는 방식으로 전환하는 것입니다. 하나의 워크체인이 필요한 수의 *샤드체인*으로 분할될 때 샤드를 통해 처리량을 무한히 수평적으로 확장할 수 있는 이 능력이 TON을 다른 L1 네트워크와 구별짓습니다.
+The key feature of the TON Blockchain is the ability to distribute transaction processing over network nodes, switching from **everybody checks all transactions** to **every transaction is checked by a secure validator subset**. This ability to infinitely horizontally scale throughput over shards when one work chain splits to the required number of shard chains distinguishes TON from other L1 networks.
 
-그러나 담합을 방지하기 위해 한 샤드나 다른 샤드를 처리하는 검증자 부분집합을 정기적으로 교체해야 합니다. 동시에 트랜잭션을 처리하기 위해 검증자는 명백히 트랜잭션 이전의 샤드 상태를 알아야 합니다. 가장 단순한 접근방식은 모든 검증자가 모든 샤드의 상태를 알도록 요구하는 것입니다.
+However, it is necessary to rotate validator subsets regularly, which process one or another shard, to prevent collusion. At the same time, to process transactions, validators obviously should know the state of the shard prior to the transaction. The simplest approach is to require all validators to know the state of all shards.
 
-이 접근방식은 TON 사용자 수가 수백만 명 범위 내이고 TPS(초당 트랜잭션)가 100 미만일 때는 잘 작동합니다. 하나 향후 TON이 초당 수천 개의 트랜잭션을 처리하고 수억 또는 수십억 명의 사람들을 서비스할 때는 어떤 단일 서버도 전체 네트워크의 실제 상태를 유지할 수 없을 것입니다. 다행히도 TON은 이러한 부하를 염두에 두고 설계되었으며 처리량과 상태 업데이트 모두의 샤딩을 지원합니다.
+This approach works well when the number of TON users is within the range of a few million and TPS (transactions per second) is under a hundred. However, in the future, when TON Blockchain processes many thousands of transactions per second for hundreds of millions or billions of people, no single server will be able to keep the actual state of the whole network. Fortunately, TON was designed with such loads in mind and supports sharding both throughput and state updates.
 
-이는 두 가지 역할의 분리를 통해 달성됩니다:
+# Accelerator
 
-- *콜레이터* - 네트워크의 일부만 감시하고, 실제 상태를 알며 다음 블록을 *콜레이트*(생성)하는 액터
-- *검증자* - *콜레이터*로부터 새 블록을 받아 유효성을 확인하고 서명하여 스테이크를 잃을 위험을 감수하면서 정확성을 효과적으로 보장하는 액터
+**Accelerator** is an upcoming update designed to improve blockchain scalability. Its main features are:
 
-동시에 TON의 아키텍처는 *검증자*가 특별히 제작된 증명을 확인함으로써 실제로 블록체인 상태를 저장하지 않고도 새 블록을 효과적으로 검증할 수 있게 합니다.
+- **Partial nodes**: A node will be able to monitor specific shards of the blockchain instead of the entire set of shards.
 
-이러한 방식으로, TON의 처리량이 단일 머신이 처리하기에는 너무 무거워질 때, 네트워크는 각각 처리할 수 있는 체인의 일부만 처리하는 콜레이터들의 서브네트워크와 새로운 트랜잭션을 커밋하기 위한 많은 안전한 집합을 형성하는 검증자들의 서브네트워크로 구성될 것입니다.
+- **Liteserver infrastructure**: Liteserver operators will be able to configure each LS to monitor a set of shards, and lite-clients will select a suitable LS for each request.
 
-현재 TON 테스트넷은 이 *검증자*/*콜레이터* 분리를 테스트하는 데 사용되고 있으며, 일부 검증자는 평소처럼 작동하고 일부 검증자는 스스로 블록을 콜레이트하지 않고 콜레이터로부터 받습니다.
+- **Collator/validator separation**: Validators will only monitor MasterChain, significantly reducing their load.
 
-# "라이트 검증자"로 참여하기
+Validator will use new **collator nodes** to collate new shard blocks.
 
-새로운 노드 소프트웨어는 [accelerator](https://github.com/ton-blockchain/ton/tree/accelerator) 브랜치에서 사용할 수 있습니다.
+The accelerator update is currently partially implemented in Testnet.
 
-## 콜레이터
+Testnet nodes can be configured to monitor a subset of shards, and lite clients can be set up to such partial liteservers.
 
-새 콜레이터를 생성하려면 TON 노드를 설정해야 합니다; `-M` 플래그를 사용하여 처리하지 않는 샤드체인을 감시하지 않도록 노드를 강제할 수 있습니다.
+Collator-validator separation has not yet been deployed in Testnet. However, you can test some parts of it by launching your own collator nodes.
 
-`validator-engine-console`에서 콜레이터를 위한 새 키를 생성하고, 이 키에 adnl 카테고리 `0`을 설정하고, 다음 명령을 통해 콜레이션 엔티티를 추가합니다:
+# Partial nodes
 
-```bash
-addcollator <adnl-id> <chain-id> <shard-id>
+Previously, each TON node was required to download all shards of the TON blockchain, which limited scalability.
+
+To address this issue, the main feature of the update allows nodes to monitor only a subset of shards.
+
+A node **monitors** a shard by maintaining its **shard state** and downloading all new blocks within that shard. Notably, each node always monitors the MasterChain.
+
+The BaseChain includes a parameter called `monitor_min_split` in `ConfigParam 12`, which is set to `2` in the Testnet. This parameter divides the BaseChain into `2^monitor_min_split = 4` groups of shards:
+
+- Shards with the prefix `0:2000000000000000`
+- Shards with the prefix `0:6000000000000000`
+- Shards with the prefix `0:a000000000000000`
+- Shards with the prefix `0:e000000000000000`
+
+Nodes can only monitor an entire group of shards at once. For instance, a node can choose to monitor all shards with the prefix `0:2000000000000000` but cannot selectively monitor just `0:1000000000000000` without also including `0:3000000000000000`.
+
+It is guaranteed that shards from different groups will not merge. This guarantees that a monitored shard will not unexpectedly merge with a non-monitored shard.
+
+## Node configuration
+
+To update your node to the latest commit of the `testnet` branch, follow these instructions:
+
+- By default, a node monitors all shards. You can disable this behavior by adding the `-M` flag to the `validator-engine`.
+
+- When you use the `-M` flag, the node will only monitor the MasterChain. If you want to monitor specific BaseChain shards, use the `--add-shard <wc:shard>` flag. For example:
+
+  ```
+  validator-engine ... -M --add-shard 0:2000000000000000 --add-shard 0:e000000000000000
+  ```
+
+- These flags will configure the node to monitor all shards with the prefixes `0:2000000000000000` and `0:e000000000000000`. You can either add these flags to an existing node or launch a new node with them included.
+
+#### Notes:
+
+1. **DO NOT** add these flags to a node that is participating in validation. Currently, validators are required to monitor all shards; this will be improved in future updates so that they only monitor the MasterChain.
+
+2. If you use the `-M` flag, the node will begin downloading any missing shards, which may take some time. This is also true if you add new shards later using the `--add-shard` flag.
+
+3. The command `--add-shard 0:0800000000000000` will add the entire shard group associated with the prefix `0:2000000000000000` due to the `monitor_min_split` configuration.
+
+### Low-level configuration
+
+`--add-shard` flag is a shorthand for certain validator console commands.
+A node stores a list of shards to monitor in the config (see file `db/config.json`, section `shards_to_monitor`).
+This list can be modified using `validator-engine-console`:
+
+```
+add-shard <wc>:<shard>
+del-shard <wc>:<shard>
 ```
 
-예시:
+The `--add-shard X` flag is equivalent to the `add-shard X` command.
 
-```bash
-newkey
-addadnl <adnl-id> 0
-addcollator <adnl-id> 0 -9223372036854775808
-```
+## Lite client configuration
 
-wc:shard_pfx 샤드로 구성된 콜레이터는 wc:shard_pfx 샤드, 그 조상 및 후손에서 블록을 콜레이트할 수 있습니다; 또한 콜레이션에 필요하므로 이러한 모든 샤드를 모니터링합니다.
+If you have multiple liteservers, each configured to monitor certain shards, you can list them in the `liteservers_v2` section of the global config.
 
-콜레이터는 다음 명령으로 중지할 수 있습니다:
-
-```bash
-delcollator <adnl-id> 0 -9223372036854775808
-```
-
-:::info
-현재 네트워크에는 하나의 콜레이터가 있으며 설정 **-41**이 그 adnl 주소를 발표하는 데 사용됩니다.
-:::
-
-## 검증자
-
-검증자를 실행하려면 TON 노드를 설정하고, `--lite-validator` 플래그를 사용하여 검증자가 블록을 직접 생성하는 대신 콜레이터로부터 새 블록을 요청하도록 강제하고, 스테이킹 프로세스를 설정해야 합니다. 라이트 모드의 검증자는 `-41` 설정에서 콜레이터 노드를 가져옵니다.
-
-가장 쉬운 방법은 다음과 같습니다:
-
-- 테스트넷용 MyTonCtrl 설정
-- 검증자 중지 `sudo systemctl stop validator`
-- 서비스 파일 업데이트 `sudo nano /etc/systemd/system/validator.service`: `--lite-validator` 플래그 추가
-- systemctl 리로드 `sudo systemctl daemon-reload`
-- 검증자 시작 `sudo systemctl start validator`
-
-## 라이트서버
-
-콜레이터처럼 라이트서버도 블록체인의 일부만 모니터링하도록 구성할 수 있습니다. `-M` 옵션으로 노드를 실행하고 `validator-engine-console`에서 샤드를 추가하면 됩니다:
-
-```bash
-addshard 0 -9223372036854775808
-```
-
-마스터체인은 기본적으로 항상 모니터링됩니다. 샤드는 `delshard 0 -9223372036854775808`를 사용하여 제거할 수 있습니다.
-
-### 라이트 클라이언트
-
-전역 설정은 `liteservers`와 `liteservers_v2` 중 하나 이상의 섹션을 포함해야 합니다. 첫 번째 섹션은 모든 샤드 상태에 대한 데이터를 가진 "전체" 라이트서버를 포함합니다. 두 번째 섹션은 블록체인의 일부에 대한 데이터를 포함하는 "부분" 라이트서버를 포함합니다.
-
-"부분" 라이트서버는 다음과 같이 설명됩니다:
+See the example:
 
 ```json
-"liteservers_v2": [
-  {
-    "ip": ...,
-    "port": ...,
-    "id": {
-      "@type": "pub.ed25519",
-      "key": "..."
-    },  
-    "shards": [
-      {   
-        "workchain": 0, 
-        "shard": -9223372036854775808
-      }   
-    ]   
-  }
-  ...
-]
+{
+  "liteservers_v2": [
+    {
+      "ip": 123456789, "port": 10001,
+      "id": { "@type": "pub.ed25519", "key": "..." },
+      "slices": [
+        {
+          "@type": "liteserver.descV2.sliceSimple",
+          "shards": [
+            { "workchain": 0, "shard": 2305843009213693952 },
+            { "workchain": 0, "shard": -6917529027641081856 }
+          ]
+        }
+      ]
+    },
+    {
+      "ip": 987654321, "port": 10002,
+      "id": { "@type": "pub.ed25519", "key": "..." },
+      "slices": [
+        {
+          "@type": "liteserver.descV2.sliceSimple",
+          "shards": [
+            { "workchain": 0, "shard": 6917529027641081856 },
+            { "workchain": 0, "shard": -2305843009213693952 }
+          ]
+        }
+      ]
+    }
+  ],
+  "validator": "...",
+  "dht": "..."
+}
 ```
 
-라이트 클라이언트와 Tonlib는 이 설정을 지원하고 각 쿼리에 적합한 라이트서버를 선택할 수 있습니다. 각 라이트서버는 기본적으로 마스터체인을 모니터링하며, `liteservers_v2`의 각 서버는 암시적으로 마스터체인에 대한 쿼리를 수락하도록 구성됩니다. 설정의 샤드 `wc:shard_pfx`는 서버가 샤드 `wc:shard_pfx`, 그 조상 및 후손에 대한 쿼리를 수락한다는 것을 의미합니다(콜레이터 구성과 마찬가지로).
+This config includes two liteservers:
 
-## 전체 콜레이트된 데이터
+- The first one monitors shards with prefixes `0:2000000000000000` and `0:a000000000000000`.
+- The second one monitors shards with prefixes `0:6000000000000000` and `0:e000000000000000`.
+
+Both liteservers monitor MasterChain, so it is not necessary to include MasterChain explicitly in the configuration.
+
+#### Note:
+
+- To obtain the value for `"shard": 6917529027641081856`, convert the shard ID in hexadecimal (`6000000000000000`) to decimal within the range of `[-2^63, 2^63)`.
+
+- Both `lite-client` and `tonlib` support this new global configuration format. Clients select the appropriate liteserver for each request based on its shard.
+
+## Proxy liteserver
+
+**Proxy Liteserver** is a server designed to accept standard liteserver queries and forward them to other liteservers.
+
+Its main purpose is to create a single liteserver that functions as a liteserver (LS) for all shards while distributing incoming queries to the appropriate child liteservers behind the scenes. This setup eliminates the need for clients to maintain multiple TCP connections for different shards and enables older clients to interact with sharded liteservers through the proxy.
+
+**Usage:**
+
+```
+proxy-liteserver -p <tcp-port> -C global-config.json --db db-dir/ --logname ls.log
+```
+
+List all child liteservers in the global config. These can be partial liteservers, as shown in the example above.
+
+To use the proxy liteserver in clients, create a new global config with this proxy in `liteservers` section. See `db-dir/config.json`:
+
+```json
+{
+   "@type" : "proxyLiteserver.config",
+   "port" : 10005,
+   "id" : {
+      "@type" : "pub.ed25519",
+      "key" : "..."
+   }
+}
+```
+
+This file contains the port and public key for the proxy liteserver. You can copy these details to the new global configuration.
+
+The key is generated upon the first launch and remains unchanged after any restarts.
+
+If you need to use an existing private key, place the private key file in `db-dir/keyring/<key-hash-hex>` and launch `proxy-liteserver` with the `--adnl-id <key-hash-hex>` flag.
+
+# Collator/validator separation
+
+Currently, Testnet and Mainnet validators function as follows:
+
+- All validators monitor all shards.
+
+- For each shard, a **validator group** is randomly selected to generate and validate new blocks.
+
+- Within this validator group, validators **collate** (generate) new block candidates one by one, while other validators **validate** and sign them.
+
+Changes introduced in the accelerator update are as follows:
+
+- Validators will monitor only the MasterChain, significantly reducing their workload (this feature is not yet enabled in Testnet).
+
+- The process for selecting validator groups and signing blocks remains unchanged.
+
+- MasterChain validators will continue to collate and validate blocks as before.
+
+- The collation of a shard block requires monitoring the shard. To address this, a new type of node called **collator node** is introduced. Shard validators will send requests to collator nodes to generate block candidates.
+
+- Validators will still validate blocks themselves. Collators will attach **collated data** (proof of shard state) to blocks, allowing for validation without the need to monitor the shard.
+
+In the current `testnet` branch, validators must still monitor all shards. However, you can experiment with launching collator nodes and configuring your validators to collate through them.
+
+## Launching a collator node
+
+Firstly, update your node to the [accelerator branch](https://github.com/ton-blockchain/ton/tree/accelerator).
+
+To configure a collator node, use the following commands in the `validator-engine-console`:
+
+```
+new-key
+add-adnl <key-id-hex> 0
+add-collator <key-id-hex> <wc>:<shard>
+```
+
+The `new-key` and `add-adnl` commands create a new ADNL address, while `add-collator` starts a collator node for the specified shard using this ADNL address.
+
+A collator for shard `X` can create blocks for all shards that are either ancestors or descendants of `X`. However, collator nodes cannot create blocks for the MasterChain; they are limited to the BaseChain.
+
+In a simple scenario, you can use a node that monitors all shards and launch a collator for all of them by running: `add-collator <key-id-hex> 0:8000000000000000`.
+
+Alternatively, you can launch a partial node that monitors and collates only a subset of shards. For example, to launch a node with flags `-M --add-shard 0:2000000000000000`, you would start the collator with the command `add-collator <key-id-hex> 0:2000000000000000`. This collator will generate blocks in the designated group of shards.
+
+#### Notes:
+
+- A collator node generates blocks automatically, even without requests from validators.
+
+- A collator node configured to generate blocks for a specific shard does not need to monitor other shards. However, it does require access to outbound message queues from neighboring shard states for collation. This is accomplished by downloading these message queues from other nodes that monitor the relevant shards.
+
+## Configuring a validator
+
+Update your validator to [accelerator branch](https://github.com/ton-blockchain/ton/tree/accelerator).
+
+By default, validators collate all blocks themselves. To use collator nodes, create a **collators list** and provide it to the validator using `validator-engine-console`:
+
+- `set-collators-list <filename>` installs a new list of collators.
+- `clear-collators-list` resets the validator to the default behavior.
+- `show-collators-list` displays the current list.
+
+The **collators list** is a JSON file. It contains a list of collator node ADNL ids for each shard.
+
+### Example 1: collators for all shards
+
+```json
+{
+  "shards": [
+    {
+      "shard_id": { "workchain": 0, "shard": -9223372036854775808 },
+      "self_collate": true,
+      "select_mode": "random",
+      "collators": [
+        { "adnl_id": "jKT47N1RExRD81OzeHcH1F194oxHyHv76Im71dOuQJ0=" },
+        { "adnl_id": "H39D7XTXOER9U1r/CEunpVbdmd7aNrcX0jOd8j7pItA=" }
+      ]
+    }
+  ]
+}
+```
+
+This list contains two collators that can generate blocks in all shards in BaseChain (`shard_id` is `0:8000000000000000`).
+
+When the validator needs to generate a shard block, it randomly selects one of the collators to send the request.
+
+`"self_collate": true` means that if all collators are offline then the validator will collate the block on its own. It is recommended to use this option for testing, since validators are still able to generate shard blocks.
+
+### Example 2: partial collators
+
+```json
+{
+  "shards": [
+    {
+      "shard_id": { "workchain": 0, "shard": 4611686018427387904 },
+      "self_collate": true,
+      "select_mode": "random",
+      "collators": [
+        { "adnl_id": "jKT47N1RExRD81OzeHcH1F194oxHyHv76Im71dOuQJ0=" }
+      ]
+    },
+    {
+      "shard_id": { "workchain": 0, "shard": -6917529027641081856 },
+      "self_collate": true,
+      "select_mode": "random",
+      "collators": [
+        { "adnl_id": "H39D7XTXOER9U1r/CEunpVbdmd7aNrcX0jOd8j7pItA=" }
+      ]
+    },
+    {
+      "shard_id": { "workchain": 0, "shard": -2305843009213693952 },
+      "self_collate": true,
+      "select_mode": "random",
+      "collators": []
+    }
+  ]
+}
+```
+
+This list has one collator for prefix `0:4000000000000000`, one collator for prefix `0:a000000000000000` and no collators for `0:e000000000000000`. `self_collate` is `true`, so the validator will collate on its own if no collators for the shard are online.
+
+### Formal protocol for selecting the collator
+
+The **collators list** contains a list `shards`. Each entry has the following parameters: `shard_id`, `select_mode`, `self_collate`, `collators`.
+
+To generate a block in shard `X`, the validator does the following:
+
+- If `X` is MasterChain then the validator generates the block itself.
+- Take the first entry from `shards` where `shard_id` intersects with `X`.
+- Validator periodically pings collators from the list to determine which ones are online and ready to respond.
+- Choose an online collator from the `collators` list. `select_mode` determines the selection method:
+  - `random`: random online collator.
+  - `ordered`: the first from the list (skipping offline collators).
+  - `round_robin`: select collators sequentially (skipping offline collators).
+- Send a request to the selected collator.
+- If all collators are offline and `self_collate` is `true` then the validator generates the block itself.
+
+### Collation manager stats
+
+Command `collation-manager-stats` in `validator-engine-console` displays the status of collators: which collators are currently used and which are online.
+
+## Collator whitelist
+
+By default, the collator node accepts requests from any validator.
+
+You can enable whitelist to allow requests only from certain validators using `validator-engine-console`:
+
+- `collator-whitelist-enable 1` enables the whitelist.
+- `collator-whitelist-enable 0` disables the whitelist.
+- `collator-whitelist-add <validator-adnl-id-hex>` adds a validator to the whitelist.
+- `collator-whitelist-del <validator-adnl-id-hex>` removes a validator from the whitelist.
+
+# 전체 콜레이트된 데이터
 
 기본적으로 검증자 세트에서 새 블록을 제안하는 검증자는 "블록 이전" 상태를 증명하는 데이터를 첨부하지 않습니다. 이 데이터는 다른 검증자가 로컬에 저장된 상태에서 얻어야 합니다. 이러한 방식으로 구(마스터 브랜치의) 노드와 새 노드가 합의에 도달할 수 있지만, 새 검증자는 모든 네트워크 상태를 감시해야 합니다.
 
-콜레이트된 데이터가 첨부된 블록을 검증자가 공유하는 새 프로토콜로의 업그레이드는 다음과 같이 할 수 있습니다:
-
-- 모든 검증자를 새 노드 버전으로 업그레이드
-- [full_collated_data](https://github.com/ton-blockchain/ton/tree/accelerator/crypto/block/block.tlb#L858)를 true로 설정
+Once [ton::capFullCollatedData](https://github.com/ton-blockchain/ton/blob/160b539eaad7bc97b7e238168756cca676a5f3be/validator/impl/collator-impl.h#L49) capabilities in network configuration parameter 8 will be enabled `collated_data` will be included into blocks and validators will be able to get rid of monitoring anything except masterchain: incoming data will be enough to fully check correctness of the block.
 
 # 다음 단계
 
-*검증자*와 *콜레이터* 역할을 분리하는 실제적인 능력은 무제한 처리량으로 가는 길의 주요 이정표이지만, 진정으로 탈중앙화되고 검열 저항성이 있는 네트워크를 만들기 위해서는 다음이 필요합니다:
+Developers are planning to implement the following features:
 
-- *콜레이터*의 독립성과 중복성 보장
-- 검증자와 콜레이터의 상호작용을 위한 안정적이고 안전한 방법 보장
-- 새 블록의 지속적인 콜레이션을 장려하는 콜레이터를 위한 적절한 재정 모델 보장
+- Add comprehensive and user-friendly support for validation using collators in MyTonCtrl.
 
-현재 이러한 작업들은 범위를 벗어납니다.
+- Optimize the size of `collated_data`: Although it currently functions well for most blocks, some transactions can lead to excessive data usage.
+
+- Enable broadcasting of `collated_data`.
+
+- Provide support in MyTonCtrl for automatic payments for collation to establish a market for collation and enhance its durability.
+
+<Feedback />
+

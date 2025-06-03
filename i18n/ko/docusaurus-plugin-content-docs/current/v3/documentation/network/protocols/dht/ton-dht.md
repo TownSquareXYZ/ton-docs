@@ -1,50 +1,53 @@
-# TON DHT 서비스
+import Feedback from '@site/src/components/Feedback';
 
-구현:
+# TON DHT service
 
-- https://github.com/ton-blockchain/ton/tree/master/dht
-- https://github.com/ton-blockchain/ton/tree/master/dht-server
+Please see the implementations:
+
+- [DHT](https://github.com/ton-blockchain/ton/tree/master/dht)
+- [DHT Server](https://github.com/ton-blockchain/ton/tree/master/dht-server)
 
 ## 개요
 
-Kademlia 기반의 분산 해시 테이블(DHT)은 TON 프로젝트의 네트워킹 부분에서 중요한 역할을 하며 네트워크의 다른 노드들을 찾는 데 사용됩니다.
+The Kademlia-like Distributed Hash Table (DHT) plays a crucial role in the networking aspect of the TON project, enabling the discovery of other nodes within the network.
 
-TON DHT의 키는 단순히 256비트 정수입니다. 대부분의 경우 TL-직렬화된 객체의 SHA256으로 계산됩니다.
+The keys used in the TON DHT are 256-bit integers, often derived from a SHA256 of a TL-serialized object.
 
-이 256비트 키에 할당된 값은 본질적으로 제한된 길이의 임의 바이트 문자열입니다. 이러한 바이트 문자열의 해석은 해당 키의 원상(preimage)에 의해 결정됩니다. 일반적으로 키를 조회하는 노드와 키를 저장하는 노드 모두 이를 알고 있습니다.
+The values associated with these 256-bit keys are essentially arbitrary byte strings of limited length. The meaning of these byte strings is determined by the pre-image of the corresponding key; this is typically known by both the node performing the key lookup and the node storing the key.
 
-가장 단순한 경우, 키는 특정 노드의 ADNL 주소를 나타내고 값은 해당 노드의 IP 주소와 포트가 될 수 있습니다.
+In its simplest form, the key represents an ADNL address of a node, while the value could be its IP address and port.
 
-TON DHT의 키-값 매핑은 DHT 노드에 유지됩니다.
+The key-value mappings of the TON DHT are maintained on the DHT nodes.
 
 ## DHT 노드
 
-각 DHT 노드는 256비트 DHT 주소를 가집니다. ADNL 주소와 달리 DHT 주소는 너무 자주 변경되어서는 안 됩니다. 그렇지 않으면 다른 노드들이 찾고자 하는 키를 찾을 수 없게 됩니다.
+Each DHT node has a 256-bit DHT address. Unlike an ADNL address, a DHT address should not change too frequently; otherwise, other nodes will be unable to locate the keys they are searching for.
 
-키 `K`의 값은 `K`에 Kademlia 거리로 가장 가까운 `S`개의 노드에 저장될 것으로 예상됩니다.
+The value of key `K` is expected to be stored on the `S` Kademlia-nearest nodes to `K`.
 
-Kademlia 거리 = 256비트 키 `XOR` 256비트 DHT 노드 주소 (지리적 위치와는 관련이 없음).
+Kademlia distance is calculated by performing a 256-bit `XOR` operation between the key `X` and the 256-bit DHT node address. This distance does not relate to geographic location.
 
-`S`는 작은 매개변수(예: `S = 7`)로, DHT의 신뢰성을 향상시키기 위해 필요합니다 (`K`에 가장 가까운 하나의 노드에만 키를 저장한다면, 그 단일 노드가 오프라인이 되면 해당 키의 값이 손실될 것입니다).
+`S` is a small parameter, for instance, `S = 7`, which helps improve the reliability of the DHT. If the key were stored only on a single node (the nearest one to `K`) the value of that key would be lost if that node were to go offline.
 
 ## Kademlia 라우팅 테이블
 
-DHT에 참여하는 모든 노드는 일반적으로 Kademlia 라우팅 테이블을 유지합니다.
+A node participating in a DHT typically maintains a Kademlia routing table.
 
-이는 0부터 255까지 번호가 매겨진 256개의 버킷으로 구성됩니다. `i`번째 버킷은 노드의 주소 `a`로부터 Kademlia 거리가 `2^i`에서 `2^(i+1) − 1` 사이인 알려진 노드들에 대한 정보(고정된 수의 "최상" 노드들과 추가 후보들)를 포함합니다.
+This table consists of 256 buckets, numbered from 0 to 255. The `i`-th bucket contains information about known nodes that lie within a Kademlia distance from `2^i` to `2^(i+1) − 1` from the node’s address `a`. Each bucket holds a fixed number of the “best” nodes, along with some additional candidate nodes.
 
-이 정보에는 DHT 주소, IP 주소, UDP 포트 및 마지막 핑의 시간과 지연과 같은 가용성 정보가 포함됩니다.
+The information stored in these buckets includes the DHT addresses, IP addresses, UDP ports, and availability details, such as the time and delay of the last ping.
 
-Kademlia 노드가 쿼리의 결과로 다른 Kademlia 노드에 대해 알게 되면, 먼저 후보로서 라우팅 테이블의 적절한 버킷에 배치합니다. 그런 다음 해당 버킷의 "최상" 노드 중 일부가 실패하면(예: 오랫동안 핑 쿼리에 응답하지 않음) 이러한 후보들 중 일부로 대체될 수 있습니다. 이러한 방식으로 Kademlia 라우팅 테이블이 계속 채워집니다.
+When a Kademlia node discovers another Kademlia node through a query, it places that node into the appropriate bucket as a candidate. If some of the “best” nodes in that bucket become unresponsive (for example, if they do not reply to ping queries for an extended period), they can be replaced by some of these candidates. This process ensures that the Kademlia routing table remains populated.
 
 ## 키-값 쌍
 
-TON DHT에서 키-값 쌍을 추가하고 업데이트할 수 있습니다.
+Key-value pairs can be added and updated in the TON DHT. The rules for these updates can vary. In some cases, they allow for the old value to be replaced with a new one as long as the new value is signed by the owner or creator. This signature must be retained as part of the value so that it can be verified later by any other nodes that receive this key's value.
 
-"업데이트 규칙"은 다를 수 있습니다. 일부 경우에는 소유자/생성자가 새 값에 서명한 경우에만 이전 값을 새 값으로 대체할 수 있습니다(서명은 다른 노드들이 이 키의 값을 얻은 후 나중에 확인할 수 있도록 값의 일부로 유지되어야 합니다). 다른 경우에는 이전 값이 어떤 식으로든 새 값에 영향을 미칩니다. 예를 들어 시퀀스 번호를 포함할 수 있고 새 시퀀스 번호가 더 큰 경우에만 이전 값을 덮어쓰게 됩니다(재생 공격을 방지하기 위함).
+In other cases, the old value impacts the new value in some way. For example, the old value may contain a sequence number, and it can only be overwritten if the new sequence number is larger. This helps prevent replay attacks.
 
-TON DHT는 ADNL 노드의 IP 주소를 저장하는 데만 사용되는 것이 아니라 다른 목적으로도 사용됩니다 - TON Storage의 특정 토렌트를 저장하는 노드들의 주소 목록, 오버레이 서브네트워크에 포함된 노드들의 주소 목록, TON 서비스의 ADNL 주소 또는 TON 블록체인 계정의 ADNL 주소 등을 저장할 수 있습니다.
+The TON DHT is not only used to store the IP addresses of ADNL nodes; it also serves other purposes. It can store a list of addresses of nodes that are holding a specific torrent in TON Storage, a list of addresses of nodes included in an overlay subnetwork, ADNL addresses of TON services, and ADNL addresses of accounts on the TON Blockchain, among others.
 
 :::info
-TON DHT에 대해 더 자세히 알아보려면 [DHT](/v3/documentation/network/protocols/dht/dht-deep-dive) 문서나 [TON 백서](https://docs.ton.org/ton.pdf)의 3.2장을 참고하세요.
+Learn more about TON DHT in [DHT](/v3/documentation/network/protocols/dht/dht-deep-dive) documentation, or in Chapter 3.2. of the [TON Whitepaper](https://docs.ton.org/ton.pdf).
 :::
+

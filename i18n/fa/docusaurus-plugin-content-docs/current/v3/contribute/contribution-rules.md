@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # دستورالعمل‌های مشارکت
+
+:::danger
+This page is outdated and will be deleted soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 قبل از مشارکت در هر صفحه‌ای از docs.ton.org، لطفاً لیست زیر از الزامات کلی و مهم را مرور کنید تا تجربه‌ای روان تضمین شود.
 
@@ -25,8 +32,8 @@ The TON Connect protocol...
 
 ```
 ## See Also
-* [TON Contribution Guidelines](/v3/contribute/contribution-rules)
-* [Tutorial Styling Guidelines](/v3/contribute/tutorials/guidelines)
+* [TON Contribution Guidelines](/v3/contribute/contribution-rules/)
+* [Tutorial Styling Guidelines](/v3/contribute/tutorials/guidelines/)
 ```
 
 :::
@@ -40,5 +47,8 @@ The TON Connect protocol...
 
 ## همچنین ببینید
 
-- [راهنمای مشارکت TON](/v3/contribute/contribution-rules)
-- [راهنمای سبک آموزش](/v3/contribute/tutorials/guidelines)
+- [TON Contribution Guidelines](/v3/contribute/contribution-rules/)
+- [Tutorial Styling Guidelines](/v3/contribute/tutorials/guidelines/)
+
+<Feedback />
+

@@ -1,32 +1,36 @@
-# خدمات بلاک چین
+import Feedback from '@site/src/components/Feedback';
 
-## سیستم‌های نام دامنه
+# Blockchain services
 
-در اتریوم، کاربران از سرویس نام اتریوم (ENS) استفاده می‌کنند که یک سیستم نام‌گذاری غیرمتمرکز است که بر روی بلاکچین اتریوم ساخته شده است.
+## Domain name systems
 
-بلاکچین TON شامل یک سیستم نام دامنه توکار به نام TON DNS است. این یک سرویس غیرمتمرکز است که به کاربران امکان می‌دهد نام‌های دامنه خوانا برای قراردادهای هوشمند، وب‌سایت‌ها یا هر محتوای آنلاین دیگر ثبت کنند. چنین سوریسی تعامل با برنامه‌های غیرمتمرکز (dApps) و منابع دیگر در بلاکچین TON را تسهیل می‌کند. سیستم DNS در TON به طور مشابه با سیستم‌های DNS اینترنت سنتی عمل می‌کند، اما طبیعت غیرمتمرکز آن نیاز به یک مرجع متمرکز برای کنترل و مدیریت نام‌های دامنه را از بین می‌برد و بنابراین خطرات سانسور، کلاهبرداری و سرقت نام دامنه را کاهش می‌دهد.
+In Ethereum, users use the **Ethereum Name Service (ENS)**, a decentralized naming system built on top of the Ethereum blockchain.
 
-## وب
+The TON blockchain includes an embedded domain name system called the TON DNS. This service allows users to register human-readable domain names for smart contracts, websites, or other online content. Such a device facilitates interaction with **decentralized applications (DApps)** and other resources on the TON blockchain.
 
-سرویس TON WWW بخشی از بلاکچین TON است که به شما امکان می‌دهد وب‌سایت‌های غیرمتمرکز را مستقیماً از طریق بلاکچین ایجاد کرده و با آنها تعامل داشته باشید. برخلاف وب‌سایت‌های سنتی، وب‌سایت‌ها در TON از طریق URL‌های ویژه‌ای که با `.ton` پایان می‌یابند قابل دسترسی هستند و از لینک‌های منحصر به فردی به فرم `ton://` پشتیبانی می‌کنند که امکان تراکنش‌ها و عملیات‌های دیگر را مستقیماً از URL فراهم می‌کنند.
+The DNS system in TON functions similarly to traditional Internet DNS systems, but its decentralized nature eliminates the need for a centralized authority to control and manage domain names, thereby reducing the risks of censorship, fraud, and domain name hijacking.
 
-یکی از ویژگی‌های کلیدی TON WWW، قابلیت اتصال مستقیم کیف پول‌های رمزنگاری به نام‌های دامنه است که به کاربران امکان می‌دهد ارز رمزنگاری را به آدرس‌هایی مانند alice.place.ton بدون جزئیات اضافی ارسال کنند. این فرآیند اهداها و پرداخت‌ها را بسیار ساده‌تر و راحت‌تر می‌کند.
+One key feature of TON DNS is the ability to bind crypto wallets to domain names directly. This feature allows users to send cryptocurrency to addresses like `alice.place.ton` without additional details. This feature simplifies the process of donations and payments, making it more intuitive and convenient.
 
 ## پراکسی
 
-سرویس TON Proxy یک ابزار مبتنی بر پروتکل TON است که سطح بالایی از امنیت و ناشناسی را ارائه می‌دهد. تمامی داده‌های منتقل شده از طریق TON Proxy رمزنگاری می‌شوند و بنابراین اطلاعات محرمانه کاربران را محافظت می‌کنند.
+TON Proxy is a tool based on the TON protocol that offers high security and anonymity. All data transmitted through TON Proxy is encrypted, thus protecting users' confidential information.
 
-یکی از مزایای کلیدی TON Proxy قابلیت عبور از بلوک‌های اعمال شده توسط ارائه‌دهندگان خدمات اینترنت یا سازمان‌های دولتی است. این امر آن را به یک ابزار ضروری برای کاربرانی تبدیل می‌کند که نیاز به دسترسی آزاد به اطلاعات در اینترنت بدون محدودیت دارند.
+One of TON Proxy's key advantages is bypassing blockades imposed by ISPs or government agencies. This property makes it an essential tool for users who need free access to information on the Internet without restrictions.
 
-علاوه بر این، TON Proxy به سرعت اتصال اینترنت کمک می‌کند. این ابزار به‌طور خودکار سرورهای با کمترین بار را انتخاب می‌کند که کیفیت اتصال و سرعت دسترسی به اینترنت را بهبود می‌بخشد.
+In addition, TON Proxy helps to speed up Internet connection speeds. It automatically selects the servers with the lowest load, improving the quality of connection and Internet access speed.
 
 ## ذخیره‌سازی غیرمتمرکز
 
-اتریوم برای ذخیره‌سازی مقدار زیادی از داده‌ها مناسب نیست. بنابراین، ذخیره‌سازی غیرمتمرکز در اتریوم معمولاً شامل استفاده از سیستم‌های فایل توزیع شده برای ذخیره و بازیابی داده‌ها به صورت غیرمتمرکز و امن است. یک روش محبوب برای ذخیره‌سازی غیرمتمرکز در اتریوم، سیستم فایل بین‌سیاره‌ای (IPFS) است که یک سیستم فایل همتا به همتا است که به کاربران امکان می‌دهد فایل‌ها را از یک شبکه از گره‌های توزیع شده ذخیره و بازیابی کنند.
+Ethereum is not suitable for storing large amounts of data. Therefore, decentralized storage on Ethereum typically involves using distributed file systems to store and retrieve data in a decentralized and secure manner. One popular approach to decentralized storage on Ethereum is the **InterPlanetary File System (IPFS)**, a peer-to-peer file system that allows users to store and retrieve files from a distributed network.
 
-شبکه TON دارای سرویس ذخیره‌سازی غیرمتمرکز خود است که توسط بلاکچین TON برای ذخیره نسخه‌های آرشیوی بلوک‌ها و داده‌های وضعیت (snapshots) استفاده می‌شود، اما همچنین برای ذخیره فایل‌های کاربران یا خدمات دیگر که بر روی پلتفرم اجرا می‌شوند با فناوری دسترسی مشابه تورنت موجود است. محبوب‌ترین استفاده برای ذخیره‌سازی متادیتای NFT به طور مستقیم بر روی TON است، بدون استفاده از سرویس‌های ذخیره‌سازی فایل توزیع شده اضافی مانند IPFS متادیتای NFT را ذخیره کنید.
+The TON network has its own decentralized storage service called snapshots, which the TON blockchain uses to store archive copies of blocks and status data. The service can also store users’ files or other services running on the platform with torrent-like access technology. The most popular use case is to store NFT metadata directly on TON storage, not using additional distributed file storage services like IPFS.
 
 ## خدمات پرداخت
 
-TON Payments یک راه‌حل برای تراکنش‌های برق آسا با هزینه صفر در بلاکچین TON است. در حالی که بلاکچین TON برای اکثر وظایف کافی است، برخی از برنامه‌ها، مانند TON Proxy، TON Storage یا برنامه غیرمتمرکز خاص، نیاز به تراکنش‌های کوچک با سرعت بسیار بالا و هزینه‌های کمتر دارند. کانال‌های پرداخت، که به عنوان شبکه رعد و برق نیز شناخته می‌شوند، برای حل این مشکل ایجاد شده‌اند. کانال‌های پرداخت به دو طرف امکان می‌دهند تراکنش‌ها را خارج از زنجیره با ایجاد یک قرارداد هوشمند خاص بر روی بلاکچین با موجودی‌های اولیه خود انجام دهند. آن‌ها می‌توانند به اندازه‌ای که می‌خواهند تراکنش‌ها را بین خود انجام دهند بدون هیچ محدودیت سرعت یا هزینه. هزینه‌های شبکه فقط در هنگام باز شدن و بسته شدن کانال دریافت می‌شود. این فناوری همچنین عملکرد صحیح را با اجازه دادن به یک طرف برای بستن کانال به تنهایی در صورتی که طرف دیگر تقلب کرده یا ناپدید شود تضمین می‌کند.
+TON Payments is a solution for lightning-fast transactions with zero network fees on the TON blockchain. While the TON blockchain is sufficient for most tasks, some applications, such as TON Proxy, TON Storage, or a particular decentralized application, require micro-transactions with much higher speed and lower costs. In TON, Payment channels solve this problem.
+
+Payment channels allow two parties to make transactions off-chain by creating a special smart contract on the blockchain with their initial balances. They can then perform as many transactions between them as they want without any speed limits or fees. The network charges fees only when opening and closing the channel. The technology guarantees proper operation by allowing a party to close the channel if the other party cheats or disappears.
+
+<Feedback />
 

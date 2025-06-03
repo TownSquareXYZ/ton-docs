@@ -1,28 +1,26 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 외부 메시지
 
 외부 메시지는 TON 블록체인에 존재하는 스마트 컨트랙트가 특정 작업을 수행하도록 하기 위해 `외부에서 전송되는` 메시지입니다.
 
 예를 들어, 지갑 스마트 컨트랙트는 지갑 소유자가 서명한 주문(예: 지갑 스마트 컨트랙트에서 보낼 내부 메시지)이 포함된 외부 메시지를 수신하기를 기대합니다. 이러한 외부 메시지가 지갑 스마트 컨트랙트에 수신되면 먼저 서명을 확인하고, 메시지를 수락한 다음(TVM 프리미티브 `ACCEPT` 실행), 필요한 작업을 수행합니다.
 
-:::danger
-모든 외부 메시지는 재생 공격으로부터 `보호되어야 함`에 주의하세요. 검증자는 일반적으로 제안된 외부 메시지 풀(네트워크에서 수신)에서 외부 메시지를 제거합니다. 하지만 일부 상황에서는 `다른 검증자`가 동일한 외부 메시지를 두 번 처리할 수 있습니다(따라서 동일한 외부 메시지에 대해 두 번째 트랜잭션이 생성되어 원래 작업이 중복됨). 더 나쁜 경우, `악의적인 행위자가` 처리 트랜잭션이 포함된 블록에서 외부 메시지를 추출하여 나중에 다시 보낼 수 있습니다. 이로 인해 예를 들어 지갑 스마트 컨트랙트가 결제를 반복하도록 강제할 수 있습니다.
+## Replay protection
+
+:::caution
+Stay vigilant and check replay protection in contracts for external-in messages.
 :::
 
-export const Highlight = ({children, color}) => (
-<span
-style={{
-backgroundColor: color,
-borderRadius: '2px',
-color: '#4a080b',
-padding: '0.2rem',
-}}>
-{children} </span>
-);
+Notice that all external messages must be protected against replay attacks. The validators normally remove an external message from the pool of suggested external messages (received from the network); however, in some situations another validator could process the same external message twice (thus creating a second transaction for the same external message, leading to the duplication of the original action). Even worse, a `malicious actor could extract` the external message from the block containing the processing transaction and re-send it later. This could force a wallet smart contract to repeat a payment.
 
-<Highlight color="#ffeced">외부 메시지와 관련된 재생 공격으로부터 스마트 컨트랙트를 보호하는 가장 간단한 방법</Highlight>은 스마트 컨트랙트의 영구 데이터에 32비트 카운터 `cur-seqno`를 저장하고, 수신되는 모든 외부 메시지의 (서명된 부분에) `req-seqno` 값을 기대하는 것입니다. 그러면 서명이 유효하고 `req-seqno`가 `cur-seqno`와 같은 경우에만 외부 메시지가 수락됩니다. 성공적인 처리 후, 영구 데이터의 `cur-seqno` 값이 1 증가하므로 <Highlight color="#ffeced">동일한 외부 메시지는 다시는 수락되지 않습니다</Highlight>.
+The simplest way to protect smart contracts from replay attacks related to external messages is to store a 32-bit counter `cur-seqno` in the persistent data of the smart contract, and to expect a `req-seqno` value in (the signed part of) any inbound external messages. Then an external message is accepted only if both the signature is valid and `req-seqno` equals `cur-seqno`. After successful processing, the `cur-seqno` value in the persistent data is increased by one, so the same external message will never be accepted again.
 
-<Highlight color="#ffeced">또한</Highlight> 외부 메시지에 `expire-at` 필드를 포함시키고 현재 Unix 시간이 이 필드의 값보다 작은 경우에만 외부 메시지를 수락할 수 있습니다. 이 접근 방식은 `seqno`와 함께 사용할 수 있습니다. 또는 수신하는 스마트 컨트랙트가 최근(만료되지 않은) 수락된 모든 외부 메시지의 (해시) 집합을 영구 데이터에 저장하고, 새 외부 메시지가 저장된 메시지 중 하나의 중복인 경우 거부할 수 있습니다. 영구 데이터의 비대화를 방지하기 위해 이 집합에서 만료된 메시지에 대한 가비지 컬렉션도 수행해야 합니다.
+And one could also include an `expire-at` field in the external message, and accept an external message only if the current Unix time is less than the value of this field. This approach can be used in conjunction with `seqno`; alternatively, the receiving smart contract could store the set of (the hashes of) all recent (not expired) accepted external messages in its persistent data, and reject a new external message if it is a duplicate of one of the stored messages. Some garbage collection of expired messages in this set should also be performed to avoid bloating the persistent data.
 
-:::note
-일반적으로 외부 메시지는 256비트 서명(필요한 경우), 32비트 `req-seqno`(필요한 경우), 32비트 `expire-at`(필요한 경우), 그리고 가능한 32비트 `op`와 `op`에 따른 다른 필수 매개변수로 시작합니다. 외부 메시지는 서로 다른 스마트 컨트랙트(서로 다른 개발자가 작성하고 서로 다른 소유자가 관리하는) 간의 상호 작용에 사용되지 않기 때문에 외부 메시지의 레이아웃이 내부 메시지만큼 표준화될 필요는 없습니다.
+:::note\
+In general, an external message begins with a 256-bit signature (if needed), a 32-bit `req-seqno` (if needed), a 32-bit `expire-at` (if needed), and possibly a 32-bit `op` and other required parameters depending on `op`. The layout of external messages does not need to be as standardized as that of internal messages because external messages are not used for interaction between different smart contracts (written by different developers and managed by different owners).\
 :::
+
+<Feedback />
+

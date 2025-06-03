@@ -1,18 +1,20 @@
+import Feedback from '@site/src/components/Feedback';
+
 # TON 프록시 연결하기
 
-TON 프록시는 일반 HTTP 프록시와 호환되어 브라우저나 운영체제 설정에서 직접 사용할 수 있습니다.
+TON Proxy is fully compatible with standard HTTP proxy settings so that you can configure it directly through your browser or operating system.
 
 ## Google Chrome
 
-운영체제에 따라 Windows, macOS, Linux, iOS 또는 Android 지침을 따르세요.
+Follow the instructions specific to your device’s operating system: Windows, macOS, Linux, iOS, or Android.
 
 ## Firefox
 
-설정 -> 일반 -> 네트워크 설정 -> 설정 -> 수동 프록시 설정 -> HTTP 프록시
-
-"HTTP 프록시" 필드에 공개 진입 프록시 중 하나의 주소를 입력하고, "포트" 필드에 "8080"을 따옴표 없이 입력하세요.
-
-"확인"을 클릭하세요.
+1. Go to **Settings → General → Network Settings → Configure**.
+2. Choose a "Manual proxy settings".
+3. In the "HTTP Proxy" field, enter the address of a public entry proxy.
+4. In the "Port" field, enter "8080" without quotes.
+5. "확인"을 클릭하세요.
 
 ## Safari
 
@@ -20,44 +22,42 @@ TON 프록시는 일반 HTTP 프록시와 호환되어 브라우저나 운영체
 
 ## iOS
 
-설정 -> WiFi -> 현재 연결된 네트워크 클릭 -> 프록시 설정 -> 수동
-
-"서버" 필드에 공개 진입 프록시 중 하나의 주소를 입력하고, "포트" 필드에 "8080"을 따옴표 없이 입력하세요.
-
-"저장"을 클릭하세요.
+1. Go to **Settings → Wi-Fi**.
+2. Tap your currently connected network.
+3. Scroll to "HTTP Proxy" and choose "Manual".
+4. In the "Server" field, enter the address of a public entry proxy.
+5. In the "Port" field, enter "8080" without quotes.
+6. Tap "Save".
 
 ## Android
 
-설정 -> WiFi -> Wi-Fi 네트워크 이름을 길게 누르기 -> 네트워크 수정 -> 고급 옵션 -> 수동
-
-"서버" 필드에 공개 진입 프록시 중 하나의 주소를 입력하고, "포트" 필드에 "8080"을 따옴표 없이 입력하세요.
-
-"저장"을 클릭하세요.
+1. Go to **Settings → Wi-Fi**.
+2. Tap and hold the Wi-Fi network name.
+3. Select **Modify Network → Advanced Options → Manual**.
+4. In the "Server" field, enter the address of a public entry proxy.
+5. In the "Port" field, enter "8080" without quotes.
+6. Tap "Save".
 
 ## Windows
 
-"시작" 버튼을 클릭한 후 설정 > 네트워크 및 인터넷 > 프록시를 선택하세요.
-
-"수동 프록시 설정"에서 "프록시 서버 사용" 옆의 "설정"을 선택하세요.
-
-"프록시 서버 편집" 대화 상자에서 다음을 수행하세요:
-
-"프록시 서버 사용"을 켜세요.
-
-공개 진입 프록시 중 하나의 주소를 입력하고, "포트" 필드에 "8080"을 따옴표 없이 입력하세요.
-
-"저장"을 클릭하세요.
+1. Click the "Start" button and select **Settings → Network & Internet → Proxy**.
+2. "수동 프록시 설정"에서 "프록시 서버 사용" 옆의 "설정"을 선택하세요.
+3. "프록시 서버 사용"을 켜세요.
+4. Enter the address of one of the public entry proxies, in the "Port" field, and enter "8080" without quotes.
+5. "저장"을 클릭하세요.
 
 ## macOS
 
-설정 -> 네트워크 -> 고급 -> 프록시 -> 웹 프록시(HTTP)
-
-"웹 프록시 서버" 필드에 공개 진입 프록시 중 하나의 주소를 입력하고, 콜론 뒤에 "8080"을 따옴표 없이 입력하세요.
-
-"확인"을 클릭하세요.
+1. Go to **Settings → Network → Advanced → Web proxy (HTTP)**.
+2. In the "Web proxy server" field, enter the address of one of the public entry proxies; after the colon, enter "8080" without quotes.
+3. "확인"을 클릭하세요.
 
 ## Ubuntu
 
-설정 -> 네트워크 -> 네트워크 프록시 버튼 -> 수동
+1. Go to **Settings → Network**.
+2. Click **Network Proxy → Manual**.
+3. In the "HTTP Proxy" field, enter the address of one of the public entry proxies.
+4. For the port, enter "8080" without quotes.
 
-"HTTP 프록시" 필드에 공개 진입 프록시 중 하나의 주소를 입력하고, 포트에는 "8080"을 따옴표 없이 입력하세요.
+<Feedback />
+

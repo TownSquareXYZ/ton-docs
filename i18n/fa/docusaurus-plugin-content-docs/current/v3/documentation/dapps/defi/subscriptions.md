@@ -1,4 +1,6 @@
-# اشتراک‌های محتوا
+import Feedback from '@site/src/components/Feedback';
+
+# Content subscriptions
 
 به دلیل این که تراکنش‌ها در بلاکچین TON سریع هستند و هزینه‌های شبکه کم است، می‌توانید پرداخت‌های دوره‌ای را از طریق قراردادهای هوشمند به صورت زنجیره‌ای پردازش کنید.
 
@@ -35,4 +37,5 @@ Subscription contract requires authorization exactly once, on installation; then
 
 ## پیاده‌سازی
 
-یک مثال خوب از پیاده‌سازی، اشتراک غیرمتمرکز تونکوین در کانال های خصوصی در تلگرام توسط ربات [@donate](https://t.me/donate) و [کیف پول Tonkeeper](https://tonkeeper.com) است.
+A good example of implementation is decentralized subscriptions for Toncoin to private channels in Telegram by the [@donate](https://t.me/donate) bot and the [Tonkeeper wallet](https://tonkeeper.com). <Feedback />
+

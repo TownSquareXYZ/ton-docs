@@ -1,18 +1,21 @@
+import Feedback from '@site/src/components/Feedback';
+
 import ThemedImage from '@theme/ThemedImage';
 
-# 백엔드에서 로그인 사용자 인증하기
+# Verifying signed-in users on the backend
 
-이 페이지에서는 백엔드에서 사용자가 선언한 주소를 실제로 소유하고 있는지 확인하는 방법을 설명합니다.
-모든 DApp에서 사용자 인증이 필요한 것은 아닙니다.
+This page describes a method for the backend to ensure that the user truly owns the declared address.
 
-백엔드에서 사용자의 개인 정보를 제공하기 위해 사용자를 인증하려는 경우 유용합니다.
+Note that user verification is not required for all dApps.
+
+It is helpful if you want to verify a user by providing them with their personal information from the backend.
 
 ## 작동 방식
 
-- 사용자가 로그인 프로세스를 시작합니다.
-- 백엔드가 ton_proof 엔티티를 생성하여 프론트엔드로 전송합니다.
-- 프론트엔드는 ton_proof를 사용하여 지갑에 로그인하고 서명된 ton_proof를 받습니다.
-- 프론트엔드가 서명된 ton_proof를 백엔드로 전송하여 검증합니다.
+- User initiates the sign-in process.
+- Backend generates a `ton_proof` entity and sends it to frontend.
+- Frontend signs in to wallet using `ton_proof` and receives a signed `ton_proof`.
+- Frontend sends signed `ton_proof` to backend for verification.
 
 <br></br>
 <ThemedImage
@@ -24,9 +27,9 @@ import ThemedImage from '@theme/ThemedImage';
 />
 <br></br>
 
-## ton_proof 구조
+## Structure of the ton_proof
 
-connector 내부에 구현된 TonProof 엔티티를 사용합니다.
+We will use the  `ton_proof`, implemented inside the connector.
 
 ```js
 type TonProofItemReply = TonProofItemReplySuccess | TonProofItemReplyError;
@@ -46,27 +49,27 @@ type TonProofItemReplySuccess = {
 
 ```
 
-## 서버 측에서 ton_proof 확인하기
+## Checking ton_proof on server side
 
 1. 사용자로부터 `TonProofItemReply`를 가져옵니다.
-2. 받은 도메인이 애플리케이션 도메인과 일치하는지 확인합니다.
-3. `TonProofItemReply.payload`가 원본 서버에서 허용되고 여전히 유효한지 확인합니다.
+2. Verify that the received domain corresponds to your application's domain.
+3. Check if `TonProofItemReply.payload` is permitted by the original server and is still active.
 4. `timestamp`가 현재 시점에서 유효한지 확인합니다.
 5. [메시지 스킴](/v3/guidelines/ton-connect/guidelines/verifying-signed-in-users#concept-explanation)에 따라 메시지를 조합합니다.
 6. API(a)나 백엔드 로직(b)을 통해 `public_key`를 가져옵니다
 
 - 6a:
   - [TON API](https://docs.tonconsole.com/tonapi#:~:text=/v2/-,tonconnect,-/stateinit)의 `POST /v2/tonconnect/stateinit` 메서드로 `walletStateInit`에서 `{public_key, address}`를 가져옵니다.
-  - `walletStateInit`에서 추출한 `address`가 사용자가 선언한 지갑 `address`와 일치하는지 확인합니다.
+  - Verify that the address extracted from `walletStateInit` to the wallet `address` declared by the user.
 - 6b:
   - 지갑 계약의 [get 메서드](https://github.com/ton-blockchain/wallet-contract/blob/main/func/wallet-v4-code.fc#L174)를 통해 지갑 `public_key`를 얻습니다.
-  - 계약이 활성화되지 않았거나 이전 지갑 버전(v1-v3)에서 발견되는 get_method가 없는 경우, 이 방식으로 키를 얻을 수 없습니다. 대신 프론트엔드에서 제공한 walletStateInit을 파싱해야 합니다. TonAddressItemReply.walletStateInit.hash()가 TonAddressItemReply.address.hash()와 같은지 확인하여 BoC 해시를 나타냅니다.
+  - If the contract is inactive or lacks the get_method found in older wallet versions (v1-v3), then obtaining the key in this manner will be impossible. Instead, you must parse the walletStateInit provided by the front end. Ensure that TonAddressItemReply.walletStateInit.hash() equals TonAddressItemReply.address.hash(), indicating a BoC hash.
 
-7. 프론트엔드의 `signature`가 조합된 메시지에 대해 올바르게 서명되었고 주소의 `public_key`와 일치하는지 확인합니다.
+7. Verify that the `signature` from the front end correctly signs the assembled message and matches the `public_key` of the address.
 
-## React 예시
+## React example
 
-1. 앱의 루트에 토큰 프로바이더를 추가합니다:
+1. Add a token provider to the root of your app:
 
 ```tsx
 function App() {
@@ -80,7 +83,7 @@ function App() {
 }
 ```
 
-2. 백엔드 통합과 함께 프론트엔드에서 인증을 구현합니다:
+2. Implement authentication on the front end with backend integration:
 
 <details>
 <summary>예시</summary>
@@ -155,50 +158,100 @@ export function useBackendAuth() {
 
 </details>
 
-## 백엔드 예시
+## Backend example
 
 <details>
-<summary>Proof 유효성 확인하기 (Next.js)</summary>
+<summary>Check if proof valid with [ton-proof-service](https://github.com/ton-connect/demo-dapp-with-react-ui/blob/master/src/server/services/ton-proof-service.ts)</summary>
 
 ```tsx
-'use server'
-import {Address, Cell, contractAddress, loadStateInit, TonClient4} from '@ton/ton'
-
-
-export async function isValid(proof, account) {
-    const payload = {
-					address: account.address,
-					public_key: account.publicKey,
-					proof: {
-						...proof,
-						state_init: account.walletStateInit
-					}
-	  }
-    const stateInit = loadStateInit(Cell.fromBase64(payload.proof.state_init).beginParse())
-	  const client = new TonClient4({
-		  endpoint: 'https://mainnet-v4.tonhubapi.com'
-	  })
-	  const masterAt = await client.getLastBlock()
-	  const result = await client.runMethod(masterAt.last.seqno, Address.parse(payload.address), 'get_public_key', [])
-	  const publicKey = Buffer.from(result.reader.readBigNumber().toString(16).padStart(64, '0'), 'hex')
-	  if (!publicKey) {
-		  return false
-	  }
-	  const wantedPublicKey = Buffer.from(payload.public_key, 'hex')
-	  if (!publicKey.equals(wantedPublicKey)) {
-		  return false
-	  }
-	  const wantedAddress = Address.parse(payload.address)
-	  const address = contractAddress(wantedAddress.workChain, stateInit)
-	  if (!address.equals(wantedAddress)) {
-		  return false
-	  }
-	  const now = Math.floor(Date.now() / 1000)
-	  if (now - (60 * 15) > payload.proof.timestamp) {
-		  return false
-	  }
-    return true
+public async checkProof(payload: CheckProofRequestDto, getWalletPublicKey: (address: string) => Promise<Buffer | null>): Promise<boolean> {
+  try {
+    const stateInit = loadStateInit(Cell.fromBase64(payload.proof.state_init).beginParse());
+  
+    // 1. First, try to obtain the public key via the get_public_key get-method on the smart contract deployed at Address.
+    // 2. If the smart contract is not deployed yet, or the get-method is missing, you need:
+    //  2.1. Parse TonAddressItemReply.walletStateInit and get public key from stateInit. You can compare the walletStateInit.code
+    //  with the code of standard wallet contracts and parse the data according to the found wallet version.
+    let publicKey = tryParsePublicKey(stateInit) ?? await getWalletPublicKey(payload.address);
+    if (!publicKey) {
+      return false;
+    }
+  
+    // 2.2. Check that TonAddressItemReply.publicKey equals to obtained public key
+    const wantedPublicKey = Buffer.from(payload.public_key, 'hex');
+    if (!publicKey.equals(wantedPublicKey)) {
+      return false;
+    }
+  
+    // 2.3. Check that TonAddressItemReply.walletStateInit.hash() equals to TonAddressItemReply.address. .hash() means BoC hash.
+    const wantedAddress = Address.parse(payload.address);
+    const address = contractAddress(wantedAddress.workChain, stateInit);
+    if (!address.equals(wantedAddress)) {
+      return false;
+    }
+  
+    if (!allowedDomains.includes(payload.proof.domain.value)) {
+      return false;
+    }
+  
+    const now = Math.floor(Date.now() / 1000);
+    if (now - validAuthTime > payload.proof.timestamp) {
+      return false;
+    }
+  
+    const message = {
+      workchain: address.workChain,
+      address: address.hash,
+      domain: {
+        lengthBytes: payload.proof.domain.lengthBytes,
+        value: payload.proof.domain.value,
+      },
+      signature: Buffer.from(payload.proof.signature, 'base64'),
+      payload: payload.proof.payload,
+      stateInit: payload.proof.state_init,
+      timestamp: payload.proof.timestamp
+    };
+  
+    const wc = Buffer.alloc(4);
+    wc.writeUInt32BE(message.workchain, 0);
+  
+    const ts = Buffer.alloc(8);
+    ts.writeBigUInt64LE(BigInt(message.timestamp), 0);
+  
+    const dl = Buffer.alloc(4);
+    dl.writeUInt32LE(message.domain.lengthBytes, 0);
+  
+    // message = utf8_encode("ton-proof-item-v2/") ++
+    //           Address ++
+    //           AppDomain ++
+    //           Timestamp ++
+    //           Payload
+    const msg = Buffer.concat([
+      Buffer.from(tonProofPrefix),
+      wc,
+      message.address,
+      dl,
+      Buffer.from(message.domain.value),
+      ts,
+      Buffer.from(message.payload),
+    ]);
+  
+    const msgHash = Buffer.from(await sha256(msg));
+  
+    // signature = Ed25519Sign(privkey, sha256(0xffff ++ utf8_encode("ton-connect") ++ sha256(message)))
+    const fullMsg = Buffer.concat([
+      Buffer.from([0xff, 0xff]),
+      Buffer.from(tonConnectPrefix),
+      msgHash,
+    ]);
+  
+    const result = Buffer.from(await sha256(fullMsg));
+  
+    return sign.detached.verify(result, message.signature, publicKey);
+  } catch (e) {
+    return false;
   }
+}
 
 ```
 
@@ -206,12 +259,12 @@ export async function isValid(proof, account) {
 
 주요 메서드를 보여주는 [예시](https://github.com/ton-connect/demo-dapp-with-react-ui/tree/master/src/server)를 확인할 수 있습니다:
 
-- [generatePayload](https://github.com/ton-connect/demo-dapp-with-react-ui/blob/master/src/server/api/generate-payload.ts): ton proof용 페이로드 생성
+- [generatePayload](https://github.com/ton-connect/demo-dapp-with-react-ui/blob/master/src/server/api/generate-payload.ts): Generates a payload for `ton_proof`.
 - [checkProof](https://github.com/ton-connect/demo-dapp-with-react-ui/blob/master/src/server/api/check-proof.ts): proof를 확인하고 액세스 토큰 반환
 
-## 개념 설명
+## Concept explanation
 
-`TonProofItem`이 요청되면 지갑은 선택된 계정의 키 소유권을 증명합니다. 서명된 메시지는 다음과 연결됩니다:
+If `TonProofItem` is requested, the wallet proves ownership of the selected account’s key. The signed message is bound to:
 
 - 온체인 메시지와 구분하기 위한 고유 접두사 (`ton-connect`)
 - 지갑 주소
@@ -248,19 +301,19 @@ signature = Ed25519Sign(privkey, sha256(0xffff ++ utf8_encode("ton-connect") ++ 
 
 참고: payload는 신뢰할 수 없는 가변 길이 데이터입니다. 불필요한 길이 접두사 사용을 피하기 위해 마지막에 배치합니다.
 
-서명은 공개키를 사용하여 확인해야 합니다:
+The signature must be verified using the public key:
 
-1. 먼저 `Address`에 배포된 스마트 계약의 `get_public_key` get-메서드를 통해 공개키를 얻습니다.
+1. First, try to obtain the public key via the `get_public_key` get-method on the smart contract deployed at `Address`.
 
 2. 스마트 계약이 아직 배포되지 않았거나 get-메서드가 없는 경우:
 
-   1. `TonAddressItemReply.walletStateInit`를 파싱하여 stateInit에서 공개키를 가져옵니다. `walletStateInit.code`를 표준 지갑 계약의 코드와 비교하고 발견된 지갑 버전에 따라 데이터를 파싱할 수 있습니다.
+   1. Parse `TonAddressItemReply.walletStateInit` and get public key from stateInit. You can compare the `walletStateInit.code` with the code of standard wallet contracts and parse the data according to the found wallet version.
 
    2. `TonAddressItemReply.publicKey`가 얻은 공개키와 일치하는지 확인
 
-   3. `TonAddressItemReply.walletStateInit.hash()`가 `TonAddressItemReply.address`와 일치하는지 확인. `.hash()`는 BoC 해시를 의미합니다.
+   3. Check that `TonAddressItemReply.walletStateInit.hash()` equals `TonAddressItemReply.address`. `.hash()` means BoC hash.
 
-### TON Proof 검증 예시
+### Verification examples
 
 - [Go 데모 앱](https://github.com/ton-connect/demo-dapp-backend)
 - [Rust 데모 앱](https://github.com/liketurbo/demo-dapp-backend-rs)
@@ -269,8 +322,10 @@ signature = Ed25519Sign(privkey, sha256(0xffff ++ utf8_encode("ton-connect") ++ 
 - [PHP 예시](https://github.com/vladimirfokingithub/Ton-Connect-Proof-Php-Check)
 - [C# 데모 앱](https://github.com/WinoGarcia/TonProof.NET)
 
-## 참고 자료
+## See also
 
+- [Preparing messages](/v3/guidelines/ton-connect/guidelines/preparing-messages)
+- [Sending messages](/v3/guidelines/ton-connect/guidelines/sending-messages)
 - [[YouTube] @tonconnect/react-ui의 ton_proof 확인하기 [RU]](https://youtu.be/wIMbkJHv0Fs?list=PLyDBPwv9EPsCJ226xS5_dKmXXxWx1CKz_&t=2971)
-- [메시지 준비하기](/v3/guidelines/ton-connect/guidelines/preparing-messages)
-- [메시지 보내기](/v3/guidelines/ton-connect/guidelines/sending-messages)
+
+<Feedback />

@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # راهنمای مشارکت
+
+:::danger
+This page is outdated and will be deleted soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 در اینجا یک راهنمای گام به گام برای مشارکت در مستندات TON با آموزش‌ها آورده شده است.
 
@@ -18,14 +25,14 @@
 متریالی را که می‌خواهید توصیف کنید بیابید یا آن را بنویسید.
 
 1. [لیست مسائل روی GitHub مستندات TON](https://github.com/ton-community/ton-docs/issues) با برچسب 'آموزش' را بررسی کنید.
-2. *یا* ایده خود را با [قالب آموزش](https://github.com/ton-community/ton-docs/issues/new?assignees=\&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A\&template=suggest_tutorial.yaml\&title=Suggest+a+tutorial) در GitHub مستندات TON بنویسید.
+2. *یا* ایده خود را با قالب آموزش در GitHub مستندات TON بنویسید.
 
 ## توصیف مشکل برای دریافت پاداش
 
 یک *ton-footstep* بنویسید تا برای مشارکت خود تأمین مالی دریافت کنید.
 
 1. بیشتر درباره برنامه [TON Bounties](https://github.com/ton-society/grants-and-bounties/blob/main/bounties/BOUNTIES_PROGRAM_GUIDELINES.md) بخوانید.
-   1. **خلاصه:** از مقاله [بهبود دستورالعمل‌های TVM](https://github.com/ton-society/grants-and-bounties/issues/361) به عنوان نمونه استفاده کنید
+    1. **خلاصه:** از مقاله [بهبود دستورالعمل‌های TVM](https://github.com/ton-society/grants-and-bounties/issues/361) به عنوان نمونه استفاده کنید
 2. [درخواست جایزه خود را بنویسید](https://github.com/ton-society/grants-and-bounties/issues/new/choose) تا شرکت کنید و منتظر تصویب باشید. [ربات ایجادکننده جوایز TON](https://t.me/footsteps_helper_bot) به شما کمک خواهد کرد.
 3. پس از دریافت برچسب `approved`، شروع به نوشتن آموزش خود کنید.
 
@@ -47,3 +54,6 @@
 2. این راهنمای [چگونه ton-bounty را کامل کنیم؟](https://github.com/ton-society/grants-and-bounties/blob/main/bounties/BOUNTIES_PROGRAM_GUIDELINES.md#got-assigned-submit-a-questbook-proposal) را دنبال کنید تا بتوانید پاداش خود را دریافت کنید.
 3. در وظیفه خود، از شما خواسته می‌شود کیف پولی برای ارسال پاداش ارائه کنید.
 4. پاداش خود را دریافت کنید!
+
+<Feedback />
+

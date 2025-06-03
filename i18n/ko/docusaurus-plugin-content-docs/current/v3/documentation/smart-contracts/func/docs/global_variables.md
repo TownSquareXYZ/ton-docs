@@ -1,12 +1,19 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 전역 변수
 
-FunC 프로그램은 본질적으로 함수 선언/정의와 전역 변수 선언의 목록입니다. 이 섹션에서는 두 번째 주제를 다룹니다.
+A FunC program primarily consists of function declarations/definitions and global variable declarations.
+This section focuses on the latter.
 
-전역 변수는 `global` 키워드 뒤에 변수 타입과 변수 이름을 붙여 선언할 수 있습니다. 예를 들어,
+**A global variable** is declared using the `global` keyword, followed by the variable's type and name. For example:
 
 ```func
 global ((int, int) -> int) op;
+```
 
+Here's a simple program demonstrating how to use a global functional variable:
+
+```func
 int check_assoc(int a, int b, int c) {
   return op(op(a, b), c) == op(a, op(b, c));
 }
@@ -17,11 +24,13 @@ int main() {
 }
 ```
 
-이는 전역 함수형 변수 `op`에 덧셈 연산자 `_+_`를 쓰고 세 개의 샘플 정수 2, 3, 9에 대해 덧셈의 결합법칙을 확인하는 간단한 프로그램입니다.
+In this example, the global variable `op` is assigned the addition operator `_+_`. The program then verifies the associativity of addition using three sample integers: 2, 3, and 9.
 
-내부적으로, 전역 변수들은 TVM의 c7 제어 레지스터에 저장됩니다.
+Under the hood, global variables in FunC are stored in the `c7` control register of the TVM.
 
-전역 변수의 타입은 생략될 수 있습니다. 이 경우, 변수의 사용으로부터 타입이 추론될 것입니다. 예를 들어, 위 프로그램을 다음과 같이 다시 작성할 수 있습니다:
+In FunC, you can *omit the type* of global variable.
+In this case, the compiler determines the type based on how the variable is used.
+For example, you can rewrite the previous program like this:
 
 ```func
 global op;
@@ -36,7 +45,10 @@ int main() {
 }
 ```
 
-동일한 `global` 키워드 뒤에 여러 변수를 선언하는 것이 가능합니다. 다음 코드들은 동등합니다:
+**Declaring multiple global variables**
+
+FunC allows users to declare multiple global variables using a single `global` keyword.
+The following examples are equivalent:
 
 ```func
 global int A;
@@ -48,18 +60,20 @@ global C;
 global int A, cell B, C;
 ```
 
-이미 선언된 전역 변수와 동일한 이름으로 지역 변수를 선언하는 것은 허용되지 않습니다. 예를 들어, 이 코드는 컴파일되지 않을 것입니다:
+**Restrictions on global and local variable names**
+
+A local variable **cannot** have the same name as a previously declared global variable. The following example is invalid and will not compile:
 
 ```func
 global cell C;
 
 int main() {
-  int C = 3;
+  int C = 3; ;; Error: cannot declare a local variable with the same name as a global variable
   return C;
 }
 ```
 
-다음 코드는 올바르다는 점에 주목하세요:
+However, the following example is valid:
 
 ```func
 global int C;
@@ -70,4 +84,7 @@ int main() {
 }
 ```
 
-하지만 여기서 `int C = 3;`은 `C = 3;`과 동등합니다. 즉, 이는 지역 변수 `C`의 선언이 아니라 전역 변수 `C`에 대한 할당입니다 (이 효과에 대한 설명은 [statements](/v3/documentation/smart-contracts/func/docs/statements#variable-declaration)에서 찾을 수 있습니다).
+In this case, `int C = 3;` is not declaring a new local variable
+but instead assigning value `3` to the global variable `C`.
+This behavior is explained in more detail in the section on [statements](/v3/documentation/smart-contracts/func/docs/statements#variable-declaration). <Feedback />
+

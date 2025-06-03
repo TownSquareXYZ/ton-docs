@@ -1,32 +1,34 @@
+import Feedback from '@site/src/components/Feedback';
+
 # چگونه هر سایت TON را باز کنیم؟
 
-در این مقاله به روش‌های رایج برای بازدید از سایت‌های TON از دستگاه‌های مختلف خواهیم پرداخت.
+This article explains the most common ways to access TON Sites from different devices.
 
-هر روش مزایا و معایب خاص خود را دارد که در اینجا تجزیه و تحلیل خواهیم کرد.
+Each method has its advantages and limitations. The list begins with the most straightforward options and progresses to more advanced configurations.
 
-با ساده‌ترین روش‌ها شروع کرده و با پیشرفته‌ترین آنها به پایان خواهیم رساند.
-
-## 😄 روش‌های ساده
+## Easy methods
 
 ### کاوش از طریق ton.run یا tonp.io
 
-ساده‌ترین راه برای باز کردن یک سایت TON از طریق سایت‌هایی مانند [ton.run](https://ton.run) است. شما نیازی به نصب یا تنظیم چیزی در دستگاه خود ندارید - فقط **ton.run** یا **tonp.io** را باز کنید و آماده کاوش در سایت‌های TON هستید.
+The simplest way to access a TON Site is through services like [ton.run](https://ton.run). No installation or setup is required — just open the **ton.run** or **tonp.io** and browse TON Sites.
 
-این روش ممکن است برای کاوش غیررسمی سایت‌های TON یا برای برخی بررسی‌ها مناسب باشد، اما به دلیل داشتن معایب، برای استفاده منظم مناسب نیست:
+This method is helpful for casual browsing or quick checks. However, it is not recommended for regular use due to several drawbacks:
 
-- شما به ترافیک اینترنت خود به **ton.run** اعتماد می‌کنید
-- می‌تواند در هر زمانی آفلاین یا خراب شود
-- ممکن است توسط ارائه‌دهنده اینترنت شما مسدود شود
+- Your internet traffic is routed through a third-party service, e.g., ton.run.
+- The service may go offline or stop functioning at any time.
+- Your internet service provider may block it.
 
 ### افزونه‌های TON Wallet و MyTonWallet
 
-روشی کمی سخت‌تر اما بهتر این است که از افزونه‌ای برای مرورگر استفاده کنید که شما را به TON Proxy متصل کرده و امکان مرور سایت‌های TON را بدون استفاده از خدمات واسطی مثل ton.run فراهم کند.
+A more reliable and private method is to use a browser extension that connects directly to the TON Proxy without relying on third-party services.
+Currently:
 
-در حال حاضر، TON Proxy در افزونه [MyTonWallet](https://mytonwallet.io/) موجود است و بزودی در افزونه [TON Wallet](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) نیز در دسترس خواهد بود.
+- [MyTonWallet](https://mytonwallet.io/) supports TON Proxy in its browser extension.
+- [TON Wallet](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) will support it soon.
 
-این روش نیز نسبتاً آسان است، اما نیاز است که یک افزونه را روی مرورگر خود نصب کنید تا کار کند. برای بیشتر کاربران مناسب خواهد بود.
+This method requires installing a browser extension and is suitable for regular use by most users.
 
-## 🤓 روش‌های پیشرفته
+## Advanced methods
 
 ### استفاده از Tonutils-Proxy
 
@@ -38,6 +40,16 @@
 
 3. تمام شد!
 
-## همچنین ببینید
+For the most secure and independent access to TON Sites, use Tonutils-Proxy.
 
-- [اجرای پیاده‌سازی C++](/v3/guidelines/web3/ton-proxy-sites/running-your-own-ton-proxy)
+**To get started:**
+
+1. Download the latest release from [GitHub](https://github.com/xssnick/Tonutils-Proxy#download-precompiled-version).
+2. Launch the application and click “Start Gateway”.
+
+## See also
+
+- [Run C++ implementation](/v3/guidelines/web3/ton-proxy-sites/running-your-own-ton-proxy)
+
+<Feedback />
+

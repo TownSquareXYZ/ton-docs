@@ -1,7 +1,14 @@
+import Feedback from '@site/src/components/Feedback';
+
 import ConceptImage from '@site/src/components/conceptImage';
 import ThemedImage from '@theme/ThemedImage';
 
 # راهنمای توضیحات گرافیکی
+
+:::danger
+This page is outdated and will be deleted soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 حفظ ثبات در مستندات حیاتی است و برای دستیابی به این هدف، یک استاندارد خاص برای نمایش فرآیندها در قراردادهای هوشمند توسعه داده شده است.
 
@@ -15,13 +22,14 @@ import ThemedImage from '@theme/ThemedImage';
 
 #### ابتداییات حاشیه نویسی
 
-| شکل                                                                                                        | توضیحات                           |
-| ---------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| ![](/img/docs/scheme-templates/message-processing-graphs/circle_for_smart_contract.svg?raw=true)           | دایره - نهاد قرارداد هوشمند       |
-| ![](/img/docs/scheme-templates/message-processing-graphs/rectangle_for_regular_message.svg?raw=true)       | مستطیل - نهاد پیام                |
-| ![](/img/docs/scheme-templates/message-processing-graphs/dashed_rectgl_for_optional_message.svg?raw=true)  | مستطیل خط‌چین - نهاد پیام اختیاری |
-| ![](/img/docs/scheme-templates/message-processing-graphs/line_for_transaction.svg?raw=true)                | تراکنش ها (شمارش اختیاری)         |
-| ![](/img/docs/scheme-templates/message-processing-graphs/person_figure_for_actor.svg?raw=true)             | بازیگر                            |
+<ThemedImage
+  alt=""
+  sources={{
+    light: '/img/docs/scheme-templates/message-processing-graphs/Graphic-Explanations-Guidelines_1.png?raw=true',
+    dark: '/img/docs/scheme-templates/message-processing-graphs/Graphic-Explanations-Guidelines_1_dark.png?raw=true',
+  }}
+/>
+<br></br>
 
 - از استفاده زیادی از رنگ‌های مختلف و روشن خودداری کنید.
 - از تغییرات اشکال استفاده کنید، مانند استفاده از خط مرزی نقطه‌چین.
@@ -33,8 +41,8 @@ import ThemedImage from '@theme/ThemedImage';
 <ThemedImage
   alt=""
   sources={{
-    light: '/img/docs/message-delivery/message_delivery_2.svg?raw=true',
-    dark: '/img/docs/message-delivery/message_delivery_2.svg?raw=true',
+    light: '/img/docs/message-delivery/message_delivery_2.png?raw=true',
+    dark: '/img/docs/message-delivery/message_delivery_2_dark.png?raw=true',
   }}
 />
 <br></br>
@@ -75,8 +83,8 @@ import ThemedImage from '@theme/ThemedImage';
 <ThemedImage
   alt=""
   sources={{
-    light: '/img/docs/message-delivery/message_delivery_7.svg?raw=true',
-    dark: '/img/docs/message-delivery/message_delivery_7.svg?raw=true',
+    light: '/img/docs/message-delivery/message_delivery_7.png?raw=true',
+    dark: '/img/docs/message-delivery/message_delivery_7_dark.png?raw=true',
   }}
 />
 </div>
@@ -85,3 +93,5 @@ import ThemedImage from '@theme/ThemedImage';
 ### منابع الگو
 
 - [message-processing.vsdx](/schemes-visio/message_processing.vsdx)
+
+<Feedback />

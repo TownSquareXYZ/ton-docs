@@ -1,52 +1,67 @@
+import Feedback from '@site/src/components/Feedback';
+
 # دیمون ذخیره‌سازی
 
-*دیمون ذخیره‌سازی برنامه‌ای است که برای دانلود و به اشتراک گذاری فایل‌ها در شبکه TON استفاده می‌شود. برنامه کنسول `storage-daemon-cli` برای مدیریت دیمون ذخیره‌سازی در حال اجرا استفاده می‌شود.*
+A **storage daemon** is a program used to download and share files in the TON network. The `storage-daemon-cli` console program manages a running storage daemon.
 
-نسخه فعلی دیمون ذخیره‌سازی را می‌توان در شاخه [Testnet](https://github.com/ton-blockchain/ton/tree/testnet) پیدا کرد.
+The current version of the storage daemon is available in the [Testnet](https://github.com/ton-blockchain/ton/tree/testnet) branch.
 
 ## نیازمندی‌های سخت‌افزاری
 
-- حداقل 1GHz و 2 هسته CPU
-- حداقل 2 گیگابایت RAM
-- حداقل 2 گیگابایت حافظه SSD (بدون احتساب فضای مورد نیاز برای تورنت)
-- پهنای باند شبکه 10 مگابایت در ثانیه با IP ثابت
+- At least 1GHz dual-core CPU
+- At least 2 GB RAM
+- At least 2 GB SSD, excluding space for torrents
+- 10 Mb/s network bandwidth with a static IP
 
 ## باینری‌ها
 
-شما می‌توانید باینری‌های `storage-daemon` و `storage-daemon-cli` برای Linux/Windows/MacOS را از [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest) دانلود کنید.
+You can download `storage-daemon` and `storage-daemon-cli` for Linux, Windows, and macOS from [TON auto builds](https://github.com/ton-blockchain/ton/releases/latest).
 
 ## کامپایل از سورس‌ها
 
-شما می‌توانید `storage-daemon` و `storage-daemon-cli` را از سورس ها با استفاده از این [دستورالعمل](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#storage-daemon) کامپایل کنید.
+You can compile `storage-daemon` and `storage-daemon-cli` from the source using this [instruction](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#storage-daemon).
 
 ## مفاهیم کلیدی
 
-- *مجموعه فایل‌ها* یا *کیف* - مجموعه‌ای از فایل‌ها که از طریق ذخیره‌سازی TON توزیع می‌شود
-- بخش شبکهٔ TON Storage بر اساس تکنولوژی مشابه با تورنت‌ها است، بنابراین اصطلاحات *تورنت*، *کیف فایل‌ها* و *کیف* به صورت متناوب استفاده خواهند شد. با این حال، توجه به برخی تفاوت‌ها مهم است: TON Storage داده‌ها را از طریق [ADNL](/v3/documentation/network/protocols/adnl/overview) با پروتکل [RLDP](/v3/documentation/network/protocols/rldp) منتقل می‌کند، هر *کیف* از طریق پوشش شبکهٔ خود توزیع می‌شود، ساختار مرکل می‌تواند در دو نسخه وجود داشته باشد - با قطعات بزرگ برای دانلود کارآمد و کوچک برای اثبات مالکیت کارآمد، و شبکهٔ [TON DHT](/v3/documentation/network/protocols/dht/ton-dht) برای یافتن همتاها استفاده می‌شود.
-- یک *مجموعه فایل‌ها* شامل *اطلاعات تورنت* و یک بلوک داده است.
-- بلوک داده با یک *سرفصل تورنت* شروع می‌شود - ساختاری که شامل فهرستی از فایل‌ها با نام‌ها و اندازه‌هایشان است. خود فایل‌ها در بلوک داده دنبال می‌شوند.
-- بلاک داده به بخش‌هایی (به طور پیش‌فرض ۱۲۸ کیلوبایت) تقسیم می‌شود و یک *درخت مرکل* (ساخته شده از سلول‌های TVM) بر روی هش‌های SHA256 این بخش‌ها ساخته می‌شود. این امکان را فراهم می‌کند که *اثبات‌های مرکل* بخش‌های منفرد ساخته و تأیید شوند، همچنین به طور کارآمد *کیف* را با تبادل تنها اثبات بخش تغییر یافته بازسازی کند.
-- *اطلاعات تورنت* شامل *ریشه مرکل*
-    - اندازه قسمت (بلوک داده)
-    - فهرست اندازه‌های قسمت‌ها
-    - هش *درخت مرکل*
-    - توضیحات - هر متنی که توسط ایجادکننده تورنت مشخص شده باشد
-- *اطلاعات تورنت* به یک سلول TVM سریالیزه می‌شود. هش این سلول گاهی به نام *BagID* شناخته می‌شود و به طور منحصربه‌فرد *کیف* را شناسایی می‌کند.
-- *متا کیف* یک فایل است که شامل *اطلاعات تورنت* و *سرفصل تورنت* است. این یک آنالوگ فایل‌های `.torrent` است.
+- **Bag of files** or **bag** – a collection of files distributed via TON Storage.
+
+- TON Storage uses torrent-like technology, so terms like *Torrent*, *bag of files*, and *bag* are used interchangeably. However, there are some important differences:
+  - Data is transferred over [ADNL](/v3/documentation/network/protocols/adnl/overview) using the [RLDP](/v3/documentation/network/protocols/rldp) protocol.
+  - Each bag is distributed via its overlay network.
+  - The Merkle structure can exist in two formats: one with large chunks for efficient downloading and one with smaller chunks for efficient proof of ownership.
+  - The [TON DHT](/v3/documentation/network/protocols/dht/ton-dht) network is used to discover peers.
+
+- A **bag of files** includes:
+  - Torrent info.
+  - Data block - starts with a torrent header including file names and sizes, followed by the files themselves.
+
+The data block is divided into chunks, with a default size of 128 KB. A merkle tree built from TVM cells is constructed on the SHA256 hashes of these chunks. This structure enables the creation and verification of *merkle proofs* for individual chunks and allows efficient reconstruction of the *bag* by exchanging only the proof of the changed chunk.
+
+- **Torrent info** contains the merkle root of the following:
+  - The chunk size (data block)
+  - The list of chunk sizes
+  - Hash-based merkle tree
+  - Description, which is any text specified by the creator of the torrent
+
+- Torrent info is serialized into a TVM cell. The hash of this cell is called the **bagID**, and it uniquely identifies the **bag**.
+
+- The **bag meta** is a file that includes the *torrent info* and *header*. This file serves the same purpose as a `.torrent` file.
 
 ## شروع دیمون ذخیره‌سازی و storage-daemon-cli
 
-### مثال دستوری برای شروع storage-daemon:
+### Starting storage-daemon:
+
+**Example**
 
 `storage-daemon -v 3 -C global.config.json -I <ip>:3333 -p 5555 -D storage-db`
 
 - `-v` - سطح فراوانی (INFO)
-- `-C` - تنظیم شبکهٔ جهانی ([دانلود تنظیم جهانی](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config))
-- `-I` - آدرس IP و پورت برای adnl
-- `-p` - پورت TCP برای رابط کنسول
-- `-D` - دایرکتوری برای پایگاه داده دیمون ذخیره‌سازی
+- `-C` - global network config ([download](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config))
+- `-I` - IP address and port for ADNL
+- `-p` - TCP port for the console interface
+- `-D` - path to the storage daemon’s database
 
-### مدیریت storage-daemon-cli
+### Starting storage-daemon-cli
 
 اینطور شروع می‌شود:
 
@@ -54,67 +69,74 @@
 storage-daemon-cli -I 127.0.0.1:5555 -k storage-db/cli-keys/client -p storage-db/cli-keys/server.pub
 ```
 
-- `-I` - این همان آدرس IP و پورت دیمون است (پورت همان پورت مشخص شده در پارامتر `-p` بالاست)
-- `-k` و `-p` - این‌ها کلید خصوصی کلاینت و کلید عمومی سرور هستند (مشابه `validator-engine-console`). این کلیدها در اولین اجرای دیمون ایجاد می‌شوند و در `<db>/cli-keys/` قرار می‌گیرند.
+- `-I` - IP address and port of the daemon (same as `-p` above)
+- `-k` and `-p` - client private and server public keys (similar to `validator-engine-console`). These are auto-generated at first daemon startup and stored in `<db>/cli-keys/`.
 
 ### فهرست دستورها
 
-فهرست دستورات `storage-daemon-cli` می‌تواند با دستور `help` به دست آید.
+You can view the list of `storage-daemon-cli` commands using the `help` command.
 
-دستورها دارای پارامترهای مکانی و علامت‌ها هستند. پارامترهایی با فاصله‌ها باید داخل نقل قول (\`\` یا `"`) قرار گیرند، فاصله‌ها نیز می‌توانند فرار داده شوند. راهکار های دیگری در دسترس است، به عنوان مثال:
+Commands include *positional parameters* and *flags*.
+
+- Parameters that contain spaces must be enclosed in quotes, using either single `'` or double `"` quotation marks.
+- Alternatively, spaces can be escaped.
+- Other common escape sequences are also supported.
+
+**Example**
 
 ```
 create filename\ with\ spaces.txt -d "Description\nSecond line of \"description\"\nBackslash: \\"
 ```
 
-همه پارامترها بعد از علامت `--` پارامترهای مکانی هستند. می‌تواند برای مشخص کردن نام فایل‌هایی که با یک خط تیره شروع می‌شوند استفاده شود:
+All parameters following the `--` flag are treated as positional parameters. This allows specifying filenames that begin with a dash:
 
 ```
 create -d "Description" -- -filename.txt
 ```
 
-`storage-daemon-cli` می‌تواند با گذراندن دستورات برای اجرا در حالت غیر تعاملی اجرا شود:
+You can run `storage-daemon-cli` in non-interactive mode by passing it commands to execute:
 
 ```
 storage-daemon-cli ... -c "add-by-meta m" -c "list --hashes"
 ```
 
-## افزودن کیف فایل‌ها
+## Adding a bag of files
 
-برای دانلود یک *کیف فایل‌ها*، باید `BagID` آن را بدانید یا یک فایل متا داشته باشید. دستورها زیر می‌تواند برای افزودن یک *مجموعه* برای دانلود استفاده شود:
+To download a **bag of files**, you need its hash `bagID` or a metafile. Use the following commands to add a *bag* for download:
 
 ```
 add-by-hash <hash> -d directory
 add-by-meta <meta-file> -d directory
 ```
 
-*کیف* به دایرکتوری مشخص شده دانلود خواهد شد. می‌توانید این را حذف کنید، سپس در دایرکتوری دیمون ذخیره‌سازی ذخیره خواهد شد.
+The bag will be downloaded to the specified directory. It will be saved to the default storage daemon directory if not specified.
 
 :::info
-هش در قالب هگزادسیمال مشخص می‌شود (طول - 64 کاراکتر).
+The hash must be provided in hexadecimal format with a length of 64 characters.
 :::
 
-هنگام اضافه کردن *کیف* به‌وسیله یک فایل متا، اطلاعات درباره *کیف* بلافاصله در دسترس خواهد بود: اندازه، توضیحات، فهرست فایل‌ها. هنگام اضافه کردن با هش، باید منتظر بمانید تا این اطلاعات بارگذاری شوند.
+When adding a bag via a metafile, information such as size, description, and file list becomes available immediately. When adding by hash, this information may take time to load.
 
-## مدیریت کیف‌های افزوده شده
+## Managing added bags
 
-- دستور `list` فهرستی از *کیف‌ها* را نمایش می‌دهد.
-- `list --hashes` فهرستی با هش‌های کامل را نمایش می‌دهد.
+- The `list` command shows all added bags.
+- The `list --hashes` command shows full hashes.
 
-در تمام دستورهای بعدی، `<BagID>` یا یک هش (هگزادسیمال) یا یک شماره ترتیبی *کیف* در جلسه (شماره‌ای که توسط دستور `list` در فهرست دیده می‌شود) است. شماره‌های ترتیبی *کیف‌ها* بین راه‌اندازی مجدد storage-daemon-cli ذخیره نمی‌شوند و در حالت غیر تعاملی در دسترس نیستند.
+In the following commands, `<BagID>` can be either a bag's hexadecimal hash or its ordinal number in the current session, which is visible in the list output using `list` command. Note that ordinal numbers of bags are not persistent and are unavailable in non-interactive mode.
 
 ### روش‌ها
 
-- `get <BagID>` - اطلاعات دقیق در مورد *کیف* را نمایش می‌دهد: توضیحات، اندازه، سرعت دانلود، فهرست فایل‌ها.
-- `get-peers <BagID>` - فهرستی از همتاها را نمایش می‌دهد.
-- `download-pause <BagID>`, `download-resume <BagID>` - دانلود را متوقف یا از سر می‌گیرد.
-- `upload-pause <BagID>`, `upload-resume <BagID>` - آپلود را متوقف یا از سر می‌گیرد.
-- `remove <BagID>` - *کیف* را حذف می‌کند. `remove --remove-files` همچنین تمامی فایل‌های *کیف* را حذف می‌کند. توجه داشته باشید که اگر *کیف* در دایرکتوری داخلی دیمون ذخیره‌ساز ذخیره شده باشد، فایل‌ها در هر صورت حذف خواهند شد.
+- `get <BagID>` - shows full information about the Bag: description, size, download speed, and file list.
+- `get-peers <BagID>` - lists connected peers.
+- `download-pause <BagID>`, `download-resume <BagID>` - pauses or resumes download.
+- `upload-pause <BagID>`, `upload-resume <BagID>` - pauses or resumes upload.
+- `remove <BagID>` - removes the bag.
+- `remove --remove-files` also removes the bag and its files. Note that if the bag is saved in the internal storage daemon directory, the files will be deleted in any case.
 
-## دانلود جزئی، اولویت‌ها
+## Partial download, priorities
 
 :::info
-هنگام افزودن یک *کیف* می‌توانید تعیین کنید که کدام فایل‌ها را می‌خواهید دانلود کنید:
+When adding a bag, you can specify which files to download:
 :::
 
 ```
@@ -124,36 +146,41 @@ add-by-meta <meta-file> -d dir --partial file1 file2 file3
 
 ### اولویت‌ها
 
-هر فایل در *کیف فایل‌ها* اولویتی بین ۰ تا ۲۵۵ دارد. اولویت ۰ به این معنی است که فایل دانلود نمی‌شود. فلگ `--partial` فایل‌های مشخص شده را به اولویت ۱ و بقیه را به ۰ تنظیم می‌کند.
+Each file in a bag has a priority from 0 to 255. A priority of 0 means the file will not be downloaded. The `--partial` flag sets selected files to priority 1 and all others to 0.
 
-می‌توانید اولویت‌های *کیف* موجود را با دستورهای زیر تغییر دهید:
+To update priorities after adding a bag:
 
-- `priority-all <BagID> <priority>` - برای همه فایل‌ها.
-- `priority-idx <BagID> <idx> <priority>` - برای یک فایل بر اساس شماره (با فرمان `get` ببینید).
-- `priority-name <BagID> <name> <priority>` - برای یک فایل با نام.
-    اولویت‌ها حتی قبل از دانلود فهرست فایل‌ها می‌توانند تنظیم شوند.
+- `priority-all <BagID> <priority>` - sets priority for all files.
+- `priority-idx <BagID> <idx> <priority>` - sets priority by file index (shown by the `get` command).
+- `priority-name <BagID> <name> <priority>` - sets priority by file name.
 
-## ایجاد کیف فایل‌ها
+You can set priorities even before the file list is fully available.
 
-برای ایجاد یک *کیف* و شروع به توزیع آن، از فرمان `create` استفاده کنید:
+## Creating a bag of files
+
+To create and start sharing a bag, use the `create` command:
 
 ```
 create <path>
 ```
 
-`<path>` می‌تواند به یک فایل واحد یا یک دایرکتوری اشاره کند. وقتی *کیف*ی ایجاد می‌کنید، می‌توانید توضیحی مشخص کنید:
+`<path>` can be a file or a directory. Add a description if needed:
 
 ```
 create <path> -d "Bag of Files description"
 ```
 
-پس از ایجاد *کیف*، کنسول اطلاعات دقیقی درباره آن نمایش می‌دهد (از جمله هش که همان `BagID` است که بر اساس آن *کیف* شناسایی می‌شود) و دیمون شروع به توزیع تورنت می‌کند. گزینه‌های اضافی برای `create`:
+After creation, detailed information, including the hash `BagID`, is shown in the console, and the daemon begins sharing the torrent.
+Additional options for the `create` command:
 
-- `--no-upload` - daemon فایل‌ها را به همتاها توزیع نخواهد کرد. آپلود می‌تواند با استفاده از `upload-resume` شروع شود.
-- `--copy` - فایل‌ها در یک دایرکتوری داخلی دیمون ذخیره‌سازی کپی خواهند شد.
+- `--no-upload` - daemon will not distribute files to peers. Upload can be started using the `upload-resume` command.
+- `--copy` - files will be copied to the internal directory of the storage daemon.
 
-برای دانلود *کیف*، سایر کاربران فقط باید هش آن را بدانند. شما همچنین می‌توانید فایل متای تورنت را ذخیره کنید:
+To download the bag, other users need to know its hash. You can also save the torrent metafile:
 
 ```
 get-meta <BagID> <meta-file>
 ```
+
+<Feedback />
+

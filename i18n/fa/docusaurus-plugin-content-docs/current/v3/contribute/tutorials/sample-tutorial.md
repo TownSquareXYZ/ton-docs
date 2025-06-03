@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # ساختار نمونه آموزش
+
+:::danger
+This page is outdated and will be updated soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 ## معرفی
 
@@ -130,4 +137,5 @@
 
 در صورت امکان منابع را با افزودن نام و لینک به سند اعتبار دهید.
 
-اگر سند دیجیتالی نیست، باید شامل یک ISBN یا شکل دیگری از مرجع باشد.
+If it is not a digital document, include an ISBN or other form of reference. <Feedback />
+

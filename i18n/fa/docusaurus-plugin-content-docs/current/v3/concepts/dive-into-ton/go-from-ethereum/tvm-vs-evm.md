@@ -1,60 +1,66 @@
+import Feedback from '@site/src/components/Feedback';
+
 # TVM در مقابل EVM
 
-ماشین مجازی اتریوم (EVM) و ماشین مجازی TON (TVM) هر دو ماشین‌های مجازی مبتنی بر پشته هستند که برای اجرای کد قراردادهای هوشمند توسعه داده شده‌اند. با وجود ویژگی‌های مشترک، تفاوت‌های قابل توجهی بین آن‌ها وجود دارد.
+## Introduction
 
-## نمایش داده‌ها
+**Ethereum Virtual Machine (EVM)** and **TON Virtual Machine (TVM)** are stack-based virtual machines developed for running smart contract code. Although they have standard features, there are notable distinctions between them.
 
-### ماشین مجازی اتریوم (EVM)
+## Differences of TVM and EVM
 
-1. واحدهای داده اصلی
+### نمایش داده‌ها
 
-- EVM عمدتاً بر روی اعداد صحیح ۲۵۶ بیتی عمل می‌کند که طراحی آن حول توابع رمزنگاری اتریوم (مانند هش Keccak-256 و عملیات منحنی بیضوی) است.
-- انواع داده‌ها عمدتاً به اعداد صحیح، بایت‌ها و گاهی آرایه‌های این انواع محدود می‌شوند، اما همه باید به قوانین پردازش ۲۵۶ بیتی پایبند باشند.
+#### EVM
 
-2. ذخیره‌سازی حالت
+1. Fundamental data units
 
-- کل وضعیت بلاکچین اتریوم یک نگاشت از آدرس‌های ۲۵۶ بیتی به مقادیر ۲۵۶ بیتی است. این نگاشت در یک ساختار داده به نام Merkle Patricia Trie (MPT) نگهداری می‌شود.
+- The EVM operates primarily on 256-bit integers, reflecting its design around Ethereum's cryptographic functions, such as Keccak-256 hashing and elliptic curve operations.
+- Data types are limited mainly to integers, bytes, and occasionally arrays of these types, but all must conform to 256-bit processing rules.
+
+2. State storage
+
+- The entire state of the Ethereum blockchain is a mapping of 256-bit addresses to 256-bit values. A data structure known as the **Merkle Patricia Trie (MPT)** maintains this mapping.
 - MPT به اتریوم امکان می‌دهد تا به طور مؤثر سازگاری و یکپارچگی وضعیت بلاکچین را از طریق تأیید رمزنگاری اثبات کند که برای یک سیستم غیرمتمرکز مانند اتریوم حیاتی است.
 
-3. محدودیت‌های ساختار داده
+3. Data structure limitations
 
-- ساده‌سازی به محدودیت‌های کلمه ۲۵۶ بیتی به این معنی است که EVM به طور ذاتی برای مدیریت ساختارهای داده پیچیده یا سفارشی طراحی نشده است.
-- توسعه‌دهندگان اغلب نیاز به پیاده‌سازی منطق اضافی در داخل قراردادهای هوشمند دارند تا ساختارهای داده پیچیده‌تر را شبیه‌سازی کنند که می‌تواند به هزینه‌های گس و پیچیدگی بیشتری منجر شود.
+- The simplification to 256-bit word constraints means that the EVM is not inherently designed to handle complex or custom data structures directly.
+ Developers often need to implement additional logic within smart contracts to simulate more complex data structures, which can increase gas costs and complexity.
 
-### ماشین مجازی TON (TVM)
+#### TVM
 
-1. معماری مبتنی بر سلول
+1. Cell-based architecture
 
-- TVM از یک مدل منحصر به فرد "کیف سلول‌ها" برای نمایش داده‌ها استفاده می‌کند. هر سلول می‌تواند تا ۱۲۸ بایت داده داشته باشد و می‌تواند تا ۴ مرجع به سلول‌های دیگر داشته باشد.
+- TVM uses a unique [bag of cells](/v3/documentation/data-formats/tlb/cell-boc/) model to represent data. Each cell can contain up to 128 data bytes and have up to 4 references to other cells.
 - این ساختار به TVM امکان می‌دهد تا به طور ذاتی از انواع داده جبری دلخواه و ساختارهای پیچیده‌تری مانند درخت‌ها یا گراف‌های غیر حلقه‌ای جهت‌دار (DAG) به طور مستقیم در مدل ذخیره‌سازی خود پشتیبانی کند.
 
-2. انعطاف‌پذیری و کارایی
+2. Flexibility and efficiency
 
-- مدل سلول انعطاف‌پذیری قابل توجهی را فراهم می‌کند و به TVM امکان می‌دهد تا انواع مختلفی از ساختارهای داده را به طور طبیعی‌تر و کارآمدتر از EVM مدیریت کند.
-- به عنوان مثال، توانایی ایجاد ساختارهای متصل از طریق مراجع سلول، امکان ساختارهای داده پویا و احتمالاً بی‌نهایت را فراهم می‌کند که برای برخی از انواع برنامه‌ها مانند شبکه‌های اجتماعی غیرمتمرکز یا پروتکل‌های مالی غیرمتمرکز (DeFi) پیچیده حیاتی است.
+- The cell model provides significant flexibility, enabling the TVM to handle various data structures more naturally and efficiently than the EVM.
+- For example, creating linked structures through cell references allows for dynamic and potentially infinite data structures, which is crucial for specific applications like decentralized social networks or complex decentralized finance (DeFi) protocols.
 
-3. مدیریت داده‌های پیچیده
+3. Complex data handling
 
-- توانایی مدیریت انواع داده پیچیده به طور ذاتی در معماری VM نیاز به پیاده‌سازی راه‌حل‌های موقت در قراردادهای هوشمند را کاهش می‌دهد که ممکن است هزینه اجرا را کاهش داده و سرعت اجرا را افزایش دهد.
-- طراحی TVM به ویژه برای برنامه‌هایی که نیاز به مدیریت حالت پیچیده یا ساختارهای داده متصل دارند، مزیت بزرگی دارد و بنیاد محکمی برای توسعه‌دهندگان برای ساخت برنامه‌های غیرمتمرکز پیچیده و مقیاس‌پذیر فراهم می‌کند.
+- The ability to manage complex data types inherently within the VM architecture reduces the need for workaround implementations in smart contracts, potentially lowering the execution cost and increasing execution speed.
+ TVM's design is particularly advantageous for applications requiring complex state management or interlinked data structures. It provides a robust foundation for developers to build sophisticated and scalable decentralized applications.
 
-## ماشین پشته
+### Stack machine
 
-### ماشین مجازی اتریوم (EVM)
+#### EVM
 
-- EVM به عنوان یک ماشین پشته‌ای سنتی عمل می‌کند، جایی که از یک پشته با اصل آخرین ورودی، اولین خروجی (LIFO) برای مدیریت محاسبات استفاده می‌کند.
-- عملیات‌ها را با فشردن و پاپ کردن اعداد صحیح ۲۵۶ بیتی پردازش می‌کند که اندازه استاندارد برای همه عناصر در پشته است.
+- The EVM operates as a traditional stack-based machine, using a last-in, first-out (LIFO) stack to manage computation.
+- It processes operations by pushing and popping 256-bit integers, the standard size for all elements in the stack.
 
-### ماشین مجازی TON (TVM)
+#### TVM
 
-- TVM نیز به عنوان یک ماشین پشته‌ای عمل می‌کند اما با یک تفاوت کلیدی: از اعداد صحیح ۲۵۷ بیتی و مراجع به سلول‌ها پشتیبانی می‌کند.
-- این امکان به TVM می‌دهد تا این دو نوع داده متمایز را بر روی/از پشته فشار داده و پاپ کند، که در دستکاری مستقیم داده‌ها انعطاف‌پذیری بیشتری فراهم می‌کند.
+- TVM also functions as a stack-based machine but with a key distinction: it supports both 257-bit integers and references to cells.
+- This allows TVM to push and pop these two distinct types of data onto/from the stack, providing enhanced flexibility in direct data manipulation.
 
-### مثال عملیات پشته
+#### Example of stack operations
 
-فرض کنید می‌خواهیم دو عدد (2 و 2) را در EVM جمع کنیم. فرآیند شامل فشردن اعداد به پشته و سپس فراخوانی دستور `ADD` خواهد بود. نتیجه (4) در بالای پشته باقی می‌ماند.
+Suppose we want to add two numbers, `2` and `2`, in EVM. The process would involve pushing the numbers onto the stack and calling the `ADD` instruction. The result, `4`, would be left on top of the stack.
 
-ما می‌توانیم این عملیات را به همان روش در TVM انجام دهیم. اما بیایید به مثال دیگری با ساختارهای داده پیچیده‌تر مانند هش‌مپ‌ها و مرجع سلول نگاه کنیم. فرض کنید یک هش‌مپ داریم که جفت‌های کلید-مقدار را ذخیره می‌کند، جایی که کلیدها اعداد صحیح و مقادیر یا اعداد صحیح یا مراجع سلول هستند. فرض کنید هش‌مپ ما حاوی مدخل‌های زیر است:
+We can do this operation in the same way in TVM. But let’s look at another example with more complex data structures, such as hashmaps and cell references. Suppose we have a hashmap that stores key-value pairs, where keys are integers and values are either integers or cell references. Let’s say our hashmap contains the following entries:
 
 ```js
 {
@@ -63,16 +69,16 @@
 }
 ```
 
-ما می‌خواهیم مقادیر مرتبط با کلیدهای ۱ و ۲ را جمع کنیم و نتیجه را با کلید ۳ ذخیره کنیم. بیایید به عملیات‌های پشته نگاه کنیم:
+We want to add the values associated with keys `1` and `2` and store the result with key `3`. Let’s look at stack operations:
 
-1. کلید ۱ را به پشته فشار دهید: `stack` = (1)
-2. فراخوانی `DICTGET` برای کلید ۱ (مقداری را که با کلید در بالای پشته مرتبط است بازیابی می‌کند): مقدار ۱۰ را بازیابی می‌کند. `stack` = (10)
-3. کلید ۲ را به پشته فشار دهید: `stack` = (10, 2)
-4. فراخوانی `DICTGET` برای کلید ۲: مرجع به Cell_A را بازیابی می‌کند. `stack` = (10, Cell_A)
-5. مقدار را از Cell_A بارگذاری کنید: یک دستور برای بارگذاری مقدار از مرجع سلول اجرا می‌شود. `stack` = (10, 10)
-6. فراخوانی دستور `ADD`: هنگامی که دستور `ADD` اجرا می‌شود، TVM دو عنصر بالای پشته را پاپ می‌کند، آن‌ها را جمع می‌کند و نتیجه را به پشته فشار می‌دهد. در این حالت، دو عنصر بالای پشته ۱۰ و ۱۰ هستند. پس از جمع، پشته حاوی نتیجه خواهد بود: `stack` = (20)
-7. کلید ۳ را به پشته فشار دهید: `stack` = (20, 3)
-8. فراخوانی `DICTSET`: مقدار ۲۰ را با کلید ۳ ذخیره می‌کند. هش‌مپ به‌روزشده:
+1. Push key `1` onto the stack: `stack = (1)`
+2. Call `DICTGET` for key `1` (retrieves the value associated with the key at the top of the stack): Retrieves value 10. `stack = (10)`
+3. Push key `2` onto the stack: `stack = (10, 2)`
+4. Call `DICTGET` for key `2`: Retrieves reference to Cell_A. `stack = (10, Cell_A)`
+5. Load value from `Cell_A`: TVM executes an instruction to load the value from the cell reference. `stack = (10, 10)`
+6. Call the `ADD` instruction: When the `ADD` instruction is executed, the TVM will pop the top two elements from the stack, add them together, and push the result back onto the stack. In this case, the top two elements are `10` and `10`. After the addition, the stack will contain the result: `stack = (20)`
+7. Push key `3` onto the stack: `stack = (20, 3)`
+8. Call `DICTSET`: Stores `20` with key `3`. Updated hashmap:
 
 ```js
 {
@@ -82,52 +88,59 @@
 }
 ```
 
-برای انجام همین کار در EVM، نیاز به تعریف یک نگاشت داریم که جفت‌های کلید-مقدار را ذخیره می‌کند و تابعی که مستقیماً با اعداد صحیح ۲۵۶ بیتی ذخیره شده در نگاشت کار می‌کنیم.
-مهم است که توجه داشته باشید که EVM از ساختارهای داده پیچیده پشتیبانی می‌کند با استفاده از Solidity، اما این ساختارها بر روی مدل داده ساده‌تر EVM ساخته شده‌اند که به طور اساسی با مدل داده بیشتر بیانگر TVM متفاوت است
+To do the same in EVM, we need to define a mapping that stores key-value pairs and the function where we work directly with 256-bit integers stored in the mapping.
+It’s essential to note that the EVM supports complex data structures by leveraging Solidity, but these structures are built on top of the EVM’s simpler data model, which is fundamentally different from the TVM's more expressive data model.
 
-## عملگرهای ریاضی
+### Arithmetic operations
 
-### ماشین مجازی اتریوم (EVM)
+#### EVM
 
-- ماشین مجازی اتریوم (EVM) عملیات ریاضی را با استفاده از اعداد صحیح ۲۵۶ بیتی انجام می‌دهد، به این معنی که عملیات‌هایی مانند جمع، تفریق، ضرب و تقسیم برای این اندازه داده طراحی شده‌اند.
+- The **Ethereum Virtual Machine (EVM)** uses 256-bit integers to handle arithmetic operations such as addition, subtraction, multiplication, and division, tailoring them to this data size.
 
-### ماشین مجازی TON (TVM)
+#### TVM
 
-- ماشین مجازی TON (TVM) از مجموعه متنوع‌تری از عملیات‌های ریاضی پشتیبانی می‌کند، از جمله اعداد صحیح ۶۴ بیتی، ۱۲۸ بیتی و ۲۵۶ بیتی، هم بدون علامت و هم با علامت، و همچنین عملیات مدولار. TVM قابلیت‌های ریاضی خود را با عملیات‌هایی مانند ضرب-سپس-شیفت و شیفت-سپس-تقسیم بهبود می‌بخشد که به‌ویژه برای پیاده‌سازی ریاضیات ثابت‌نقطه مفید هستند. این تنوع به توسعه‌دهندگان اجازه می‌دهد تا براساس نیازهای خاص قراردادهای هوشمند خود، کارآمدترین عملیات ریاضی را انتخاب کنند و بهینه‌سازی‌های ممکن را براساس اندازه و نوع داده ارائه دهند.
+- The **TON Virtual Machine (TVM)** supports more diverse arithmetic operations, including 64-bit, 128-bit, and 256-bit integers, both unsigned and signed and modulo operations. TVM further enhances its arithmetic capabilities with multiplication-then-shift and shift-then-divide, which are particularly useful for implementing fixed-point arithmetic. This variety allows developers to select the most efficient arithmetic operations based on the specific requirements of their smart contracts, offering potential optimizations based on data size and type.
 
-## بررسی‌های سرریز
+### Overflow checks
 
-### ماشین مجازی اتریوم (EVM)
+#### EVM
 
-- در EVM، بررسی‌های سرریز به طور ذاتی توسط ماشین مجازی انجام نمی‌شود. با معرفی Solidity 0.8.0، بررسی‌های خودکار سرریز و زیرسرریز به زبان افزوده شدند تا امنیت را افزایش دهند. این بررسی‌ها به جلوگیری از ضعف‌های رایج مربوط به عملیات‌های ریاضی کمک می‌کنند، اما نیاز به نسخه‌های جدیدتر Solidity دارند، زیرا نسخه‌های قبلی نیاز به پیاده‌سازی دستی این حفاظت‌ها داشتند.
+- In the EVM, the virtual machine does not perform overflow checks inherently. With the introduction of Solidity 0.8.0, automatic overflow and underflow checks were integrated into the language to enhance security. These checks help prevent common vulnerabilities related to arithmetic operations but require newer versions of Solidity, as earlier versions necessitate manual implementation of these safeguards.
 
-### ماشین مجازی TON (TVM)
+#### TVM
 
-- در مقابل، TVM به‌طور خودکار بررسی‌های سرریز را بر روی تمام عملیات‌های ریاضی انجام می‌دهد، که این ویژگی مستقیماً در ماشین مجازی ساخته شده است. این انتخاب طراحی توسعه قراردادهای هوشمند را با کاهش ذاتی خطر خطاها و افزایش اطمینان و امنیت کلی کد ساده می‌کند.
+- In contrast, TVM automatically performs overflow checks on all arithmetic operations, a feature built directly into the virtual machine. This design choice simplifies the development of smart contracts by inherently reducing the risk of errors and enhancing the overall reliability and security of the code.
 
-## رمزنگاری و توابع هش
+### Cryptography and hash functions
 
-### ماشین مجازی اتریوم (EVM)
+#### EVM
 
-- EVM از سیستم رمزنگاری خاص اتریوم، مانند منحنی بیضوی secp256k1 و تابع هش keccak256 پشتیبانی می‌کند. همچنین، EVM پشتیبانی داخلی از اثبات‌های مرکل ندارد، که اثبات‌های رمزنگاری برای تأیید عضویت یک عنصر در یک مجموعه هستند.
+EVM supports Ethereum-specific cryptography schemes, such as the secp256k1 elliptic curve and the keccak256 hash function. However, it does not have built-in support for Merkle proofs, which are cryptographic proofs used to verify the membership of an element in a set.
 
-### ماشین مجازی TON (TVM)
+#### TVM
 
-- TVM از رمزنگاری منحنی بیضوی 256 بیتی (ECC) برای منحنی‌های از پیش تعریف شده، مانند Curve25519، پشتیبانی می‌کند. همچنین، از ترکیب‌های Weil در برخی از منحنی‌های بیضوی پشتیبانی می‌کند که برای پیاده‌سازی سریع zk-SNARKs (اثبات‌های بدون دانش) مفید هستند. توابع هش محبوب مانند sha256 نیز پشتیبانی می‌شوند، که گزینه‌های بیشتری برای عملیات‌های رمزنگاری ارائه می‌دهد. علاوه بر این، TVM می‌تواند با اثبات‌های مرکل کار کند، که ویژگی‌های رمزنگاری اضافی ارائه می‌دهد که برای برخی از موارد استفاده مفید است، مانند تأیید شامل شدن یک تراکنش در یک بلوک.
+- TVM supports 256-bit Elliptic Curve Cryptography (ECC) for predefined curves, like Curve25519. It also supports Weil pairings on some elliptic curves, which are helpful for the fast implementation of zk-SNARKs (zero-knowledge proofs). Popular hash functions like sha256 are also supported, providing more cryptographic operation options. In addition, TVM can work with Merkle proofs, providing additional cryptographic features that can be beneficial for specific use cases, such as verifying the inclusion of a transaction in a block.
 
-## زبان‌های سطح بالا
+### High-level languages
 
-### ماشین مجازی اتریوم (EVM)
+#### EVM
 
-- EVM عمدتاً از Solidity به عنوان زبان سطح بالای خود استفاده می‌کند، که یک زبان شیءگرا و دارای نوع‌سنجی ایستا است که شبیه جاوا اسکریپت و C++ است. همچنین، زبان‌های دیگری برای نوشتن قراردادهای هوشمند اتریوم مانند Vyper، Yul و غیره وجود دارد.
+EVM primarily uses Solidity as its high-level language, an object-oriented, statically typed language similar to JavaScript. Other languages, such as Vyper and Yul, are also used for writing Ethereum smart contracts.
 
-### ماشین مجازی TON (TVM)
+#### TVM
 
-- TVM از FunC به عنوان یک زبان سطح بالا استفاده می‌کند که برای نوشتن قراردادهای هوشمند TON طراحی شده است. این یک زبان رویه‌ای با نوع‌سنجی ایستا و پشتیبانی از انواع داده جبری است. FunC به Fift کامپایل می‌شود که به نوبه خود به بایت‌کد TVM کامپایل می‌شود.
+- TVM uses FunC as a high-level language for writing TON smart contracts. It is a procedural language with static types and support for algebraic data types. FunC compiles to Fift, which in turn compiles to TVM bytecode.
 
-## نتیجه‌گیری
+## Conclusion
 
-در خلاصه، در حالی که هر دو EVM و TVM ماشین‌های مبتنی بر پشته هستند که برای اجرای قراردادهای هوشمند طراحی شده‌اند، TVM انعطاف‌پذیری بیشتری، پشتیبانی از انواع داده و ساختارهای گسترده‌تر، بررسی‌های سرریز داخلی و ویژگی‌های رمزنگاری پیشرفته ارائه می‌دهد.
+In summary, while EVM and TVM are stack-based machines designed to execute smart contracts, TVM offers more flexibility, support for a broader range of data types and structures, built-in overflow checks, and advanced cryptographic features.
 
-پشتیبانی TVM از قراردادهای هوشمند آگاه به شاردینگ و رویکرد منحصر به فرد آن در نمایش داده‌ها آن را برای برخی موارد استفاده و شبکه‌های بلاکچین مقیاس‌پذیر بهتر مناسب می‌کند.
+TVM’s support for sharding-aware smart contracts and its unique data representation approach make it better suited for specific use cases and scalable blockchain networks.
+
+## See also
+
+- [Solidity vs FunC](/v3/concepts/dive-into-ton/go-from-ethereum/solidity-vs-func/)
+- [TVM overview](/v3/documentation/tvm/tvm-overview/)
+
+<Feedback />
 

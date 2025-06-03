@@ -1,13 +1,15 @@
+import Feedback from '@site/src/components/Feedback';
+
 # مفسرهای TON DNS
 
 ## معرفی
 
-TON DNS یک ابزار قدرتمند است. این اجازه می‌دهد تا سایت‌ها/فضاهای ذخیره‌سازی TON به دامنه‌ها اختصاص یابند و همچنین تنظیم مفسر زیر دامنه‌ها ممکن شود.
+TON DNS is a powerful tool for assigning TON Sites or Storage bags to domains and configuring subdomain resolution.
 
 ## لینک‌های مرتبط
 
-1. [مستندات آدرس‌های قرارداد هوشمند](/v3/documentation/smart-contracts/addresses)
-2. [TEP-0081 - استاندارد TON DNS](https://github.com/ton-blockchain/TEPs/blob/master/text/0081-dns-standard.md)
+1. [TON smart contract address system](/v3/documentation/smart-contracts/addresses)
+2. [TEP-0081 - TON DNS standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0081-dns-standard.md)
 3. [سورس کد کلکسیون دامنه .ton](https://tonscan.org/address/EQC3dNlesgVD8YbAazcauIrXBPfiVhMMr5YYk2in0Mtsz0Bz#source)
 4. [سورس کد کلکسیون دامنه .t.me](https://tonscan.org/address/EQCA14o1-VWhS2efqoh_9M1b_A9DtKTuoqfmkn83AbJzwnPi#source)
 5. [جستجوگر قراردادهای دامنه](https://tonscan.org/address/EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH_Zp#source)
@@ -15,39 +17,39 @@ TON DNS یک ابزار قدرتمند است. این اجازه می‌دهد �
 
 ## جستجوگر قراردادهای دامنه
 
-زیر دامنه‌ها کاربرد عملی دارند. برای مثال، کاوشگرهای بلاک‌چین در حال حاضر راهی برای پیدا کردن قرارداد دامنه با نام آن ارائه نمی‌دهند. بیایید بررسی کنیم که چگونه می‌توان قراردادی ایجاد کرد که فرصتی برای یافتن چنین دامنه‌هایی بدهد.
+Subdomains provide helpful functionality. For example, most blockchain explorers do not support looking up a domain contract by its name. This section explains how to create a contract that enables this functionality.
 
 :::info
-This contract is deployed at [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH\_Zp](https://tonscan.org/address/EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH_Zp#source) and linked to `resolve-contract.ton`. To test it, you may write `<your-domain.ton>.resolve-contract.ton` in the address bar of your favourite TON explorer and get to the page of TON DNS domain contract. Subdomains and .t.me domains are supported as well.
+The example contract is deployed at [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH\_Zp](https://tonscan.org/address/EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH_Zp#source) and is associated with `resolve-contract.ton`. To test it, enter `<your-domain.ton>.resolve-contract.ton` in the address bar of your preferred TON explorer. This resolves to the corresponding TON DNS domain contract page. Subdomains and `.t.me` domains are supported.
 
-شما می‌توانید برای مشاهده کد مفسر با رفتن به `resolve-contract.ton.resolve-contract.ton` تلاش کنید. متاسفانه، این به شما مفسر فرعی را نشان نمی‌دهد (آن یک قرارداد هوشمند متفاوت است)، بلکه صفحه قرارداد دامنه را می‌بینید.
+To view the resolver’s code, navigate to `resolve-contract.ton.resolve-contract.ton`. Note that this does not show the subresolver contract; it is a separate smart contract. Instead, it displays the domain contract itself.
 :::
 
 ### کد dnsresolve()
 
-برخی از قسمت‌های تکراری حذف شده‌اند.
+Some repetitive parts are omitted.
 
 ```func
 (int, cell) dnsresolve(slice subdomain, int category) method_id {
   int subdomain_bits = slice_bits(subdomain);
   throw_unless(70, (subdomain_bits % 8) == 0);
   
-  int starts_with_zero_byte = subdomain.preload_int(8) == 0;  ;; assuming that 'subdomain' is not empty
+  int starts_with_zero_byte = subdomain.preload_int(8) == 0;  ;; Assuming that 'subdomain' is not empty.
   if (starts_with_zero_byte) {
     subdomain~load_uint(8);
-    if (subdomain.slice_bits() == 0) {   ;; current contract has no DNS records by itself
+    if (subdomain.slice_bits() == 0) {   ;; Current contract has no DNS records by itself.
       return (8, null());
     }
   }
   
-  ;; we are loading some subdomain
-  ;; supported subdomains are "ton\\0", "me\\0t\\0" and "address\\0"
+  ;; We are loading some subdomain.
+  ;; Supported subdomains are "ton\\0", "me\\0t\\0" and "address\\0"
   
   slice subdomain_sfx = null();
   builder domain_nft_address = null();
   
   if (subdomain.starts_with("746F6E00"s)) {
-    ;; we're resolving
+    ;; we are resolving
     ;; "ton" \\0 <subdomain> \\0 [subdomain_sfx]
     subdomain~skip_bits(32);
     
@@ -72,14 +74,14 @@ This contract is deployed at [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH\_Zp]
   }
   
   if (slice_empty?(subdomain_sfx)) {
-    ;; example of domain being resolved:
+    ;; Example of domain being resolved:
     ;; [initial, not accessible in this contract] "ton\\0resolve-contract\\0ton\\0ratelance\\0"
     ;; [what is accessible by this contract]      "ton\\0ratelance\\0"
     ;; subdomain          "ratelance"
     ;; subdomain_sfx      ""
     
-    ;; we want the resolve result to point at contract of 'ratelance.ton', not its owner
-    ;; so we must answer that resolution is complete + "wallet"H is address of 'ratelance.ton' contract
+    ;; We want the resolved result to point to the 'ratelance.ton' contract, not its owner.
+    ;; So we must answer that the resolution is complete + "wallet"H is the address of the 'ratelance.ton' contract
     
     ;; dns_smc_address#9fd3 smc_addr:MsgAddressInt flags:(## 8) { flags <= 1 } cap_list:flags . 0?SmcCapList = DNSRecord;
     ;; _ (HashmapE 256 ^DNSRecord) = DNS_RecordSet;
@@ -108,58 +110,67 @@ This contract is deployed at [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH\_Zp]
 }
 ```
 
-### توضیح dnsresolve()
+### dnsresolve() explanation
 
-- کاربر `"stabletimer.ton.resolve-contract.ton"` درخواست می‌کند.
-- برنامه آن را به `"\0ton\0resolve-contract\0ton\0stabletimer\0"` (اولین بایت صفر اختیاری است) تبدیل می‌کند.
-- مفسر DNS ریشه درخواست را به کلکسیون TON DNS هدایت می‌کند، قسمت باقی‌مانده `"\0resolve-contract\0ton\0stabletimer\0"` است.
-- کلکسیون TON DNS درخواست را به دامنه خاصی ارجاع می‌دهد، `"\0ton\0stabletimer\0"` باقی می‌ماند.
-- قرارداد دامنه DNS .TON فرایند تفسیر را به مفسر فرعی مشخص شده توسط ویرایشگر منتقل می‌کند، زیردامنه `"ton\0stabletimer\0"` می‌باشد.
+Here's a step-by-step breakdown of when a user resolves a domain like `stabletimer.ton.resolve-contract.ton`:
 
-**این نقطه‌ای است که dnsresolve() فراخوانی می‌شود.** توضیح گام به گام نحوه عملکرد آن:
+1. The user requests the domain: `"stabletimer.ton.resolve-contract.ton"`.
+2. The application encodes it as a byte string: `"\0ton\0resolve-contract\0ton\0stabletimer\0"`.  Note: the leading null byte is optional.
+3. The root DNS resolver forwards the request to the TON DNS collection, leaving: `"\0resolve-contract\0ton\0stabletimer\0"`.
+4. The TON DNS collection delegates the request to the specified domain, leaving: `"\0ton\0stabletimer\0"`.
+5. The `.ton` DNS domain contract passes the resolution to the subresolver specified by the editor. The subdomain is: `"ton\0stabletimer\0"`.
 
-1. زیر دامنه و دسته را به عنوان ورودی می‌گیرد.
-2. اگر در ابتدا بایت صفر وجود داشته باشد، نادیده گرفته می‌شود.
-3. بررسی می‌کند که آیا زیر دامنه با `"ton\0"` شروع می‌شود. اگر چنین است،
-  1. اولین ۳۲ بیت را نادیده می‌گیرد (زیر دامنه = `"resolve-contract\0"`)
-  2. مقدار `subdomain_sfx` به `subdomain` تنظیم می‌شود و تابع بایت‌ها را تا بایت صفر می‌خواند
-  3. (subdomain = `"resolve-contract\0"`, subdomain_sfx = `""`)
-  4. بایت صفر و subdomain_sfx از انتهای قطعه زیر دامنه برش داده می‌شوند (subdomain = `"resolve-contract"`)
-  5. توابع slice_hash و get_ton_dns_nft_address_by_index برای تبدیل نام دامنه به آدرس قرارداد استفاده می‌شوند. می‌توانید آن‌ها را در [[Subresolvers#Appendix 1. Code of resolve-contract.ton | Appendix ۱]] ببینید.
-4. در غیر این صورت، dnsresolve() بررسی می‌کند که آیا زیر دامنه با `"address\0"` شروع می‌شود. اگر چنین است، آن پیشوند را نادیده می‌گیرد و آدرس base64 را می‌خواند.
-5. اگر زیر دامنه ارائه شده برای حل با هیچ یک از این پیشوندها مطابقت نداشته باشد، تابع با بازگشت `(۰, null())` (پیشوند بایت صفر حل شده بدون هیچ مدخل DNS) شکست را نشان می‌دهد.
-6. سپس بررسی می‌کند که آیا پسوند زیر دامنه خالی است یا نه. پسوند خالی به این معنی است که درخواست به طور کامل برآورده شده است. اگر پسوند خالی باشد:
-  1. dnsresolve() یک رکورد DNS برای بخش "کیف پول" دامنه ایجاد می‌کند، با استفاده از آدرس قرارداد دامنه TON که بازیابی کرده است.
-  2. اگر دسته ۰ (تمام مدخل‌های DNS) درخواست شود، رکورد در یک دیکشنری پیچیده شده و برگردانده می‌شود.
-  3. اگر دسته "کیف پول"H درخواست شود، رکورد به همان صورت برگردانده می‌شود.
-  4. در غیر این صورت، برای دسته مشخص شده هیچ مدخل DNS وجود ندارد، بنابراین تابع نشان می‌دهد که تفسیر با موفقیت انجام شده اما هیچ نتیجه‌ای پیدا نشده است.
-7. اگر پسوند خالی نباشد:
-  1. آدرسی که قبلاً دریافت شده است به عنوان مفسر بعدی استفاده می‌شود. تابع رکورد مفسر بعدی را که به آن اشاره می‌کند ایجاد می‌کند.
-  2. `"\0ton\0stabletimer\0"` مجدد به آن قرارداد ارسال می‌شود: بیت‌های پردازش شده، بیت‌های زیر دامنه هستند.
+**At this point, the `dnsresolve()` is invoked.**
 
-به طور خلاصه، dnsresolve() یا:
+How `dnsresolve()` works:
 
-- زیر دامنه را به طور کامل به یک رکورد DNS تفسیر می‌کند
-- تا حدی آن را به یک رکورد مفسر تبدیل می‌کند تا تفسیر را به یک قرارداد دیگر منتقل کند
-- برای زیر دامنه‌هایی که ناشناخته‌اند، نتیجه «دامنه پیدا نشد» را بازمی‌گرداند
+1. It takes the subdomain and category as inputs.
+2. It is skipped if the subdomain begins with zero byte.
+3. It checks if the subdomain starts with `"ton\0"`. If it does:
+  - The first 32 bits are skipped (`subdomain = "resolve-contract\0"`).
+  - A suffix variable `subdomain_sfx` is set to the `subdomain`. It reads bytes until the zero byte.
+  - At this point: `subdomain = "resolve-contract\0", subdomain_sfx = "")`.
+  - The zero byte and suffix are trimmed, resulting in `subdomain = "resolve-contract"`.
+  - The domain name is converted into a contract address using helper functions `slice_hash` and `get_ton_dns_nft_address_by_index`. See [Appendix 1](subresolvers#appendix-1-code-of-resolve-contractton) for implementation details.
+4. If the subdomain starts with `"address\0"`:
+  - The prefix is skipped, and the rest is interpreted as a base64-encoded address.
+5. If the subdomain doesn't match any known prefix:
+  - The function returns `(0, null())`, indicating a failed resolution with no entries.
+6. The function then checks if the `subdomain_sfx` is empty:
+  - If **yes**, the request is considered fully resolved.
+    - `dnsresolve()` generates a DNS record for the wallet subdomain using the previously retrieved TON DNS contract address.
+    - If category 0, i.e., all DNS records, is requested, the result is wrapped in a dictionary and returned.
+    - If the category is "wallet"H, the record is returned as-is.
+    - The function returns a successful resolution for any other category with no matching record.
+  - If **not**, the request is only partially resolved.
+    - The function builds a resolver record pointing to the next contract associated with the domain.
+    - The remaining subdomain `"\0ton\0stabletimer\0"` is forwarded to the contract, with the already processed bits corresponding to the initial part of the subdomain.
+
+The `dnsresolve()` function can:
+
+- Fully resolve a subdomain to a DNS record.
+- Partially resolve it, delegating to another resolver contract.
+- Return a "domain not found" result if the subdomain is unknown.
 
 :::warning
-در واقع تجزیه base64 آدرس‌ها کار نمی‌کند: اگر سعی کنید `<some-address>.address.resolve-contract.ton` را وارد کنید، یک خطا خواهید گرفت که نشان می‌دهد دامنه نادرست پیکربندی شده است یا وجود ندارد. بدلیل اینکه نام‌های دامنه به حروف کوچک و بزرگ حساس نیستند (ویژگی‌ای که از DNS واقعی به ارث رسیده) و بنابراین به حروف کوچک تبدیل می‌شوند، شما را به آدرس زنجیره کاری غیر موجود هدایت می‌کند.
+Base64 address parsing is currently not functional. Suppose you attempt to resolve a domain like `<some-address>.address.resolve-contract.ton`, you will receive an error indicating that the domain is misconfigured or does not exist. This issue arises because domain names are case-insensitive—a behavior inherited from traditional DNS, which results in the lowercase. Consequently, the resolver may attempt to query a non-existent or invalid WorkChain address.
 :::
 
 ### اتصال مفسر
 
-حالا که قرارداد مفسر فرعی پیاده‌سازی شده است، باید دامنه را به آن متصل کنیم، یعنی رکورد `dns_next_resolver` دامنه را تغییر دهیم. می‌توانیم این کار را با ارسال یک پیام با ساختار TL-B زیر به قرارداد دامنه انجام دهیم.
+Now that the subresolver contract is deployed, the next step is to point the domain to it by updating domain `dns_next_resolver` record. This is done by sending a message with the following TL-B structure to the domain contract:
 
-1. `change_dns_record#4eb1f0f9 query_id:uint64 record_key#19f02441ee588fdb26ee24b2568dd035c3c9206e11ab979be62e55558a1d17ff record:^[dns_next_resolver#ba93 resolver:MsgAddressInt]`
+```
+`change_dns_record#4eb1f0f9 query_id:uint64 record_key#19f02441ee588fdb26ee24b2568dd035c3c9206e11ab979be62e55558a1d17ff record:^[dns_next_resolver#ba93 resolver:MsgAddressInt]`
+```
 
 ## ایجاد مدیر زیر دامنه‌های خود
 
-زیر دامنه‌ها می‌توانند برای کاربران عادی مفید باشند - به عنوان مثال، پیوند دادن چندین پروژه به یک دامنه، یا پیوند به کیف پول‌های دوستان.
+Subdomains can be helpful for everyday users. For example, they can associate multiple projects with a single domain or link to friends' wallet addresses.
 
 ### داده‌های قرارداد
 
-ما نیاز داریم که آدرس مالک و دیکشنری *دامنه*->*هش رکورد*->*مقدار رکورد* را در داده‌های قرارداد ذخیره کنیم.
+The contract must store the owner's address and a dictionary structured as **domain → record hash → record value**.
 
 ```func
 global slice owner;
@@ -183,10 +194,10 @@ const int op::update_record = 0x537a3491;
 ;;     value:(Maybe ^Cell) = InMsgBody;
 
 () recv_internal(cell in_msg, slice in_msg_body) {
-  if (in_msg_body.slice_empty?()) { return (); }   ;; simple money transfer
+  if (in_msg_body.slice_empty?()) { return (); }   ;; Simple money transfer.
 
   slice in_msg_full = in_msg.begin_parse();
-  if (in_msg_full~load_uint(4) & 1) { return (); } ;; bounced message
+  if (in_msg_full~load_uint(4) & 1) { return (); } ;; Bounced message.
 
   slice sender = in_msg_full~load_msg_addr();
   load_data();
@@ -198,7 +209,7 @@ const int op::update_record = 0x537a3491;
     (cell records, _) = domains.udict_get_ref?(256, string_hash(domain));
 
     int key = in_msg_body~load_uint(256);
-    throw_if(502, key == 0);  ;; cannot update "all records" record
+    throw_if(502, key == 0);  ;; Cannot update "all records" record.
 
     if (in_msg_body~load_uint(1) == 1) {
       cell value = in_msg_body~load_ref();
@@ -213,11 +224,16 @@ const int op::update_record = 0x537a3491;
 }
 ```
 
-ما بررسی می‌کنیم که پیام ورودی شامل درخواست باشد، برگردانده نشده باشد، از طرف مالک آمده باشد و درخواست `op::update_record` باشد.
+We begin by verifying that the incoming message:
 
-سپس نام دامنه را از پیام بارگذاری می‌کنیم. نمی‌توانیم دامنه‌ها را به همان صورت در دیکشنری ذخیره کنیم: آنها ممکن است طول‌های متفاوتی داشته باشند، اما دیکشنری‌های بدون پیشوند TVM تنها می‌توانند حاوی کلیدهایی با طول یکسان باشند. بنابراین، `string_hash(domain)` را محاسبه می‌کنیم - هش SHA-256 از نام دامنه؛ نام دامنه تضمین شده است که دارای تعداد صحیح اُکتت باشد بنابراین کار می‌کند.
+- Contains a valid request
+- Is not bounced
+- Comes from the owner
+- Specifies the `op::update_record` operation.
 
-بعد از آن، رکورد برای دامنه مشخص شده را به‌روزرسانی می‌کنیم و داده‌های جدید را به ذخیره‌ساز قرارداد می‌سپاریم.
+Next, we extract the domain name from the message. Domains cannot be stored directly in a dictionary since they may vary in length — and TVM non-prefix dictionaries require keys of fixed length. To solve this, we compute `string_hash(domain)`, which is the SHA-256 hash of the domain name. Domain names are guaranteed to contain an integer number of octets, so hashing them is safe and consistent.
+
+Finally, we update the record associated with the specified domain and write the new data to the contract storage.
 
 ### تفسیر دامنه‌ها
 
@@ -225,7 +241,7 @@ const int op::update_record = 0x537a3491;
 (slice, slice) ~parse_sd(slice subdomain) {
   ;; "test\0qwerty\0" -> "test" "qwerty\0"
   slice subdomain_sfx = subdomain;
-  while (subdomain_sfx~load_uint(8)) { }  ;; searching zero byte
+  while (subdomain_sfx~load_uint(8)) { }  ;; Searching zero byte.
   subdomain~skip_last_bits(slice_bits(subdomain_sfx));
   return (subdomain, subdomain_sfx);
 }
@@ -241,13 +257,13 @@ const int op::update_record = 0x537a3491;
   load_data();
   (cell records, _) = domains.udict_get_ref?(256, string_hash(subdomain));
 
-  if (subdomain_suffix_bits > 0) { ;; more than "<SUBDOMAIN>\0" requested
+  if (subdomain_suffix_bits > 0) { ;; More than "<SUBDOMAIN>\0" requested.
     category = "dns_next_resolver"H;
   }
 
   int resolved = subdomain_bits - subdomain_suffix_bits;
 
-  if (category == 0) { ;; all categories are requested
+  if (category == 0) { ;; All categories are requested.
     return (resolved, records);
   }
 
@@ -256,13 +272,13 @@ const int op::update_record = 0x537a3491;
 }
 ```
 
-تابع `dnsresolve` بررسی می‌کند که آیا زیر دامنه درخواست شده شامل تعداد صحیحی از اُکتت‌ها است، صفر بایت اختیاری در ابتدای برش زیر دامنه را عبور می‌کند، سپس آن را به دامنه سطح بالاتر و چیزهای دیگر تقسیم می‌کند (`test\0qwerty\0` به `test` و `qwerty\0` تقسیم می‌شود). دیکشنری رکوردهای مربوط به دامنه درخواست شده بارگذاری می‌شود.
+The `dnsresolve` function begins by verifying that the requested subdomain contains an integer number of octets. It skips an optional zero byte at the start of the subdomain slice, then splits the slice into the top-level domain and the remaining portion. For example, `test\0qwerty\0` is split into `test` and `qwerty\0`. Next, the function loads the record dictionary associated with the requested domain.
 
-اگر پسوند زیر دامنه غیر خالی وجود داشته باشد، تابع تعداد بایت‌های تفسیر شده و رکورد بعدی مفسر که در کلید `"dns_next_resolver"H` یافت شده را برمی‌گرداند. در غیر این صورت، تابع تعداد بایت‌های تفسیر شده (یعنی طول کامل برش) و رکورد درخواست شده را برمی‌گرداند.
+If a non-empty subdomain suffix remains, the function returns the number of bytes resolved along with the next resolver record, which is stored under the `"dns_next_resolver"H` key. Otherwise, it returns the total number of resolved bytes, i.e., the full slice length and the requested record.
 
-روشی برای بهبود این تابع با مدیریت خطاها به شکلی زیباتر وجود دارد، اما این کار به‌طور دقیقی لازم نیست.
+While this function could be improved to handle errors more gracefully, such enhancements are not strictly required.
 
-## ضمیمه ۱. کد resolve-contract.ton
+## Appendix 1: code of resolve-contract.ton
 
 <details>
 <summary>subresolver.fc</summary>
@@ -444,3 +460,6 @@ slice decode_base64_address(slice readable) method_id {
 ```
 
 </details>
+
+<Feedback />
+

@@ -1,6 +1,11 @@
-# TON 블록체인의 월렛 컨트랙트 종류
+import Feedback from '@site/src/components/Feedback';
 
-TON 블록체인에서 다양한 버전의 지갑에 대해 들어본 적이 있을 겁니다. 하지만 이 버전들이 실제로 무엇을 의미하며, 어떻게 다른지 궁금하지 않으신가요?
+import ConceptImage from '@site/src/components/conceptImage';
+import ThemedImage from '@theme/ThemedImage';
+
+# Wallet contracts
+
+You may have heard about different versions of wallets on TON Blockchain. But what do these versions actually mean, and how do they differ?
 
 이 글에서는 TON 지갑의 여러 버전과 수정 사항을 자세히 살펴보겠습니다.
 
@@ -8,15 +13,15 @@ TON 블록체인에서 다양한 버전의 지갑에 대해 들어본 적이 있
 Before we start, there are some terms and concepts that you should be familiar with to fully understand the article:
 
 - [메시지 관리](/v3/documentation/smart-contracts/message-management/messages-and-transactions) - 월렛의 주요 기능이기 때문입니다.
-- [FunC 언어](/v3/documentation/smart-contracts/func/overview) - FunC로 구현된 내용을 많이 다룰 것이기 때문입니다.
+- [FunC language](/v3/documentation/smart-contracts/func/overview), because we will heavily rely on implementations made using it.
   :::
 
 ## 기본 개념
 
 먼저 이해해야 할 것은 월렛이 TON 생태계에서 특별한 존재가 아니라는 점입니다. 월렛은 코드와 데이터로 구성된 스마트 컨트랙트일 뿐이며, TON의 다른 액터(즉, 스마트 컨트랙트)와 동등합니다.
 
-사용자 정의 스마트 컨트랙트나 다른 컨트랙트와 마찬가지로, 월렛은 외부 및 내부 메시지를 받고, 내부 메시지와 로그를 보내며, "get" 메소드를 제공할 수 있습니다.
-그렇다면 각 버전은 어떤 기능을 제공하고 버전 간에 어떤 차이가 있을까요?
+Like your own custom smart contract, or any other one, wallets can receive external and internal messages, send internal messages and logs, and provide `get methods`.
+So the question is: what functionality do they provide and how it differs between versions?
 
 각 월렛 버전은 표준 외부 인터페이스를 제공하는 스마트 컨트랙트 구현으로 볼 수 있으며, 이를 통해 다양한 외부 클라이언트가 월렛과 동일한 방식으로 상호작용할 수 있습니다. TON 메인 모노레포에서 FunC와 Fift 언어로 구현된 내용을 찾을 수 있습니다:
 
@@ -37,7 +42,7 @@ Before we start, there are some terms and concepts that you should be familiar w
 - 컨트랙트에서 seqno와 공개키를 검색할 쉬운 방법이 없습니다.
 - `valid_until` 확인이 없어서 트랜잭션이 너무 늦게 확인되는 것을 방지할 수 없습니다.
 
-첫 번째 문제는 `V1R2`와 `V1R3`에서 수정되었습니다. `R`은 "리비전"을 의미합니다. 일반적으로 리비전은 get 메소드만 추가하는 작은 업데이트입니다. `new-wallet.fif`의 변경 이력에서 모든 리비전을 찾을 수 있습니다. 이후로는 최신 리비전만 다루겠습니다.
+The first issue was fixed in `V1R2` and `V1R3`. The `R` stands for **revision**. Usually, revisions are just small updates that only add get methods; you can find all of those in the changes history of `new-wallet.fif`. Hereinafter, we will consider only the latest revisions.
 
 그럼에도 불구하고, 이후 버전이 이전 버전의 기능을 상속하므로 여전히 이를 살펴볼 필요가 있습니다. 이는 이후 버전을 이해하는 데 도움이 될 것입니다.
 
@@ -49,9 +54,9 @@ Before we start, there are some terms and concepts that you should be familiar w
 #### 외부 메시지 본문 레이아웃
 
 1. 데이터:
-   - <b>signature</b>: 512비트 ed25519 서명
-   - <b>msg-seqno</b>: 32비트 시퀀스 넘버
-   - <b>(0-4)mode</b>: 각 메시지의 전송 모드를 정의하는 최대 4개의 8비트 정수
+  - <b>signature</b>: 512비트 ed25519 서명
+  - <b>msg-seqno</b>: 32비트 시퀀스 넘버
+  - <b>(0-4)mode</b>: 각 메시지의 전송 모드를 정의하는 최대 4개의 8비트 정수
 2. 메시지가 포함된 셀에 대한 최대 4개의 참조
 
 보시다시피, 월렛의 주요 기능은 외부 세계에서 TON 블록체인과 안전하게 통신할 수 있는 방법을 제공하는 것입니다. `seqno` 메커니즘은 재생 공격을 방지하고, `Ed25519 서명`은 월렛 기능에 대한 인증된 접근을 제공합니다. 이러한 메커니즘 각각에 대해 자세히 설명하지는 않겠습니다. 이는 [외부 메시지](/v3/documentation/smart-contracts/message-management/external-messages) 문서 페이지에 자세히 설명되어 있으며 외부 메시지를 받는 스마트 컨트랙트에서 매우 일반적입니다. 페이로드 데이터는 최대 4개의 셀 참조와 해당하는 수의 모드로 구성되며, 이는 직접 [send_raw_message(cell msg, int mode)](/v3/documentation/smart-contracts/func/docs/stdlib#send_raw_message) 메소드로 전송됩니다.
@@ -90,10 +95,10 @@ Before we start, there are some terms and concepts that you should be familiar w
 #### 외부 메시지 본문 레이아웃
 
 1. 데이터:
-   - <b>signature</b>: 512비트 ed25519 서명
-   - <b>msg-seqno</b>: 32비트 시퀀스 넘버
-   - <b>valid-until</b>: 32비트 Unix-time 정수
-   - <b>(0-4)mode</b>: 각 메시지의 전송 모드를 정의하는 최대 4개의 8비트 정수
+  - <b>signature</b>: 512비트 ed25519 서명
+  - <b>msg-seqno</b>: 32비트 시퀀스 넘버
+  - <b>valid-until</b>: 32비트 Unix-time 정수
+  - <b>(0-4)mode</b>: 각 메시지의 전송 모드를 정의하는 최대 4개의 8비트 정수
 2. 메시지가 포함된 셀에 대한 최대 4개의 참조
 
 ### 월렛 V3
@@ -115,11 +120,11 @@ Before we start, there are some terms and concepts that you should be familiar w
 #### 외부 메시지 레이아웃
 
 1. 데이터:
-   - <b>signature</b>: 512비트 ed25519 서명
-   - <b>subwallet-id</b>: 32비트 서브월렛 ID
-   - <b>msg-seqno</b>: 32비트 시퀀스 넘버
-   - <b>valid-until</b>: 32비트 UNIX 시간 정수
-   - <b>(0-4)mode</b>: 각 메시지의 전송 모드를 정의하는 최대 4개의 8비트 정수
+  - <b>signature</b>: 512비트 ed25519 서명
+  - <b>subwallet-id</b>: 32비트 서브월렛 ID
+  - <b>msg-seqno</b>: 32비트 시퀀스 넘버
+  - <b>valid-until</b>: 32비트 UNIX 시간 정수
+  - <b>(0-4)mode</b>: 각 메시지의 전송 모드를 정의하는 최대 4개의 8비트 정수
 2. 메시지가 포함된 셀에 대한 최대 4개의 참조
 
 #### 종료 코드
@@ -161,8 +166,8 @@ Before we start, there are some terms and concepts that you should be familiar w
 - <b>query-id</b>: 64비트 정수. 이 필드는 스마트 컨트랙트의 동작에 영향을 미치지 않습니다. 컨트랙트 간의 메시지 체인을 추적하는 데 사용됩니다.
 
 1. op-code = 0x706c7567, 자금 요청 작업 코드
-   - <b>toncoins</b>: 요청된 toncoins의 VARUINT16 금액
-   - <b>extra_currencies</b>: 요청된 추가 통화의 금액이 포함된 딕셔너리(비어있을 수 있음)
+  - <b>toncoins</b>: 요청된 toncoins의 VARUINT16 금액
+  - <b>extra_currencies</b>: 요청된 추가 통화의 금액이 포함된 딕셔너리(비어있을 수 있음)
 2. op-code = 0x64737472, 플러그인-발신자를 "허용 목록"에서 제거 요청
 
 #### 외부 메시지 본문 레이아웃
@@ -174,17 +179,17 @@ Before we start, there are some terms and concepts that you should be familiar w
 - <b>op-code</b>: 32비트 작업 코드
 
 1. op-code = 0x0, 단순 전송
-   - <b>(0-4)mode</b>: 각 메시지의 전송 모드를 정의하는 최대 4개의 8비트 정수
-   - <b>(0-4)messages</b>: 최대 4개의 메시지가 포함된 셀에 대한 참조
+  - <b>(0-4)mode</b>: 각 메시지의 전송 모드를 정의하는 최대 4개의 8비트 정수
+  - <b>(0-4)messages</b>: 최대 4개의 메시지가 포함된 셀에 대한 참조
 2. op-code = 0x1, 플러그인 배포 및 설치
-   - <b>workchain</b>: 8비트 정수
-   - <b>balance</b>: 초기 잔액의 VARUINT16 toncoins 금액
-   - <b>state-init</b>: 플러그인 초기 상태가 포함된 셀 참조
-   - <b>body</b>: 본문이 포함된 셀 참조
+  - <b>workchain</b>: 8비트 정수
+  - <b>balance</b>: 초기 잔액의 VARUINT16 toncoins 금액
+  - <b>state-init</b>: 플러그인 초기 상태가 포함된 셀 참조
+  - <b>body</b>: 본문이 포함된 셀 참조
 3. op-code = 0x2/0x3, 플러그인 설치/제거
-   - <b>wc_n_address</b>: 8비트 workchain_id + 256비트 플러그인 주소
-   - <b>balance</b>: 초기 잔액의 VARUINT16 toncoins 금액
-   - <b>query-id</b>: 64비트 정수
+  - <b>wc_n_address</b>: 8비트 workchain_id + 256비트 플러그인 주소
+  - <b>balance</b>: 초기 잔액의 VARUINT16 toncoins 금액
+  - <b>query-id</b>: 64비트 정수
 
 보시다시피, 네 번째 버전은 여전히 이전 버전과 유사하게 `0x0` op-코드를 통해 표준 기능을 제공합니다. `0x2`와 `0x3` 작업은 플러그인 딕셔너리를 조작할 수 있게 합니다. `0x2`의 경우 해당 주소로 플러그인을 직접 배포해야 한다는 점에 유의하세요. 반면에 `0x1` op-코드는 state_init 필드를 사용하여 배포 프로세스도 처리합니다.
 
@@ -218,9 +223,15 @@ If `state_init` doesn't make much sense from its name, take a look at the follow
 
 ### 월렛 V5
 
-현재 가장 현대적인 월렛 버전으로, Tonkeeper 팀이 개발했으며 V4를 대체하고 임의의 확장을 허용하는 것을 목표로 합니다.
-
-V5 월렛 표준은 사용자와 판매자 모두의 경험을 개선하는 많은 이점을 제공합니다. V5는 가스 없는 트랜잭션, 계정 위임 및 복구, 토큰과 Toncoin을 사용한 구독 결제, 저비용 다중 전송을 지원합니다. 이전 기능(V4)을 유지하면서도 새로운 컨트랙트는 한 번에 최대 255개의 메시지를 보낼 수 있습니다.
+It is the most modern wallet version at the moment, developed by the Tonkeeper team, aimed at replacing V4 and allowing arbitrary extensions. <br></br>
+<ThemedImage
+alt=""
+sources={{
+light: '/img/docs/wallet-contracts/wallet-contract-V5.png?raw=true',
+dark: '/img/docs/wallet-contracts/wallet-contract-V5_dark.png?raw=true',
+}}
+/> <br></br><br></br><br></br>
+The V5 wallet standard offers many benefits that improve the experience for both users and merchants. V5 supports gas-free transactions, account delegation and recovery, subscription payments using tokens and Toncoin, and low-cost multi-transfers. In addition to retaining the previous functionality (V4), the new contract allows you to send up to 255 messages at a time.
 
 월렛 소스 코드:
 
@@ -237,11 +248,11 @@ TL-B 스키마:
 #### 영구 메모리 레이아웃
 
 ```
-contract_state$_ 
-    is_signature_allowed:(## 1) 
-    seqno:# 
-    wallet_id:(## 32) 
-    public_key:(## 256) 
+contract_state$_
+    is_signature_allowed:(## 1)
+    seqno:#
+    wallet_id:(## 32)
+    public_key:(## 256)
     extensions_dict:(HashmapE 256 int1) = ContractState;
 ```
 
@@ -260,8 +271,8 @@ signed_request$_             // 32 (opcode from outer)
 
 internal_signed#73696e74 signed:SignedRequest = InternalMsgBody;
 
-internal_extension#6578746e 
-    query_id:(## 64) 
+internal_extension#6578746e
+    query_id:(## 64)
     inner:InnerRequest = InternalMsgBody;
 
 external_signed#7369676e signed:SignedRequest = ExternalMsgBody;
@@ -279,8 +290,8 @@ external_signed#7369676e signed:SignedRequest = ExternalMsgBody;
 
 ```
 out_list_empty$_ = OutList 0;
-out_list$_ {n:#} 
-    prev:^(OutList n) 
+out_list$_ {n:#}
+    prev:^(OutList n)
     action:OutAction = OutList (n + 1);
 
 action_send_msg#0ec3c86d mode:(## 8) out_msg:^(MessageRelaxed Any) = OutAction;
@@ -336,9 +347,9 @@ actions$_ out_actions:(Maybe OutList) has_other_actions:(## 1) {m:#} {n:#} other
 4. int get_public_key() - 현재 저장된 공개키를 반환
 5. cell get_extensions() - 확장 딕셔너리를 반환
 
-#### 가스 없는 트랜잭션 준비
+#### Preparing for gasless transactions
 
-앞서 언급했듯이 v5 월렛 스마트 컨트랙트는 소유자가 서명한 내부 메시지를 처리할 수 있습니다. 이를 통해 가스 없는 트랜잭션이 가능합니다. 예를 들어, USDt 전송 시 네트워크 수수료를 USDt로 지불할 수 있습니다. 일반적인 구조는 다음과 같습니다:
+As was said, before v5, the wallet smart contract allowed the processing of internal messages signed by the owner. This also allows you to make gasless transactions, e.g., payment of network fees when transferring USDt in USDt itself. The common scheme looks like this:
 
 ![image](/img/gasless.jpg)
 
@@ -349,8 +360,8 @@ actions$_ out_actions:(Maybe OutList) has_other_actions:(## 1) {m:#} {n:#} other
 #### 플로우
 
 1. USDt를 보낼 때 사용자는 두 개의 발신 USDt 전송이 포함된 하나의 메시지에 서명합니다:
-   1. 수신자 주소로의 USDt 전송
-   2. 서비스를 위한 소량의 USDt 전송
+  1. 수신자 주소로의 USDt 전송
+  2. 서비스를 위한 소량의 USDt 전송
 2. 이 서명된 메시지는 HTTPS를 통해 오프체인으로 서비스 백엔드로 전송됩니다. 서비스 백엔드는 이를 TON 블록체인으로 전송하며, 네트워크 수수료를 Toncoins로 지불합니다.
 
 가스 없는 백엔드 API의 베타 버전은 [tonapi.io/api-v2](https://tonapi.io/api-v2)에서 사용할 수 있습니다. 월렛 앱을 개발 중이고 이러한 메소드에 대한 피드백이 있다면 [@tonapitech](https://t.me/tonapitech) 채팅에서 공유해주세요.
@@ -365,7 +376,7 @@ actions$_ out_actions:(Maybe OutList) has_other_actions:(## 1) {m:#} {n:#} other
 
 이들을 살펴보겠습니다.
 
-### Highload 월렛
+### Highload wallets
 
 짧은 시간 동안 많은 메시지를 처리해야 할 때는 Highload Wallet이라는 특수한 월렛이 필요합니다. 자세한 내용은 [이 글](/v3/documentation/smart-contracts/contracts-specs/highload-wallet)을 참조하세요.
 
@@ -389,72 +400,11 @@ actions$_ out_actions:(Maybe OutList) has_other_actions:(## 1) {m:#} {n:#} other
 
 - [EmelyanenkoK/nomination-contract/restricted-wallet](https://github.com/EmelyanenkoK/nomination-contract/tree/master/restricted-wallet)
 
-## 알려진 op 코드
-
-:::info
-op-code, op::code, operational code라고도 함
-:::
-
-| 컨트랙트 유형       | 16진수 코드    | OP::Code                                                                                               |
-| ------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Global        | 0x00000000 | Text Comment                                                                                                                           |
-| Global        | 0xffffffff | Bounce                                                                                                                                 |
-| Global        | 0x2167da4b | [Encrypted Comment](/v3/documentation/smart-contracts/message-management/internal-messages#messages-with-encrypted-comments)           |
-| Global        | 0xd53276db | Excesses                                                                                                                               |
-| Elector       | 0x4e73744b | New Stake                                                                                                                              |
-| Elector       | 0xf374484c | New Stake Confirmation                                                                                                                 |
-| Elector       | 0x47657424 | Recover Stake Request                                                                                                                  |
-| Elector       | 0x47657424 | Recover Stake Response                                                                                                                 |
-| Wallet        | 0x0f8a7ea5 | Jetton Transfer                                                                                                                        |
-| Wallet        | 0x235caf52 | [Jetton Call To](https://testnet.tonviewer.com/transaction/1567b14ad43be6416e37de56af198ced5b1201bb652f02bc302911174e826ef7)           |
-| Jetton        | 0x178d4519 | Jetton Internal Transfer                                                                                                               |
-| Jetton        | 0x7362d09c | Jetton Notify                                                                                                                          |
-| Jetton        | 0x595f07bc | Jetton Burn                                                                                                                            |
-| Jetton        | 0x7bdd97de | Jetton Burn Notification                                                                                                               |
-| Jetton        | 0xeed236d3 | Jetton Set Status                                                                                                                      |
-| Jetton-Minter | 0x642b7d07 | Jetton Mint                                                                                                                            |
-| Jetton-Minter | 0x6501f354 | Jetton Change Admin                                                                                                                    |
-| Jetton-Minter | 0xfb88e119 | Jetton Claim Admin                                                                                                                     |
-| Jetton-Minter | 0x7431f221 | Jetton Drop Admin                                                                                                                      |
-| Jetton-Minter | 0xcb862902 | Jetton Change Metadata                                                                                                                 |
-| Jetton-Minter | 0x2508d66a | Jetton Upgrade                                                                                                                         |
-| Vesting       | 0xd372158c | [Top Up](https://github.com/ton-blockchain/liquid-staking-contract/blob/be2ee6d1e746bd2bb0f13f7b21537fb30ef0bc3b/PoolConstants.ts#L28) |
-| Vesting       | 0x7258a69b | Add Whitelist                                                                                                                          |
-| Vesting       | 0xf258a69b | Add Whitelist Response                                                                                                                 |
-| Vesting       | 0xa7733acd | Send                                                                                                                                   |
-| Vesting       | 0xf7733acd | Send Response                                                                                                                          |
-| Dedust        | 0x9c610de3 | Dedust Swap ExtOut                                                                                                                     |
-| Dedust        | 0xe3a0d482 | Dedust Swap Jetton                                                                                                                     |
-| Dedust        | 0xea06185d | Dedust Swap Internal                                                                                                                   |
-| Dedust        | 0x61ee542d | Swap External                                                                                                                          |
-| Dedust        | 0x72aca8aa | Swap Peer                                                                                                                              |
-| Dedust        | 0xd55e4686 | Deposit Liquidity Internal                                                                                                             |
-| Dedust        | 0x40e108d6 | Deposit Liquidity Jetton                                                                                                               |
-| Dedust        | 0xb56b9598 | Deposit Liquidity all                                                                                                                  |
-| Dedust        | 0xad4eb6f5 | Pay Out From Pool                                                                                                                      |
-| Dedust        | 0x474а86са | Payout                                                                                                                                 |
-| Dedust        | 0xb544f4a4 | Deposit                                                                                                                                |
-| Dedust        | 0x3aa870a6 | Withdrawal                                                                                                                             |
-| Dedust        | 0x21cfe02b | Create Vault                                                                                                                           |
-| Dedust        | 0x97d51f2f | Create Volatile Pool                                                                                                                   |
-| Dedust        | 0x166cedee | Cancel Deposit                                                                                                                         |
-| StonFi        | 0x25938561 | Swap Internal                                                                                                                          |
-| StonFi        | 0xf93bb43f | Payment Request                                                                                                                        |
-| StonFi        | 0xfcf9e58f | Provide Liquidity                                                                                                                      |
-| StonFi        | 0xc64370e5 | Swap Success                                                                                                                           |
-| StonFi        | 0x45078540 | Swap Success ref                                                                                                                       |
-
-:::info
-[DeDust docs](https://docs.dedust.io/docs/swaps)
-
-[StonFi docs](https://docs.ston.fi/docs/developer-section/architecture#calls-descriptions)
-:::
-
 ## 결론
 
 보시다시피 TON에는 많은 다른 버전의 월렛이 있습니다. 하지만 대부분의 경우 `V3R2` 또는 `V4R2`만 있으면 됩니다. 주기적인 자금 잠금 해제와 같은 추가 기능이 필요한 경우 특수 월렛 중 하나를 사용할 수도 있습니다.
 
-## 관련 자료
+## See also
 
 - [월렛 스마트 컨트랙트 작업하기](/v3/guidelines/smart-contracts/howto/wallet)
 - [기본 월렛 소스](https://github.com/ton-blockchain/ton/tree/master/crypto/smartcont)
@@ -463,3 +413,6 @@ op-code, op::code, operational code라고도 함
 - [Lockup 월렛 소스와 자세한 설명](https://github.com/ton-blockchain/lockup-wallet-contract)
 - [Restricted 월렛 소스](https://github.com/EmelyanenkoK/nomination-contract/tree/master/restricted-wallet)
 - [TON의 가스 없는 트랜잭션](https://medium.com/@buidlingmachine/gasless-transactions-on-ton-75469259eff2)
+
+<Feedback />
+

@@ -1,6 +1,12 @@
-# manifest.json 생성하기
+import Feedback from '@site/src/components/Feedback';
 
-모든 앱은 지갑에 메타 정보를 전달하기 위한 manifest가 필요합니다. manifest는 `tonconnect-manifest.json`이라는 이름의 JSON 파일로 다음 형식을 따릅니다:
+# Creating the TON Connect manifest for DApp
+
+## Manifest definition
+
+Every app needs a manifest to pass meta information to the wallet.
+
+The manifest is a JSON file named `tonconnect-manifest.json` and has the following format:
 
 ```json
 {
@@ -12,9 +18,19 @@
 }
 ```
 
-## 예시
+| 필드                 | 요구사항     | 설명                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url`              | 필수       | `url` defines the app URL.  It will be used to open the DApp after clicking its icon in the wallet. It is recommended to pass the URL without closing the slash, e.g., 'https://mydapp.com' instead of 'https://mydapp.com/'. |
+| `name`             | required | `name` defines the app name. Typically simple word. Shouldn't be used as identifier.                                                                                                                                                                                                                                          |
+| `iconUrl`          | required | `iconUrl` defines the URL to the app icon. It must be in `PNG` or `ICO` format. `SVG` icons are not supported. Perfectly pass the URL to a 180x180px PNG icon.                                                                                                                                                |
+| `termsOfUseUrl`    | 선택       | Optional for usual apps, but required for the apps placed in the Tonkeeper recommended apps list.                                                                                                                                                                                                                                                             |
+| `privacyPolicyUrl` | optional | Optional for usual apps, but required for the apps placed in the Tonkeeper recommended apps list.                                                                                                                                                                                                                                                             |
 
-manifest 예시는 다음과 같습니다:
+:::info
+The original definition is [here](https://github.com/ton-blockchain/ton-connect/blob/main/requests-responses.md#app-manifest).
+:::
+
+### 예시
 
 ```json
 {
@@ -26,15 +42,14 @@ manifest 예시는 다음과 같습니다:
 
 ## 모범 사례
 
-- manifest는 앱과 저장소의 루트에 위치시키는 것이 좋습니다(예: `https://myapp.com/tonconnect-manifest.json`). 이를 통해 지갑이 앱을 더 잘 처리하고 앱 관련 UX를 개선할 수 있습니다.
+- Place the manifest in the root of your app and repository, for example: `https://myapp.com/tonconnect-manifest.json`. It allows the wallet to handle your app better and improve the UX connected to your app.
+- The fields `url`, `iconUrl`, `termsOfUseUrl`, `privacyPolicyUrl`: must be publicly accessible from the internet and should be requestable from any origin without CORS restrictions.
+- The manifest must be publicly accessible from the internet and should be requestable from any origin without CORS restrictions.
 - `manifest.json` 파일이 URL을 통해 GET 요청으로 접근 가능한지 확인하세요
 
-## 필드 설명
+## See also
 
-| 필드                 | 요구사항 | 설명                                                                                                                                                                                                                                                                                                         |
-| ------------------ | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `url`              | 필수   | 앱 URL. DApp 식별자로 사용됩니다. 지갑에서 앱 아이콘 클릭 시 DApp을 열 때 사용됩니다. 마지막 슬래시를 제외한 URL 사용을 권장합니다(예: 'https://mydapp.com/'가 아닌 'https://mydapp.com'). |
-| `name`             | 필수   | 앱 이름. 단순할 수 있으며 식별자로 사용되지 않습니다.                                                                                                                                                                                                                                            |
-| `iconUrl`          | 필수   | 앱 아이콘 URL. PNG, ICO 등의 형식이어야 합니다. SVG 아이콘은 지원되지 않습니다. 180x180px PNG 아이콘 URL을 전달하는 것이 가장 좋습니다.                                                                                                                                              |
-| `termsOfUseUrl`    | 선택   | 이용 약관 문서 URL. 일반 앱의 경우 선택사항이지만, Tonkeeper 추천 앱 목록에 포함될 앱의 경우 필수입니다.                                                                                                                                                                                                        |
-| `privacyPolicyUrl` | 선택   | 개인정보 처리방침 문서 URL. 일반 앱의 경우 선택사항이지만, Tonkeeper 추천 앱 목록에 포함될 앱의 경우 필수입니다.                                                                                                                                                                                                    |
+- [TON Connect GitHub - App manifest](https://github.com/ton-blockchain/ton-connect/blob/main/requests-responses.md#app-manifest)
+
+<Feedback />
+

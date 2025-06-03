@@ -1,10 +1,12 @@
-# 하이로드 월렛
+import Feedback from '@site/src/components/Feedback';
 
-짧은 기간 동안 많은 메시지를 처리할 때는 하이로드 월렛이라는 특별한 월렛이 필요합니다. 하이로드 월렛 V2는 오랫동안 TON의 주요 월렛이었지만, 매우 주의해서 사용해야 했습니다. 그렇지 않으면 [모든 자금이 잠길 수 있었습니다](https://t.me/tonstatus/88).
+# Highload wallet contracts
+
+When working with many messages in a short period, there is a need for special wallet called Highload wallet. Highload wallet v2 was the main wallet on TON for a long time, but you had to be very careful with it. Otherwise, you could [lock all funds](https://t.me/tonstatus/88).
 
 [하이로드 월렛 V3의 출시](https://github.com/ton-blockchain/Highload-wallet-contract-v3)로 이 문제는 컨트랙트 아키텍처 수준에서 해결되었으며 가스도 덜 소비합니다. 이 장에서는 하이로드 월렛 V3의 기본 사항과 기억해야 할 중요한 뉘앙스를 다룰 것입니다.
 
-## 하이로드 월렛 v3
+## Highload wallet v3
 
 이 월렛은 매우 높은 속도로 트랜잭션을 보내야 하는 사람들을 위해 만들어졌습니다. 예를 들어, 암호화폐 거래소입니다.
 
@@ -51,15 +53,18 @@
 1. **저장소 크기 제한.** 현재 컨트랙트 저장소의 크기는 65535 셀 미만이어야 합니다. old_queries의 크기가 이 제한을 초과하면 ActionPhase에서 예외가 발생하고 트랜잭션이 실패합니다. 실패한 트랜잭션은 재생될 수 있습니다.
 2. **가스 제한.** 현재 가스 제한은 1,000,000 GAS 단위이므로, 한 트랜잭션에서 정리할 수 있는 old queries의 수에 제한이 있습니다. 만료된 쿼리의 수가 이보다 높으면 컨트랙트가 중단됩니다.
 
-즉, 만료 날짜를 너무 높게 설정하지 않는 것이 좋습니다:
-만료 시간 동안의 쿼리 수는 1000을 초과해서는 안 됩니다.
+That means that it is not recommended to set too high expiration date:
+the number of queries during expiration time span should not exceed 1000.
 
-또한 한 트랜잭션에서 정리되는 만료된 쿼리의 수는 100 미만이어야 합니다.
+Also, the number of expired queries cleaned in one transaction should be below 100.
 
-## 사용 방법
+## How to
 
 [하이로드 월렛 튜토리얼](/v3/guidelines/smart-contracts/howto/wallet#-high-load-wallet-v3) 문서도 읽어보실 수 있습니다.
 
 월렛 소스 코드:
 
 - [ton/crypto/smartcont/Highload-wallet-v2-code.fc](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/new-highload-wallet-v2.fif)
+
+<Feedback />
+

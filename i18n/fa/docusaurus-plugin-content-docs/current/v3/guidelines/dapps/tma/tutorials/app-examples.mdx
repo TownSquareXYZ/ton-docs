@@ -1,10 +1,12 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 
-# مثال‌های TMA
+# TMA examples
 
-نمونه‌های زیر را بررسی کنید تا ببینید چگونه می‌توانید Telegram Mini App خود را ایجاد کنید.
+Explore the examples below to learn how to create your own Telegram Mini App.
 
-## مثال TMA پایه
+## Basic TMA example
 
 <p align="center">
   <br />
@@ -12,15 +14,15 @@ import Button from '@site/src/components/button'
       <br />
 </p>
 
-این یک Telegram Mini App (TMA) ساده و مستقیم است که با استفاده از JavaScript، HTML و CSS ساده پیاده‌سازی شده است. هدف این پروژه ارائه یک مثال حداقلی از چگونگی ایجاد یک TMA ساده و اجرای آن در تلگرام بدون نیاز به ابزارهای پیچیده ساخت یا کتابخانه‌های پیشرفته است.
+This example demonstrates a simple Telegram Mini App using plain JavaScript, HTML, and CSS. The goal is to provide a minimalistic starting point for creating a TMA without relying on complex build tools or advanced libraries.
 
-- برنامه از طریق لینک مستقیم در دسترس است: [t.me/simple_telegram_mini_app_bot/app](https://t.me/simple_telegram_mini_app_bot/app)
-- یا می‌توانید برنامه را با دکمه منوی ربات راه‌اندازی کنید: [t.me/simple_telegram_mini_app_bot](https://t.me/simple_telegram_mini_app_bot)
-- URL استقرار: [https://telegram-mini-apps-dev.github.io/vanilla-js-boilerplate/](https://telegram-mini-apps-dev.github.io/vanilla-js-boilerplate/)
+- App is available at: [t.me/simple_telegram_mini_app_bot/app](https://t.me/simple_telegram_mini_app_bot/app).
+- Bot menu button: [t.me/simple_telegram_mini_app_bot](https://t.me/simple_telegram_mini_app_bot).
+- Deployment URL: [https://telegram-mini-apps-dev.github.io/vanilla-js-boilerplate/](https://telegram-mini-apps-dev.github.io/vanilla-js-boilerplate/).
 
 <Button href="https://t.me/simple_telegram_mini_app_bot/app" colorType={'primary'} sizeType={'sm'}>
 
-دمو را باز کنید
+Open demo
 
 </Button>
 
@@ -33,14 +35,14 @@ GitHub
 ### ویژگی‌ها
 
 - رابط کاربری ساده و حداقلی.
-- بدون استفاده از کتابخانه‌ها یا چارچوب‌های خارجی.
+- No external libraries or frameworks.
 - به راحتی قابل درک و تغییر است.
 
-### شروع به کار
+### Getting started
 
 #### پیش‌نیازها
 
-برای اجرای این مثال، به یک مرورگر وب مدرن با JavaScript فعال نیاز دارید.
+A modern web browser with JavaScript enabled.
 
 #### نصب
 
@@ -56,42 +58,44 @@ git clone https://github.com/Telegram-Mini-Apps-Dev/vanilla-js-boilerplate.git
 cd vanilla-js-boilerplate
 ```
 
-index.html را در ویرایشگر کد یا IDE مورد نظر خود باز کنید.
+Open `index.html` in your preferred code editor or IDE.
 
 ### استفاده
 
 1. index.html را در ویرایشگر کد یا IDE مورد نظر خود باز کنید.
-2. تغییرات خود را اعمال کنید.
-3. مخزن GitHub خود را ایجاد کنید، تغییرات خود را commit کرده و push کنید.
-4. به صفحه GitHub مخزن خود بروید و Settings را باز کنید. تب Pages و قسمت Build and deployment را بررسی کنید. اگر گزینه Actions GitHub انتخاب شده بود، دارایی‌ها باید در Pages مستقر شوند و یک URL مانند `https://<username>.github.io/vanilla-js-boilerplate/` وجود خواهد داشت. می‌توانید این URL را کپی کنید و در ربات [BotFather](https://tg.me/BotFather) از آن استفاده کنید تا TWA خود را ایجاد نمایید.
+2. Make any necessary modifications.
+3. Create your own GitHub repository, commit, and push your updates.
+4. In GitHub, navigate to Settings > Pages > Build and Deployment.
+5. If GitHub Actions is enabled, your assets will deploy automatically, and you'll receive a public URL like:`https://<username>.github.io/vanilla-js-boilerplate/`.
+6. Use this URL with [@BotFather](https://t.me/BotFather) to create your own Telegram Web App (TWA).
 
-## نمونه TMA مدرن
+## Modern TMA example
 
 ### معرفی
 
-Vite (که به معنای "سریع" در زبان فرانسوی است) یک ابزار ساخت و سرور توسعه فرانت‌اند است که به عملکرد سریع‌تر و تجربه توسعه بهتری برای پروژه‌های وب مدرن می‌پردازد. ما از Vite برای ایجاد این نمونه Telegram Mini App استفاده خواهیم کرد.
+Vite is a front-end build tool and development server designed to improve development speed and efficiency. This example shows how to use Vite to create a modern Telegram Mini App.
 
-شما می‌توانید پروژه مثال را در اینجا پیدا کنید [https://github.com/Telegram-Mini-Apps-Dev/vite-boilerplate](https://github.com/Telegram-Mini-Apps-Dev/vite-boilerplate) یا می‌توانید از دستورالعمل‌های زیر استفاده کنید.
+You can find the example project here [https://github.com/Telegram-Mini-Apps-Dev/vite-boilerplate](https://github.com/Telegram-Mini-Apps-Dev/vite-boilerplate) or you follow the following instructions.
 
 ### پیش‌نیازها
 
-ما با راه‌اندازی پروژه Vite شما شروع خواهیم کرد.
+To start, we will scaffold a Vite project.
 
-با NPM:
+With npm:
 
 ```bash
 $ npm create vite@latest
 ```
 
-با Yarn:
+With yarn:
 
 ```bash
 $ yarn create vite
 ```
 
-سپس دستورات را دنبال کنید!
+Follow the on-screen prompts.
 
-یا می‌توانید به سادگی این فرمان را اجرا کنید تا پروژه React با پشتیبانی TypeScript ایجاد کنید:
+Or you can simply run this command to create a React project with TypeScript Support:
 
 ```bash
 # npm 7+, extra double-dash is needed:
@@ -104,9 +108,9 @@ yarn create vite my-react-telegram-web-app --template react-ts
 cd my-react-telegram-web-app
 ```
 
-### توسعه مینی اپ
+### Development of a Mini App
 
-اکنون باید حالت توسعه پروژه را شروع کنیم، دستورات زیر را در ترمینال اجرا کنید:
+To start the development mode of the project, run the following commands in the terminal:
 
 ```bash
 # npm
@@ -118,15 +122,13 @@ yarn
 yarn dev --host
 ```
 
-گزینه `--host` به شما امکان می‌دهد URL با آدرس IP دریافت کنید که می‌توانید در طول فرآیند توسعه برای اهداف تست استفاده کنید. توجه مهم: در حالت توسعه، ما از یک گواهینامه SSL خودامضاء استفاده خواهیم کرد که این امکان را به ما می‌دهد که تنها در نسخه وب تلگرام [https://web.telegram.org](https://web.telegram.org/a/#6549734463)، به‌دلیل سیاست‌های دیگر پلتفرم‌ها (iOS, Android, MacOS) با بارگذاری مجدد حین اجرا، برنامه خود را تست کنیم.
-
-ما نیاز داریم که پلاگین `@vitejs/plugin-basic-ssl` را اضافه کنیم:
+The `--host` option provides a URL with an IP address, which can be used for testing during development. In development mode, a self-signed SSL certificate is used. This allows testing with hot reload only in the web version of Telegram [https://web.telegram.org](https://web.telegram.org/a/#6549734463)/ due to platform restrictions on iOS, Android, and macOS.
 
 ```bash npm2yarn
 npm install @vitejs/plugin-basic-ssl
 ```
 
-اکنون باید `vite.config.ts` را تغییر دهیم. این را اضافه کنید:
+Then change `vite.config.ts`. Add import:
 
 ```jsx
 import basicSsl from '@vitejs/plugin-basic-ssl';
@@ -140,14 +142,14 @@ export default defineConfig({
 });
 ```
 
-شما می‌توانید از `ngrok` برای افشای سرور محلی خود به اینترنت با گواهینامه SSL استفاده کنید. شما قادر خواهید بود با جایگزینی ماژول داغ در تمامی پلتفرم‌های تلگرام توسعه دهید. یک پنجره ترمینال جدید باز کنید و اجرا کنید:
+You can use `ngrok` to expose your local server to the internet with an SSL certificate. This enables hot module replacement on all Telegram platforms.
 
 ```bash
 # where 5173 is the port number from npm/yarn dev --host
 ngrok http 5173
 ```
 
-همچنین، ما پروژه خود را برای استقرار در GitHub Pages آماده خواهیم کرد:
+Also, we are going to prepare our project for deployment:
 
 ```jsx
 export default defineConfig({
@@ -159,7 +161,7 @@ export default defineConfig({
 });
 ```
 
-ما از اسکریپت استقرار برای GitHub Actions استفاده خواهیم کرد که بر روی push هایی که به شاخه master هستند، اجرا می‌شود. از ریشه پروژه خود:
+We will use the deploy script for GitHub Actions that will run on pushes targeting the master branch. From the root of your project:
 
 ```bash
 # we are going to create GitHub Actions config for deployment
@@ -227,11 +229,10 @@ jobs:
         uses: actions/deploy-pages@v1
 ```
 
-فراموش نکنید که گزینه GitHub Actions را برای Build and Deployment در Settings→Pages مخزن GitHub خود انتخاب کنید. اکنون پس از هر push، کد شما به Pages مستقر خواهد شد.
-
+In GitHub repository settings, go to Settings → Pages and choose GitHub Actions for Build and Deployment. After each push to master, GitHub Pages will automatically deploy your code.
 ![Screenshot 2023-09-11 at 22.07.44.png](/img/docs/telegram-apps/modern-1.png)
 
-حالا می‌خواهیم `@twa-dev/sdk` را اضافه کنیم. تلگرام SDK را از طریق [لینک](https://core.telegram.org/bots/webapps#initializing-web-apps) توزیع می‌کند. این روش کمی قدیمی برای کار با یک کتابخانه است. بسته `@twa-dev/sdk` این امکان را می‌دهد که با SDK به عنوان یک بسته npm کار کنید و از TypeScript پشتیبانی می‌کند.
+Telegram provides an SDK via a direct [link](https://core.telegram.org/bots/webapps#initializing-web-apps), but using `@twa-dev/sdk` offers TypeScript support and better integration.
 
 ```bash npm2yarn
 npm install @twa-dev/sdk
@@ -247,9 +248,9 @@ WebApp.ready();
 ReactDOM.createRoot...
 ```
 
-`WebApp.ready()` - یک روش است که به برنامه تلگرام اعلام می‌کند که مینی‌اپ آماده نمایش است. توصیه می‌شود این روش را در اولین فرصت ممکن، پس از بارگذاری همه عناصر ضروری واسط کاربری، فراخوانی کنید. هنگامی که این روش فراخوانی شد، جایگزین بارگذاری پنهان می‌شود و مینی‌اپ نمایش داده می‌شود.
+`WebApp.ready()`method informs Telegram that the Mini App is ready to display. This method should be called as early as possible to ensure all interface elements load before the app appears.
 
-سپس مقداری تعامل با کاربر اضافه می‌کنیم. به `src/App.tsx` بروید و دکمه‌ای با هشدار اضافه می‌کنیم.
+Then add some interaction with the user. Go to `src/App.tsx` and add a button that triggers an alert.
 
 ```tsx
 import { useState } from 'react'
@@ -293,18 +294,22 @@ export default App
 
 حالا باید یک ربات تلگرام ایجاد کنیم تا بتوانیم مینی‌اپ تلگرام را درون برنامه پیام‌رسان اجرا کنیم.
 
-### تنظیم یک ربات برای برنامه
+### Setting up a bot for the App
 
-برای اتصال مینی‌اپ خود به تلگرام، باید یک ربات ایجاد کرده و برای آن مینی‌اپ راه‌اندازی کنید. این مراحل را دنبال کنید تا یک ربات تلگرام جدید تنظیم کنید:
+To launch the Telegram Mini App within the messenger, you need to create a bot and configure it. Follow these steps:
 
 <Button href="/v3/guidelines/dapps/tma/tutorials/step-by-step-guide#setting-up-a-bot-for-the-app" colorType={'primary'} sizeType={'sm'}>
 
-تنظیم یک ربات
+Setup a bot
 
 </Button>
 
 ### نکات
 
-با گواهینامه SSL خودامضا ممکن است با این نوع هشدارها مواجه شوید. بر روی دکمه "Advanced" کلیک کنید و سپس بر روی `Proceed <local dev server address here>` کلیک کنید. بدون این مراحل، قادر به دیباگ نسخه وب تلگرام نخواهید بود.
+When using a self-signed SSL certificate, you may see security warnings.
+
+**Fix:** Click **Advanced** and then **Proceed to `<local dev server address>`** to continue debugging in the web version of Telegram.
 
 ![Screenshot 2023-09-11 at 18.58.24.png](/img/docs/telegram-apps/modern-2.png)
+
+<Feedback />

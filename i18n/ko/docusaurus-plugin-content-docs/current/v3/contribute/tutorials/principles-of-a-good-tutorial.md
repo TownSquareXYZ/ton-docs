@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 좋은 튜토리얼의 원칙
+
+:::danger
+This page is outdated and will be updated soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 이 원칙을 담은 [talkol](https://github.com/talkol)의 원본 댓글입니다:
 
@@ -25,3 +32,5 @@
 8. 저장소는 자체적으로 이해하기 쉬운 컴파일/배포 스크립트를 포함해야 합니다. 사용자가 단순히 `npm install` 을 하고 이를 사용할 수 있어야 합니다.
 
 9. 때로는 GitHub 리포지토리만으로 충분하고 전체 문서를 작성할 필요가 없습니다. 이 경우 README에 저장소의 모든 코드가 포함되어 있어야 합니다. 코드는 사용자가 쉽게 읽고 이해할 수 있도록 잘 주석이 달려 있어야 합니다.
+ <Feedback />
+

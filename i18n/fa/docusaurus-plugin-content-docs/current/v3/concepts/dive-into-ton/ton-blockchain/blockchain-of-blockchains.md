@@ -1,72 +1,88 @@
-# بلاکچینی از بلاکچین‌ها
+import Feedback from '@site/src/components/Feedback';
+
+# Blockchain of blockchains
 
 :::tip
-اصطلاحات '**قرارداد هوشمند**'، '**حساب**' و '**بازیگر**' به طور متناوب در این سند برای توصیف یک نهاد بلاکچین استفاده می‌شوند.
+Terms '**smart contract**', '**account**', and '**actor**' are used interchangeably in this document to describe a blockchain entity.
 :::
 
 ## بازیگر تکی
 
 بیایید یک قرارداد هوشمند را در نظر بگیریم.
 
-در TON، این یک *جزء* است که ویژگی‌هایی مانند `address`، `code`، `data`، `balance` و غیره دارد. به عبارت دیگر، این یک شیء است که مقداری *فضای ذخیره سازی* و *واکنش* دارد.
-این واکنش الگوی زیر را دارد:
+In TON, it is a *thing* with properties like `address`, `code`, `data`, `balance` and others. In other words, it is an object with some *storage* and *behavior*.
+That behavior has the following pattern:
 
-- چیزی اتفاق می‌افتد (شایع‌ترین وضعیت این است که یک قرارداد پیامی دریافت می‌کند)
-- قرارداد این رویداد را بر اساس ویژگی‌های خود با اجرای `code` خود در ماشین مجازی TON مدیریت می‌کند.
-- قرارداد ویژگی‌های خود را تغییر می‌دهد (`code`، `data` و غیره)
+- contract receives a message
+- contract handles that event according to its properties by executing its `code` in TON Virtual Machine
+- contract modifies its properties consisting of `code`, `data`, and others
 - قرارداد به‌طور اختیاری پیام‌های خروجی تولید می‌کند
 - قرارداد تا وقوع رویداد بعدی به حالت آماده‌باش می‌رود
 
-ترکیبی از این مراحل را **تراکنش** می‌نامند. مهم است که رویدادها تک به تک مدیریت شوند، بنابراین *تراکنش‌ها* به‌طور دقیق مرتب می‌شوند و نمی‌توانند اجرای یکدیگر را قطع کنند.
+A combination of these steps is called a **transaction**. Since it is essential to handle events one by one, transactions follow a strict order and cannot interrupt each other.
 
-این الگوی رفتاری به خوبی شناخته شده است و به نام 'بازیگر' شناخته می‌شود.
+This behavior pattern is well known and called **actor**.
 
-### پایین‌ترین سطح: زنجیره حساب
+### The lowest level: AccountChain
 
-یک توالی از *تراکنش‌ها* `Tx1 -> Tx2 -> Tx3 -> ....` ممکن است به عنوان یک **زنجیره** نامیده شود. و در مثال مورد نظر ما به آن **AccountChain** گفته می‌شود تا تاکید شود که این *زنجیره* یک حساب واحد از تراکنش‌ها است.
+A **chain** can be viewed as a sequence of transactions, such as `Tx1 → Tx2 → Tx3 → …`. When this transaction sequence pertains to a single account, it is specifically termed an **AccountChain**.
 
-حالا، از آنجا که گره‌هایی که تراکنش‌ها را پردازش می‌کنند نیاز دارند هر لحظه به هماهنگی وضعیت قرارداد هوشمند بپردازند (برای رسیدن به *اجماع* در مورد وضعیت) آن *تراکنش‌ها* به صورت دسته‌ای بسته‌بندی می‌شوند:
-`[Tx1 -> Tx2] -> [Tx3 -> Tx4 -> Tx5] -> [] -> [Tx6]`.
-دسته‌بندی در ترتیب‌بندی دخالت نمی‌کند، هر تراکنش هنوز فقط یک 'tx قبلی' و حداکثر یک 'tx بعدی' دارد، اما حالا این توالی به **بلوک‌ها** برش داده می‌شود.
+Since nodes processing these transactions periodically need to synchronize the smart contract state to achieve consensus, transactions are grouped into batches called **blocks**. For instance:
 
-*بلوک‌ها* همچنین شامل صف‌های پیام‌های ورودی و خروجی هستند که مفید است. به این صورت که یک *بلوک* مجموعه کاملی از اطلاعاتی که تعیین و توصیف می‌کند چه چیزی برای قرارداد هوشمند در طول آن بلوک اتفاق افتاده است، را شامل می‌شود.
+```
+[Tx1 → Tx2] → [Tx3 → Tx4 → Tx5] → [] → [Tx6]
+```
 
-## بسیاری از AccountChains: شاردها
+Batching does not alter the underlying sequence. Each transaction still references exactly one preceding transaction (`prev tx`) and at most one succeeding transaction (`next tx`). Batching simply organizes this sequence into manageable blocks for consensus purposes.
 
-حالا بیایید بسیاری از حساب‌ها را در نظر بگیریم. می‌توانیم چند *AccountChains* بدست آوریم و آنها را با هم ذخیره کنیم، چنین مجموعه‌ای از *AccountChains* به عنوان **ShardChain** نامیده می‌شود. به همین ترتیب، می‌توانیم **ShardChain** را به **ShardBlocks** برش دهیم، که تجمیعی از *AccountBlocks* جداگانه هستند.
+Additionally, each block can contain queues of incoming and outgoing messages. Incorporating these queues ensures that a block fully encapsulates all events and state changes relevant to the smart contract within the block period.
 
-### تقسیم و ادغام پویا شاردها
+## Many AccountChains: Shards
 
-توجه داشته باشید که از آنجا که یک *ShardChain* از *AccountChains* قابل تشخیص تشکیل شده است، ما می‌توانیم به راحتی آن را تقسیم کنیم. به این ترتیب، اگر ما یک *ShardChain* داریم که رویدادهایی را که با یک میلیون حساب اتفاق می‌افتد توصیف می‌کند و تراکنش‌های زیادی در هر ثانیه برای پردازش و ذخیره در یک گره وجود دارد، پس ما فقط آن زنجیره را به دو *ShardChain* کوچکتر تقسیم می‌کنیم که هر زنجیره نیمی از حساب‌ها را پوشش می‌دهد و هر زنجیره بر روی یک زیرمجموعه جداگانه از گره‌ها پردازش می‌شود.
+Now let's consider many accounts. We can get a few AccountChains and store them together; such a set of AccountChains is called a **ShardChain**. In the same way, we can cut ShardChain into **ShardBlocks**, which are an aggregation of individual AccountBlocks.
 
-به‌طور مشابه، اگر برخی از شاردها مدت زیادی بیکار شدند، می‌توان آنها را به یک شارد بزرگتر **ادغام** کرد.
+### Dynamic splitting and merging of ShardChains
 
-بدیهی است که دو حالت محدود وجود دارد: زمانی که شارد فقط یک حساب را شامل می‌شود (بنابراین نمی‌تواند بیشتر تقسیم شود) و زمانی که شارد همه حساب‌ها را شامل می‌شود.
+Note that since a ShardChain consists of easily distinguished AccountChains, we can easily split it. That way, if we have one ShardChain that describes events that happen with one million accounts and there are too many transactions per second to be processed and stored in one node, so we just **split** that chain into two smaller ShardChains with each chain accounting for half a million accounts and each chain processed on a separate subset of nodes.
 
-حساب‌ها می‌توانند با ارسال پیام به یکدیگر تعامل کنند. یک مکانیزم ویژه مسیریابی وجود دارد که پیام‌ها را از صف‌های خروجی به صف‌های ورودی مربوط منتقل می‌کند و اطمینان می‌دهد که: 1) همه پیام‌ها تحویل داده می‌شوند 2) پیام‌ها به ترتیب تحویل داده می‌شوند (پیامی که زودتر ارسال شده زودتر به مقصد می‌رسد).
+Analogously, if some shards become too unoccupied, they can be **merged** into one more enormous shard.
 
-:::info نکته جانبی
-برای تعیین قطعی تقسیم و ادغام، تجمیع AccountChains به شاردها بر اساس نمایش بیتی از آدرس‌های حساب انجام می‌شود. به عنوان مثال، آدرس به شکل `(shard prefix, address)` به نظر می‌رسد. به این ترتیب، همه حساب‌ها در شاردچین دقیقاً همان پیشوند باینری را خواهند داشت (به عنوان مثال همه آدرس‌ها با `0b00101` شروع می‌شوند).
+There are two limiting cases: when the shard contains only one account (and thus cannot be split further) and when the shard contains all accounts.
+
+Accounts can interact with each other by sending messages.  A unique routing mechanism moves messages from outgoing queues to corresponding incoming queues and ensures:
+
+1. The delivery of all messages
+2. Consecutive delivery of messages — a message sent earlier will reach the destination earlier
+
+:::info SIDE NOTE
+An aggregation of AccountChains into shards is based on the bit-representation of account addresses to make splitting and merging deterministic. For example, an address looks like `(shard prefix, address)`. That way, all accounts in the ShardChain will have the same binary prefix (for instance, all addresses will start with `0b00101`).
 :::
 
-## بلاکچین
+## Blockchain
 
-تجمیع تمام شاردها که شامل همه حساب‌هایی است که با یک مجموعه از قوانین عمل می‌کنند، **بلاکچین** نامیده می‌شود.
+An aggregation of all shards, which contains all accounts behaving according to one set of rules, is called a Blockchain.
 
-در TON ممکن است مجموعه‌های زیادی از قوانین وجود داشته باشد و در نتیجه بلاکچین‌های زیادی که به‌طور همزمان عمل می‌کنند و می‌توانند با ارسال پیام به صورت زنجیره متقاطع به همان شیوه‌ای که حساب‌های یک زنجیره می‌توانند با هم داشته باشند، با یکدیگر تعامل کنند.
+In TON, there can be many sets of rules, and thus, many blockchains operate simultaneously and can interact with each other by sending messages cross-chain in the same way that accounts of one chain can interact with each other.
 
-### زنجیره کار: بلاکچین با قوانین اختصاصی خودتان
+### WorkChain: a blockchain with your own rules
 
-اگر می‌خواهید قوانین گروهی از شاردچین‌ها را سفارشی کنید، می‌توانید یک **Workchain** ایجاد کنید. یک مثال خوب ایجاد یک زنجیره کار است که بر اساس EVM کار کند تا قراردادهای هوشمند Solidity را بر روی آن اجرا شود.
+If you want to customize the rules of the ShardChains group, you could create a **WorkChain**. A good example is to make a workchain that works on the base of EVM to run Solidity smart contracts on it.
 
-به‌طور تئوری، همه افراد جامعه می‌توانند زنجیره کار خود را ایجاد کنند اما در واقع، این کار بسیار پیچیده‌ای است! پس از آنکه هزینه (گران) ایجاد آن را پرداخت کنید و 2/3 آرا از اعتبارسنج‌ها برای تأیید ایجاد زنجیره کار خود را دریافت کنید میتوانید بلاکچین با قوانین خودتان داشته باشید.
+Theoretically, everyone in the community can create their own WorkChain. Building it isn't very easy, and then you have to pay a high price and receive 2/3 of votes from validators to approve it.
 
-در TON این امکان وجود دارد تا حداکثر `2^32` زنجیره کار ایجاد شود، که هر یک به حداکثر `2^60` شارد تقسیم می‌شود.
+TON allows creating up to `2^32` workchains, subdivided into `2^60` shards.
 
-امروزه، فقط 2 زنجیره کار در TON وجود دارد: MasterChain و BaseChain.
+Nowadays, there are only two workchains in TON: MasterChain and BaseChain.
 
-BaseChain برای تراکنش‌های روزمره بین بازیگران استفاده می‌شود زیرا بسیار ارزان است، در حالی که MasterChain دارای یک عملکرد حیاتی برای TON است، پس بیایید کاری که انجام می دهد را پوشش دهیم!
+BaseChain is used for everyday transactions between actors because it's cheap, while MasterChain has a crucial function for TON.
 
-### MasterChain: بلاکچینی از بلاکچین‌ها
+### MasterChain: blockchain of blockchains
 
-نیاز به هماهنگی مسیریابی پیام‌ها و اجرای تراکنش‌ها وجود دارد. به عبارت دیگر، گره‌های شبکه نیاز دارند که راهی برای تثبیت برخی از 'نقاط' در وضعیت چند زنجیره‌ای پیدا کنند و به یک اجماع در مورد آن وضعیت برسند. در TON، یک زنجیره خاص به نام **MasterChain** برای این منظور استفاده می‌شود. بلوک‌های *MasterChain* شامل اطلاعات اضافی (آخرین هش بلوک‌ها) در مورد همه زنجیره‌های دیگر در سیستم هستند، بنابراین هر ناظری به‌طور واضح وضعیت همه سیستم‌های چند زنجیره‌ای را در یک بلوک MasterChain تعیین می‌کند.
+There is a necessity for the synchronization of message routing and transaction execution. In other words, nodes in the network need a way to fix some 'point' in a multichain state and reach a consensus about that state. In TON, a special chain called **MasterChain** is used for that purpose. Blocks of MasterChain contain additional information, like the latest block hashes, about all other chains in the system, thus any observer unambiguously determines the state of all multichain systems at a single MasterChain block.
+
+## See also
+
+- [Smart contract addresses](/v3/concepts/dive-into-ton/ton-blockchain/smart-contract-addresses/)
+
+<Feedback />
+

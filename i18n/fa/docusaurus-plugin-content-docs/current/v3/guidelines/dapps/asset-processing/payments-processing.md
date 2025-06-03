@@ -1,53 +1,55 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# پردازش پرداخت‌ها
+# Payments processing
 
-این صفحه **نحوه پردازش** (ارسال و پذیرش) `digital assets` در بلاکچین TON را توضیح می‌دهد. این عمدتاً نحوه کار با `تونکوین‌ها` را توصیف می‌کند، اما **بخش تئوری** حتی اگر بخواهید فقط با `Jettonها` کار کنید، **مهم** است.
+This page **explains how to process** (send and accept) digital assets on TON Blockchain. While it primarily focuses on handling TON coins, the **theoretical concepts** are also relevant for processing `jettons`.
 
 :::tip
-پیشنهاد می‌شود قبل از مطالعه این آموزش با [بررسی اجمالی پردازش دارایی](/v3/documentation/dapps/assets/overview) آشنا شوید.
+It's recommended to review the [Asset processing overview](/v3/documentation/dapps/assets/overview) before reading this tutorial.
 :::
 
 ## قرارداد هوشمند کیف پول
 
-قراردادهای هوشمند کیف پول در شبکه TON به بازیگران خارجی اجازه می‌دهد با نهادهای بلاکچین تعامل داشته باشند.
+Wallet smart contracts on the TON Network allow external actors to interact with blockchain entities. They serve the following purposes:
 
-- مالک را تأیید می‌کند: درخواست‌هایی که سعی در پردازش یا پرداخت هزینه‌ها به نمایندگی از غیر مالکان دارند را رد می‌کند.
-- محافظت در برابر اجرای مجدد: از اجرای مکرر همان درخواست جلوگیری می‌کند، مانند ارسال دارایی به قرارداد هوشمند دیگر.
-- تعاملات دلخواه با قراردادهای هوشمند دیگر را آغاز می‌کند.
+- Authenticating the owner: Rejects requests that attempt to process transactions or pay fees on behalf of unauthorized users.
+- Providing replay protection: Prevents the repeated execution of the same request, such as sending assets to another smart contract multiple times.
+- Initiating arbitrary interactions with other smart contracts.
 
-راه‌حل استاندارد برای اولین چالش، رمزنگاری با کلید عمومی است: `wallet` کلید عمومی را ذخیره می‌کند و بررسی می‌کند که آیا پیام ورودی دارای درخواست، توسط کلید خصوصی مربوطه که فقط صاحب آن می‌داند، امضا شده است.
+The standard solution for authentication relies on public-key cryptography. The `wallet` stores the public key and verifies that any incoming request is signed by the corresponding private key, which is known only to the owner.
 
-راه‌حل چالش سوم نیز رایج است؛ به‌طور کلی، درخواست شامل یک پیام داخلی کاملاً شکل‌گرفته است که توسط `wallet` به شبکه ارسال می‌شود. با این حال، برای محافظت در برابر اجرای مجدد، رویکردهای مختلفی وجود دارد.
+The solution for replay protection varies. Generally, a request contains a fully formed inner message that the `wallet` sends to the network. However, different approaches exist for preventing replay attacks.
 
 ### کیف پول‌های مبتنی بر Seqno
 
-کیف‌پول‌های مبتنی بر Seqno از ساده‌ترین روش برای ترتیب‌بندی پیام‌ها استفاده می‌کنند. هر پیام دارای یک عدد صحیح ویژه `seqno` است که باید با شمارنده ذخیره‌شده در قرارداد هوشمند `wallet` همخوانی داشته باشد. `wallet` شمارنده خود را در هر درخواست به‌روزرسانی می‌کند و بدین ترتیب اطمینان حاصل می‌شود که یک درخواست دوبار پردازش نمی‌شود. چند نسخه `wallet` وجود دارد که در روش‌های عمومی متفاوت هستند: توانایی محدود کردن درخواست‌ها براساس زمان انقضا و قابلیت داشتن چندین کیف‌پول با همان کلید عمومی. با این حال، الزام ذاتی این روش ارسال درخواست‌ها به طور یکی‌یکی است، زیرا هر شکافی در دنباله `seqno` منجر به عدم توانایی در پردازش همه درخواست‌های بعدی می‌شود.
+Seqno-based wallets use a simple `seqno` method to process messages. Each message includes a special seqno integer that must match the counter stored in the wallet smart contract. The `wallet` updates this counter with each request, ensuring that no request is processed twice. There are multiple versions of seqno-based wallets, which may differ in publicly available methods. These variations include: the ability to limit requests by expiration time and the ability to operate multiple wallets with the same public key. However, this approach has a limitation: requests must be sent sequentially. Any gap in the `seqno` sequence will prevent the processing of all subsequent requests.
 
 ### کیف پول‌های با بار بالا
 
-این نوع `wallet` از رویکردی بر اساس ذخیره شناسه درخواست‌های پردازش‌شده و غیرمنقضی در ذخیره‌سازی قرارداد هوشمند پیروی می‌کند. در این روش، هر درخواست بررسی می‌شود تا در صورت مطابقت آن با درخواست‌هايی که قبلاً پردازش شده‌اند، حذف شود. به دلیل انقضاء، قرارداد نمی‌تواند تمامی درخواست‌ها را برای همیشه ذخیره کند، اما آنهایی که به دلیل محدودیت زمان انقضاء قابل پردازش نیستند، حذف می‌شوند. درخواست‌ها به این `wallet` می‌توانند بدون تداخل به صورت موازی ارسال شوند، اما این روش نیاز به نظارت پیشرفته‌تری برای پردازش درخواست‌ها دارد.
+High-load wallets take a different approach by storing the identifiers of non-expired processed requests in the smart contract’s storage. Each new request is checked against previously processed ones, and any detected duplicates are dropped. Since expired requests are removed over time, the contract does not store all requests indefinitely. This method allows multiple requests to be processed in parallel without interference. However, it requires more sophisticated monitoring to track request processing.
 
 ### استقرار کیف پول
 
-برای استقرار یک کیف‌پول از طریق TonLib، باید:
+To deploy a wallet via TonLib, follow these steps:
 
-1. یک جفت کلید خصوصی/عمومی را از طریق [createNewKey](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L244) یا توابع پوشش آن (مثال در [tonlib-go](https://github.com/mercuryoio/tonlib-go/tree/master/v2#create-new-private-key)) ایجاد کنید. توجه داشته باشید که کلید خصوصی به صورت محلی تولید می‌شود و دستگاه میزبان را ترک نمی‌کند.
-2. ساختار [InitialAccountWallet](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L62) مورد نظر را مطابق با یکی از `wallet`های فعال تشکیل دهید. در حال حاضر `wallet.v3`، `wallet.v4`، `wallet.highload.v1`، `wallet.highload.v2` قابل استفاده هستند.
-3. آدرس یک قرارداد هوشمند جدید `wallet` را از طریق متد [getAccountAddress](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L283) محاسبه کنید. توصیه می‌کنیم از ویرایش پیش‌فرض `0` استفاده کنید و همچنین کیف پول‌ها را در زنجیره اصلی `workchain=0`، برای کاهش هزینه‌های پردازش و ذخیره‌سازی، استقرار دهید.
-4. مقداری تونکوین به آدرس محاسبه‌شده ارسال کنید. توجه داشته باشید که باید آن‌ها را در حالت `non-bounce` ارسال کنید، چرا که این آدرس هنوز هیچ کدی ندارد و نمی‌تواند پیام‌های ورودی را پردازش کند. نشانگر `non-bounce` نشان می‌دهد که حتی اگر پردازش شکست بخورد، پول نباید با پیام بازگشت داده شود. توصیه نمی‌کنیم که از نشانگر `non-bounce` برای تراکنش‌های دیگر، به‌ویژه هنگام حمل مبالغ بزرگ، استفاده کنید، چون مکانیزم بازگشت در برابر اشتباهات تا حدودی محافظت می‌کند.
-5. [اقدام](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L154) مورد نظر را شکل دهید، بعنوان مثال برای فقط استقرار از `actionNoop` استفاده کنید. سپس از [createQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L292) و [sendQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L300) برای شروع تعامل با بلاکچین استفاده کنید.
-6. قرارداد را چند ثانیه بعد با متد [getAccountState](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L288) بررسی کنید.
+1. Generate a private/public key pair using [createNewKey](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L244) or its wrapper functions (example in [tonlib-go](https://github.com/mercuryoio/tonlib-go/tree/master/v2#create-new-private-key)). The private key is generated locally and never leaves the host machine.
+2. Form [InitialAccountWallet](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L62) structure corresponding to one of the available wallet versions. Currently, the supported `wallets` are: `wallet.v3`, `wallet.v4`, `wallet.highload.v1`, `wallet.highload.v2` are available.
+3. Calculate the address of the new `wallet` smart contract using the [getAccountAddress](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L283) method. It is recommended to use revision 0 by default. Deploy wallets in the basechain `workchain=0`     to minimize processing and storage fees.
+4. Send some Toncoin to the calculated address. The transfer should be made in `non-bounce` mode since the wallet address has no code yet and cannot process incoming messages. The `non-bounce` flag ensures that if processing fails, the funds are not returned via a bounce message. Warning: Avoid using the non-bounce flag for other transactions, especially when transferring large sums, as the bounce mechanism provides protection against mistakes.
+5. Form the desired [action](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L154), such as `actionNoop` for deploy only. Then use [createQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L292) and [sendQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L300) to initiate interactions with the blockchain.
+6. Check the contract’s status after a few seconds using the [getAccountState](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L288) method.
 
 :::tip
-مطالعه بیشتر در [آموزش کیف پول](/v3/guidelines/smart-contracts/howto/wallet#-deploying-a-wallet)
+Read more on the [Wallet tutorial](/v3/guidelines/smart-contracts/howto/wallet#-deploying-a-wallet).
 :::
 
-### اعتبار آدرس کیف پول را بررسی کنید
+### Checking wallet address validity
 
-بیشتر SDK ها شما را مجبور به تأیید آدرس می کنند (بیشتر آنها در طول فرآیند ایجاد کیف پول یا آماده‌سازی تراکنش آن را تأیید می کنند)، بنابراین معمولاً نیازی به مراحل پیچیده اضافی از جانب شما ندارد.
+Most SDKs automatically verify a wallet address during creation or transaction preparation, so additional manual validation is usually unnecessary.
 
 <Tabs groupId="address-examples">
 
@@ -100,23 +102,27 @@ try {
 </Tabs>
 
 :::tip
-توضیحات کامل آدرس در صفحه [آدرس‌های قرارداد هوشمند](/v3/documentation/smart-contracts/addresses).
+Full Address description on the [Smart contract addresses](/v3/documentation/smart-contracts/addresses) page.
 :::
 
-## کار با انتقالات
+## Working with transfers
 
 ### تراکنش‌های یک قرارداد را بررسی کنید
 
-تراکنش‌های قرارداد با استفاده از [getTransactions](https://toncenter.com/api/v2/#/accounts/get_transactions_getTransactions_get) قابل دسترسی هستند. این روش به شما امکان می‌دهد ۱۰ تراکنش از `last_transaction_id` و قبلتر دریافت کنید. برای پردازش تمام تراکنش‌های ورودی، مراحل زیر باید دنبال شوند:
+To retrieve a smart contract's transactions, use the [getTransactions](https://toncenter.com/api/v2/#/accounts/get_transactions_getTransactions_get). method. This method fetches up to 10 transactions starting from a specified `last_transaction_id` and earlier. To process all incoming transactions, follow these steps:
 
-1. آخرین `last_transaction_id` را می‌توان با استفاده از [getAddressInformation](https://toncenter.com/api/v2/#/accounts/get_address_information_getAddressInformation_get) به دست آورد
-2. فهرست ۱۰ تراکنش باید از طریق متد `getTransactions` بارگذاری شود.
-3. تراکنش‌ها را با مبدا غیر خالی در پیام ورودی پردازش کنید و مقصد برابر با آدرس حساب باشد.
-4. ۱۰ تراکنش بعدی باید بارگذاری شوند و مراحل ۲،۳،۴،۵ تکرار شوند تا زمانیکه شما همه تراکنش‌های ورودی را پردازش کنید.
+1. Obtain the latest `last_transaction_id` using [getAddressInformation](https://toncenter.com/api/v2/#/accounts/get_address_information_getAddressInformation_get)
+2. Load 10 transactions using the `getTransactions` method.
+3. Process transactions where the source field in the incoming message is not empty and the destination field matches the account address.
+4. Retrieve the next 10 transactions and repeat steps 2 and 3 until all incoming transactions are processed.
 
-### بازیابی تراکنش‌های ورودی/خروجی
+### Retrieve incoming/outgoing transactions
 
-در طول پردازش تراکنش، می‌توان جریان پیام‌ها را ردیابی کرد. از آنجا که جریان پیام یک DAG است، کافی است با استفاده از متد [getTransactions](https://toncenter.com/api/v2/#/transactions/get_transactions_getTransactions_get) تراکنش جاری را دریافت کنید و تراکنش ورودی را با استفاده از `out_msg` از [tryLocateResultTx](https://testnet.toncenter.com/api/v2/#/transactions/get_try_locate_result_tx_tryLocateResultTx_get) یا تراکنش‌های خروجی را با `in_msg` از [tryLocateSourceTx](https://testnet.toncenter.com/api/v2/#/transactions/get_try_locate_source_tx_tryLocateSourceTx_get) بیابید.
+It is possible to track message flows during transaction processing. Since the message flow forms a DAG (Directed Acyclic Graph), follow these steps:
+
+1. Use the [getTransactions](https://toncenter.com/api/v2/#/transactions/get_transactions_getTransactions_get) to obtain the current transaction.
+2. Identify incoming transactions by checking out_msg with [tryLocateResultTx](https://testnet.toncenter.com/api/v2/#/transactions/get_try_locate_result_tx_tryLocateResultTx_get).
+3. Identify outgoing transactions by checking in_msg with [tryLocateSourceTx](https://testnet.toncenter.com/api/v2/#/transactions/get_try_locate_source_tx_tryLocateSourceTx_get).
 
 <Tabs groupId="example-outgoing-transaction">
 <TabItem value="JS" label="JS">
@@ -178,73 +184,73 @@ main();
 ### ارسال پرداخت‌ها
 
 :::tip
-یادگیری از نمونه پایه‌ای پردازش پرداخت‌ها از [TMA USDT Payments demo](https://github.com/ton-community/tma-usdt-payments-demo)
+Learn the basics of payment processing from the [TMA USDT Payments demo](https://github.com/ton-community/tma-usdt-payments-demo)
 :::
 
-1. سرویس باید یک `wallet` ایجاد کند و آن را تأمین مالی کند تا از تخریب قرارداد به دلیل هزینه‌های ذخیره‌سازی جلوگیری شود. توجه داشته باشید که هزینه‌های ذخیره‌سازی عموماً کمتر از ۱ تونکوین در سال است.
-2. سرویس باید از کاربر `destination_address` و `comment` اختیاری را بگیرد. توجه داشته باشید که در حال حاضر، پیشنهاد می‌کنیم یا پرداخت‌های خروجی ناتمام با همان مفدار (`destination_address`, `value`, `comment`) را ممنوع کنید یا برنامه‌ریزی مناسب برای این پرداخت‌ها انجام دهید؛ در این صورت، پرداخت بعدی فقط پس از تأیید پرداخت قبلی آغاز می‌شود.
-3. [msg.dataText](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L103) را با `comment` به عنوان متن تشکیل دهید.
-4. [msg.message](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L113) را که شامل `destination_address`، `public_key` خالی، `amount` و `msg.dataText` می‌باشد، تشکیل دهید.
-5. [Action](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L154) را که شامل یک سری پیام‌های خروجی است، تشکیل دهید.
-6. برای ارسال پرداخت‌های خروجی از کوئری‌های [createQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L292) و [sendQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L300) استفاده کنید.
-7. سرویس باید به طور منظم متد [getTransactions](https://toncenter.com/api/v2/#/transactions/get_transactions_getTransactions_get) را برای قرارداد `wallet` اجرا کند. تطبیق تراکنش‌های تأیید شده با پرداخت‌های خروجی بر اساس (`destination_address`, `value`, `comment`) اجازه می‌دهد پرداخت‌ها به عنوان کامل شده علامت‌گذاری شوند؛ هش تراکنش و lt (زمان منطقی) مربوطه را شناسایی و به کاربر نشان دهید.
-8. درخواست‌های به `v3` کیف پول‌های `high-load` به طور پیش‌فرض دارای زمان انقضای ۶۰ ثانیه هستند. پس از این زمان، درخواست‌های پردازش نشده می‌توانند به طور امن به شبکه مجدداً ارسال شوند (به مراحل ۳ تا ۶ مراجعه کنید).
+1. The service must deploy a `wallet` and keep it funded to prevent contract destruction due to storage fees. Storage fees are typically less than 1 Toncoin per year.
+2. The service should collect the `destination_address` and an optional `comment` from the user. To avoid duplicate outgoing payments with the same (`destination_address`, `value`, `comment`), either prohibit unfinished payments with identical parameters or schedule payments so that a new payment starts only after the previous one is confirmed.
+3. Create [msg.dataText](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L103) with `comment` as text.
+4. Create [msg.message](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L113) which includes `destination_address`, empty `public_key`, `amount`, and `msg.dataText`.
+5. Create the [Action](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L154) that should contain a set of outgoing messages.
+6. Use [createQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L292) and [sendQuery](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L300) to submit the payment to the blockchain.
+7. The service should regularly poll the [getTransactions](https://toncenter.com/api/v2/#/transactions/get_transactions_getTransactions_get) method of the `wallet` contract. By matching confirmed transactions with outgoing payments (`destination_address`, `value`, `comment`) the service can mark payments as finished and retrieve and display the transaction hash and logical time (lt) to the user.
+8. Requests sent to `v3` of `high-load` have a 60-second expiration time by default. After expiration, unprocessed requests can be safely resent following steps 3-6.
 
 :::caution
-اگر `value` پیوست شده بسیار کوچک باشد، تراکنش ممکن است با خطای `cskip_no_gas` متوقف شود. در این صورت، تونکوین‌ها با موفقیت منتقل خواهند شد اما هیچ منطقی در طرف دیگر اجرا نمی‌شود (حتی TVM راه‌اندازی نمی‌شود). درباره محدودیت‌های گس می‌توانید بیشتر [اینجا](/v3/documentation/network/configs/blockchain-configs#param-20-and-21) بخوانید.
+If the attached `value` is too small, the transaction may fail with the error `cskip_no_gas`. n this case, Toncoins will be transferred, but no logic will be executed on the recipient's side (the TVM will not launch). Read more [here](/v3/documentation/network/configs/blockchain-configs#param-20-and-21).
 :::
 
-### دریافت شناسه تراکنش
+### Get the transaction ID
 
-ممکن است نامشخص باشد که برای دریافت اطلاعات بیشتر در مورد تراکنش، کاربر باید بلاکچین را از طریق تابع [getTransactions](https://toncenter.com/api/v2/#/transactions/get_transactions_getTransactions_get) اسکن کند.
-کسب شناسه تراکنش بلافاصله پس از ارسال پیام غیرممکن است، زیرا تراکنش ابتدا باید توسط شبکه بلاکچین تأیید شود.
-برای درک فرآیند مورد نیاز، [ارسال پرداخت‌ها](/v3/guidelines/dapps/asset-processing/payments-processing/#send-payments) را با دقت مطالعه کنید، به ویژه بند ۷.
+It may be confusing that to get more information about a transaction, the user must scan the blockchain via the [getTransactions](https://toncenter.com/api/v2/#/transactions/get_transactions_getTransactions_get) function.
+It is not possible to get the transaction ID immediately after sending the message, as the transaction must first be confirmed by the blockchain network.
+To understand the required pipeline, carefully read [Send payments](/v3/guidelines/dapps/asset-processing/payments-processing/#send-payments), especially the 7th point.
 
 ## رویکرد مبتنی بر فاکتور
 
-برای پذیرش پرداخت‌ها بر اساس نظرات پیوست، سرویس باید
+To accept payments based on attached comments, the service should:
 
 1. قرارداد `wallet` را مستقر کند.
-2. یک `invoice` منحصر به فرد برای هر کاربر تولید کند. ارائه رشته‌ای uuid32 کافی است.
-3. باید به کاربران دستور داده شود که تونکوین را به قرارداد `wallet` سرویس با پیوست `invoice` به عنوان نظر بفرستند.
+2. Generate a unique `invoice` for each user. A uuid32 string is sufficient for invoice identification.
+3. Users should send payments to the service’s `wallet` contract with the `invoice` as a comment.
 4. سرویس باید به طور منظم متد [getTransactions](https://toncenter.com/api/v2/#/transactions/get_transactions_getTransactions_get) را برای قرارداد `wallet` اجرا کند.
-5. برای تراکنش‌های جدید، پیام ورودی باید استخراج شود، `comment` با پایگاه داده تطبیق داده شود و **مقدار پیام ورودی** به حساب کاربر واریز شود.
+5. For each new transaction extract the incoming message, match the comment against stored invoice data, and deposit the Toncoin value into the user's account.
 
-برای محاسبه **مقدار پیام ورودی** که پیام به قرارداد می‌آورد، لازم است که تراکنش تجزیه شود. این امر زمانی اتفاق می‌افتد که پیام به قرارداد برخورد کند. تراکنش را می‌توان با استفاده از [getTransactions](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L268) بدست آورد. برای یک تراکنش کیف پول ورودی، داده صحیح شامل یک پیام ورودی و صفر پیام خروجی است. در غیر این صورت، یا یک پیام خارجی به کیف پول ارسال می‌شود که در آن صورت مالک تونکوین مصرف می‌کند، یا کیف پول مستقر نمی‌شود و تراکنش ورودی بازگشت داده می‌شود.
+To calculate the **incoming message value** that a message brings to a contract, we need to analyze the transaction. This happens when a message enters the contract. The transaction can be retrieved using [getTransactions](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L268). For an incoming wallet transaction, the correct data consists of one incoming message and zero outgoing messages. Otherwise, either an outgoing message is sent to the wallet, in which case the owner spends the Toncoin, or the wallet is not deployed and the incoming transaction is returned.
 
-به طور کلی، مبلغی که یک پیام به قرارداد می‌برد را می‌توان به صورت مقدار پیام ورودی منهای مجموع مقادیر پیام‌های خروجی منهای کارمزد محاسبه کرد: `value_{in_msg} - SUM(value_{out_msg}) - fee`. به طور تکنیکی، نمایش تراکنش شامل سه فیلد متفاوت با `fee` در نام آنهاست: `fee`، `storage_fee` و `other_fee`، یعنی کارمزد کل، بخشی از کارمزد مرتبط با هزینه‌های ذخیره سازی و بخشی از کارمزد مرتبط با پردازش تراکنش. فقط باید از اولین استفاده شود.
+In any case, in general, the amount a message brings to a contract can be calculated as the incoming message value minus the sum of the outgoing message values ​​minus the fee: `value_{in_msg} - SUM(value_{out_msg}) - fee`. Technically, the transaction view contains three different fields with `fee` in the name: `fee`, `storage_fee` and `other_fee`, i.e. the total fee, the portion of the fee related to storage costs, and the portion of the fee related to processing the transaction. Only the first one should be used.
 
 ### صورتحساب‌ها با TON Connect
 
-بهترین گزینه برای DAppsهایی که نیاز به امضای چندین پرداخت/تراکنش در یک سشن دارند یا به حفظ اتصال به کیف پول برای مدت زمانی نیاز دارند.
+Best for dApps that require multiple transactions within a session or a persistent wallet connection.
 
-- ✅ یک کانال ارتباطی دائمی با کیف پول وجود دارد، اطلاعات مربوط به آدرس کاربر
+**Advantages**
 
-- ✅ کاربران فقط نیاز به اسکن یک بار کد QR دارند
+- ✅ Permanent communication channel with the wallet.
+- ✅ Users only scan a QR code once.
+- ✅ Can track transaction confirmation via the returned BOC.
+- ✅ Ready-made SDKs and UI kits for various platforms.
 
-- ✅ این امکان دارد که بدانیم آیا کاربر تراکنش را در کیف پول تایید کرده است، تراکنش را از طریق BOC برگشتی پیگیری کنید
+**Disadvantages**
 
-- ✅ SDK‌های آماده و کیت‌های رابط کاربری برای پلتفرم‌های مختلف موجود هستند
-
-- ❌ اگر فقط نیاز به ارسال یک پرداخت دارید، کاربر باید دو اقدام انجام دهد: اتصال کیف پول و تایید تراکنش
-
-- ❌ پیاده‌سازی پیچیده‌تر از لینک ton:// است
+- ❌ If only one payment is needed, users must connect the wallet and confirm the transaction
+- ❌ More complex integration than a ton:// link.
 
 <Button href="/v3/guidelines/ton-connect/overview/"
 colorType="primary" sizeType={'lg'}>
 
-بیشتر بدانید
+Learn more
 
 </Button>
 
 ### صورتحساب‌ها با لینک ton://
 
 :::warning
-لینک Ton منسوخ شده است، از استفاده از این پرهیز کنید
+The Ton link is deprecated. Avoid using it.
 :::
 
-اگر به یک پیاده‌سازی ساده برای یک جریان ساده کاربری نیاز دارید، استفاده از لینک ton:// مناسب است.
-بهترین گزینه برای پرداخت‌های یکباره و صورتحساب‌ها است.
+If you need an easy integration for a simple user flow, it is suitable to use the ton:// link.
+It is best suited for one-time payments and invoices.
 
 ```bash
 ton://transfer/<destination-address>?
@@ -253,25 +259,25 @@ ton://transfer/<destination-address>?
     [forward-amount=<nanocoins>] 
 ```
 
-- ✅ پیاده‌سازی آسان
+**Advantages**
 
-- ✅ نیازی به اتصال کیف پول ندارد
+- ✅ Easy integration.
+- ✅ No need to connect a wallet.
 
-- ❌ کاربران برای هر پرداخت نیاز به اسکن یک کد QR جدید دارند
+**Disadvantages**
 
-- ❌ امکان پیگیری این که کاربر تراکنش را امضا کرده یا نه وجود ندارد
+- ❌ Users must scan a new QR code for each payment.
+- ❌ Cannot track if the user signed the transaction.
+- ❌ No information about the user’s address.
+- ❌ Requires workarounds for platforms where links are not clickable (e.g., Telegram Desktop bots).
 
-- ❌ هیچ اطلاعاتی در مورد آدرس کاربر وجود ندارد
-
-- ❌ در پلتفرم‌هایی که چنین لینک‌هایی قابل کلیک نیستند (مثلاً پیام‌های از ربات‌ها برای کلاینت‌های دسکتاپ تلگرام)، نیاز به راه‌حل‌های جایگزین می‌باشد
-
-[اینجا بیشتر درباره لینک‌های ton بیاموزید](https://github.com/tonkeeper/wallet-api#payment-urls)
+[Learn more about TON links here](https://github.com/tonkeeper/wallet-api#payment-urls).
 
 ## کاوشگرها
 
-کاوشگر بلاکچین https://tonscan.org است.
+The official TON blockchain explorer: https://tonscan.org.
 
-برای تولید یک لینک تراکنش در کاوشگر، سرویس نیاز دارد تا lt (زمان منطقی)، هش تراکنش و آدرس حساب را به دست آورد ( آدرس حسابی که از طریق متد [getTransactions](https://toncenter.com/api/v2/#/transactions/get_transactions_getTransactions_get) برای آن  lt و txhash دریافت شده است). سپس https://tonscan.org و https://explorer.toncoin.org/ می‌توانند صفحه برای آن tx را به فرمت زیر نشان دهند:
+To generate a transaction link in the explorer, the service needs to get the lt (logical time), the transaction hash, and the account address (the address of the account for which the lt and txhash were obtained using the [getTransactions](https://toncenter.com/api/v2/#/transactions/get_transactions_getTransactions_get) method). Then https://tonscan.org and https://explorer.toncoin.org/ can display the page for this transaction in the following format:
 
 `https://tonviewer.com/transaction/{txhash as base64url}`
 
@@ -279,13 +285,11 @@ ton://transfer/<destination-address>?
 
 `https://explorer.toncoin.org/transaction?account={account address}&lt={lt as int}&hash={txhash as base64url}`
 
-توجه داشته باشید که tonviewer و tonscan به جای هش تراکنش برای لینک در اکسپلورر، از هش پیام خارجی پشتیبانی می‌کنند.
-این می‌تواند زمانی مفید باشد که می‌خواهید پیام خارجی تولید کرده و فوراً لینک تولید کنید.
-اطلاعات بیشتر درباره تراکنش‌ها و هش پیام‌ها در [اینجا](/v3/guidelines/dapps/cookbook#how-to-find-transaction-or-message-hash) بخوانید.
+Note: tonviewer and tonscan also support external-in message hashes instead of transaction hashes for explorer links. This is useful when generating an external message and needing an instant transaction link. Learn more about transactions and messages hashes [here](/v3/guidelines/dapps/cookbook#how-to-find-transaction-or-message-hash).
 
-## بهترین تمرین‌ها
+## Best practices
 
-### ایجاد کیف پول
+### Wallet creation
 
 <Tabs groupId="example-create_wallet">
 <TabItem value="JS" label="JS">
@@ -336,16 +340,16 @@ if __name__ == "__main__":
 
 </Tabs>
 
-### ایجاد کیف پول برای شاردهای مختلف
+### Wallet creation for different shards
 
-هنگامی که بار زیادی وجود دارد، بلاکچین TON ممکن است به [شاردها](/v3/documentation/smart-contracts/shards/shards-intro) تقسیم شود. یک تشبیه ساده برای شارد در دنیای Web3 می‌تواند یک بخش شبکه باشد.
+When under heavy load, TON Blockchain may split into [shards](/v3/documentation/smart-contracts/shards/shards-intro)to distribute network activity. A shard is similar to a network segment in Web3.
 
-درست همانطور که ما زیرساخت‌های سرویس را در دنیای Web2 توزیع می‌کنیم تا به کاربر نهایی نزدیک‌تر باشیم، در TON، ما می‌توانیم قراردادها را در همان شاردی که کیف پول کاربر یا هر قراردادی که با آن تعامل دارد، قرار دهیم.
+Just as we distribute service infrastructure in the Web2 world to be as close to the end user as possible, in TON we can deploy contracts that will reside in the same shard as the user's wallet or any other contract that interacts with it.
 
-برای مثال، یک DApp که از کاربران برای سرویس آیردراپ آینده‌ هزینه می‌گیرد، ممکن است کیف پول‌های جداگانه‌ای برای هر شارد آماده کند تا تجربه کاربری در روزهای اوج بارگذاری بهبود یابد. برای رسیدن به بالاترین سرعت پردازش، باید یک کیف پول جمع‌آوری‌کننده برای هر شارد مستقر کنید.
+For example, a DApp that collects fees from users for a future airdrop service could prepare separate wallets for each shard to improve the user experience during peak load days. To achieve maximum processing speed, you would need to deploy one collector wallet per shard.
 
-پیشوند شارد `SHARD_INDEX` یک قرارداد با اولین ۴ بیت از هش آدرس آن تعریف می‌شود.
-برای مستقر کردن کیف پول در شارد خاص، می‌توانید از منطق مبتنی بر قطعه کد زیر استفاده کنید:
+The shard prefix `SHARD_INDEX` of a contract is determined by the first 4 bits of its address hash.
+To deploy a wallet to a specific shard, you can use logic based on the following code snippet:
 
 ```javascript
 
@@ -378,17 +382,17 @@ run();
 
 ```
 
-در مورد قرارداد کیف پول، ممکن است از `subwalletId` به جای mnemonic استفاده شود، اما `subwalletId` توسط [اپلیکیشن‌های کیف پول](https://ton.org/wallets) پشتیبانی نمی‌شود.
+In the case of a wallet contract, `subwalletId` can be used instead of a mnemonic, however `subwalletId` is not supported by [wallet applications](https://ton.org/wallets).
 
-پس از تکمیل استقرار، می‌توانید با الگوریتم زیر پردازش را ادامه دهید:
+Once deployment is complete, you can begin processing using the following algorithm:
 
-1. کاربر به صفحه DApp می‌رود و درخواست اقدام می‌کند.
-2. DApp نزدیک‌ترین کیف پول به کاربر را انتخاب می‌کند (با مقایسه پیشوند ۴ بیتی)
-3. DApp به کاربر payloadی ارائه می‌دهد که هزینه او را به کیف پول انتخاب شده می‌فرستد.
+1. User visits the DApp and requests an action.
+2. The DApp chooses the closest wallet (matching by 4-bit shard prefix).
+3. The DApp generates a payload for sending fees to the selected wallet.
 
-به این ترتیب شما خواهید توانست بهترین تجربه کاربری ممکن را بدون توجه به بار کنونی شبکه ارائه دهید.
+This way, you can provide the best user experience regardless of the current network load.
 
-### سپرده‌های تونکوین‌ (دریافت تونکوین‌ها)
+### Toncoin deposits (get Toncoins)
 
 <Tabs groupId="example-toncoin_deposit">
 <TabItem value="JS" label="JS">
@@ -558,7 +562,7 @@ if __name__ == "__main__":
 </TabItem>
 </Tabs>
 
-### برداشت تونکوین‌ (ارسال تونکوین‌ها)
+### Toncoin withdrawals (send Toncoins)
 
 <Tabs groupId="example-toncoin_withdrawals">
 <TabItem value="JS" label="JS">
@@ -643,3 +647,6 @@ if __name__ == "__main__":
 ## SDKها
 
 لیست کامل SDKها برای زبان‌های برنامه‌نویسی مختلف (JS، Python، Golang و غیره) [اینجا](/v3/guidelines/dapps/apis-sdks/sdk) در دسترس است.
+
+<Feedback />
+

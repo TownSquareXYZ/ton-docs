@@ -1,9 +1,10 @@
-# 추가 화폐 발행
+import Feedback from '@site/src/components/Feedback';
+
+# Extra currency minting
 
 ## 추가 화폐
 
-[Ton 블록체인 백서 3.1.6](https://ton-blockchain.github.io/docs/tblkch.pdf#page=55)에 따르면, TON 블록체인은 사용자가 특정 조건을 충족하는 경우 Toncoin 외에 임의의 암호화폐나 토큰을 정의할 수 있게 합니다. 이러한 추가 화폐는 32비트 _currency_ids_로 식별됩니다. 정의된 추가 화폐 목록은 마스터체인에 저장된 블록체인 설정의 일부입니다.
-각 내부 메시지와 계정 잔액은 `ExtraCurrencyCollection`(메시지에 첨부되거나 잔액에 보관된 추가 화폐 세트)을 위한 특별한 필드를 포함합니다:
+According to [TON Blockchain Whitepaper 3.1.6](https://ton-blockchain.github.io/docs/tblkch.pdf#page=55), the TON Blockchain allows users to create arbitrary cryptocurrencies or tokens, in addition to the Toncoin, provided certain conditions are met. These additional cryptocurrencies are identified by 32-bit **currency\_ids**. The list of these defined cryptocurrencies is a part of the blockchain configuration stored in the MasterChain. Each internal message and account balance includes a special field for `ExtraCurrencyCollection`, which is a set of extracurrencies attached to a message or maintained in a balance:
 
 ```tlb
 extra_currencies$_ dict:(HashmapE 32 (VarUInteger 32)) = ExtraCurrencyCollection;
@@ -12,47 +13,62 @@ currencies$_ grams:Grams other:ExtraCurrencyCollection = CurrencyCollection;
 
 ## 추가 화폐 설정
 
-발행되어야 할 모든 화폐의 딕셔너리, 정확히는 `ExtraCurrencyCollection`이 `ConfigParam7`에 저장됩니다:
+A dictionary, specifically `ExtraCurrencyCollection`, containing all currencies to be minted is stored in `ConfigParam7`:
 
 ```tlb
 _ to_mint:ExtraCurrencyCollection = ConfigParam 7;
 ```
 
-`ConfigParam 6`은 발행과 관련된 데이터를 포함합니다:
+`ConfigParam 6` contains data related to the minting:
 
 ```tlb
 _ mint_new_price:Grams mint_add_price:Grams = ConfigParam 6;
 ```
 
-`ConfigParam2`는 *발행자* 주소를 포함합니다.
+`ConfigParam2` contains the address of  **minter**.
 
 ## 저수준 발행 흐름
 
-각 블록에서 콜레이터는 이전 블록 끝의 모든 화폐의 글로벌 잔액(구 글로벌 잔액)과 `ConfigParam7`을 비교합니다. `ConfigParam7`의 어떤 화폐의 금액이 글로벌 잔액보다 적으면 설정이 유효하지 않습니다. `ConfigParam7`의 어떤 화폐의 금액이 글로벌 잔액보다 높으면 발행 메시지가 생성됩니다.
+In each block, the collator compares the old global balance (the global balance of all currencies at the end of the previous block) with `ConfigParam7`. If any amount for any currency in `ConfigParam7` is less than it is in the global balance, the config is invalid. If any amount of any currency in `ConfigParam7` is higher than it is in the global balance, a minting message will be created.
 
-이 발행 메시지는 소스가 `-1:0000000000000000000000000000000000000000000000000000000000000000`이고 `ConfigParam2`의 _발행자_가 대상이며 구 글로벌 잔액을 초과하는 `ConfigParam7`의 추가 화폐를 포함합니다.
+This minting message has source `-1:0000000000000000000000000000000000000000000000000000000000000000` and **minter** from `ConfigParam2` as destination and contains excesses of extracurrencies in `ConfigParam7` over the old global balance.
 
-여기서 문제는 발행 메시지가 추가 화폐만 포함하고 TON 코인은 포함하지 않는다는 점입니다. 즉, _발행자_가 기본 스마트 컨트랙트(`ConfigParam31`에 있음)로 설정되어 있더라도 발행 메시지는 중단된 트랜잭션을 발생시킵니다: `compute_ph:(tr_phase_compute_skipped reason:cskip_no_gas)`.
+The problem here is that the minting message includes only additional currencies and no Toncoins.  As a result, even if the **Minter** is designated as a fundamental smart contract (as indicated in `ConfigParam31`), a minting message will lead to an aborted transaction with the error: `compute_ph:(tr_phase_compute_skipped reason:cskip_no_gas)`.
 
 ## 고수준 발행 흐름
 
-*발행자* 스마트 컨트랙트는 새 추가 화폐 생성이나 기존 화폐의 추가 토큰 발행 요청을 받으면:
+One possible high-level minting flow, which is implemented [here](https://github.com/ton-blockchain/governance-contract/tree/50ed2ecacc9e3cff4c77cbcc69aa07b39f5c46a2) (check `*.tolk` files) is as follows:
 
-1. `ConfigParam6`에 정의된 수수료를 요청 메시지에서 공제할 수 있는지 확인
-2. 1. 기존 토큰의 경우: 발행 권한 확인(_소유자_만 새로운 토큰 발행 가능)
-   2. 새 화폐 생성의 경우: 화폐 id가 사용되지 않았는지 확인하고 새 화폐의 소유자 저장
-3. 설정 컨트랙트에 메시지 전송(`ConfigParam7`의 `ExtraCurrencyCollection`에 추가되어야 함)
-4. `0:0000...0000`(다음 블록이나 그 이후 블록에서 반드시 바운스됨)에 extra_currency id와 함께 메시지 전송
+1. There is `ExtraCurrencyAuthorizationConfig`: the config contains information on which contracts (addresses) have authorization to request minter to mint new extracurrencies. This config has the following scheme:
 
-`0:0000...0000`에서 메시지를 받으면:
+```tlb
+_ (Hashmap 32 std_addr) = ExtraCurrencyAuthorizationConfig;
+```
 
-1. 바운스된 메시지에서 extra_currency id 읽기
-2. 발행자 잔액에 해당 id의 토큰이 있으면 `ok` 메시지와 함께 해당 화폐 소유자에게 전송
-3. 그렇지 않으면 화폐 소유자에게 `fail` 메시지 전송
+where key - `currency_id` and `std_addr` is *admin* of this currency (can be in any WorkChain).
 
-## 해결해야 할 문제
+2. Minter accepts mint requests from **admins**, forwards requests for mint to **config**, **config** updates `ConfigParam 7`, and responds to **minter**. Since extracurrencies would be minted to **minter** only on the next MasterChain block, withdrawing extra currencies to **admin** should be delayed. It is done via **echo** smart-contract, not in MasterChain. When a response from **echo** comes to **minter**, it sends extracurrencies to **admin**. So the scheme is as follows:
 
-1. 요청 처리 연기를 위해 `0:0000...0000`에 메시지를 보내는 우회 방법은 매우 지저분합니다.
-2. 발행이 실패하는 경우를 고려해야 합니다. 현재로서는 화폐 금액이 0이거나 현재 잔액과 발행된 금액의 합이 `(VarUInteger 32)`에 맞지 않는 경우만 가능해 보입니다.
-3. 소각은 어떻게 할까요? 첫 눈에 보기에는 방법이 없어 보입니다.
-4. 발행 수수료가 금지적이어야 할까요? 다시 말해, 수백만 개의 추가 화폐를 갖는 것이 위험할까요(큰 설정, 콜레이션 시 제한되지 않은 dict 연산 수로 인한 잠재적 DoS?)
+    `Admin -> Minter -> Config -> Minter -> Echo (in other workchain to wait 	until the next masterchain block) -> Minter -> Admin`
+
+An example of this flow is as follows: [minting 2'000'000'000 units of `currency_id=100`](https://testnet.tonviewer.com/transaction/20fe328c04b4896acecb6e96aaebfe6fef90dcc1441e27049302f29770904ef0)
+
+:::danger
+Each minting of new extracurrency or an increase in the supply of existing currency necessitates a change to `ConfigParam7`, which in turn alters the configuration and creation of keyblocks. Frequent keyblock generation can slow down shard performance since each key block causes a rotation of validator groups and affects the synchronization of liteclients. Therefore, contracts like `swap.tolk` should not be utilized in production environments. Instead, it is advisable to use schemes that involve reserves to minimize minting events.
+:::
+
+:::info
+Sending of extracurrency to blackhole has the following effect: extracurrency amount is burnt, but since `ConfigParam7` is not changed, on the next block, **minter** will receive the burnt amount on its balance.
+:::
+
+## How to mint your own extracurrency
+
+1. Ensure that your network has the **minter contract** and that `ConfigParam2` and `ConfigParam6` are set correctly.
+
+2. Create a **currency admin contract** that will control how the extra currency is minted.
+
+3. Submit a proposal to the validators to add your **currency admin** contract address to the `ExtraCurrencyAuthorizationConfig` for a specific `currency_id` and obtain their approval.
+
+4. Send a `mint` request from the **currency admin contract** to the **minter**. Wait for the **minter** to return the extra currency.
+    <Feedback />
+

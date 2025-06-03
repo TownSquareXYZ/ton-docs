@@ -1,0 +1,168 @@
+---
+title: 概要
+---
+
+import Feedback from "@site/src/components/Feedback";
+import Button from "@site/src/components/button";
+
+# Tolk language: overview
+
+**Tolk** is a new language for writing smart contracts in TON.
+Tolk compiler is a fork of FunC compiler, introducing familiar syntax similar to TypeScript
+but leaving all low-level optimizations untouched. Think of Tolk as the next‑generation FunC.
+
+```tolk
+import "storage.tolk"
+
+fun loadData() {
+    ctxCounter = contract.getData().beginParse().loadUint(32);
+}
+
+fun onInternalMessage(msgValue: int, msgFull: cell, msgBody: slice) {
+    var cs = msgFull.beginParse();
+    var flags = cs.loadMessageFlags();
+    if (isMessageBounced(flags)) {
+        return;
+    }
+    ...
+}
+
+get currentCounter(): int {
+    loadData(); // fills global variables
+    return ctxCounter;
+}
+```
+
+<details>
+  <summary><b>FunC</b></summary> で実装されている同じロジックを参照してください。
+
+```func
+#include "storage.fc";
+
+() load_data() impure {
+  slice cs = get_data().begin_parse();
+  ctx_counter = cs~load_uint(32);
+}
+
+() recv_internal(int msg_value, cell msg_full, slice msg_body) impure {
+  slice cs = msg_full.begin_parse();
+  int flags = cs.load_uint(4);
+  if (flags & 1) {
+    return ();
+  }
+  ...
+}
+
+int currentCounter() method_id {
+  load_data(); ;; fills global variables
+  return ctx_counter;
+}
+```
+
+</details>
+
+<Button
+  href="https://github.com/ton-blockchain/convert-func-to-tolk"
+  colorType={"primary"}
+  sizeType={"sm"}
+>
+  Try a FunC → Tolk converter
+</Button>
+<Button
+  href="/v3/documentation/smart-contracts/tolk/tolk-vs-func/in-short"
+  colorType={"secondary"}
+  sizeType={"sm"}
+>
+  Tolk vs FunC differences
+</Button>
+<div style={{ height: "2em" }}></div>
+
+## フリークの背後にある動機
+
+FunC is awesome.
+It is low-level and encourages a programmer to think about compiler internals.
+It gives complete control over TVM assembler, allowing a programmer to make his contract as effective as possible.
+If you get used to it, you love it.
+
+しかし、問題があります。
+FunC は「関数型 C」であり、忍者向けです。
+Lisp と Haskell に興味がある人なら満足できるでしょう。
+しかし、あなたが JavaScript / Go / Kotlin 開発者である場合、その構文は独特であり、時折間違いを引き起こす可能性があります。
+構文に苦労すると、TON を深く掘り下げるモチベーションが低下する可能性があります。
+
+Imagine what if there was a language that was smart and low-level but not functional and not like C?
+Leaving all beauty and complexity inside, what if it would be more similar to popular languages at first glance?
+
+それがトレックの考え方です
+
+## FunCからTolkへの移行
+
+FunCを知っていて、新しい構文を試したい場合は、次のようにします。
+
+1. [Tolk vs FunC: 簡潔版](/v3/documentation/smart-contracts/tolk/tolk-vs-func/in-short) を読んでください。
+2. With a blueprint, create a new Tolk contract (for example, a counter) and experiment around it. Remember that almost all stdlib functions are renamed to ~~verbose~~ clear names. Here is [a mapping](/v3/documentation/smart-contracts/tolk/tolk-vs-func/stdlib).
+3. Try a [converter](https://github.com/ton-blockchain/convert-func-to-tolk) for your existing contracts or one from [FunC contracts](/v3/documentation/smart-contracts/contracts-specs/examples). Remember that contracts written in Tolk from scratch look nicer than auto-converted ones. For instance, using logical operators instead of bitwise tremendously increases code readability.
+
+## FunCを知らないならTolkを試す方法
+
+:::tip 現在、このドキュメントはあなたがFunCを知っていることを前提としています。
+This section describes the **Tolk vs FunC** differences.
+Later, it will be adapted to land newcomers. Moreover, FunC will eventually become deprecated for onboarding,
+and all code snippets throughout the documentation will be rewritten for Tolk.
+:::
+
+TONを初めてお使いの方は以下のとおりです。
+
+1. Dig into [this documentation](/v3/documentation/smart-contracts/overview) to acquire basic on development in TON. No matter your language, you must be aware of cells, slices, and TON asynchronous nature.
+2. Facing FunC snippets, you can still use FunC or try to express the same in Tolk. If FunC syntax is peculiar to you, don't worry: the goal of Tolk is to fix this issue precisely.
+3. Once you understand what's happening, try using Tolk with [blueprint](https://github.com/ton-org/blueprint).
+
+## Tooling around Tolk language
+
+Tolk コンパイラのソースは `ton-blockchain` [repo](https://github.com/ton-blockchain/ton) の一部です。
+コンパイラのほかに以下があります。
+
+1. [tolk-js](https://github.com/ton-blockchain/tolk-js) — TolkコンパイラのWASMラッパー。
+2. [JetBrains IDE plugin](https://github.com/ton-blockchain/intellij-ton)はFunC、Fift、TL/B、Tact以外にもTolkをサポートしています。
+3. [VS Code Extension](https://github.com/ton-blockchain/tolk-vscode) によりTolk Language のサポートが可能になります。
+4. [Converter from FunC to Tolk](https://github.com/ton-blockchain/convert-funct-to-tolk) -- `.fc`ファイルを単一の`npx`コマンドで`.tolk`ファイルに変換する。
+5. Tolk Language is available in [blueprint](https://github.com/ton-org/blueprint).
+
+## Tolkの生産準備はできていますか?
+
+FunCコンパイラのフォークであるTolkコンパイラは、現時点では実験的なものの、生産準備ができていると見なされています。
+
+Undiscovered bugs may exist, potentially inherited from FunC or attributable to TVM characteristics.
+Anyway, no matter your language, you should cover your contracts with tests to reach high reliability.
+
+## ロードマップ
+
+Tolkの最初のリリースバージョンはv0.6で、 [missing](/v3/documentation/smart-contracts/tolk/changelog#how-tolk-was-born) FunC v0.5を強調しています。
+
+Here are some points to investigate:
+
+- type system improvements
+- セルとの間で構造を自動パックします。おそらくメッセージ ハンドラーと統合されています。
+- 組み込み型をカバーするために一般化された構造体のメソッド
+- easier message sending
+- better experience for everyday use cases: jettons, NFT, etc.
+- ガスとスタックの最適化ASTインライン
+- stdlibを拡張及び維持
+- some ABI (how explorers "see" bytecode)
+- ガスと料金の管理全般
+
+The following strategic milestone for **Tolk v1.0** is structures with auto-serialization into cells.
+
+This milestone eliminates manual manipulations with builders and slices, allowing data and messages to be described declaratively.
+Closely related to this is the **ABI (interface) of contracts**.
+Well-designed structures make up the majority of an ABI.
+
+## Issues and contacts
+
+If you face an issue, connect to developer society on [TON Dev Chats](https://t.me/addlist/1r5Vcb8eljk5Yzcy) or create GitHub issues.
+
+## See also
+
+- [Tolk vs FunC: in short](/v3/documentation/smart-contracts/tolk/tolk-vs-func/in-short)
+
+<Feedback />

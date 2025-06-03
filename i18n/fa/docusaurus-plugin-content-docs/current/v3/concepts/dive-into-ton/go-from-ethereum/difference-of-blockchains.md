@@ -1,59 +1,152 @@
-# تفاوت بلاکچین‌ها
+import Feedback from '@site/src/components/Feedback';
 
-در این فصل، تفاوت‌های کلیدی بین بلاکچین اتریوم و بلاکچین TON را بررسی خواهیم کرد. این تحلیل شامل بررسی معماری شبکه، برجسته کردن ویژگی‌های منحصر به فرد آنها و ارزیابی مزایا و معایب هر کدام خواهد بود.
+# The differences of blockchains
 
-با شروع بررسی یک نمای کلی از اکوسیستم‌های اتریوم و TON، می‌توان اشاره کرد که هر دو پلتفرم ساختاری مشابه از شرکت‌کنندگان و خدمات ارائه می‌دهند، از جمله کاربرانی که دارایی دارند و تراکنش انجام می‌دهند، اعتبارسنج‌هایی که شبکه را نگه می‌دارند و ایمن می‌کنند، و توسعه‌دهندگان برنامه که از بلاکچین به عنوان مبنای محصولات و خدمات خود استفاده می‌کنند. هر دو اکوسیستم شامل خدمات حضانتی و غیر حضانتی هستند که به کاربران سطوح مختلفی از کنترل بر دارایی‌های خود ارائه می‌دهند.
+## Introduction
 
-علاوه بر این، باید تاکید کرد که هر دو پلتفرم تسهیل‌کننده ایجاد برنامه‌های غیرمتمرکز (DApps) هستند و ابزارها و استانداردهای قدرتمندی برای توسعه به توسعه‌دهندگان ارائه می‌دهند.
+In this chapter, we will examine the key differences between the Ethereum blockchain and the TON blockchain. The analysis will include an overview of the network architectures, highlight their unique features, and evaluate the advantages and disadvantages of each.
 
-با این حال، با وجود شباهت در ساختار کلی و ویژگی‌های ارائه شده، جنبه‌های فناوری کلیدی و رویکردهای طراحی شبکه اتریوم و TON به طور قابل توجهی متفاوت هستند. این تفاوت‌ها مبنای درک جامع از مزایای منحصر به فرد و محدودیت‌های هر پلتفرم را فراهم می‌کنند، که به ویژه برای توسعه‌دهندگانی که به دنبال استفاده حداکثری از قابلیت‌های هر شبکه هستند، مهم است. در زیر بخش‌هایی از این تفاوت‌ها را با تمرکز بر معماری شبکه، مدل‌ها، مکانیزم‌های تراکنش و سیستم تسویه تراکنش‌ها بررسی خواهیم کرد تا به توسعه‌دهندگان دیدگاهی جامع ارائه دهیم.
+Starting with an overview of the Ethereum and TON ecosystems, we can note that both platforms offer a similar structure of participants and services, including users who hold assets and make transactions, validators who keep the network up and running and secure, and application developers who use the blockchain as the basis for their products and services. Both ecosystems include custodial and non-custodial services that give users different control over their assets.
 
-## معماری بلاکچین‌ها
+Additionally, it is worth highlighting that both platforms facilitate the creation of **decentralized applications (DApps)**, offering developers powerful tools and standards for development.
 
-اتریوم با به ارث بردن و گسترش اصول بنیادی بیت‌کوین، به توسعه‌دهندگان انعطاف‌پذیری لازم برای ایجاد برنامه‌های پیچیده غیرمتمرکز (DApps) را فراهم کرده است. ویژگی منحصر به فرد اتریوم توانایی ارائه هر حساب با یک فضای داده فردی است که به تراکنش‌ها امکان می‌دهد نه تنها انتقال توکن را انجام دهند، بلکه وضعیت بلاکچین را با تعامل با قراردادهای هوشمند تغییر دهند. این توانایی تعامل همزمان بین حساب‌ها، همانطور که می‌دانیم، وعده‌های بزرگی برای توسعه برنامه‌ها دارد، اما همچنین مسئله مقیاس‌پذیری را نیز مطرح می‌کند. هر تراکنش در شبکه اتریوم نیازمند بروزرسانی و نگهداری وضعیت کامل بلاکچین توسط گره‌ها است که منجر به تاخیر قابل توجه و افزایش هزینه گس با افزایش استفاده از شبکه می‌شود.
+However, despite the similarities in overall structure and features offered, the key technological aspects and network design approaches of Ethereum and TON differ significantly. These differences lay the foundation for a thorough understanding of each platform's unique advantages and limitations, which is particularly important for developers seeking to maximize the capabilities of each network. In the following subsections, we will explore these differences in more detail, focusing on the network architecture, models, transaction mechanisms, and transaction settlement system to provide developers with the necessary insights.
 
-در پاسخ به این چالش‌ها، TON یک رویکرد جایگزین ارائه می‌دهد که بهبود مقیاس‌پذیری و عملکرد را هدف قرار داده است. طراحی شده با هدف ارائه حداکثر انعطاف‌پذیری به توسعه‌دهندگان برای ایجاد برنامه‌های مختلف، TON از مفهوم شاردها و مسترچین برای بهینه‌سازی فرآیند ایجاد بلوک استفاده می‌کند. در هر شاردچین و مسترچین TON، به طور متوسط هر ۵ ثانیه یک بلوک جدید تولید می‌شود و اجرای سریع تراکنش‌ها را تضمین می‌کند. برخلاف اتریوم، که بروزرسانی‌های وضعیت همزمان را اجرا می‌کند، TON پیام‌رسانی ناهمزمان بین قراردادهای هوشمند را پیاده‌سازی می‌کند و اجازه می‌دهد هر تراکنش به طور مستقل و به صورت موازی پردازش شود و به طور قابل توجهی سرعت پردازش تراکنش‌ها در شبکه را افزایش دهد. بخش‌ها و مقالاتی که باید با آنها آشنا شوید:
+## Differences between TON and Ethereum
 
-- [شاردها](/v3/documentation/smart-contracts/shards/shards-intro)
-- [مستند مقایسه بلاکچین‌ها](https://ton.org/comparison_of_blockchains.pdf)
-- [جدول مقایسه بلاکچین‌ها (کمتر آموزنده از مستند، اما بیشتر بصری)](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-comparison)
+### Account
 
-در نتیجه، با مقایسه معماری و زیرساخت‌های فناوری TON و اتریوم، روشن است که TON مزایای قابل توجهی ارائه می‌دهد. با رویکرد نوآورانه خود به پردازش تراکنش‌های غیرهمزمان و معماری منحصر به فرد شارد و مسترچین، TON پتانسیل پشتیبانی از میلیون‌ها تراکنش در ثانیه را بدون به خطر انداختن امنیت یا تمرکززدایی نشان می‌دهد. این ویژگی‌ها به پلتفرم انعطاف‌پذیری و کارایی بی‌نظیری می‌بخشد و آن را برای طیف گسترده‌ای از برنامه‌ها ایده‌آل می‌کند.
+In the first subsection, we compared Ethereum and TON, highlighting their key architectural differences and the main challenges faced by Ethereum. Of particular note are the different approaches to organizing interactions in these blockchains and using models. These differences come from the unique architectural choices of each platform. For developers accustomed to Ethereum, it is essential to deeply understand these differences to effectively transition to developing on TON. This understanding will allow the architecture to adapt and optimize the interaction of smart contracts in the new environment.
 
-## مدل مبتنی بر حساب (اتریوم) در مقابل مدل بازیگر (TON)
+#### Ethereum
 
-در زیر بخش اول، مقایسه‌ای بین اتریوم و TON انجام دادیم و تفاوت‌های کلیدی معماری آنها و چالش‌های اصلی که اتریوم با آن مواجه است را برجسته کردیم. به خصوص توجه به رویکردهای مختلف برای سازماندهی تعاملات در این بلاکچین‌ها و استفاده از مدل‌ها شایان ذکر است. این تفاوت‌ها از انتخاب‌های معماری منحصر به فرد هر پلتفرم نشأت می‌گیرند. برای توسعه‌دهندگانی که به اتریوم عادت دارند، مهم است که این تفاوت‌ها را به‌طور عمیق درک کنند تا به‌طور مؤثر به توسعه بر روی TON منتقل شوند. این درک از معماری اجازه می‌دهد تا تعامل قراردادهای هوشمند را در محیط جدید سازگار و بهینه کند.
+Ethereum uses an account-based model to track balances. An account stores information about different coin balances, like a regular bank account. There are two types of accounts:
 
-بنابراین، بیایید به یاد بیاوریم که مدل مبتنی بر حساب در اتریوم چگونه کار می‌کند. اتریوم از این مدل برای پیگیری موجودی‌ها استفاده می‌کند. مانند یک حساب بانکی، وجوه در حساب‌ها ذخیره می‌شود نه در سکه‌های فردی. دو نوع حساب وجود دارد:
+- **Externally-owned accounts (EOAs)** - externally managed accounts are controlled by the user using public and private key pairs. The public key allows others to send payments to the account.
+- Contract accounts are controlled by smart contract code rather than private keys. Contract accounts cannot initiate transactions independently because they do not have a private key.
 
-- حساب‌های مدیریت‌شده توسط کاربر (EOAs) - حساب‌هایی که به‌طور خارجی مدیریت می‌شوند و توسط کاربر با استفاده از کلیدهای عمومی و خصوصی کنترل می‌شوند. کلید عمومی به دیگران اجازه می‌دهد تا پرداخت‌ها را به حساب ارسال کنند.
-- حساب‌های قرارداد - توسط کد قرارداد هوشمند کنترل می‌شوند نه کلیدهای خصوصی. به دلیل نداشتن کلید خصوصی، حساب‌های قرارداد نمی‌توانند به‌تنهایی تراکنش‌ها را آغاز کنند.
+When an Ethereum user creates a wallet, an EOA is added to the global state on all nodes in the decentralized network. Deploying a smart contract creates a contract account capable of storing and distributing funds programmatically based on certain conditions. All account types have balances and storage and can trigger transactions by calling functions in other accounts. This structure provides Ethereum's ability to serve as programmable money.
 
-وقتی یک کاربر اتریوم کیف پول ایجاد می‌کند، یک حساب خارجی به وضعیت جهانی در همه گره‌های شبکه غیرمتمرکز اضافه می‌شود وقتی اولین تراکنش فراخوانی می‌شود یا اولین وجوه دریافت می‌شود. استقرار یک قرارداد هوشمند یک حساب قرارداد ایجاد می‌کند که قادر است به‌طور برنامه‌ریزی‌شده وجوه را بر اساس شرایط خاصی ذخیره و توزیع کند. همه انواع حساب‌ها موجودی دارند، ذخیره‌سازی دارند و می‌توانند با فراخوانی عملکردهای دیگر حساب‌ها تراکنش‌ها را انجام دهند. این ساختار توانایی اتریوم برای خدمت به عنوان پول برنامه‌ریزی‌شده را فراهم می‌کند.
+Ethereum has synchronous transaction processing, where each transaction is processed sequentially and in strict order. Synchronous processing ensures that the state of the blockchain always remains consistent and predictable for all participants in the network. All transactions are atomic; they either complete successfully or unsuccessfully without partial or incomplete execution. Moreover, when a smart contract invokes another smart contract, the invocation occurs instantaneously within the same transaction. But here again, there are disadvantages — a transaction can grow as much as it can. A negative effect of synchronicity is still overloading, as computations cannot run in parallel. The number of contracts and users grows, and the inability to parallelize computations becomes a major limiting factor in the growth of the network.
 
-اتریوم دارای پردازش تراکنش همزمان است که در آن هر تراکنش به ترتیب دقیق، به‌طور متوالی پردازش می‌شود. این اطمینان حاصل می‌کند که وضعیت بلاکچین همیشه برای همه شرکت‌کنندگان در شبکه سازگار و قابل پیش‌بینی باقی می‌ماند. همه تراکنش‌ها اتمی هستند، به‌طور کامل یا با موفقیت کامل به پایان می‌رسند یا به‌طور کامل با شکست کامل به پایان می‌رسند، بدون هیچ‌گونه اجرای جزئی یا ناقص. علاوه بر این، وقتی یک قرارداد هوشمند فراخوانی می‌شود و به نوبه خود یک قرارداد هوشمند دیگر را فراخوانی می‌کند، فراخوانی در همان تراکنش به‌طور فوری اتفاق می‌افتد. اما در اینجا دوباره معایبی وجود دارد، یک تراکنش می‌تواند به اندازه‌ای که مجاز است رشد کند. یک اثر منفی از همزمانی همچنان بارگذاری بیش از حد است، زیرا محاسبات نمی‌توانند به صورت موازی اجرا شوند. تعداد قراردادها و کاربران افزایش می‌یابد و عدم توانایی در موازی‌سازی محاسبات به یک عامل محدودکننده اصلی در رشد شبکه تبدیل می‌شود.
+#### TON
 
-حالا بیایید بفهمیم مدل بازیگر چیست؟ مدل بازیگر یک رویکرد برای محاسبات موازی و توزیع شده است که در آن عنصر اصلی یک بازیگر است - یک بلوک اجرایی مستقل از کد. در اصل برای محاسبات خوشه‌ای توسعه یافته است، این مدل به‌طور گسترده‌ای در معماری‌های میکروسرویس‌ها استفاده می‌شود تا نیازهای سیستم‌های توزیع شده مدرن را با توانایی مقیاس‌پذیری، موازی‌سازی و تحمل خطا برآورده کند. بازیگران پیام‌ها را دریافت و پردازش می‌کنند و بسته به منطق پیام، با پذیرش تغییرات محلی یا انجام اقدامات در پاسخ، می‌توانند سایر بازیگران را ایجاد کنند یا پیام‌ها را به جلو بفرستند. آن‌ها ایمن در برابر موضوع هستند و قابل بازیابی هستند و نیاز به قفل‌ها را از بین می‌برند و پردازش موازی وظایف را ساده می‌کنند. این مدل برای ساختن راه‌حل‌های سروری مقیاس‌پذیر و قابل اعتماد ایده‌آل است، دسترسی همزمان کارآمد و کنترل پشتیبانی از پیام‌رسانی همزمان و غیر همزمان را فراهم می‌کند.
+The actor model is an approach to parallel and distributed computing where the main element is an actor - an independent executable block of code. Initially developed for cluster computing, this model is widely used in micro-server architectures to meet the needs of modern distributed systems due to its ability to scale, parallelism, and fault tolerance. Actors receive and process messages, depending on the logic of the message, respond by accepting local changes or performing actions in response, and can create other actors or send messages onward. They are thread-safe and reentrant, eliminating the need for locks and simplifying parallel processing of tasks. This model is ideal for building scalable and reliable server solutions, providing efficient concurrent access control and support for synchronous and asynchronous messaging.
 
-در TON، همه چیز توسط قراردادهای هوشمند نمایان می‌شود که می‌توانند در زمینه مدل بازیگر نیز به عنوان بازیگر شناخته شوند. یک قرارداد هوشمند یک شیء با ویژگی‌هایی مانند آدرس، کد، داده و موجودی است. آن توانایی ذخیره داده‌ها را دارد و بر اساس دستورالعمل‌های دریافتی از قراردادهای هوشمند دیگر عمل می‌کند. پس از دریافت یک پیام و پردازش آن توسط اجرای کد خود در TVM، سناریوهای مختلفی می‌تواند رخ دهد:
+In TON, smart contracts represent everything and are called actors within the actor model context. A smart contract is an object with address, code, data, and balance properties. It can store data and behaves according to instructions received from other smart contracts. After a contract receives a message and processes it by executing its code in the TVM, various scenarios can occur:
 
-- قرارداد ویژگی‌های خود را تغییر می‌دهد `code, data, balance`
+- The contract changes its properties `code`, `data`, and `balance`
 - قرارداد به‌طور اختیاری یک پیام خروجی تولید می‌کند
 - قرارداد تا وقوع رویداد بعدی به حالت آماده‌باش می‌رود
 
-نتیجه اسکریپت‌ها همیشه ایجاد یک تراکنش است. خود تراکنش‌ها ناهمزمان هستند، به این معنی که سیستم می‌تواند به پردازش تراکنش‌های دیگر ادامه دهد در حالی که منتظر تکمیل تراکنش‌های گذشته است. این امر هنگام پردازش تراکنش‌های پیچیده‌تر انعطاف‌پذیری بیشتری فراهم می‌کند. گاهی اوقات یک تراکنش منفرد ممکن است نیاز به فراخوانی چند قرارداد هوشمند داشته باشد که باید در یک توالی خاص اجرا شوند. به دلیل ناهمزمان بودن این فراخوانی‌ها، توسعه‌دهندگان می‌توانند به‌طور آسان‌تری جریان‌های تراکنش پیچیده را طراحی و پیاده‌سازی کنند که ممکن است شامل چندین عملیات همزمان باشد. یک توسعه‌دهنده‌ای که از اتریوم می‌آید باید بداند که قراردادهای هوشمند در بلاکچین TON تنها می‌توانند با ارسال پیام‌های ناهمزمان به یکدیگر ارتباط برقرار کنند، به این معنی که اگر نیاز به درخواست داده از یک قرارداد دیگر و پاسخ فوری وجود داشته باشد، این امکان‌پذیر نخواهد بود. در عوض، `get methods` باید توسط مشتریان خارج از شبکه فراخوانی شوند، مشابه به این که یک کیف پول در اتریوم از گره‌های RPC مانند Infura برای درخواست وضعیت قراردادهای هوشمند استفاده می‌کند. این محدودیت برای چندین دلیل مهم است. به عنوان مثال، وام‌های فوری تراکنش‌هایی هستند که باید در یک بلوک اجرا شوند و متکی به توانایی قرض گرفتن و بازپرداخت در همان تراکنش هستند. این امر توسط طبیعت همزمان EVM اتریوم تسهیل می‌شود، اما در TON، طبیعت ناهمزمان همه تراکنش‌ها اجرای یک وام فوری را غیرممکن می‌سازد. همچنین اوراکل‌ها که داده‌های خارجی را به قراردادهای هوشمند ارائه می‌دهند، در TON نیاز به یک فرآیند طراحی پیچیده‌تری دارند. اوراکل‌ها چه هستند و چگونه می‌توان از آن‌ها در TON استفاده کرد [اینجا](/v3/documentation/dapps/oracles/about_blockchain_oracles) در دسترس است.
+The result of the scripts is always the creation of a transaction. The transactions themselves are asynchronous, meaning that the system can continue processing other transactions while waiting for past transactions to complete. This approach provides more flexibility when processing complex transactions. Sometimes a single transaction may require multiple smart contract calls to be executed in a specific sequence. Because these calls are asynchronous, developers can more easily design and implement complex transaction flows that may involve multiple concurrent operations.
 
-## تفاوت کیف پول‌ها
+A developer coming from Ethereum needs to realize that smart contracts in the TON blockchain can only communicate with each other by sending asynchronous messages, which means that if there is a need to request data from another contract and an immediate response is required, this will not be possible. Instead, clients outside the network must call `get methods`, much like a wallet in Ethereum that uses RPC nodes such as Infura to request smart contract states. This is an important limitation for several reasons. For example, flash loans are transactions executed within a single block, relying on the ability to borrow and repay in the same transaction.
 
-ما قبلاً بحث کردیم که در اتریوم، کیف پول کاربر بر اساس آدرس او ایجاد می‌شود که در رابطه یک به یک با کلید عمومی او قرار دارد. اما در TON، همه کیف پول‌ها قراردادهای هوشمندی هستند که باید توسط خود کاربر مستقر شوند. از آنجایی که قراردادهای هوشمند می‌توانند به روش‌های مختلف پیکربندی شوند و ویژگی‌های مختلفی داشته باشند، نسخه‌های مختلفی از کیف پول‌ها وجود دارد که می‌توانید درباره آنها [اینجا](https://ton.org/v3/documentation/smart-contracts/contracts-specs/wallet-contracts) بیشتر بخوانید. به دلیل اینکه کیف پول‌ها قراردادهای هوشمند هستند، یک کاربر می‌تواند چندین کیف پول با آدرس‌ها و پارامترهای اولیه مختلف داشته باشد. برای ارسال یک تراکنش، کاربر باید پیام را با کلید خصوصی خود امضا کند و آن را به قرارداد کیف پول خود ارسال کند که به نوبه خود آن را به قرارداد هوشمند یک برنامه خاص (DApp) ارسال می‌کند. این روش به شدت انعطاف‌پذیری در طراحی کیف پول را افزایش می‌دهد و توسعه‌دهندگان می‌توانند نسخه‌های جدیدی از کیف پول را در آینده اضافه کنند. در حال حاضر توسعه‌دهندگان در اتریوم به طور فعال از کیف پول‌های چند امضایی (قراردادهای هوشمند) مانند Gnosis استفاده می‌کنند و به تازگی شروع به معرفی اصطلاحات حساب‌های انتزاعی مانند ERC-4337 کرده‌اند، جایی که کیف پول‌ها با ویژگی‌هایی مانند ارسال تراکنش بدون نیاز به توکن بومی، بازیابی حساب بعد از دست دادن آن و غیره پر می‌شوند. اما لازم به ذکر است که استفاده از حساب‌های کیف پول در اتریوم بسیار گرانتر از نظر هزینه گس در مقایسه با EOA است.
+The synchronous nature of Ethereum's EVM facilitates such transactions, whereas the asynchronous nature of all transactions in TON makes executing a flash loan infeasible. Oracles, which provide smart contracts with external data, also involve a more intricate design process in TON. What Oracles are and how to use them in TON can be found [here](/v3/documentation/dapps/oracles/about_blockchain_oracles/).
 
-## پیام‌ها و تراکنش‌ها
+### Wallets
 
-آنچه بین دو قرارداد اتفاق می‌افتد یک پیام نامیده می‌شود - تعداد کمی از توکن‌ها و داده‌های دلخواه به یک آدرس مشخص ارسال می‌شود. وقتی پیام به قرارداد می‌رسد، توسط کد قرارداد پردازش می‌شود، قرارداد وضعیت خود را به‌روزرسانی می‌کند و به‌طور اختیاری یک پیام جدید ارسال می‌کند. همه این اقدامات در قرارداد به عنوان تراکنش‌ها ثبت می‌شود. بیایید یک مثال را تصور کنیم، ما یک زنجیره پیام داریم، از قرارداد `A` به قرارداد `B`، از قرارداد `B` به قرارداد `C`، پس دو پیام و سه تراکنش خواهیم داشت. اما ابتدا، برای تغییر وضعیت بلاکچین، به یک سیگنال خارجی نیاز است. برای فراخوانی یک قرارداد هوشمند، باید یک پیام خارجی ارسال کنید که به تاییدکنندگان می‌رود و آنها آن را به قرارداد هوشمند اعمال می‌کنند. و در زیر بخش قبلی بحث کردیم که کیف پول یک قرارداد هوشمند است، بنابراین این پیام خارجی معمولاً ابتدا به قرارداد هوشمند کیف پول می‌رود که آنها را به عنوان اولین تراکنش ثبت می‌کند و آن اولین تراکنش معمولاً حاوی یک پیام داخلی برای قرارداد مقصد واقعی است. وقتی قرارداد هوشمند کیف پول پیام را دریافت می‌کند، آن را پردازش می‌کند و به قرارداد مقصد تحویل می‌دهد (در مثال ما، قرارداد `A` می‌تواند یک کیف پول باشد و وقتی پیام خارجی را دریافت می‌کند، اولین تراکنش را خواهد داشت). توالی تراکنش‌ها یک زنجیره را تشکیل می‌دهد. می‌توانید ببینید که هر قرارداد هوشمند تراکنش‌های خود را دارد و به این معنی است که هر قرارداد بلاکچین کوچک خود را دارد (می‌توانید بیشتر درباره آن [اینجا](https://ton.org/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains) بخوانید)، بنابراین شبکه می‌تواند تراکنش‌ها را به‌طور کاملاً مستقل از یکدیگر پردازش کند.
+#### Ethereum
 
-## تفاوت سیستم گس
+We have already discussed that in Ethereum, a user's wallet is generated based on their address, which is in a 1-to-1 relationship with their public key.
 
-در اتریوم، هزینه یک تراکنش با `gas` اندازه‌گیری می‌شود که نشان‌دهنده مقدار منابع محاسباتی مورد نیاز برای تراکنش است. هزینه `gas` به دو بخش تقسیم می‌شود: `base fee` که توسط پروتکل تعیین می‌شود و `priority fee` که کاربر برای سرعت بخشیدن به پردازش تراکنش توسط تاییدکنندگان اضافه می‌کند. هزینه کلی اینگونه محاسبه می شود: `total fee` = `units of gas used` \* (`priority fee` + `base fee`).
-علاوه بر این، ذخیره‌سازی در اتریوم اساساً رایگان است، به این معنی که پس از ذخیره شدن داده‌ها بر روی بلاکچین، هیچ هزینه‌ای برای نگهداری آن وجود ندارد.
+In Ethereum, developers use multi-signature wallets like gnosis. They are just introducing so-called **account abstraction** with the ERC-4337 standard. This standard extends the functionality of wallets, such as sending transactions without a native token, recovering accounts after loss, etc.
 
-در TON، محاسبه هزینه‌های تراکنش پیچیده است و شامل چندین نوع هزینه است: برای ذخیره‌سازی قراردادهای هوشمند در بلاکچین، برای وارد کردن پیام‌ها به بلاکچین، برای اجرای کد در ماشین مجازی، برای پردازش اقدامات پس از اجرای کد، و برای ارسال پیام‌ها خارج از بلاکچین TON. قیمت گس و برخی پارامترهای دیگر می‌توانند با رای‌گیری در شبکه اصلی تغییر کنند. برخلاف اتریوم، کاربران TON نمی‌توانند قیمت گس را خودشان تعیین کنند. همچنین، توسعه‌دهنده باید مانده گس را به مالک بازگرداند، در غیر این صورت آنها قفل می‌شوند. استفاده از ذخیره‌سازی قراردادهای هوشمند نیز بر قیمت تأثیر می‌گذارد: اگر قرارداد هوشمند یک کیف پول برای مدت طولانی استفاده نشده باشد، تراکنش بعدی هزینه بیشتری خواهد داشت.
+Still, it's worth noting that wallet accounts are much more expensive to use in terms of gas fees compared to EOA in Ethereum.
+
+#### TON
+
+In TON, all wallets are smart contracts that the user must deploy. Since developers can configure smart contracts in different ways and have other features, there are several versions of wallets, which you can read about [here](/v3/documentation/smart-contracts/contracts-specs/wallet-contracts/).
+
+Because wallets are smart contracts, users can have multiple wallets with different addresses and initial parameters. To send a transaction, the user must sign the message with their private key and send it to their wallet contract, which forwards it to the smart contract of a particular DApp application. This approach dramatically increases flexibility in wallet design, and developers can add new versions of the wallet in the future.
+
+### Transaction
+
+#### Ethereum
+
+Recall that in Ethereum transactions are cryptographically signed instructions from accounts. An account will initiate a transaction to update the state of the Ethereum network. The most straightforward transaction is transferring ETH from one account to another.
+
+Transaction flow
+
+1. A transaction hash is cryptographically generated: `0x97d99bc7729211111a21b12c933c949d4f31684f1d6954ff477d0477538ff017`
+2. The transaction is then broadcast to the network and added to a transaction pool consisting of all other pending network transactions.
+3. A validator must pick your transaction and include it in a block to verify and consider it successful.
+4. As time passes, the block containing your transaction will be upgraded to `justified` and then `finalized.` These upgrades ensure that your transaction was successful and will never be altered. Once a block is finalized, it could only ever be changed by a network-level attack that would cost many billions of dollars.
+
+#### TON
+
+In TON, the entity that transfers data between two contracts is called a message. For example, a message contains arbitrary data about a token transfer sent to a specified address. When the message arrives at the contract, the contract processes this according to the code. The contract updates its state and optionally sends a new message. [Transaction](/v3/documentation/smart-contracts/message-management/messages-and-transactions/) is an entire flow from receiving messages to executing actions on the account.
+
+For example, consider the interaction of accounts where we have messages from contract **A** to contract **B**. In this case, we have one message and two transactions.
+
+But initially, to change the state of the blockchain, you need an outside signal. To invoke a smart contract, you need to send an external message to the validators, and they will apply it to the smart contract.
+
+As we already discussed, a wallet is a smart contract, so this external message usually first goes to the wallet's smart contract, which records them as the first transaction, and that first transaction usually contains an embedded message for the actual destination contract.
+
+When the wallet smart contract receives the message, it processes it and delivers it to the destination contract. In our example, contract **A** could be a wallet; when it receives the external message, it will have the first transaction.
+
+We can represent the sequence of transactions as a chain. In this representation, each smart contract has its transactions, which means that each contract has its blockchain, so the network can process the transactions independently.
+
+:::info
+Read more in [Blockchain of blockchain](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains)
+:::
+
+### Gas
+
+#### Ethereum
+
+In Ethereum, users pay fees in their native currency, ether (ETH). Usually, one quotes gas prices in gwei, which is a denomination of ETH. Each gwei is equal to one billionth of an ETH.
+
+For example, 0.000000001 ether is equal to 1 gwei.
+
+The gas cost is divided into a base fee set by the protocol and a `priority fee` that the user adds to speed up transaction processing by validators.
+
+The `total fee` is equal:
+
+```
+total fee = units of gas used * (base fee + priority fee).
+```
+
+Additionally, storage in Ethereum is essentially free, meaning that once data is stored on the blockchain, there is no ongoing cost for keeping it there.
+
+#### TON
+
+The contract nominates all computation costs in gas units and fixes them in a specific gas amount. The blockchain config defines the gas, and one pays for it in Toncoins.
+
+The chain configuration determines the price of gas units and may be changed only by consensus of validators. Note that, unlike in other systems, the user cannot set their gas price, and there is no fee market.
+In TON, the calculation of transaction fees is complex. It includes several types of fees:
+
+- fees for storing smart contracts in the blockchain
+- fees for importing messages into the blockchain
+- fees for executing code on a virtual machine
+- fees for processing actions after code execution
+- fees for sending messages outside the TON blockchain
+
+The price of gas and some other parameters can be changed by voting on the main network. Unlike Ethereum, TON users cannot set the gas price themselves. Also, the developer needs to return the remaining gas funds to the owner manually, otherwise they will remain locked. Smart contract storage also affects the price: if a wallet's smart contract remains unused for a long time, the next transaction will incur higher costs.
+
+:::info
+Read more about [gas](/v3/documentation/smart-contracts/transaction-fees/fees/)
+:::
+
+### Architecture
+
+#### Ethereum
+
+Ethereum inherits and extends the foundational principles of Bitcoin. This approach gives developers the flexibility to create complex DApps. A unique feature of Ethereum is its ability to provide each account with an individualized data store, allowing transactions to perform token transfers and change the state of the blockchain by interacting with smart contracts. As we know, this ability to synchronously interact between accounts offers great promise for application development, but also raises the issue of scalability. Each transaction on the Ethereum network requires nodes to update and maintain the entire state of the blockchain, which leads to significant latency and increases the cost of gas as network utilization increases.
+
+#### TON
+
+TON offers an alternative approach to improve scalability and performance in response to these challenges. Designed to provide developers with maximum flexibility to create various applications, TON uses the concept of shards and the MasterChain to optimize the block creation process. Each TON ShardChain and MasterChain generates a new block on average every 3 seconds, ensuring fast transaction execution. Unlike Ethereum, where state updates are synchronous, TON implements asynchronous messaging between smart contracts, allowing each transaction to be processed independently and in parallel, significantly speeding up transaction processing on the network. Sections and articles to familiarize yourself with:
+
+- [Shards](/v3/documentation/smart-contracts/shards/shards-intro/)
+- [Comparison of blockchains](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-comparison)
+
+In conclusion, by comparing TON and Ethereum's architecture and technological underpinnings, it's clear that TON offers significant advantages. With its innovative approach to asynchronous transaction processing and unique shard and MasterChain architecture, TON demonstrates the potential to support millions of transactions per second without compromising security or centralization. High scalability provides the platform with outstanding flexibility and efficiency, making it ideal for various applications.
+
+## See also
+
+- [Smart contract addresses](/v3/concepts/dive-into-ton/ton-blockchain/smart-contract-addresses/)
+
+<Feedback />
+

@@ -1,4 +1,6 @@
-# 소스에서 컴파일하기
+import Feedback from '@site/src/components/Feedback';
+
+# Compile from sources
 
 [여기](/v3/documentation/archive/precompiled-binaries#1-download)에서 미리 빌드된 바이너리를 다운로드할 수 있습니다.
 
@@ -108,60 +110,58 @@ cmake -GNinja -DCMAKE_BUILD_TYPE=Release .. \
 -DLZ4_INCLUDE_DIRS=$lz4Path/lib
 ```
 
-:::
-
 :::tip
-메모리가 적은 컴퓨터(예: 1GB)에서 컴파일하는 경우, [스왑 파티션 생성](/v3/guidelines/smart-contracts/howto/compile/instructions-low-memory)을 잊지 마세요.
+If you are compiling on a computer with low memory (e.g., 1 Gb), don't forget to [create a swap partitions](/v3/guidelines/smart-contracts/howto/compile/instructions-low-memory).
 :::
 
-## 전역 설정 다운로드
+## Download global config
 
-라이트 클라이언트와 같은 도구의 경우 전역 네트워크 설정을 다운로드해야 합니다.
+For tools like lite client you need to download the global network config.
 
-메인넷의 경우 https://ton-blockchain.github.io/global.config.json 에서 최신 구성 파일을 다운로드하세요:
+Download the newest configuration file from https://ton-blockchain.github.io/global.config.json for mainnet:
 
 ```bash
 wget https://ton-blockchain.github.io/global.config.json
 ```
 
-또는 테스트넷의 경우 https://ton-blockchain.github.io/testnet-global.config.json에서:
+or from https://ton-blockchain.github.io/testnet-global.config.json for testnet:
 
 ```bash
 wget https://ton-blockchain.github.io/testnet-global.config.json
 ```
 
-## 라이트 클라이언트
+## Lite client
 
-라이트 클라이언트를 빌드하려면, [공통 부분](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common)을 수행하고, [설정을 다운로드](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config)한 다음:
+To build a lite client, do [common part](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common), [download the config](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config), and then do:
 
 ```bash
 cmake --build . --target lite-client
 ```
 
-설정으로 라이트 클라이언트 실행:
+Run the Lite Client with config:
 
 ```bash
 ./lite-client/lite-client -C global.config.json
 ```
 
-모든 것이 성공적으로 설치되면, 라이트 클라이언트는 특별 서버(TON 블록체인 네트워크용 전체 노드)에 연결하여 서버에 일부 쿼리를 보낼 것입니다.
-클라이언트에 추가 인수로 쓰기 가능한 "데이터베이스" 디렉토리를 지정하면, 최신 마스터체인 블록에 해당하는 블록과 상태를 다운로드하여 저장합니다:
+If everything was installed successfully, the Lite Client will connect to a special server (a full node for the TON Blockchain Network) and will send some queries to the server.
+If you indicate a writeable "database" directory as an extra argument to the client, it will download and save the block and the state corresponding to the newest masterchain block:
 
 ```bash
 ./lite-client/lite-client -C global.config.json -D ~/ton-db-dir
 ```
 
-기본 도움말은 라이트 클라이언트에 `help`를 입력하여 얻을 수 있습니다. 종료하려면 `quit`를 입력하거나 `Ctrl-C`를 누르세요.
+Basic help info can be obtained by typing `help` into the Lite Client. Type `quit` or press `Ctrl-C` to exit.
 
 ## FunC
 
-소스 코드에서 FunC 컴파일러를 빌드하려면 위에서 설명한 [공통 부분](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common)을 수행한 다음:
+To build FunC compiler from source code, do [common part](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common) described above and then:
 
 ```bash
 cmake --build . --target func
 ```
 
-Fift 스크립트를 실행하려면:
+To compile FunC smart contract:
 
 ```bash
 ./crypto/func -o output.fif -SPA source0.fc source1.fc ...
@@ -169,13 +169,13 @@ Fift 스크립트를 실행하려면:
 
 ## Fift
 
-소스 코드에서 Fift 컴파일러를 빌드하려면 위에서 설명한 [공통 부분](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common)을 수행한 다음:
+To build Fift compiler from source code, do [common part](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common) described above and then:
 
 ```bash
 cmake --build . --target fift
 ```
 
-Fift 스크립트를 실행하려면:
+To run Fift script:
 
 ```bash
 ./crypto/fift -s script.fif script_param0 script_param1 ..
@@ -183,72 +183,72 @@ Fift 스크립트를 실행하려면:
 
 ## Tonlib-cli
 
-tonlib-cli를 빌드하려면, [공통 부분](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common)을 수행하고, [설정을 다운로드](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config)한 다음:
+To build tonlib-cli, do [common part](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common), [download the config](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config) and then do:
 
 ```bash
 cmake --build . --target tonlib-cli
 ```
 
-설정으로 tonlib-cli 실행:
+Run the tonlib-cli with config:
 
 ```bash
 ./tonlib/tonlib-cli -C global.config.json
 ```
 
-기본 도움말은 tonlib-cli에 `help`를 입력하여 얻을 수 있습니다. 종료하려면 `quit`를 입력하거나 `Ctrl-C`를 누르세요.
+Basic help info can be obtained by typing `help` into the tonlib-cli. Type `quit` or press `Ctrl-C` to exit.
 
 ## RLDP-HTTP-Proxy
 
-rldp-http-proxy를 빌드하려면, [공통 부분](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common)을 수행하고, [설정을 다운로드](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config)한 다음:
+To build rldp-http-proxy, do [common part](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common), [download the config](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#download-global-config) and then do:
 
 ```bash
 cmake --build . --target rldp-http-proxy
 ```
 
-프록시 바이너리는 다음 위치에 있습니다:
+The Proxy binary will be located as:
 
 ```bash
 ./rldp-http-proxy/rldp-http-proxy
 ```
 
-## generate-random-id
+## Generate-random-id
 
-generate-random-id를 빌드하려면, [공통 부분](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common)을 수행한 다음:
+To build generate-random-id, do [common part](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common) and then do:
 
 ```bash
 cmake --build . --target generate-random-id
 ```
 
-바이너리는 다음 위치에 있습니다:
+The binary will be located as:
 
 ```bash
 ./utils/generate-random-id
 ```
 
-## storage-daemon
+## Storage-daemon
 
-storage-daemon과 storage-daemon-cli를 빌드하려면, [공통 부분](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common)을 수행한 다음:
+To build storage-daemon and storage-daemon-cli, do [common part](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#common) and then do:
 
 ```bash
 cmake --build . --target storage-daemon storage-daemon-cli
 ```
 
-바이너리는 다음 위치에 있습니다:
+The binary will be located at:
 
 ```bash
 ./storage/storage-daemon/
 ```
 
-# 이전 TON 버전 컴파일
+# Compile old TON versions
 
-TON 릴리스: https://github.com/ton-blockchain/ton/tags
+TON releases: https://github.com/ton-blockchain/ton/tags
 
 ```bash
 git clone https://github.com/ton-blockchain/ton.git
 cd ton
 # git checkout <TAG> for example checkout func-0.2.0
 git checkout func-0.2.0
-git submodule update --init --recursive 
+git submodule update --init --recursive
 cd ..
 mkdir ton-build
 cd ton-build
@@ -257,16 +257,20 @@ cmake ../ton
 cmake --build . --target func
 ```
 
-## Apple M1에서 이전 버전 컴파일:
+## Compile old versions on Apple M1
 
-TON은 2022년 6월 11일부터 Apple M1을 지원합니다([Add apple m1 support (#401)](https://github.com/ton-blockchain/ton/commit/c00302ced4bc4bf1ee0efd672e7c91e457652430) 커밋).
+TON supports Apple M1 from 11 Jun 2022 ([Add apple m1 support (#401)](https://github.com/ton-blockchain/ton/commit/c00302ced4bc4bf1ee0efd672e7c91e457652430) commit).
 
-Apple M1에서 이전 TON 개정판을 컴파일하려면:
+To compile older TON revisions on Apple M1:
 
-1. RocksDb 서브모듈을 6.27.3으로 업데이트
+1. Update RocksDb submodule to 6.27.3
+
   ```bash
   cd ton/third-party/rocksdb/
   git checkout fcf3d75f3f022a6a55ff1222d6b06f8518d38c7c
   ```
 
-2. 루트 `CMakeLists.txt`를 https://github.com/ton-blockchain/ton/blob/c00302ced4bc4bf1ee0efd672e7c91e457652430/CMakeLists.txt로 교체
+2. Replace root `CMakeLists.txt` by https://github.com/ton-blockchain/ton/blob/c00302ced4bc4bf1ee0efd672e7c91e457652430/CMakeLists.txt
+
+<Feedback />
+

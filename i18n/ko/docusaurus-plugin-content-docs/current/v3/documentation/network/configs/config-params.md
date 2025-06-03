@@ -1,88 +1,104 @@
-# 파라미터 변경하기
+import Feedback from '@site/src/components/Feedback';
 
-이 문서는 TON 블록체인의 설정 파라미터에 대한 기본적인 설명과 함께 검증자의 합의를 통해 이러한 파라미터를 변경하기 위한 단계별 지침을 제공합니다.
+# Changing the parameters
 
-읽는 사람이 [Fift](/v3/documentation/smart-contracts/fift/overview)와 [Lite Client](/v3/guidelines/nodes/running-nodes/liteserver-node)에 대해 이미 알고 있다고 가정합니다. 이는 [FullNode-HOWTO (low-level)](/v3/guidelines/nodes/running-nodes/full-node)와 [Validator-HOWTO (low-level)](/v3/guidelines/nodes/running-nodes/validator-node)에서 검증자의 설정 제안에 대한 투표가 설명된 섹션에서 다뤄집니다.
+This document aims to provide a basic explanation of TON Blockchain's configuration parameters and give step-by-step instructions for changing these parameters based on a consensus of a majority of validators.
 
-## 1. 설정 파라미터
+We assume that the reader is already familiar with [Fift](/v3/documentation/smart-contracts/fift/overview) and the [Lite Client](/v3/guidelines/nodes/running-nodes/liteserver-node), as explained in [FullNode-HOWTO (low-level)](/v3/guidelines/nodes/running-nodes/full-node), and [Validator-HOWTO (low-level)](/v3/guidelines/nodes/running-nodes/validator-node) particularly in the sections discussing how validators vote on configuration proposals.
 
-**설정 파라미터**는 검증자와 TON 블록체인의 기본 스마트 컨트랙트의 동작에 영향을 미치는 특정 값입니다. 모든 설정 파라미터의 현재 값은 마스터체인 상태의 특별한 부분으로 저장되며 필요할 때 현재 마스터체인 상태에서 추출됩니다. 따라서 특정 마스터체인 블록에 대한 설정 파라미터의 값을 언급하는 것이 의미가 있습니다. 각 샤드체인 블록은 최신 알려진 마스터체인 블록에 대한 참조를 포함합니다. 해당 마스터체인 상태의 값들이 이 샤드체인 블록에 대해 활성화된 것으로 간주되며 블록의 생성과 검증 중에 사용됩니다. 마스터체인 블록의 경우, 이전 마스터체인 블록의 상태가 활성 설정 파라미터를 추출하는 데 사용됩니다. 따라서 마스터체인 블록 내에서 일부 설정 파라미터를 변경하려고 해도 다음 마스터체인 블록부터 변경사항이 활성화됩니다.
+## Configuration parameters
 
-각 설정 파라미터는 **설정 파라미터 인덱스** 또는 단순히 **인덱스**라고 불리는 부호 있는 32비트 정수로 식별됩니다. 설정 파라미터의 값은 항상 Cell입니다. 일부 설정 파라미터는 없을 수 있습니다. 이 경우 해당 파라미터의 값은 `Null`로 간주됩니다. 또한 항상 존재해야 하는 **필수** 설정 파라미터의 목록이 있습니다. 이 목록은 설정 파라미터 `#10`에 저장됩니다.
+The **configuration parameters** are specific values that influence the behavior of validators and fundamental smart contracts on the TON Blockchain. The current values of all configuration parameters are stored as a distinct part of the MasterChain state and are retrieved whenever necessary. Consequently, we can refer to the values of the configuration parameters concerning a particular MasterChain block. Each ShardChain block includes a reference to the most recently known MasterChain block; the values from the corresponding MasterChain state are considered active for this ShardChain block and are used during its generation and validation.
 
-모든 설정 파라미터는 부호 있는 32비트 키(설정 파라미터 인덱스)와 정확히 하나의 셀 참조로 구성된 값을 가진 Hashmap인 **설정 사전**으로 결합됩니다. 다시 말해, 설정 사전은 TL-B 타입 (`HashmapE 32 ^Cell`)의 값입니다. 실제로 모든 설정 파라미터의 컬렉션은 마스터체인 상태에 TL-B 타입 `ConfigParams`의 값으로 저장됩니다:
+For MasterChain blocks, the state of the previous MasterChain block is used to extract the active configuration parameters. Therefore, even if certain configuration parameters are attempted to be modified within a MasterChain block, any changes will only take effect in the subsequent MasterChain block.
 
-```
-_ config_addr:bits256 config:^(Hashmap 32 ^Cell) = ConfigParams;
-```
+Each configuration parameter is identified by a signed 32-bit integer known as the **configuration parameter index**, or simply the **index**. The value of a configuration parameter is always a `Cell`. In some cases, certain configuration parameters may be absent, and it is generally assumed that the value of these missing parameters is `Null`. Additionally, there is a list of **mandatory** configuration parameters that must always be present. This list is stored in the configuration parameter `#10`.
 
-`ConfigParams`가 설정 사전 외에도 마스터체인의 설정 스마트 컨트랙트의 256비트 주소인 `config_addr`을 포함하고 있음을 알 수 있습니다. 설정 스마트 컨트랙트에 대한 자세한 내용은 나중에 제공될 것입니다.
+All configuration parameters are combined into a **configuration dictionary**, which is a `Hashmap` with signed 32-bit keys (the configuration parameter indices) and values that consist of exactly one cell reference. In other words, a configuration dictionary is a value of the TL-B type `HashmapE 32 ^Cell`. The collection of all configuration parameters is retained in the MasterChain state as a value of the TL-B type `ConfigParams`:
 
-활성 설정 파라미터의 값을 포함하는 설정 사전은 트랜잭션에서 스마트 컨트랙트의 코드가 실행될 때 특별한 TVM 레지스터 `c7`를 통해 모든 스마트 컨트랙트에서 사용할 수 있습니다. 더 정확히 말하면, 스마트 컨트랙트가 실행될 때 `c7`는 현재 Unix 시간(블록 헤더에 등록된 대로)과 같은 스마트 컨트랙트 실행에 유용한 여러 "컨텍스트" 값을 포함하는 튜플의 유일한 요소인 튜플로 초기화됩니다. 이 튜플의 열 번째 항목(즉, 제로 기반 인덱스 9)에는 설정 사전을 나타내는 Cell이 포함됩니다. 따라서 TVM 명령어 `PUSH c7; FIRST; INDEX 9` 또는 동등한 명령어 `CONFIGROOT`를 통해 접근할 수 있습니다. 사실, 특별한 TVM 명령어 `CONFIGPARAM`과 `CONFIGOPTPARAM`은 이전 작업들을 사전 조회와 결합하여 인덱스로 설정 파라미터를 반환합니다. 이러한 명령어에 대한 자세한 내용은 TVM 문서를 참조하시기 바랍니다. 여기서 중요한 것은 모든 설정 파라미터가 모든 스마트 컨트랙트(마스터체인 또는 샤드체인)에서 쉽게 접근할 수 있다는 것입니다. 스마트 컨트랙트는 이를 검사하고 특정 검사를 수행하는 데 사용할 수 있습니다. 예를 들어, 스마트 컨트랙트는 사용자가 제공한 데이터 청크를 저장하는 비용을 계산하기 위해 설정 파라미터에서 워크체인 데이터 저장 가격을 추출할 수 있습니다.
+`_ config_addr:bits256 config:^(Hashmap 32 ^Cell) = ConfigParams;`
 
-설정 파라미터의 값은 임의로 정할 수 없습니다. 실제로 설정 파라미터 인덱스 `i`가 음수가 아닌 경우, 이 파라미터의 값은 TL-B 타입 (`ConfigParam i`)의 유효한 값이어야 합니다. 이 제한은 검증자에 의해 강제되며, 음수가 아닌 인덱스를 가진 설정 파라미터의 변경은 해당 TL-B 타입의 유효한 값이 아닌 한 받아들여지지 않습니다.
+In addition to the configuration dictionary, `ConfigParams` contains `config_addr`—the 256-bit address of the configuration smart contract within the MasterChain. Further details on the configuration smart contract will be provided later.
 
-따라서 이러한 파라미터의 구조는 소스 파일 `crypto/block/block.tlb`에서 결정되며, 여기서 (`ConfigParam i`)는 다른 `i` 값에 대해 정의됩니다. 예를 들어,
+The configuration dictionary, which contains the active values of all configuration parameters, is accessible to all smart contracts through a special TVM register called `c7` during the execution of a transaction. Specifically, when a smart contract is executed, `c7` is initialized as a tuple. This tuple consists of a single element, which is another tuple containing several "context" values that are useful for executing the smart contract, such as the current Unix time (as recorded in the block header).
 
-```
-_ config_addr:bits256 = ConfigParam 0;
-_ elector_addr:bits256 = ConfigParam 1;
-_ dns_root_addr:bits256 = ConfigParam 4;  // root TON DNS resolver
+The tenth entry of this inner tuple (i.e., the one indexed with zero-based index 9) contains a `Cell` representing the configuration dictionary. This configuration dictionary can be accessed by using the TVM instructions `PUSH c7; FIRST; INDEX 9` or the equivalent instruction `CONFIGROOT`. Furthermore, special TVM instructions like `CONFIGPARAM` and `CONFIGOPTPARAM` streamline this process by combining the previous actions with a dictionary lookup, allowing smart contracts to retrieve any configuration parameter by its index.
 
-capabilities#c4 version:uint32 capabilities:uint64 = GlobalVersion;
-_ GlobalVersion = ConfigParam 8;  // all zero if absent
-```
+It is important to note that all configuration parameters are readily accessible to all smart contracts, whether they operate on the MasterChain or ShardChain. As a result, smart contracts can inspect these parameters and utilize them for specific checks. For instance, a smart contract might extract data storage prices for different WorkChains from a configuration parameter in order to calculate the cost of storing a piece of user-provided data.
 
-설정 파라미터 `#8`은 참조가 없는 Cell과 정확히 104 데이터 비트를 포함하고 있음을 알 수 있습니다. 첫 네 비트는 `11000100`이어야 하고, 그 다음 32비트에는 현재 활성화된 "글로벌 버전"이 저장되며, 현재 활성화된 기능에 해당하는 플래그가 있는 64비트 정수가 따릅니다. 모든 설정 파라미터에 대한 더 자세한 설명은 TON 블록체인 문서의 부록에서 제공될 예정입니다. 현재로서는 `crypto/block/block.tlb`의 TL-B 스키마를 검사하고 검증자 소스에서 다른 파라미터가 어떻게 사용되는지 확인할 수 있습니다.
+The values of configuration parameters are not arbitrary. Specifically, if the configuration parameter index `i` is non-negative, then its value must correspond to a valid value of the TL-B type `ConfigParam i`. Validators enforce this restriction and do not accept changes to configuration parameters with non-negative indices unless the values are valid for the corresponding TL-B type.
 
-음수 인덱스를 가진 설정 파라미터와는 대조적으로, 음수 인덱스를 가진 설정 파라미터는 임의의 값을 포함할 수 있습니다. 적어도 검증자에 의해 그들의 값에 대한 제한이 강제되지 않습니다. 따라서 블록 생성에는 중요하지 않지만 일부 기본 스마트 컨트랙트에서 사용되는 중요한 정보(예: 특정 스마트 컨트랙트가 작동을 시작해야 하는 Unix 시간)를 저장하는 데 사용될 수 있습니다.
+The structure of these parameters is defined in the source file `crypto/block/block.tlb`, where `ConfigParam i` is specified for different values of `i`. For example:
 
-## 2. 설정 파라미터 변경하기
+- `_config_addr: bits256 = ConfigParam 0;`
+- `_elector_addr: bits256 = ConfigParam 1;`
+- `_dns_root_addr: bits256 = ConfigParam 4; // root TON DNS resolver`
+- `capabilities#c4 version:uint32 capabilities:uint64 = GlobalVersion;`
+- `_GlobalVersion = ConfigParam 8; // all zero if absent`
 
-설정 파라미터의 현재 값이 마스터체인 상태의 특별한 부분에 저장된다고 이미 설명했습니다. 그렇다면 이들은 어떻게 변경되나요?
+These entries illustrate how configuration parameters are structured and defined within the specified file.
 
-사실, 마스터체인에는 **설정 스마트 컨트랙트**라고 불리는 특별한 스마트 컨트랙트가 있습니다. 이의 주소는 이전에 설명한 `ConfigParams`의 `config_addr` 필드에 의해 결정됩니다. 데이터의 첫 번째 셀 참조는 모든 설정 파라미터의 최신 복사본을 포함해야 합니다. 새로운 마스터체인 블록이 생성될 때, 설정 스마트 컨트랙트가 주소 `config_addr`로 찾아지고 새로운 설정 사전이 데이터의 첫 번째 셀 참조에서 추출됩니다. 몇 가지 유효성 검사(예: 음수가 아닌 32비트 인덱스 `i`를 가진 값이 실제로 TL-B 타입 (`ConfigParam i`)의 유효한 값인지 확인) 후에 검증자는 이 새로운 설정 사전을 ConfigParams를 포함하는 마스터체인의 부분에 복사합니다. 이는 모든 트랜잭션이 생성된 후에 수행되므로 설정 스마트 컨트랙트에 저장된 새로운 설정 사전의 최종 버전만 검사됩니다. 유효성 검사가 실패하면 "진짜" 설정 사전은 변경되지 않고 그대로 유지됩니다. 이런 방식으로 설정 스마트 컨트랙트는 설정 파라미터의 유효하지 않은 값을 설정할 수 없습니다. 새로운 설정 사전이 현재 설정 사전과 일치하면 검사가 수행되지 않고 변경도 이루어지지 않습니다.
+The configuration parameter `#8` includes a `Cell` that has no references and contains exactly 104 data bits. The first four bits are allocated for `11000100`, followed by 32 bits that represent the currently enabled "global version." This is followed by a 64-bit integer with flags that correspond to the currently enabled capabilities. A more detailed description of all configuration parameters will be provided in an appendix to the TON Blockchain documentation. In the meantime, you can review the TL-B scheme in `crypto/block/block.tlb` to see how different parameters are utilized in the validator sources.
 
-이런 방식으로 모든 설정 파라미터의 변경은 설정 스마트 컨트랙트에 의해 수행되며, 설정 파라미터 변경 규칙을 결정하는 것은 바로 이 코드입니다. 현재 설정 스마트 컨트랙트는 설정 파라미터를 변경하기 위한 두 가지 모드를 지원합니다:
+Unlike configuration parameters with non-negative indices, those with negative indices can hold arbitrary values. Validators do not enforce any restrictions on these values. As a result, they can be used to store essential information, such as the Unix time when specific smart contracts are set to begin operating. This information is not critical for block generation but is necessary for some fundamental smart contracts.
 
-1. 설정 스마트 컨트랙트의 데이터에 저장된 공개 키에 해당하는 특정 개인 키로 서명된 외부 메시지를 통해. 이는 한 엔티티가 제어하는 더 작은 사설 테스트 네트워크와 공개 테스트넷에서 사용되는 방법입니다. 운영자가 쉽게 모든 설정 파라미터의 값을 변경할 수 있기 때문입니다. 이 공개 키는 오래된 키로 서명된 특별한 외부 메시지로 변경될 수 있으며, 0으로 변경되면 이 메커니즘이 비활성화된다는 점에 유의하세요. 따라서 출시 직후의 미세 조정에 사용하고 나서 영구적으로 비활성화할 수 있습니다.
-2. 검증자가 찬성 또는 반대 투표를 하는 "설정 제안"을 생성함으로써. 일반적으로 설정 제안은 모든 검증자(가중치 기준)의 3/4 이상의 투표를 수집해야 하며, 한 라운드뿐만 아니라 여러 라운드(즉, 여러 연속된 검증자 세트)에서도 제안된 파라미터 변경을 확인해야 합니다. 이는 TON 블록체인 메인넷에서 사용될 분산 거버넌스 메커니즘입니다.
+## Changing configuration parameters
 
-두 번째 방법으로 구성 파라미터를 변경하는 방법에 대해 더 자세히 설명하고자 합니다.
+The current values of configuration parameters are stored in a special section of the MasterChain state. But how are they changed?
 
-## 3. 설정 제안 생성하기
+There is a special smart contract known as the **configuration smart contract** that resides in the MasterChain. Its address is specified by the `config_addr` field in `ConfigParams`. The first cell reference in its data must contain an up-to-date copy of all configuration parameters. When a new MasterChain block is generated, the configuration smart contract is accessed using its address (`config_addr`), and the new configuration dictionary is extracted from the first cell reference of its data.
 
-새로운 **설정 제안**은 다음과 같은 데이터를 포함합니다:
+Following some validity checks—like ensuring that any value with a non-negative 32-bit index `i` is indeed a valid TL-B type (`ConfigParam i`)—the validator copies this new configuration dictionary into the portion of the MasterChain that contains `ConfigParams`. This operation occurs after all transactions have been created, meaning only the final version of the new configuration dictionary stored in the smart contract is evaluated.
 
-- 변경할 설정 파라미터의 인덱스
-- 설정 파라미터의 새로운 값(또는 삭제하려면 Null)
-- 제안의 만료 Unix 시간
-- 제안이 **중요**한지 여부를 나타내는 플래그
-- 선택적인 **이전 값 해시**와 현재 값의 셀 해시(제안은 현재 값이 표시된 해시를 가진 경우에만 활성화될 수 있음)
+If the validity checks fail, the existing configuration dictionary remains unchanged, ensuring that the configuration smart contract cannot install invalid parameter values. If the new configuration dictionary is identical to the current one, no checks are performed, and no changes are made.
 
-마스터체인에 지갑이 있는 누구나 적절한 수수료를 지불하면 새로운 설정 제안을 생성할 수 있습니다. 하지만 기존 설정 제안에 대해서는 검증자만 투표할 수 있습니다.
+All changes to configuration parameters are executed by the configuration smart contract, which defines the rules for modifying these parameters. Currently, the configuration smart contract supports two methods for changing configuration parameters:
 
-**중요한** 설정 제안과 **일반** 설정 제안이 있다는 점에 유의하세요. 중요한 설정 제안은 중요한 파라미터를 포함한 모든 설정 파라미터를 변경할 수 있습니다(중요한 설정 파라미터 목록은 설정 파라미터 `#10`에 저장되어 있으며 이것 자체도 중요합니다). 하지만 중요한 설정 제안을 생성하는 것은 더 비싸고, 일반적으로 더 많은 검증자 투표를 더 많은 라운드에서 수집해야 합니다(일반 및 중요 설정 제안에 대한 정확한 투표 요구사항은 중요 설정 파라미터 `#11`에 저장되어 있습니다). 반면에 일반 설정 제안은 더 저렴하지만 중요한 설정 파라미터를 변경할 수 없습니다.
+- **External message**: This method involves an external message signed by a specific private key, which corresponds to a public key stored in the configuration smart contract's data. This approach is typically used in public testnets and possibly in smaller private test networks controlled by a single entity, as it allows the operator to easily modify any configuration parameter values.
 
-새로운 설정 제안을 생성하려면, 먼저 제안된 새로운 값을 포함하는 BoC(bag-of-cells) 파일을 생성해야 합니다. 이를 수행하는 정확한 방법은 변경하려는 설정 파라미터에 따라 다릅니다. 예를 들어, UTF-8 문자열 "TEST"(즉, `0x54455354`)를 포함하는 파라미터 `-239`를 생성하려면 다음과 같이 `config-param-239.boc`를 생성할 수 있습니다: Fift를 호출하고 다음을 입력합니다
+ It is important to note that this public key can be changed through a special external message signed by the previous key, and if changed to zero, this mechanism becomes disabled. This means the method can be used for fine-tuning right after launch and then permanently disabled.
+
+- **Configuration proposals**: This method involves creating "configuration proposals" that validators vote on. Generally, a configuration proposal must gather votes from more than 3/4 (75%) of all validators by weight, and this requires approval in multiple rounds (i.e., several consecutive sets of validators must confirm the proposed parameter change). This serves as the distributed governance mechanism for the TON Blockchain Mainnet.
+
+We will provide a more detailed explanation of the second method for changing configuration parameters.
+
+## Creating configuration proposals
+
+A new **configuration proposal** includes the following information:
+
+- The index of the configuration parameter to be changed.
+
+- The new value of the configuration parameter (or `Null`, if it is to be deleted).
+
+- The expiration Unix time of the proposal.
+
+- A flag indicating whether the proposal is **critical**.
+
+- An optional **old value hash** that contains the cell hash of the current value (the proposal can only be activated if the current value matches the specified hash).
+
+Anyone with a wallet in the MasterChain can create a new configuration proposal, provided they pay the required fee. However, only validators have the authority to vote for or against existing configuration proposals.
+
+It is important to note that there are **critical** and **ordinary** configuration proposals. A critical configuration proposal can modify any configuration parameter, including those classified as critical. The list of critical configuration parameters is stored in configuration parameter `#10`, which is itself considered critical. Creating critical configuration proposals is more costly, and they typically require gathering more validator votes across multiple rounds. The specific voting requirements for both ordinary and critical configuration proposals are detailed in the critical configuration parameter `#11`. Conversely, ordinary configuration proposals are less expensive to create but cannot alter critical configuration parameters.
+
+To create a new configuration proposal, one must first generate a BoC (bag-of-cells) file that contains the proposed new value. The method for doing this varies depending on the configuration parameter being modified. For example, if we want to create a parameter `-239` containing the UTF-8 string "TEST" (i.e., `0x54455354`), we would generate `config-param-239.boc` by invoking Fift and then typing:
 
 ```
 <b "TEST" $, b> 2 boc+>B "config-param-239.boc" B>file
 bye
 ```
 
-결과적으로 필요한 값의 직렬화를 포함하는 21바이트 파일 `config-param-239.boc`가 생성됩니다.
+As a result, a 21-byte file named `config-param-239.boc` will be created, which contains the serialization of the required value.
 
-더 복잡한 경우, 특히 음수가 아닌 인덱스를 가진 설정 파라미터의 경우 이 단순한 접근 방식은 쉽게 적용할 수 없습니다. `fift` 대신 `crypto/create-state`(빌드 디렉토리에서 사용 가능)를 사용하고 보통 TON 블록체인의 제로 상태(다른 블록체인 아키텍처의 "제네시스 블록"에 해당)를 생성하는 데 사용되는 소스 파일 `crypto/smartcont/gen-zerostate.fif`와 `crypto/smartcont/CreateState.fif`의 적절한 부분을 복사하고 편집하는 것을 추천합니다.
+For more complex cases, especially for configuration parameters with non-negative indices, this straightforward approach may not be easily applicable. We recommend using `create-state`, which is available as `crypto/create-state` in the build directory, instead of using `fift`. You should also consider copying and modifying relevant portions of the source files `crypto/smartcont/gen-zerostate.fif` and `crypto/smartcont/CreateState.fif`. These files are typically used to create the zero state, corresponding to the "genesis block" found in other blockchain architectures, for the TON Blockchain.
 
-예를 들어, 현재 활성화된 전역 블록체인 버전과 기능을 포함하는 설정 파라미터 `#8`을 살펴보겠습니다:
+For example, consider configuration parameter `#8`, which contains the currently enabled global blockchain version and its capabilities:
 
 ```
 capabilities#c4 version:uint32 capabilities:uint64 = GlobalVersion;
 _ GlobalVersion = ConfigParam 8;
 ```
 
-라이트 클라이언트를 실행하고 `getconfig 8`을 입력하여 현재 값을 검사할 수 있습니다:
+We can check its current value by running the lite client and typing `getconfig 8`:
 
 ```
 > getconfig 8
@@ -93,15 +109,15 @@ ConfigParam(8) = (
 x{C4000000010000000000000006}
 ```
 
-이제 `capReportVersion`을 나타내는 비트 `#3`(`+8`)을 활성화하고 싶다고 가정해봅시다(활성화되면 이 기능은 모든 콜레이터가 생성하는 블록의 블록 헤더에서 지원하는 버전과 기능을 보고하도록 강제합니다). 따라서 `version=1`과 `capabilities=14`를 원합니다. 이 예제에서는 여전히 올바른 직렬화를 추측하고 Fift에서 다음을 입력하여 BoC 파일을 직접 생성할 수 있습니다.
+Let’s consider enabling the capability represented by bit `#3` (which corresponds to `+8`), specifically the `capReportVersion` capability. When this capability is enabled, it requires all collators to include their supported versions and capabilities in the block headers of the blocks they generate. Therefore, we need to set `version=1` and `capabilities=14`. In this case, we can accurately guess the correct serialization and create the BoC file directly by entering commands in Fift.
 
 ```
 x{C400000001000000000000000E} s>c 2 boc+>B "config-param8.boc" B>file
 ```
 
-(결과적으로 원하는 값을 포함하는 30바이트 파일 `config-param8.boc`가 생성됩니다.)
+A 30-byte file named `config-param8.boc` is created, containing the desired value.
 
-하지만 더 복잡한 경우에는 이 옵션이 적용되지 않을 수 있으므로, 이 예제를 다르게 해보겠습니다. 소스 파일 `crypto/smartcont/gen-zerostate.fif`와 `crypto/smartcont/CreateState.fif`에서 관련 부분을 검사할 수 있습니다.
+In more complicated cases, this may not be an option. Therefore, let's approach this example differently. We can inspect the source files `crypto/smartcont/gen-zerostate.fif` and `crypto/smartcont/CreateState.fif` for relevant portions.
 
 ```
 // version capabilities --
@@ -120,7 +136,7 @@ x{C400000001000000000000000E} s>c 2 boc+>B "config-param8.boc" B>file
 1 capCreateStats capBounceMsgBody or capReportVersion or config.version!
 ```
 
-마지막 `8 config!` 없이 `config.version!`이 우리가 필요한 것을 본질적으로 수행한다는 것을 알 수 있으므로, 예를 들어 `create-param8.fif`라는 임시 Fift 스크립트를 생성할 수 있습니다:
+We observe that `config.version!`, excluding the last `8 config!`, effectively accomplishes our goal. Therefore, we can create a temporary Fift script named `create-param8.fif`:
 
 ```
 #!/usr/bin/fift -s
@@ -144,16 +160,16 @@ dup ."Serialized value = " <s csr.
 ."(Saved into file " type .")" cr
 ```
 
-이제 `fift -s create-param8.fif config-param8.boc` 또는 더 나은 방법으로 `crypto/create-state -s create-param8.fif config-param8.boc`을 실행하면(빌드 디렉토리에서) 다음과 같은 출력을 볼 수 있습니다:
+To execute the command `fift -s create-param8.fif config-param8.boc` or, even better, use `crypto/create-state -s create-param8.fif config-param8.boc` from the build directory, we will see the following output:
 
 ```
 Serialized value = x{C400000001000000000000000E}
 (Saved into file config-param8.boc)
 ```
 
-그리고 이전과 동일한 내용을 가진 30바이트 파일 `config-param8.boc`를 얻습니다.
+We have obtained a 30-byte file named `config-param8.boc`, which contains the same content as before.
 
-설정 파라미터의 원하는 값이 있는 파일을 얻으면, 소스 트리의 `crypto/smartcont` 디렉토리에서 찾을 수 있는 스크립트 `create-config-proposal.fif`를 적절한 인수와 함께 호출합니다. 다시 한 번, `fift` 대신 `create-state`(빌드 디렉토리에서 `crypto/create-state`로 사용 가능)를 사용하는 것을 추천합니다. 이는 더 많은 블록체인 관련 유효성 검사를 수행할 수 있는 Fift의 특별한 확장 버전이기 때문입니다:
+To create a configuration proposal, we first need a file containing the desired value for the configuration parameter. Next, we execute the script `create-config-proposal.fif`, which is located in the `crypto/smartcont` directory of the source tree, using appropriate arguments. We recommend using `create-state` (found as `crypto/create-state` in the build directory) instead of `fift`. This is because `create-state` is a specialized version of Fift that performs additional blockchain related validity checks:
 
 ```
 $ crypto/create-state -s create-config-proposal.fif 8 config-param8.boc -x 1100000
@@ -173,7 +189,7 @@ B5EE9C7241010301002C0001216E5650525E838CB0000000085E9455904001010BF300000008A002
 (Saved to file config-msg-body.boc)
 ```
 
-마스터체인에 있는 모든 (지갑) 스마트 컨트랙트에서 적절한 양의 Toncoin과 함께 설정 스마트 컨트랙트로 보낼 내부 메시지의 본문을 얻었습니다. 설정 스마트 컨트랙트의 주소는 라이트 클라이언트에서 `getconfig 0`을 입력하여 얻을 수 있습니다:
+We have acquired the content of an internal message intended for the configuration smart contract, along with an appropriate amount of Toncoin from any wallet smart contract located in the MasterChain. To find the address of the configuration smart contract, you can enter the \`get config 0' command in the lite client:
 
 ```
 > getconfig 0
@@ -181,7 +197,7 @@ ConfigParam(0) = ( config_addr:x555555555555555555555555555555555555555555555555
 x{5555555555555555555555555555555555555555555555555555555555555555}
 ```
 
-설정 스마트 컨트랙트의 주소가 `-1:5555...5555`임을 알 수 있습니다. 이 스마트 컨트랙트의 적절한 get-메서드를 실행하여 이 설정 제안을 생성하는 데 필요한 지불액을 알아낼 수 있습니다:
+We have the address of the configuration smart contract as `-1:5555...5555`. By using appropriate getter methods of this smart contract, we can determine the required payment for creating this configuration proposal:
 
 ```
 > runmethod -1:5555555555555555555555555555555555555555555555555555555555555555 proposal_storage_price 0 1100000 104 0
@@ -191,9 +207,9 @@ result:  [ 2340800000 ]
 remote result (not to be trusted):  [ 2340800000 ] 
 ```
 
-get-메서드 `proposal_storage_price`의 파라미터는 중요 플래그(이 경우 0), 이 제안이 활성화될 시간 간격(1.1 메가초), 총 비트 수(104)와 데이터의 셀 참조 수(0)입니다. 후자의 두 수량은 `create-config-proposal.fif`의 출력에서 볼 수 있습니다.
+The parameters for the `proposal_storage_price` get-method include the following: a critical flag set to 0, a time interval of 1.1 megaseconds during which the proposal will remain active, a total of 104 bits, and 0 cell references in the data. The latter two quantities can be found in the output of `create-config-proposal.fif`.
 
-이 제안을 생성하기 위해 2.3408 Toncoin을 지불해야 함을 알 수 있습니다. 처리 수수료를 지불하기 위해 메시지에 최소 1.5 Toncoin을 추가하는 것이 좋으므로, 요청과 함께 4 Toncoin을 보낼 것입니다(초과 Toncoin은 모두 반환됩니다). 이제 우리는 `wallet.fif`(또는 사용 중인 지갑에 해당하는 Fift 스크립트)를 사용하여 4 Toncoin과 `config-msg-body.boc`의 본문을 포함하는 설정 스마트 컨트랙트로의 전송을 생성합니다. 이는 일반적으로 다음과 같이 보입니다:
+To create this proposal, we need to pay 2.3408 Toncoins. It's advisable to add at least 1.5 Toncoins to cover the processing fees. Therefore, we will send a total of 4 Toncoins with the request (any excess Toncoins will be returned). We will then use `wallet.fif` (or the appropriate Fift script for our wallet) to execute a transfer from our wallet to the configuration smart contract, including the 4 Toncoins and the body from `config-msg-body.boc`. This process typically looks like:
 
 ```
 $ fift -s wallet.fif my-wallet -1:5555555555555555555555555555555555555555555555555555555555555555 31 4. -B config-msg-body.boc
@@ -217,7 +233,7 @@ B5EE9C724101040100CB0001CF89FE00000000000000000000000000000000000000000000000000
 (Saved to file wallet-query.boc)
 ```
 
-이제 라이트 클라이언트의 도움을 받아 외부 메시지 `wallet-query.boc`를 블록체인에 보냅니다.
+We will now send the external message `wallet-query.boc` to the blockchain using the lite client.
 
 ```
 > sendfile wallet-query.boc
@@ -225,7 +241,7 @@ B5EE9C724101040100CB0001CF89FE00000000000000000000000000000000000000000000000000
 external message status is 1
 ```
 
-잠시 기다린 후, 설정 스마트 컨트랙트의 응답 메시지를 확인하기 위해 우리 지갑의 수신 메시지를 검사하거나, 운이 좋다면 설정 스마트 컨트랙트의 메서드 `list_proposals`를 통해 모든 활성 설정 제안의 목록을 검사할 수 있습니다.
+After waiting for a brief period, we can check the incoming messages in our wallet to look for response messages from the configuration smart contract. Alternatively, if we are feeling lucky, we can directly inspect the list of all active configuration proposals by using the `list_proposals` method of the configuration smart contract.
 
 ```
 > runmethod -1:5555555555555555555555555555555555555555555555555555555555555555 list_proposals
@@ -236,15 +252,21 @@ remote result (not to be trusted):  [ ([6465489854369209310663026020982025659862
 ... caching cell FDCD887EAF7ACB51DA592348E322BBC0BD3F40F9A801CB6792EFF655A7F43BBC
 ```
 
-모든 활성 설정 제안의 목록이 정확히 하나의 항목으로 구성되어 있음을 알 수 있습니다. 이는 쌍으로 표현됩니다.
+The list of all active configuration proposals contains exactly one entry represented by a pair.
 
 ```
 [6465...6321 [1586779536 0 [8 C{FDCD...} -1] 1124...2998 () 8646...209 3 0 0]]
 ```
 
-첫 번째 숫자 `6465..6321`은 256비트 해시와 동일한 설정 제안의 고유 식별자입니다. 이 쌍의 두 번째 구성 요소는 이 설정 제안의 상태를 설명하는 튜플입니다. 이 튜플의 첫 번째 구성 요소는 설정 제안의 만료 Unix 시간(`1586779546`)입니다. 두 번째 구성 요소(`0`)는 중요성 플래그입니다. 다음은 삼중항 `[8 C{FDCD...} -1]`로 표현된 설정 제안 자체입니다. 여기서 `8`은 수정할 설정 파라미터의 인덱스이고, `C{FDCD...}`는 새로운 값을 가진 셀(이 셀의 해시로 표현됨)이며, `-1`은 이 파라미터의 이전 값의 선택적 해시입니다(`-1`은 이 해시가 지정되지 않았음을 의미합니다). 다음으로 현재 검증자 세트의 식별자를 나타내는 큰 숫자 `1124...2998`가 보이고, 그 다음에는 지금까지 이 제안에 투표한 모든 현재 활성 검증자의 집합을 나타내는 빈 목록 `()`이 있으며, 그 다음에는 `8646...209`와 동일한 `weight_remaining`이 있습니다 - 이는 제안이 이 라운드에서 충분한 검증자 투표를 수집하지 못한 경우 양수이고, 그렇지 않으면 음수입니다. 그런 다음 세 개의 숫자 `3 0 0`이 보입니다. 이 숫자들은 `rounds_remaining`(이 제안은 최대 3라운드, 즉 현재 검증자 세트의 변경을 생존할 것입니다), `wins`(전체 검증자의 3/4 이상이 가중치로 투표한 라운드의 수), 그리고 `losses`(제안이 3/4의 검증자 투표를 수집하는 데 실패한 라운드의 수)입니다.
+The first number, `6465..6321`, serves as the unique identifier for the configuration proposal and represents its 256-bit hash. The second component of this pair is a tuple that describes the status of the configuration proposal. The first part of this tuple indicates the expiration Unix time of the proposal (`1586779546`), while the second part (`0`) acts as a criticality flag.
 
-`C{FDCD...}`의 해시 `FDCD...` 또는 이 해시의 충분히 긴 접두사를 사용하여 셀을 고유하게 식별하여 라이트 클라이언트에게 설정 파라미터 `#8`에 대한 제안된 값을 검사하도록 요청할 수 있습니다:
+Next, we find the configuration proposal itself, which is expressed by the triple `[8 C{FDCD...} -1]`. In this notation, `8` represents the index of the configuration parameter to be modified, `C{FDCD...}` denotes the cell containing the new value (its hash is represented by the value that follows), and `-1` indicates the optional hash of the old value for this parameter (where `-1` means the old hash is not specified).
+
+Following that, we encounter a large number, `1124...2998`, which identifies the current validator set. An empty list `()` is included to signify the set of all currently active validators who have voted for this proposal so far. Next is `weight_remaining`, equal to `8646...209`. This value is positive if the proposal has not yet garnered enough validator votes in this round, and negative otherwise.
+
+Lastly, we see three numbers: `3 0 0`. These represent `rounds_remaining` (the proposal can survive at most three rounds, meaning changes to the current validator set), `wins` (the count of rounds in which the proposal received votes exceeding 3/4 of all validators by weight), and `losses` (the count of rounds where the proposal failed to secure 3/4 of all validator votes).
+
+To inspect the proposed value for configuration parameter `#8`, you can ask the lite client to expand cell `C{FDCD...}` using its hash `FDCD...` or a sufficiently long prefix of this hash to uniquely identify the specific cell in question:
 
 ```
 > dumpcell FDC
@@ -252,7 +274,7 @@ C{FDCD887EAF7ACB51DA592348E322BBC0BD3F40F9A801CB6792EFF655A7F43BBC} =
   x{C400000001000000000000000E}
 ```
 
-값이 `x{C400000001000000000000000E}`임을 알 수 있습니다. 이는 실제로 우리가 설정 제안에 포함시킨 값입니다. 라이트 클라이언트에게 이 Cell을 TL-B 타입 (`ConfigParam 8`)의 값으로 표시하도록 요청할 수도 있습니다.
+We observe that the value is `x{C400000001000000000000000E}`, which is the value we have incorporated into our configuration proposal. Additionally, we can ask the lite client to present this Cell as a TL-B type value (`ConfigParam 8`).
 
 ```
 > dumpcellas ConfigParam8 FDC
@@ -263,9 +285,9 @@ C{FDCD887EAF7ACB51DA592348E322BBC0BD3F40F9A801CB6792EFF655A7F43BBC} =
     (capabilities version:1 capabilities:14))
 ```
 
-이는 다른 사람들이 만든 설정 제안을 고려할 때 특히 유용합니다.
+This is particularly useful when we evaluate configuration proposals created by others.
 
-설정 제안은 이후 256비트 해시 - 큰 10진수 `6465...6321`로 식별됩니다. 설정 제안의 식별자를 유일한 인수로 하는 get-메서드 `get_proposal`을 실행하여 특정 설정 제안의 현재 상태를 검사할 수 있습니다:
+Each configuration proposal is identified by its unique 256-bit hash, represented by the large decimal number `6465...6321`. To check the current status of a specific configuration proposal, you can use the `get_proposal` method, providing the identifier of the configuration proposal as the only argument:
 
 ```
 > runmethod -1:5555555555555555555555555555555555555555555555555555555555555555 get_proposal 64654898543692093106630260209820256598623953458404398631153796624848083036321
@@ -274,65 +296,76 @@ arguments:  [ 646548985436920931066302602098202565986239534584043986311537966248
 result:  [ [1586779536 0 [8 C{FDCD887EAF7ACB51DA592348E322BBC0BD3F40F9A801CB6792EFF655A7F43BBC} -1] 112474791597373109254579258586921297140142226044620228506108869216416853782998 () 864691128455135209 3 0 0] ] 
 ```
 
-본질적으로 이전과 동일한 결과를 얻지만, 설정 제안의 식별자 없이 하나의 설정 제안에 대해서만 얻습니다.
+We achieve essentially the same outcome as before, but for only one configuration proposal and without the identifier at the beginning.
 
-## 4. 설정 제안에 대한 투표
+## Voting for configuration proposals
 
-설정 제안이 생성되면, 현재 라운드와 여러 후속 라운드(선출된 검증자 세트)에서 모든 현재 검증자(가중치, 즉 지분 기준)의 3/4 이상의 투표를 수집해야 합니다. 이런 방식으로 설정 파라미터를 변경하는 결정은 현재 검증자 세트뿐만 아니라 여러 후속 검증자 세트의 상당한 다수의 승인을 받아야 합니다.
+Once a configuration proposal is created, it must collect votes from more than 75% of all current validators (based on their stake) during the current round and possibly in several subsequent rounds (with elected validator sets). This ensures that the decision to change a configuration parameter is approved by a significant majority, not only of the current set of validators but also of several future sets.
 
-설정 제안에 대한 투표는 설정 파라미터 `#34`에 (영구 공개 키와 함께) 나열된 현재 검증자만 가능합니다. 프로세스는 대략 다음과 같습니다:
+Voting for a configuration proposal is limited to the current validators listed (with their permanent public keys) in configuration parameter `#34`. The process is outlined below:
 
-- 검증자의 운영자는 설정 파라미터 `#34`에 저장된 현재 검증자 세트에서 자신의 검증자의 (0 기반) 인덱스 `val-idx`를 찾습니다.
-- 운영자는 소스 트리의 `crypto/smartcont` 디렉토리에 있는 특별한 Fift 스크립트 `config-proposal-vote-req.fif`를 호출하고, `val-idx`와 `config-proposal-id`를 인수로 지정합니다:
+- The operator of a validator first looks up `val-idx`, the zero-based index of their validator in the current set of validators stored in configuration parameter `#34`.
 
-```
-    $ fift -s config-proposal-vote-req.fif -i 0 64654898543692093106630260209820256598623953458404398631153796624848083036321
-    Creating a request to vote for configuration proposal 0x8ef1603180dad5b599fa854806991a7aa9f280dbdb81d67ce1bedff9d66128a1 on behalf of validator with index 0 
-    566F744500008EF1603180DAD5B599FA854806991A7AA9F280DBDB81D67CE1BEDFF9D66128A1
-    Vm90RQAAjvFgMYDa1bWZ-oVIBpkaeqnygNvbgdZ84b7f-dZhKKE=
-    Saved to file validator-to-sign.req
-```
+- The operator then invokes a special Fift script, `config-proposal-vote-req.fif`, found in the `crypto/smartcont` directory of the source tree. They must indicate both `val-idx` and `config-proposal-id` as arguments:
 
-- 그 후, [Validator-HOWTO](/v3/guidelines/nodes/running-nodes/validator-node)에서 검증자 선거 참여에 대해 설명된 것과 유사한 방식으로, `validator-engine-console`에서 `sign <validator-key-id> 566F744...28A1`을 사용하여 현재 검증자의 개인 키로 투표 요청에 서명해야 합니다. 하지만 이번에는 현재 활성화된 키를 사용해야 합니다.
-- 다음으로, 다른 스크립트 `config-proposal-signed.fif`를 호출해야 합니다. 이는 `config-proposal-req.fif`와 유사한 인수를 가지지만, 투표 요청에 서명하는 데 사용된 공개 키의 base64 표현과 서명 자체의 base64 표현이라는 두 가지 추가 인수가 필요합니다. 이것도 [Validator-HOWTO](/v3/guidelines/nodes/running-nodes/validator-node)에서 설명된 프로세스와 매우 유사합니다.
-- 이런 방식으로, 이 설정 제안에 대한 서명된 투표를 담은 내부 메시지의 본문이 포함된 파일 `vote-msg-body.boc`가 생성됩니다.
-- 그 후, `vote-msg-body.boc`는 처리를 위한 약간의 Toncoin(일반적으로 1.5 Toncoin이면 충분)과 함께 마스터체인에 있는 모든 스마트 컨트랙트(일반적으로 검증자의 제어 스마트 컨트랙트가 사용됨)에서 보내는 내부 메시지로 전달되어야 합니다. 이것도 검증자 선거 중에 사용되는 절차와 완전히 유사합니다. 이는 일반적으로 다음을 실행하여 달성됩니다:
+ ```
+   $ fift -s config-proposal-vote-req.fif -i 0 64654898543692093106630260209820256598623953458404398631153796624848083036321
+   Creating a request to vote for configuration proposal 0x8ef1603180dad5b599fa854806991a7aa9f280dbdb81d67ce1bedff9d66128a1 on behalf of validator with index 0 
+   566F744500008EF1603180DAD5B599FA854806991A7AA9F280DBDB81D67CE1BEDFF9D66128A1
+   Vm90RQAAjvFgMYDa1bWZ-oVIBpkaeqnygNvbgdZ84b7f-dZhKKE=
+   Saved to file validator-to-sign.req
+ ```
 
-```
-$ fift -s wallet.fif my_wallet_id -1:5555555555555555555555555555555555555555555555555555555555555555 1 1.5 -B vote-msg-body.boc
-```
+- The vote request must then be signed using the current validator’s private key, with the command `sign <validator-key-id> 566F744...28A1` in the `validator-engine-console` connected to the validator. This process is similar to the steps described in the [Validator-HOWTO](/v3/guidelines/nodes/running-nodes/validator-node) for participating in validator elections; however, the currently active key must be used.
 
-(검증자를 제어하기 위해 단순한 지갑이 사용되는 경우) 그리고 나서 결과 파일 `wallet-query.boc`를 라이트 클라이언트에서 보냅니다:
+- Next, the `config-proposal-signed.fif` script is invoked. This script has similar arguments to `config-proposal-req.fif`, but it also requires two additional arguments: the base64 representation of the public key used to sign the vote request and the base64 representation of the signature. The process is again akin to what is described in the [Validator-HOWTO](/v3/guidelines/nodes/running-nodes/validator-node).
 
-```
-> sendfile wallet-query.boc
-```
+- This process generates a file named `vote-msg-body.boc`, which contains the body of an internal message carrying a signed vote for this configuration proposal.
 
-설정 스마트 컨트랙트의 답변 메시지를 제어 스마트 컨트랙트로 모니터링하여 투표 쿼리의 상태를 알 수 있습니다. 또는 설정 스마트 컨트랙트의 get-메서드 `show_proposal`을 통해 설정 제안의 상태를 검사할 수 있습니다:
+- After that, `vote-msg-body.boc` must be sent in an internal message from any smart contract residing in the masterchain (typically from the controlling smart contract of the validator) along with a small amount of Toncoin for processing (usually, 1.5 Toncoin is sufficient). This step follows the same procedure used during validator elections. The command is typically structured as follows:
 
-```
-> runmethod -1:5555555555555555555555555555555555555555555555555555555555555555 get_proposal 64654898543692093106630260209820256598623953458404398631153796624848083036321
-...
-arguments:  [ 64654898543692093106630260209820256598623953458404398631153796624848083036321 94347 ] 
-result:  [ [1586779536 0 [8 C{FDCD887EAF7ACB51DA592348E322BBC0BD3F40F9A801CB6792EFF655A7F43BBC} -1] 112474791597373109254579258586921297140142226044620228506108869216416853782998 (0) 864691128455135209 3 0 0] ]
-```
+ ```
+ $ fift -s wallet.fif my_wallet_id -1:5555555555555555555555555555555555555555555555555555555555555555 1 1.5 -B vote-msg-body.boc
+ ```
 
-이번에는 이 설정 제안에 투표한 검증자의 인덱스 목록이 비어있지 않아야 하며, 여러분의 검증자의 인덱스가 포함되어 있어야 합니다. 이 예제에서 이 목록은 (`0`)이며, 이는 설정 파라미터 `#34`에서 인덱스 `0`을 가진 검증자만이 투표했음을 의미합니다. 목록이 충분히 커지면, 제안 상태의 마지막에서 두 번째 정수(`3 0 0`에서 첫 번째 0)가 1만큼 증가하여 이 제안의 새로운 승리를 나타냅니다. 승리 횟수가 설정 파라미터 `#11`에 표시된 값보다 크거나 같아지면, 설정 제안은 자동으로 수락되고 제안된 변경사항이 즉시 효력을 발휘합니다. 반면에 검증자 세트가 변경되면, 이미 투표한 검증자 목록이 비워지고, `rounds_remaining`의 값(`3 0 0`에서 3)이 1만큼 감소하며, 음수가 되면 설정 제안이 파기됩니다. 파기되지 않고 이 라운드에서 승리하지 못했다면, 손실 횟수(`3 0 0`에서 두 번째 0)가 증가합니다. 이 값이 설정 파라미터 `#11`에 지정된 값보다 커지면 설정 제안이 폐기됩니다. 결과적으로 라운드에서 투표하지 않은 모든 검증자는 암묵적으로 반대표를 던진 것으로 간주됩니다.
+ (if a simple wallet controls the validator), followed by sending the resulting file `wallet-query.boc` from the lite client:
 
-## 5. 설정 제안에 대한 투표를 자동화하는 방법
+ ```
+ > sendfile wallet-query.boc
+ ```
 
-검증자 선거 참여를 위해 `validator-engine-console`의 `createelectionbid` 명령이 제공하는 자동화와 유사하게, `validator-engine`과 `validator-engine-console`은 제어 지갑과 함께 사용할 준비가 된 `vote-msg-body.boc`를 생성하는 이전 섹션에서 설명한 대부분의 단계를 수행하는 자동화된 방법을 제공합니다. 이 방법을 사용하려면 [Validator-HOWTO](/v3/guidelines/nodes/running-nodes/validator-node)의 섹션 5에서 설명한 대로 validator-engine이 `validator-elect-req.fif`와 `validator-elect-signed.fif`를 찾는 것과 동일한 디렉토리에 Fift 스크립트 `config-proposal-vote-req.fif`와 `config-proposal-vote-signed.fif`를 설치해야 합니다. 그 후에는 단순히 validator-engine-console에서 다음을 실행하여:
+- You can monitor the response messages from the configuration smart contract to the controlling smart contract to check the status of your voting queries. Alternatively, you can inspect the status of the configuration proposal by using the `get-method` `show_proposal` of the configuration smart contract:
+
+ ```
+ > runmethod -1:5555555555555555555555555555555555555555555555555555555555555555 get_proposal 64654898543692093106630260209820256598623953458404398631153796624848083036321
+ ...
+ arguments:  [ 64654898543692093106630260209820256598623953458404398631153796624848083036321 94347 ] 
+ result:  [ [1586779536 0 [8 C{FDCD887EAF7ACB51DA592348E322BBC0BD3F40F9A801CB6792EFF655A7F43BBC} -1] 112474791597373109254579258586921297140142226044620228506108869216416853782998 (0) 864691128455135209 3 0 0] ]
+ ```
+
+ In this output, the list of indices for validators that voted for this configuration proposal should not be empty and must include the index of your validator. For example, if the list contains (`0`), it indicates that only the validator with index `0` in configuration parameter `#34` has voted. If this list grows, the second-to-last integer (the first zero in `3 0 0`) in the proposal status will increase, reflecting another win for this proposal. If the number of wins reaches or exceeds the value indicated in configuration parameter `#11`, the configuration proposal is automatically accepted, and the proposed changes take effect immediately.
+
+ Conversely, when the validator set changes, the list of validators that have already voted will become empty, the `rounds_remaining` value (currently three in `3 0 0`) will decrease by one, and if it becomes negative, the configuration proposal will be destroyed. If the proposal is not destroyed and has not won in the current round, the number of losses (the second zero in `3 0 0`) will increase. If this number exceeds the value specified in configuration parameter `#11`, the configuration proposal will be rejected.
+
+## An automated way of voting on configuration proposals
+
+The automation provided by the command `createelectionbid` in `validator-engine-console` facilitates participation in validator elections. Similarly, both `validator-engine` and `validator-engine-console` automate most of the steps mentioned in the previous section, allowing you to generate a `vote-msg-body.boc` that can be used with the controlling wallet.
+
+To use this method, you need to install the Fift scripts `config-proposal-vote-req.fif` and `config-proposal-vote-signed.fif` in the same directory that the validator-engine uses to locate `validator-elect-req.fif` and `validator-elect-signed.fif`, as described in Section 5 of the [Validator-HOWTO](/v3/guidelines/nodes/running-nodes/validator-node). Once you have those files set up, you can create the `vote-msg-body.boc` by executing the following command in the validator-engine-console:
 
 ```
     createproposalvote 64654898543692093106630260209820256598623953458404398631153796624848083036321 vote-msg-body.boc
 ```
 
-설정 스마트 컨트랙트로 보낼 내부 메시지의 본문이 담긴 `vote-msg-body.boc`를 생성할 수 있습니다.
+This command will generate the `vote-msg-body.boc`, which contains the body of the internal message to be sent to the configuration smart contract.
 
-## 6. 설정 스마트 컨트랙트와 선거 스마트 컨트랙트의 코드 업그레이드
+## Upgrading the code of the configuration smart contract and the elector smart contract
 
-설정 스마트 컨트랙트 자체의 코드나 선거 스마트 컨트랙트의 코드를 업그레이드해야 할 수 있습니다. 이를 위해 위에서 설명한 것과 동일한 메커니즘이 사용됩니다. 새로운 코드는 값 셀의 유일한 참조에 저장되어야 하며, 이 값 셀은 설정 파라미터 `-1000`(설정 스마트 컨트랙트 업그레이드용) 또는 `-1001`(선거 스마트 컨트랙트 업그레이드용)의 새로운 값으로 제안되어야 합니다. 이러한 파라미터는 중요한 것으로 간주되므로, 설정 스마트 컨트랙트를 변경하기 위해서는 많은 검증자 투표가 필요합니다(이는 새로운 헌법을 채택하는 것과 유사합니다). 이러한 변경사항을 먼저 테스트 네트워크에서 테스트하고, 각 검증자 운영자가 제안된 변경사항에 대해 찬성 또는 반대 투표를 결정하기 전에 공개 포럼에서 제안된 변경사항을 논의할 것으로 예상됩니다.
+It may be necessary to upgrade the code of either the configuration smart contract or the elector smart contract. To do this, we will use the same mechanism described previously. The new code must be stored in a reference of a value cell, and this value cell should be proposed as the new value for the configuration parameter `-1000` (for upgrading the configuration smart contract) or `-1001` (for upgrading the elector smart contract). These parameters are considered critical, so a significant number of validator votes will be required to make changes to the configuration smart contract, similar to adopting a new constitution. We anticipate that such changes will first be tested in a test network and discussed in public forums before each validator operator makes their decision to vote for or against the proposed changes.
 
-대안으로, 중요한 설정 파라미터 `0`(설정 스마트 컨트랙트의 주소) 또는 `1`(선거 스마트 컨트랙트의 주소)을 다른 값으로 변경할 수 있습니다. 이는 이미 존재하고 올바르게 초기화된 스마트 컨트랙트에 해당해야 합니다. 특히, 새로운 설정 스마트 컨트랙트는 영구 데이터의 첫 번째 참조에 유효한 설정 사전을 포함해야 합니다. 다른 스마트 컨트랙트 간에 변경되는 데이터(예: 활성 설정 제안 목록 또는 검증자 선거의 이전 및 현재 참가자 목록)를 올바르게 전송하는 것이 그리 쉽지 않기 때문에, 대부분의 경우 설정 스마트 컨트랙트 주소를 변경하는 것보다는 기존 스마트 컨트랙트의 코드를 업그레이드하는 것이 더 좋습니다.
+Alternatively, critical configuration parameters `0` (which indicates the address of the configuration smart contract) or `1` (which indicates the address of the elector smart contract) can be changed to other values, provided that these values match existing and correctly initialized smart contracts. Specifically, the new configuration smart contract must contain a valid configuration dictionary in the first reference of its persistent data. Since transferring changing data—such as the list of active configuration proposals or the previous and current participant lists of validator elections—between different smart contracts can be complicated, it is generally more beneficial to upgrade the code of an existing smart contract rather than change the address of the configuration smart contract.
 
-설정 또는 선거 스마트 컨트랙트의 코드를 업그레이드하기 위한 이러한 설정 제안을 생성하는 데 사용되는 두 가지 보조 스크립트가 있습니다. 즉, `create-config-upgrade-proposal.fif`는 Fift 어셈블러 소스 파일(`auto/config-code.fif`가 기본값이며, FunC 컴파일러가 `crypto/smartcont/config-code.fc`에서 자동으로 생성한 코드에 해당)을 로드하고 해당 설정 제안(설정 파라미터 `-1000`용)을 생성합니다. 마찬가지로, `create-elector-upgrade-proposal.fif`는 Fift 어셈블러 소스 파일(`auto/elector-code.fif`가 기본값)을 로드하고 이를 사용하여 설정 파라미터 `-1001`에 대한 설정 제안을 생성합니다. 이런 방식으로 이 두 스마트 컨트랙트 중 하나를 업그레이드하기 위한 설정 제안을 생성하는 것은 매우 간단해야 합니다. 하지만 스마트 컨트랙트의 수정된 FunC 소스, 이를 컴파일하는 데 사용된 FunC 컴파일러의 정확한 버전도 공개해야 합니다. 그래야 모든 검증자(또는 그들의 운영자)가 설정 제안의 코드를 재현할 수 있고(해시를 비교할 수 있고) 제안된 변경사항에 대해 찬성 또는 반대 투표를 결정하기 전에 소스 코드와 코드의 변경사항을 연구하고 논의할 수 있습니다.
+There are two auxiliary scripts designed to create configuration proposals for upgrading the code of the configuration or elector smart contract. The script `create-config-upgrade-proposal.fif` loads a Fift assembler source file (`auto/config-code.fif` by default), which corresponds to the code automatically generated by the FunC compiler from `crypto/smartcont/config-code.fc`, and creates the corresponding configuration proposal for the configuration parameter `-1000`. Similarly, the script `create-elector-upgrade-proposal.fif` loads a Fift assembler source file (`auto/elector-code.fif` by default) and uses it to create a configuration proposal for configuration parameter `-1001`. This makes it simple to create configuration proposals to upgrade either of these two smart contracts.
+
+However, it is also essential to publish the modified FunC source code of the smart contract and specify the exact version of the FunC compiler used for compilation. This way, all validators (or their operators) will be able to reproduce the code in the configuration proposal, compare the hashes, and examine the source code and changes before deciding how to vote on the proposed changes. <Feedback />
+

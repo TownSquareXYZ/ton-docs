@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # راهنمای استخراج TON
 
 :::warning منسوخ شده
@@ -197,3 +199,6 @@ Est. monthly income:                437.7 TON
 #### <a id="faq-software-build"></a>آیا می‌توانید به من در ساخت نرم‌افزار بر روی سیستم‌عامل من کمک کنید؟
 
 این خارج از محدوده این راهنما است، لطفاً به [راهنمای نصب نود کامل](https://ton.org/#/howto/full-node) و همچنین [اسکریپت‌های نصب Mytonctrl](https://github.com/igroman787/mytonctrl/blob/master/scripts/toninstaller.sh#L44) مراجعه کنید تا اطلاعاتی درباره وابستگی‌ها و فرآیند کسب کنید.
+
+<Feedback />
+

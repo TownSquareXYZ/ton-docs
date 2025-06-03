@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # TON Payments
 
 TON Payments پلتفرمی برای کانال‌های پرداخت خرد است.
@@ -32,7 +34,10 @@ TON Payments پلتفرمی برای کانال‌های پرداخت خرد ا�
 - [sevenzing/hack-a-ton](https://github.com/sevenzing/hack-a-ton)—استفاده از API پرداخت به ازای درخواست در TON ([ویدئو](https://www.youtube.com/watch?v=7lAnbyJdpOA&feature=youtu.be))
 - [illright/diamonds](https://github.com/illright/diamonds)—پلتفرم آموزش پرداخت به ازای دقیقه ([وبسایت](https://diamonds-ton.vercel.app/)، [ویدئو](https://www.youtube.com/watch?v=g9wmdOjAv1s))
 
-## همچنین ببینید
+## See also
 
-- [پردازش پرداخت‌ها](/v3/guidelines/dapps/asset-processing/payments-processing)
+- [Payments processing](/v3/guidelines/dapps/asset-processing/payments-processing)
 - [TON Connect](/v3/guidelines/ton-connect/overview)
+
+<Feedback />
+

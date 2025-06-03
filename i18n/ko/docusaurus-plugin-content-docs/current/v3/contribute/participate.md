@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 기여 가이드
+
+:::danger
+This page is outdated and will be deleted soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 여기에는 튜토리얼을 통해 TON 문서에 기여하는 단계별 가이드가 있습니다.
 
@@ -18,14 +25,14 @@
 설명하고자 하는 자료를 찾거나 작성합니다.
 
 1. TON Docs GitHub에서 'tutorial' 라벨이 붙은 [이슈 목록](https://github.com/ton-community/ton-docs/issues) 을 확인합니다.
-2. *또는* [튜토리얼 템플릿](https://github.com/ton-community/ton-docs/issues/new?assignees=\\&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A\\&template=suggest_tutorial.yaml\\&title=Suggest+a+tutorial)을 사용하여 Ton Docs Github에 자신의 아이디어를 작성합니다.
+2. *또는* 튜토리얼 템플릿을 사용하여 Ton Docs Github에 자신의 아이디어를 작성합니다.
 
 ## 보상을 받기 위한 문제 설명
 
 기여에 대한 자금을 받기 위해 _ton-footstep_을 작성합니다.
 
 1. [TON Bounties](https://github.com/ton-society/grants-and-bounties/blob/main/bounties/BOUNTIES_PROGRAM_GUIDELINES.md) 프로그램에 대해 더 자세히 알아보세요.
-   1. [Improve TVM Instructions article](https://github.com/ton-society/grants-and-bounties/issues/361)를 예시로 사용하세요.
+    1. [Improve TVM Instructions article](https://github.com/ton-society/grants-and-bounties/issues/361)를 예시로 사용하세요.
 2. 참여하려면 [자신의 바운티](https://github.com/ton-society/grants-and-bounties/issues/new/choose)를 작성하고 승인을 기다립니다. [TON Bounties Creator Bot](https://t.me/footsteps_helper_bot)이 도움을 드릴 것입니다.
 3. 'approved' 라벨을 받은 후 튜토리얼을 작성하기 시작합니다.
 
@@ -47,3 +54,6 @@
 2. [ton-bounty를 완료하는 방법](https://github.com/ton-society/grants-and-bounties/blob/main/bounties/BOUNTIES_PROGRAM_GUIDELINES.md#got-assigned-submit-a-questbook-proposal) 가이드를 따라 바운티를 완료하고 보상을 받으세요.
 3. 작업에서 보상을 받을 지갑 주소를 요청할 것입니다.
 4. 보상을 받으세요!
+
+<Feedback />
+

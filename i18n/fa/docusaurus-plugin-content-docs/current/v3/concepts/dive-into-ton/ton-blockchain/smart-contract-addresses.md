@@ -1,19 +1,70 @@
-# آدرس‌های قرارداد هوشمند
+import Feedback from '@site/src/components/Feedback';
 
-[//]: # "TODO, این توسط GPT ایجاد شده است"
+# Smart contract addresses
 
 در بلاکچین TON، هر بازیگر، از جمله کیف پول‌ها و قراردادهای هوشمند، توسط یک آدرس نمایان می‌شود. این آدرس‌ها برای دریافت و ارسال پیام‌ها و تراکنش‌ها اهمیت حیاتی دارند. دو فرمت اصلی برای آدرس‌های قرارداد هوشمند وجود دارد: **آدرس‌های خام** و **آدرس‌های کاربر پسند**.
 
-## اجزای آدرس
+## Address components
 
 هر آدرس در TON شامل دو جزء اصلی است:
 
 - **شناسه ورک‌چین**: یک عدد صحیح ۳۲ بیتی امضا شده که مشخص می‌کند قرارداد به کدام ورک‌چین تعلق دارد (به عنوان مثال، `-1` برای مسترچین و `0` برای بیس‌چین).
 - **شناسه حساب**: یک شناسه منحصر به فرد برای قرارداد، که به طور کلی برای مسترچین و بیس‌چین ۲۵۶ بیت طول دارد.
 
-## آدرس خام در مقابل آدرس کاربر پسند
+## Address states
 
-### آدرس خام
+هر آدرس در TON می‌تواند در یکی از وضعیت‌های زیر باشد:
+
+- **عدم وجود**: آدرس داده‌ای ندارد (وضعیت اولیه برای همه آدرس‌ها).
+- **غیرفعال**: آدرس دارای موجودی است اما کد قرارداد هوشمند ندارد.
+- **فعال**: آدرس با کد قرارداد هوشمند و موجودی فعال است.
+- **منجمد**: آدرس به دلیل هزینه‌های ذخیره‌سازی که از موجودی آن فراتر رفته است قفل شده است.
+
+## Address formats
+
+A TON address uniquely identifies a contract in the blockchain, indicating its workchain and original state hash. [Two standard formats](/v3/documentation/smart-contracts/addresses#raw-and-user-friendly-addresses) are used: **raw** (workchain and HEX-encoded hash separated by the ":" character) and **user-friendly** (base64-encoded with certain flags).
+
+```
+User-friendly: EQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPrHF
+Raw: 0:ca6e321c7cce9ecedf0a8ca2492ec8592494aa5fb5ce0387dff96ef6af982a3e
+```
+
+## User-friendly address
+
+A **user-friendly address** designed for blockchain users with features:
+
+1. **Flags**: Indicates if the address is bounceable for contracts or non-bounceable for wallets.
+2. **Checksum**: A 2-byte error-checking mechanism CRC16 that helps detect errors before sending.
+3. **رمزگذاری**: آدرس خام را به یک فرم خوانا و فشرده تبدیل می‌کند که از base64 یا base64url استفاده می‌کند.
+
+Example: `EQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPrHF` (base64)
+
+آدرس‌های کاربر پسند تراکنش‌ها را با جلوگیری از خطاها و امکان بازگشت وجوه در صورت شکست تراکنش‌ها ایمن‌تر می‌کنند.
+
+### User-friendly address flags
+
+Two flags are defined: **bounceable**/**non-bounceable** and **testnet**/**any-net**. The first letter of the address reflects address type because it stands for the first 6 bits in address encoding, and flags are located in these 6 bits according to [TEP-2](https://github.com/ton-blockchain/TEPs/blob/master/text/0002-address.md#smart-contract-addresses):
+
+|                   Address beginning                  |        Binary form        | Bounceable | Testnet-only |
+| :--------------------------------------------------: | :-----------------------: | :--------: | :----------: |
+| E... | 000100.01 |     yes    |      no      |
+| U... | 010100.01 |     no     |      no      |
+| k... | 100100.01 |     yes    |      yes     |
+| 0... | 110100.01 |     no     |      yes     |
+
+:::tip
+The Testnet-only flag doesn't have representation in the blockchain at all. The non-bounceable flag makes a difference only when used as the destination address for a transfer: in this case, it [disallows bounce](/v3/documentation/smart-contracts/message-management/non-bounceable-messages) for a message sent; the address in blockchain, again, does not contain this flag.
+:::
+
+```
+default bounceable: EQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPrHF
+urlSafe: EQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff+W72r5gqPrHF
+non-bounceable: UQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPuwA
+Testnet: kQDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPgpP
+non-bounceable, Testnet: 0QDKbjIcfM6ezt8KjKJJLshZJJSqX7XOA4ff-W72r5gqPleK
+```
+
+## Raw address
 
 یک **آدرس خام** فقط عناصر اساسی را شامل می‌شود:
 
@@ -26,36 +77,18 @@
 با این حال، آدرس‌های خام دو مشکل اصلی دارند:
 
 1. آن‌ها دارای چک‌ نهایی داخلی نیستند، بنابراین یک اشتباه در کپی کردن می‌تواند منجر به از دست دادن وجوه شود.
-2. آن‌ها از ویژگی‌های اضافی مانند نشانگر‌های بازگشتی/غیر بازگشتی پشتیبانی نمی‌کنند.
+2. They don't support additional features like bounceable/non-bounceable flags.
 
-### آدرس کاربر پسند
+## Converting between address formats
 
-یک **آدرس کاربر پسند** این مشکلات را با موارد زیر حل می‌کند:
+Convert raw, user-friendly addresses using [ton.org/address](https://ton.org/address/).
 
-1. **نشانگر‌ها**: نشان می‌دهد که آیا آدرس بازگشتی است (برای قراردادها) یا غیر بازگشتی (برای کیف پول‌ها).
-2. **چک‌ نهایی**: یک مکانیزم بررسی خطای ۲ بایتی (CRC16) که به شناسایی خطاها قبل از ارسال کمک می‌کند.
-3. **رمزگذاری**: آدرس خام را به یک فرم خوانا و فشرده تبدیل می‌کند که از base64 یا base64url استفاده می‌کند.
+For more details, refer to the refhandling guide in the [Smart contracts addresses documentation](/v3/documentation/smart-contracts/addresses/) section.
 
-به عنوان مثال، همان آدرس خام می‌تواند به یک آدرس کاربر پسند تبدیل شود:\
-`kf/8uRo6OBbQ97jCx2EIuKm8Wmt6Vb15+KsQHFLbKSMiYIny` (base64)
+## See also
 
-آدرس‌های کاربر پسند تراکنش‌ها را با جلوگیری از خطاها و امکان بازگشت وجوه در صورت شکست تراکنش‌ها ایمن‌تر می‌کنند.
+- [Explorers in TON](/v3/concepts/dive-into-ton/ton-ecosystem/explorers-in-ton/)
+- [Smart contracts addresses documentation](/v3/documentation/smart-contracts/addresses/)
 
-## وضعیت‌های آدرس
+<Feedback />
 
-هر آدرس در TON می‌تواند در یکی از وضعیت‌های زیر باشد:
-
-- **عدم وجود**: آدرس داده‌ای ندارد (وضعیت اولیه برای همه آدرس‌ها).
-- **غیرفعال**: آدرس دارای موجودی است اما کد قرارداد هوشمند ندارد.
-- **فعال**: آدرس با کد قرارداد هوشمند و موجودی فعال است.
-- **منجمد**: آدرس به دلیل هزینه‌های ذخیره‌سازی که از موجودی آن فراتر رفته است قفل شده است.
-
-## تبدیل بین فرمت‌های آدرس
-
-برای تبدیل بین آدرس‌های خام و کاربر پسند، می‌توانید از API های TON یا ابزارهای توسعه دهنده مانند [ton.org/address](https://ton.org/address) استفاده کنید. این ابزارها اجازه تبدیل آسان و اطمینان از فرمت صحیح قبل از ارسال تراکنش‌ها را می‌دهند.
-
-برای جزئیات بیشتر در مورد نحوه مدیریت این آدرس‌ها، شامل مثال‌های رمزگذاری و امنیت تراکنش‌ها، می‌توانید به راهنمای کامل در [مستندات آدرس‌ها](/v3/documentation/smart-contracts/addresses) مراجعه کنید.
-
-## همچنین ببینید
-
-- [مستندات آدرس‌های قرارداد هوشمند](/v3/documentation/smart-contracts/addresses)

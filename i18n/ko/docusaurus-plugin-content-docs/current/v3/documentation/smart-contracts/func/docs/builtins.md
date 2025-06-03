@@ -1,31 +1,52 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 내장 기능
 
-이 섹션에서는 이전 글에서 설명한 것보다 덜 기본적인 언어 구성을 설명합니다. 이들은 [stdlib.fc](/v3/documentation/smart-contracts/func/docs/stdlib)에 정의될 수 있지만 그렇게 하면 FunC 최적화 프로그램의 여지가 줄어들게 됩니다.
+This section covers extra language constructs that are not part of the core but are still important for functionality.
+Although they could be implemented in [stdlib.fc](/v3/documentation/smart-contracts/func/docs/stdlib/),
+keeping them as built-in features allows the FunC optimizer to work more efficiently.
 
 ## 예외 발생
 
-예외는 조건부 기본 요소인 `throw_if`와 `throw_unless`, 그리고 무조건적인 `throw`로 발생시킬 수 있습니다. 첫 번째 인자는 에러 코드이고, 두 번째는 조건입니다(`throw`는 인자가 하나만 있음). 이러한 기본 요소들은 매개변수화된 버전인 `throw_arg_if`, `throw_arg_unless`, `throw_arg`를 가집니다. 첫 번째 인자는 모든 타입의 예외 매개변수이고, 두 번째는 에러 코드, 세 번째는 조건입니다(`throw_arg`는 인자가 두 개만 있음).
+FunC provides several built-in primitives for throwing exceptions:
+
+- **Conditional exceptions:** `throw_if` and `throw_unless`
+- **Unconditional exception:** `throw`
+
+In `throw_if` and `throw_unless`, the first argument (the error code) defines the exception type,
+while the second argument (the condition) determines whether the exception is thrown.
+Meanwhile, the `throw` function takes only one argument—the error code—since it always triggers an exception.
+
+FunC also includes parameterized versions of these primitives:
+
+- **Conditional exceptions with parameters:** `throw_arg_if` and `throw_arg_unless`
+- **Unconditional exception with a parameter:** `throw_arg`
+
+In these versions, the first argument is an exception parameter of any type, the second defines the error code, and the third argument—used when needed—is a condition that determines whether the exception is thrown.
 
 ## 불리언
 
-- `true`는 `-1`의 별칭
-- `false`는 `0`의 별칭
+- `true` is an alias for `-1`.
+- `false` is an alias for `0`.
 
-## 변수 덤프
+## Dumping a variable
 
-`~dump` 함수를 사용하여 디버그 로그에 변수를 덤프할 수 있습니다.
+Use the `~dump` function to output a variable to the debug log.
 
-## 문자열 덤프
+## Dumping a string
 
-`~strdump` 함수를 사용하여 디버그 로그에 문자열을 덤프할 수 있습니다.
+Use the `~strdump` function to output a string to the debug log.
 
 ## 정수 연산
 
-- `muldiv`는 곱하기-나누기 연산입니다. 중간 결과는 513비트 정수에 저장되므로, 실제 결과가 257비트 정수에 맞는다면 오버플로우가 발생하지 않습니다.
-- `divmod`는 두 개의 숫자를 매개변수로 받아 나눗셈의 몫과 나머지를 제공하는 연산입니다.
+- `muldiv` performs a multiply-then-divide operation.
+  It uses a 513-bit intermediate result to prevent overflow if the final result fits within 257 bits.
+- `divmod` takes two numbers as input and returns the quotient and remainder of their division.
 
 ## 기타 기본 요소
 
-- `null?`은 인자가 `null`인지 확인합니다. TVM 타입의 `null` 값으로, FunC는 일부 원자적 타입 값의 부재를 표현합니다; [null 값](/v3/documentation/smart-contracts/func/docs/types#null-values)을 참조하세요.
-- `touch`와 `~touch`는 변수를 스택의 맨 위로 이동시킵니다
-- `at`은 지정된 위치에서 튜플 컴포넌트의 값을 가져옵니다
+- `null?` checks if the given argument is `null`. In FunC, the value `null` belongs to the TVM type `Null`, which represents the absence of a value for certain atomic types. See [null values](/v3/documentation/smart-contracts/func/docs/types#null-values) for details.
+- `touch` and `~touch` push a variable to the top of the stack.
+- `at` returns the value of a tuple element at the specified position.
+  <Feedback />
+

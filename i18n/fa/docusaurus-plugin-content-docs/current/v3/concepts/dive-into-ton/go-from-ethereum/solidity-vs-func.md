@@ -1,50 +1,62 @@
+import Feedback from '@site/src/components/Feedback';
+
 # Solidity در مقابل FunC
 
-توسعه قراردادهای هوشمند شامل استفاده از زبان‌های از پیش تعریف شده مانند Solidity برای اتریوم و FunC برای TON می‌شود.
-Solidity یک زبان شیء‌گرا، سطح بالا و دارای نوع‌سنجی سخت است که تحت تأثیر C++، پایتون و جاوا اسکریپت است و به طور خاص برای نوشتن قراردادهای هوشمندی طراحی شده است که در پلتفرم‌های بلاکچین اتریوم اجرا می‌شوند.
+## Introduction
 
-زبان FunC نیز یک زبان سطح بالا است که برای برنامه‌نویسی قراردادهای هوشمند در بلاکچین TON استفاده می‌شود و یک زبان خاص دامنه، شبیه به C و دارای نوع‌سنجی ایستا است.
+Smart contract development involves using predefined languages such as Solidity for Ethereum and FunC for TON.
+Solidity is an object-oriented, high-level, strictly typed language influenced by C++, Python, and JavaScript. It is designed explicitly to write smart contracts on Ethereum blockchain platforms.
 
-در بخش‌های زیر به طور خلاصه به جنبه‌های زیر این زبان‌ها، یعنی انواع داده‌ها، ذخیره‌سازی، توابع، ساختارهای کنترل جریان و آرایه ها (هش‌مپ‌ها) پرداخته خواهد شد.
+FunC is a high-level language used to program smart contracts on TON Blockchain. It is a domain-specific, C-like, statically typed language.
 
-## قالب ذخیره‌سازی
+The sections below will analyze briefly the following aspects of these languages: data types, storage, functions, flow control structures, and dictionaries (hashmaps).
 
-Solidity یک مدل ذخیره‌سازی تخت ارائه می‌دهد، به این معنی که همه متغیرهای وضعیت در یک بلوک پیوسته از حافظه ذخیره می‌شوند. ذخیره‌ساز یک بانک کلید-مقدار است که در آن هر کلید یک عدد صحیح ۲۵۶ بیتی (۳۲ بایتی) است که شماره اسلات ذخیره‌سازی را نشان می‌دهد و هر مقدار ورودی ۲۵۶ بیتی ذخیره شده در آن اسلات است. اسلات‌ها به ترتیب از صفر شماره‌گذاری می‌شوند و هر اسلات می‌تواند یک مقدار را ذخیره کند. Solidity به برنامه‌نویس اجازه می‌دهد تا با استفاده از کلیدواژه `storage` طرح‌بندی ذخیره‌سازی را مشخص کند. ترتیبی که متغیرها تعریف می‌شوند، موقعیت آن‌ها در ذخیره‌سازی را تعیین می‌کند.
+## Differences of Solidity and FunC
 
-داده‌های ذخیره‌ساز دائمی در بلاکچین TON به عنوان یک سلول ذخیره می‌شوند. سلول‌ها نقش حافظه را در TVM مبتنی بر منبع بازی می‌کنند. یک سلول می‌تواند به یک برش تبدیل شود و سپس بیت‌های داده و مراجع به سلول‌های دیگر آن سلول می‌توانند با بارگیری از برش به دست آیند. بیت‌های داده و مراجع به سلول‌های دیگر می‌توانند در یک سازنده ذخیره شوند و سپس سازنده می‌تواند به یک سلول جدید نهایی شود.
+### قالب ذخیره‌سازی
 
-## انواع داده‌ها
+#### Solidity
+
+Solidity uses a flat storage model, meaning it stores all state variables in a single, continuous block of memory called storage. The storage is a key-value store where each key is a 256-bit integer representing the storage slot number, and each value is the 256-bit word stored at that slot. Ethereum numbers the slots sequentially, starting from zero, and each slot can store a single word. Solidity allows the programmer to specify the storage layout using the storage keyword to define state variables. The order in which you define the variables determines their position in the storage.
+
+#### FunC
+
+Permanent storage data in TON Blockchain is stored as a cell. Cells play the role of memory in the stack-based TVM. To read data from a cell, you need to transform a cell into a slice and then obtain the data bits and references to other cells by loading them from the slice. To write data, you must store data bits and references to other cells in a builder and cast the builder into a new cell.
+
+### انواع داده‌ها
+
+#### Solidity
 
 Solidity شامل انواع داده‌های اساسی زیر است:
 
-- اعداد صحیح امضا شده/نشده
-- بولین
-- آدرس‌ها – برای ذخیره آدرس کیف پول یا قرارداد هوشمند اتریوم استفاده می‌شود، معمولاً حدود ۲۰ بایت. نوع آدرس می‌تواند با کلیدواژه "payable" مشخص شود که آن را محدود به ذخیره آدرس‌های کیف پول و استفاده از توابع انتقال و ارسال ارز می‌کند.
-- آرایه‌های بایت – با کلیدواژه "bytes" اعلام می‌شوند، یک آرایه با اندازه ثابت است که برای ذخیره تعداد پیش‌فرض بایت تا ۳۲ استفاده می‌شود، معمولاً همراه با کلیدواژه اعلام می‌شود.
-- لیترال‌ها – مقادیر ثابت مانند آدرس‌ها، نسبی‌ها و اعداد صحیح، رشته‌ها، یونیکد و اعداد هگزا، که می‌توانند در یک متغیر ذخیره شوند.
-- شمارشی ها
-- آرایه‌ها (ثابت/پویا)
-- ساختارها
-- نگاشت‌ها
+- **Signed** and **Unsigned** integers
+- **Boolean**
+- **Addresses**, typically around 20 bytes, are used to store Ethereum wallet or smart contract addresses. If the address type contains the suffix keyword `payable,` it restricts it from storing only wallet addresses and using the transfer and send crypto functions.
+- **Byte arrays** — declared with the keyword **bytes**, is a fixed-size array used to store a predefined number of bytes up to 32, usually declared along with the keyword.
+- **Literals** — Immutable values such as addresses, rationals and integers, strings, Unicode, and hexadecimal can be stored in a variable.
+- **Enums**
+- **Arrays** fixed or dynamic)
+- **Structs**
+- **Mappings**
 
-در مورد FunC، انواع داده‌های اصلی عبارتند از:
+#### FunC
 
-- اعداد صحیح
-- سلول – ساختار داده پایه برای TON، که با ظرفیت تا ۱۰۲۳ بیت و تا 4 مرجع به سلول‌های دیگر است
-- برش و سازنده – اشیاء خاص برای خواندن و نوشتن در سلول‌ها،
-- تداوم – نوع دیگری از سلول که حاوی کد بایت آماده برای اجرا در TVM است
-- تاپل‌ها – یک مجموعه مرتب شده از حداکثر ۲۵۵ عنصر است که دارای انواع مقادیر دلخواه هستند و ممکن است متمایز باشند.
-- تنسورها – یک مجموعه مرتب شده آماده برای تخصیص جرم مانند: `(int, int) a = (2, 4)`، یک مورد خاص از نوع تنسور نوع واحد () است. این نشان می‌دهد که یک تابع هیچ مقداری را باز نمی‌گرداند یا هیچ آرگومانی ندارد.
+In the case of FunC, the main data types are:
 
-در حال حاضر، FunC از تعریف نوع‌های سفارشی پشتیبانی نمی‌کند.
+- **Integers**
+- **Cell** — basic for TON opaque data structure, which contains up to 1,023 bits and up to 4 references to other cells
+- **Slice** and **Builder** — special flavors of the cell to read from and write to cells,
+- **Continuation** — another flavour of cell that contains ready-to-execute TVM byte-code
+- **Tuples** — is an ordered collection of up to 255 components, having arbitrary value types, possibly distinct.
+- **Tensors** — is an ordered collection ready for mass assigning like: `(int, int) a = (2, 4)`. A special case of tensor type is the unit type `()`. It represents that a function doesn’t return any value or has no arguments.
 
-### همچنین ببینید
+Currently, FunC does not support defining custom types. Read more about types in the [Statements](/v3/documentation/smart-contracts/func/docs/statements/) page.
 
-- [دستورات](/v3/documentation/smart-contracts/func/docs/statements)
+### تعریف و استفاده از متغیرها
 
-## تعریف و استفاده از متغیرها
+#### Solidity
 
-نوع‌سنجی زبان Solidity ایستا است، به این معنی که نوع هر متغیر باید در زمان اعلام آن مشخص شود.
+Solidity is a statically typed language, meaning each variable's type must be specified when declared.
 
 ```js
 uint test = 1; // Declaring an unsigned variable of integer type
@@ -52,18 +64,20 @@ bool isActive = true; // Logical variable
 string name = "Alice"; // String variable
 ```
 
-در سوی دیگر، FunC یک زبان انتزاعی‌تر و تابع‌گرا است، از نوع‌گذاری پویا و سبک برنامه‌نویسی تابعی پشتیبانی می‌کند.
+#### FunC
+
+FunC is a more abstract and function-oriented language. It supports dynamic typing and functional programming styles.
 
 ```func
 (int x, int y) = (1, 2); // A tuple containing two integer variables
 var z = x + y; // Dynamic variable declaration 
 ```
 
-### همچنین ببینید
+Read more on the [Statements](/v3/documentation/smart-contracts/func/docs/statements/) page.
 
-- [دستورات](/v3/documentation/smart-contracts/func/docs/statements)
+### حلقه‌ها
 
-## حلقه‌ها
+#### Solidity
 
 Solidity از حلقه‌های `for`، `while`، و `do { ... } while` پشتیبانی می‌کند.
 
@@ -79,7 +93,9 @@ for (uint i; i < 10; i++) {
 // x = 1024
 ```
 
-FunC به نوبه خود از حلقه‌های `repeat`، `while`، و `do { ... } until` پشتیبانی می‌کند. حلقه for پشتیبانی نمی‌شود. اگر می‌خواهید کد مشابه مثال بالا را در FunC اجرا کنید، می‌توانید از `repeat` استفاده کنید
+#### FunC
+
+FunC, in turn, supports `repeat`, `while`, and `do { ... } until` loops. The `for` loop is not supported. If you want to execute the same code as in the example above on Func, you can use `repeat`
 
 ```func
 int x = 1;
@@ -89,13 +105,15 @@ repeat(10) {
 ;; x = 1024
 ```
 
-### همچنین ببینید
+Read more on the [Statements](/v3/documentation/smart-contracts/func/docs/statements/) page.
 
-- [دستورات](/v3/documentation/smart-contracts/func/docs/statements)
+### توابع
 
-## توابع
+#### Solidity
 
-Solidity با ترکیبی از وضوح و کنترل به تعریف توابع نزدیک می‌شود. در این زبان برنامه‌نویسی، هر تابع با کلیدواژه `function` آغاز می‌شود و به دنبال آن نام تابع و پارامترهای آن قرار می‌گیرد. بدنه تابع در داخل آکولادها قرار دارد و به وضوح محدوده عملیاتی را تعریف می‌کند. علاوه بر این، مقادیر بازگشتی با استفاده از کلیدواژه `returns` نشان داده می‌شوند. چیزی که Solidity را متمایز می‌کند، دسته‌بندی دسترسی به توابع است - توابع می‌توانند به صورت `public`، `private`، `internal` یا `external` تعیین شوند، که شرایط دسترسی و فراخوانی آنها توسط قسمت‌های دیگر قرارداد یا نهادهای خارجی را تعیین می‌کند. در زیر یک مثال آورده شده است که در آن متغیر جهانی `num` را در زبان Solidity تنظیم می‌کنیم:
+Solidity approaches function declarations with a blend of clarity and control. In this programming language, each function is initiated with the keyword `function`, followed by the function's name and its parameters. The function's body is enclosed within curly braces, clearly defining the operational scope. Additionally, return values are indicated using the `returns` keyword.
+
+What sets Solidity apart is its categorization of function visibility—you can designate functions as `public`, `private`, `internal`, or `external`. These definitions dictate the conditions under which developers can access and call other parts of the contract or external entities. Below is an example in which we set the global variable `num` in the Solidity language:
 
 ```js
 function set(uint256 _num) public returns (bool) {
@@ -104,7 +122,11 @@ function set(uint256 _num) public returns (bool) {
 }
 ```
 
-با انتقال به FunC، برنامه FunC اساساً یک لیست از اعلان/تعاریف توابع و اعلان متغیرهای جهانی است. اعلان تابع FunC به طور معمول با یک اعلامگر اختیاری آغاز می‌شود، به دنبال آن نوع بازگشتی و نام تابع قرار می‌گیرد. سپس پارامترها قرار میگیرند و اعلام با انتخابی از مشخص‌کننده‌ها به پایان می‌رسد - مانند `impure`، `inline/inline_ref` و `method_id`. این مشخص‌کننده‌ها دید تابع، توانایی آن برای تغییر ذخیره‌سازی قرارداد و رفتار درون‌خطی آن را تنظیم می‌کنند. در زیر یک مثال آورده شده است که در آن متغیر ذخیره‌سازی را به عنوان یک سلول به ذخیره‌سازی پایدار در زبان Func ذخیره می‌کنیم:
+#### FunC
+
+Transitioning to FunC, the FunC program is essentially a list of function declarations/definitions and global variable declarations. A FunC function declaration typically starts with an optional declarator, followed by the return type and the function name.
+
+Parameters are listed next, and the declaration ends with a selection of specifiers—such as `impure`, `inline/inline_ref`, and `method_id`. These specifiers adjust the function's visibility, ability to modify contract storage, and inlining behavior. Below is an example in which we store a storage variable as a cell in persistent storage in the Func language:
 
 ```func
 () save_data(int num) impure inline {
@@ -115,39 +137,47 @@ function set(uint256 _num) public returns (bool) {
 }
 ```
 
-### همچنین ببینید
+Read more on [Functions](/v3/documentation/smart-contracts/func/docs/functions/) page.
 
-- [توابع](/v3/documentation/smart-contracts/func/docs/functions)
+### ساختارهای کنترل جریان
 
-## ساختارهای کنترل جریان
+#### Solidity
 
 بیشتر ساختارهای کنترلی شناخته شده از زبان‌های آکولادی در Solidity موجود است، از جمله: `if`، `else`، `while`، `do`، `for`، `break`، `continue`، `return`، با معانی معمولی که از C یا جاوا اسکریپت شناخته شده‌اند.
 
-FunC از اظهارات کلاسیک `if-else`، همچنین `ifnot`، حلقه‌های `repeat`، `while` و `do/until` پشتیبانی می‌کند. همچنین از نسخه v0.4.0 از عبارات `try-catch` پشتیبانی می‌شود.
+#### FunC
 
-### همچنین ببینید
+FunC supports classic `if-else` statements, `ifnot`, `repeat`, `while`, and `do/until` loops.  Also, since v0.4.0, `try-catch` statements are supported.
 
-- [دستورات](/v3/documentation/smart-contracts/func/docs/statements)
+Read more on the [Statements](/v3/documentation/smart-contracts/func/docs/statements/) page.
 
-## آرایه ها
+### آرایه ها
 
-ساختار داده دیکشنری (هش‌مپ/نگاشت) برای توسعه قراردادهای Solidity و FunC بسیار مهم است، زیرا به توسعه‌دهندگان امکان می‌دهد داده‌ها را به‌طور کارآمد در قراردادهای هوشمند ذخیره و بازیابی کنند، به‌ویژه داده‌های مرتبط با یک کلید خاص، مانند تراز کاربر یا مالکیت یک دارایی.
+Dictionary or hashmap data structure is essential for Solidity and FunC contract development because it allows developers to efficiently store and retrieve data in smart contracts, specifically data related to a specific key, such as a user’s balance or ownership of an asset.
 
-نگاشت (mapping) یک جدول هش در Solidity است که داده‌ها را به عنوان جفت‌های کلید-مقدار ذخیره می‌کند، جایی که کلید می‌تواند هر یک از انواع داده‌های داخلی باشد، به جز انواع مرجع، و مقدار نوع داده می‌تواند هر نوعی باشد. نگاشت‌ها به‌طور معمول در Solidity و بلاکچین اتریوم برای اتصال یک آدرس اتریوم منحصر به فرد به یک نوع مقدار مربوطه استفاده می‌شوند. در هر زبان برنامه‌نویسی دیگر، یک نگاشت معادل با یک دیکشنری است.
+#### Solidity
 
-در Solidity، نگاشت‌ها طول ندارند و مفهوم تنظیم یک کلید یا مقدار را ندارند. نگاشت‌ها فقط به متغیرهای حالت که به عنوان انواع مرجع ذخیره عمل می‌کنند، اعمال می‌شوند. هنگامی که نگاشت‌ها مقداردهی اولیه می‌شوند، هر کلید ممکن را شامل می‌شوند و به مقادیری نگاشت می‌شوند که نمایش بایتی آنها همه صفر است.
+Mapping is a hash table in Solidity that stores data as key-value pairs, where the key can be any of the built-in data types, excluding reference types, and the data type's value can be any type. In Solidity and on the Ethereum blockchain, mappings typically connect a unique Ethereum address to a corresponding value type. In any other programming language, a mapping is equivalent to a dictionary.
 
-تشبیهی از نگاشت‌ها در FunC دیکشنری‌ها یا هش‌مپ‌های TON هستند. در زمینه TON، یک هش‌مپ یک ساختار داده است که توسط یک درخت سلول‌ها نمایش داده می‌شود. هش‌مپ کلیدها را به مقادیر نوع دلخواه نگاشت می‌دهد تا جستجو و تغییر سریع ممکن باشد. نمایش انتزاعی یک هش‌مپ در TVM یک درخت پاتریشیا یا دودویی فشرده است. کار با درخت‌های سلول بزرگ بالقوه می‌تواند چندین مشکل ایجاد کند. هر عملیات به‌روزرسانی تعداد قابل توجهی سلول می‌سازد (هر سلول ساخته شده ۵۰۰ گس هزینه دارد)، که به این معنی است که این عملیات‌ها در صورت استفاده نادرست می‌توانند منابع را تمام کنند. برای جلوگیری از تجاوز به حد گس، تعداد به‌روزرسانی‌های دیکشنری در یک تراکنش را محدود کنید. همچنین، یک درخت دودویی برای جفت‌های کلید-مقدار `N` دارای `N-1` انشعاب است، که به معنای حداقل  `2N-1` سلول است. ذخیره‌سازی یک قرارداد هوشمند به `65536` سلول منحصر به فرد محدود شده است، بنابراین حداکثر تعداد ورودی‌های دیکشنری `32768` است، یا کمی بیشتر اگر سلول‌ها تکراری باشند.
+In Solidity, mappings don't have a length or the concept of setting a key or a value. Mappings are only applicable to state variables that serve as store reference types. When you initialize mappings, they include every possible key and map to values whose byte representations are all zeros.
 
-### همچنین ببینید
+#### FunC
 
-- [دیکشنری‌ها در TON](/v3/documentation/smart-contracts/func/docs/dictionaries)
+An analogy of mappings in FunC is dictionaries or TON hashmaps. In the context of TON, a hashmap is a data structure represented by a tree of cells. Hashmap maps keys to values ​​of arbitrary type so that quick lookup and modification are possible. The abstract representation of a hashmap in TVM is a Patricia tree or a compact binary trie.
 
-## ارتباط قرارداد هوشمند
+Working with potentially large cell trees can create several problems. Each update operation builds an appreciable number of cells (each cell built costs 500 gas), meaning these operations can run out of resources if used carelessly. To avoid exceeding the gas limit, limit the number of dictionary updates in a single transaction.
+
+Also, a binary tree for `N` key-value pairs contains `N-1` forks, which means a total of at least `2N-1` cells. The storage of a smart contract is limited to `65536` unique cells, so the maximum number of entries in the dictionary is `32768`, or slightly more if there are repeating cells.
+
+Read more about [Dictionaries in TON](/v3/documentation/smart-contracts/func/docs/dictionaries/).
+
+### Smart contract communication
 
 زبان های Solidity و FunC روش‌های مختلفی برای تعامل با قراردادهای هوشمند ارائه می‌دهند. تفاوت اصلی در مکانیزم‌های فراخوانی و تعامل بین قراردادها است.
 
-Solidity از یک رویکرد شیءگرا استفاده می‌کند که در آن قراردادها از طریق فراخوانی متدها با یکدیگر تعامل دارند. این شبیه به فراخوانی متدها در زبان‌های برنامه‌نویسی شیءگرای سنتی است.
+#### Solidity
+
+Solidity uses object-orienteered contracts that interact with each other through method calls. This design is similar to method calls in traditional object-oriented programming languages.
 
 ```js
 // External contract interface
@@ -163,7 +193,9 @@ contract Sender {
 }
 ```
 
-FunC، که در اکوسیستم بلاکچین TON استفاده می‌شود، با پیام‌ها برای فراخوانی و تعامل بین قراردادهای هوشمند عمل می‌کند. به جای فراخوانی مستقیم متدها، قراردادها پیام‌هایی به یکدیگر ارسال می‌کنند که می‌توانند حاوی داده‌ها و کد برای اجرا باشند.
+#### FunC
+
+FunC, used in the TON blockchain ecosystem, operates on messages to invoke and interact between smart contracts. Instead of calling methods directly, contracts send messages to each other, which can contain data and code for execution.
 
 یک مثال در نظر بگیرید که در آن یک قرارداد هوشمند فرستنده باید پیامی با یک عدد ارسال کند و یک قرارداد هوشمند گیرنده باید آن عدد را دریافت کرده و برخی دستکاری‌ها را بر روی آن انجام دهد.
 
@@ -185,13 +217,13 @@ FunC، که در اکوسیستم بلاکچین TON استفاده می‌شو�
 }
 ```
 
-بیایید جزئیات بیشتری در مورد دریافت یک پیام در قرارداد مقصد خود بررسی کنیم:
+**Receiving message flow:**
 
-1. `recv_internal()` - این تابع زمانی اجرا می‌شود که یک قرارداد مستقیماً در داخل بلاکچین دسترسی پیدا کند. به عنوان مثال، هنگامی که یک قرارداد کیف به قرارداد ما دسترسی پیدا کند.
-2. تابع مقدار موجودی قرارداد، مقدار پیام ورودی، سلول با پیام اصلی و برش `in_msg_body` را می‌پذیرد که فقط بدنه پیام دریافتی را ذخیره می‌کند.
-3. بدنه پیام ما دو عدد صحیح ذخیره خواهد کرد. اولین عدد یک عدد صحیح 32 بیتی بدون علامت که حاوی `op` است و عملیات مورد نظر را برای اجرا یا متد قرارداد هوشمند مشخص می‌کند. شما می‌توانید نوعی تشبیه با Solidity ایجاد کنید و `op` را به عنوان امضای تابع در نظر بگیرید. عدد دوم عددی است که باید برخی دستکاری‌ها را روی آن انجام دهیم.
-4. برای خواندن از برش نتیجه `op` و `num` از `load_uint()` استفاده می‌کنیم.
-5. سپس عدد را دستکاری می‌کنیم (این قابلیت در این مثال حذف شده است).
+1. `recv_internal()` function is executed when a contract is accessed directly within the blockchain. For example, when a contract accesses our contract.
+2. The function accepts the amount of the contract balance, the amount of the incoming message, the cell with the original message, and the `in_msg_body` slice, which stores only the body of the received message.
+3. Our message body will store two integer numbers. The first number is a 32-bit unsigned integer `op` defining the smart contract's operation. You can draw some analogy with Solidity and think of `op` as a function signature.
+4. We use `load_uint ()` to read `op` as a number from the resulting slice.
+5. Next, we execute business logic for a given operation. Note that we omitted this functionality in this example.
 
 بعد، قرارداد هوشمند فرستنده باید پیام را به درستی ارسال کند. این با استفاده از `send_raw_message` انجام می‌شود که یک پیام سریال شده را به عنوان یک آرگومان می‌پذیرد.
 
@@ -201,7 +233,7 @@ cell msg_body_cell = begin_cell().store_uint(1,32).store_uint(num,32).end_cell()
 
 var msg = begin_cell()
             .store_uint(0x18, 6)
-            .store_slice("EQBIhPuWmjT7fP-VomuTWseE8JNWv2q7QYfsVQ1IZwnMk8wL"a) ;; in the example, we just hardcode the recipient's address
+            .store_slice("EQBIhPuWmjT7fP-VomuTWseE8JNWv2q7QYfsVQ1IZwnMk8wL"a) ;; in the example, we hardcode the recipient's address
             .store_coins(0)
             .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
             .store_ref(msg_body_cell)
@@ -210,17 +242,20 @@ var msg = begin_cell()
 send_raw_message(msg, mode);
 ```
 
-بیایید جزئیات بیشتری در مورد ارسال پیام به گیرنده توسط قرارداد هوشمندمان بحث کنیم:
+**Sending message flow:**
 
-1. ابتدا باید پیام خود را بسازیم. ساختار کامل ارسال را می‌توانید [اینجا](/v3/documentation/smart-contracts/message-management/sending-messages) پیدا کنید. در اینجا به جزئیات نحوه ساخت آن نمی‌پردازیم، می‌توانید در لینک مطالعه کنید.
+1. Initially, we need to build our message. The complete structure of the send can be found [here](/v3/documentation/smart-contracts/message-management/sending-messages/).
 2. بدنه پیام نمایانگر یک سلول است. در `msg_body_cell` ما این کار را انجام می‌دهیم: `begin_cell()` - یک `Builder` برای سلول آینده ایجاد می‌کند، اولین `store_uint` - اولین uint را در `Builder` ذخیره می‌کند (مقدار 1 که همان `op` ماست)، دومین `store_uint` - دومین uint را در `Builder` ذخیره می‌کند (num - این همان عددی است که در قرارداد گیرنده با آن دستکاری خواهیم کرد)، `end_cell()` - سلول را ایجاد می‌کند.
 3. برای پیوست بدنه‌ای که در `recv_internal` پیام می‌آید، ما سلول جمع‌آوری شده را در خود پیام با `store_ref` ارجاع می‌دهیم.
 4. ارسال پیام.
 
 این مثال نشان داد که چگونه قراردادهای هوشمند می‌توانند با یکدیگر ارتباط برقرار کنند.
 
-### همچنین ببینید
+Read more on the [Internal messages](/v3/documentation/smart-contracts/overview/) page.
 
-- [پیام‌های داخلی](/v3/documentation/smart-contracts/message-management/internal-messages)
-- [ارسال پیام‌ها](/v3/documentation/smart-contracts/message-management/sending-messages)
-- [پیام‌های غیر بازگشتی](/v3/documentation/smart-contracts/message-management/non-bounceable-messages)
+## See also
+
+- [TON documentation](/v3/documentation/ton-documentation/)
+- [FunC overview](/v3/documentation/smart-contracts/func/overview/)
+
+<Feedback />

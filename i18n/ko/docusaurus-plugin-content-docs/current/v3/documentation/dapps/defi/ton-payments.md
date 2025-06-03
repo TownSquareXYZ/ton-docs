@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # TON 결제
 
 TON 결제는 소액 결제 채널 플랫폼입니다.
@@ -32,7 +34,10 @@ TON 결제는 소액 결제 채널 플랫폼입니다.
 - [sevenzing/hack-a-ton](https://github.com/sevenzing/hack-a-ton) - TON에서 요청당 결제 API 사용 ([영상](https://www.youtube.com/watch?v=7lAnbyJdpOA&feature=youtu.be))
 - [illright/diamonds](https://github.com/illright/diamonds) - 분당 결제 학습 플랫폼 ([웹사이트](https://diamonds-ton.vercel.app/), [영상](https://www.youtube.com/watch?v=g9wmdOjAv1s))
 
-## 참고
+## See also
 
-- [결제 처리](/v3/guidelines/dapps/asset-processing/payments-processing)
+- [Payments processing](/v3/guidelines/dapps/asset-processing/payments-processing)
 - [TON Connect](/v3/guidelines/ton-connect/overview)
+
+<Feedback />
+

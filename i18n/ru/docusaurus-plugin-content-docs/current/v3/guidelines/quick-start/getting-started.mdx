@@ -19,7 +19,7 @@ import Button from '@site/src/components/button'
 - Поймёте ключевые понятия блокчейна TON, включая `сообщения`, `смарт-контракты` и `адреса`.
 - Научитесь взаимодействовать с экосистемой TON, включая кошельки и эксплореры блокчейна.
 - Научитесь взаимодействовать с блокчейном TON, например, читать данные из него и записывать в него.
-- Настроите окружение разработчика, используя `SDK` для разработки `смарт-контрактов`.
+- Set up a development environment using the `Blueprint` for `smart contract` development.
 - Начнёте писать `смарт-контракты` с использованием языков программирования `FunC`, `Tolk`и `Tact`.
 
 ## Концепция смарт-контрактов
@@ -135,47 +135,46 @@ import Button from '@site/src/components/button'
 </div>
 
 :::info
+This might seem unintuitive: why is your wallet in the `uninit` state when you’ve already created it? There is a small difference between the `wallet app` and the `wallet smart contract`:
 
-Это может ощущаться контринтуитивным: почему ваш кошелёк находится в состоянии `неинициализирован` (`uninit`), если вы его уже создали? Тут есть важный нюанс: разница между `приложением кошелька` и `смарт-контрактом кошелька`:
+- The `wallet app` is your off-chain client for the `wallet smart contract`.
 
-- `Приложение кошелька` — это ваш оффчейн-клиент для `смарт-контракта кошелька`.
-
-- `Смарт-контракт кошелька` — это и есть сам контракт. Поскольку для его развёртывания в блокчейне требуются определённые комиссии, большинство приложений кошельков на самом деле не выполняют это развёртывание, пока вы не получаете средства на свой адрес и не пытаетесь осуществить свою первую транзакцию.
+- The `wallet smart contract` is the contract itself. Since its deployment requires some fees, most `wallet apps` don’t actually deploy the wallet `smart contract` until you receive funds on your address and try to make your first transaction.
   :::
 
-- `Active`: Это состояние развёрнутого в блокчейне `смарт-контракта` с положительным балансом. Для развёртывания нашего кошелька, давайте отправим первую транзакцию кое-кому особенному — **себе самому** — и посмотрим, как она выглядит в `блокчейне`. Зайдите в меню отправки своего приложения кошелька и переведите немного средств на свой собственный адрес, который скопировали ранее. В эксплорере наш контракт должен начать отображаться примерно так:
+- `Active`: This is the state of a deployed `smart contract` with a positive balance. To deploy our wallet, let's send the first transaction to someone special—**ourselves**—and see how it looks on the `blockchain`. Enter the send menu in your wallet app and transfer some funds to your own address that you’ve copied before. In the explorer, our contract should start looking something like this:
 
 <div style={{marginBottom: '30px'}}>
-  <img src="/img/tutorials/quick-start/active.png" alt="Скриншот активного состояния кошелька"/>
+  <img src="/img/tutorials/quick-start/active.png" alt="Screenshot of active wallet state"/>
 </div>
 
 :::info
-Есть также четвёртое состояние под названием[frozen] (/ru/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/): оно означает контракт, у которого [оплата хранения данных](/ru/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/) превышает баланс. В этом состоянии контракт не может выполнять никакие операции.
+There is also a fourth state called [frozen](/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/), which stands for a smart contract with a [storage charge](/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/) that exceeds its balance. In this state, the smart contract cannot perform any operations.
 :::
 
-Итак, наш контракт кошелька успешно развёрнут и готов к использованию. Давайте рассмотрим, что сообщает пользовательский интерфейс:
+And here we are — our wallet contract is deployed and ready to use. Let's examine the provided user interface:
 
-#### Блок с метаданными
+#### Metadata section
 
-- **Address**. Уникальный ID вашего аккаунта (например, `QQB...1g6VdFEg`).
-- **Balance**: Текущее количество TON.
-- **Type**: Версия контракта (например, `wallet_v51r1` — определяется автоматически по коду).
-- **State**: Состояние адреса. Может принимать значения `nonexist`, `uninit`, `active` и `frozen`.
+- **Address**: Your account's unique ID (e.g., `QQB...1g6VdFEg`).
+- **Balance**: Current TON amount.
+- **Type**: Contract version (e.g., `wallet_v5r1` – detected automatically by code).
+- **State**: Address state. It may be `nonexisting`, `uninit`, `active`, or `frozen`.
 
-#### Навигационные вкладки
+#### Navigation tabs
 
-- **History/Transactions**: отображают недавнюю активность (например, полученные средства или развёртывание контракта).
-- **Code**: показывает код смарт-контракта, скомпилированный из кода на языке `FunC`, `Tolk` или `Tact`.
-- **Methods**: Позволяет выполнять `get-методы` для получения данных из постоянного хранилища контракта.
+- **History/Transactions**: Displays recent activity (e.g., received funds, contract deployments).
+- **Code**: Shows raw smart contract code compiled from `FunC`/`Tact`/`Tolk`.
+- **Methods**: Allows execution of `get methods` to retrieve persistent contract data.
 
-## Следующие шаги
+## Next steps
 
-- Теперь, когда вы попробовали `приложение кошелька`, зайдите дальше: создайте ещё один `аккаунт кошелька`, отправьте TON между ними, и посмотрите, как эти транзакции отобразятся в эксплорере.
-- Когда вы будете готовы, переходите к следующему шагу:
+- Now that you’ve tried the `wallet app`, take a moment to explore further: create another `wallet account`, try sending some TON between them, and observe how the transactions appear in the explorer.
+- When you're ready, move on to the next step:
 
-<Button href="/ru/v3/guidelines/quick-start/blockchain-interaction/reading-from-network" colorType={'primary'} sizeType={'sm'}>
+<Button href="/v3/guidelines/quick-start/blockchain-interaction/reading-from-network" colorType={'primary'} sizeType={'sm'}>
 
-  Чтение из сети
+  Reading from network
 
 </Button>
 

@@ -29,14 +29,15 @@ npm -v
 1. Создайте новый каталог для проекта
 2. Инициализируйте проект Node.js
 3. Установите необходимые зависимости
+4. Initialize TypeScript configuration.
 
 Для этого выполните эти команды в терминале:
 
 ```bash
-mkdir writing-to-ton && cd writing-to-ton # create new directory and cd to it
-npm init -y # initialize Node.js project
-npm install typescript ts-node @ton/ton @ton/core @ton/crypto #install required dependecies
-npx tsc --init # initialize typesctipt
+mkdir writing-to-ton && cd writing-to-ton
+npm init -y
+npm install typescript ts-node @ton/ton @ton/core @ton/crypto
+npx tsc --init
 ```
 
 Для запуска скриптов используйте следующую команду:
@@ -64,7 +65,7 @@ npx ts-node script.ts
 <br></br>
 
 :::caution
-В отличие от раздела [Чтение из сети](/ru/v3/guidelines/quick-start/blockchain-interaction/reading-from-network/), ключ Toncenter является необходимым в следующих примерах. Его можно получить с помощью [следующего руководства](/ru/v3/guidelines/dapps/apis-sdks/api-keys/).
+Unlike in the [Reading from network](/v3/guidelines/quick-start/blockchain-interaction/reading-from-network/) section, a Toncenter API key is mandatory in the following examples. It may be retrieved using [the following guide](/v3/guidelines/dapps/apis-sdks/api-keys/).
 :::
 
 #### Реализация

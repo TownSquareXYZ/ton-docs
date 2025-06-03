@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 반송 불가 메시지
 
 export const Highlight = ({children, color}) => (
@@ -11,14 +13,43 @@ padding: '0.2rem',
 {children} </span>
 );
 
-스마트 컨트랙트 간에 전송되는 거의 모든 내부 메시지는 반송 가능해야 합니다. 즉, "반송" 비트가 설정되어 있어야 합니다. 그러면 대상 스마트 컨트랙트가 존재하지 않거나 이 메시지를 처리하는 동안 처리되지 않은 예외가 발생하는 경우, 메시지는 원래 값의 나머지(모든 메시지 전송 및 가스 수수료를 제외한)를 가지고 "반송"됩니다. 반송된 메시지의 본문에는 32비트 `0xffffffff`가 포함되며, 그 뒤에 "반송" 플래그가 해제되고 "반송됨" 플래그가 설정된 원래 메시지의 256비트가 따릅니다. 따라서 모든 스마트 컨트랙트는 모든 수신 메시지의 "반송됨" 플래그를 확인하고 조용히 수락하거나(0 종료 코드로 즉시 종료) 어떤 발신 쿼리가 실패했는지 감지하기 위한 특별한 처리를 수행해야 합니다. 반송된 메시지의 본문에 포함된 쿼리는 절대 실행되어서는 안 됩니다.
+Most internal messages between contracts should be bounceable (with the "bounce" bit set). This ensures:
+
+1. If the destination contract doesn't exist or fails to process the message:
+
+   - The message bounces back
+   - Returns remaining value (minus fees)
+   - Contains:
+      - `0xffffffff` (32-bit)
+      - Original message body (256-bit)
+      - "bounce" flag cleared
+      - "bounced" flag set
+
+2. Contracts must:
+   - Check the "bounced" flag on all incoming messages
+   - Either:
+      - Accept silently (terminate with exit code 0)
+      - Identify and handle the failed request
+   - Never execute the bounced message's original query
 
 :::info
-반송된 메시지의 본문에 포함된 쿼리는 <Highlight color="#186E8A">절대 실행되어서는 안 됩니다</Highlight>.
+The query contained in the body of a bounced message <Highlight color="#186E8A">should never be executed</Highlight>.
 :::
 
-어떤 경우에는 `반송 불가 내부 메시지`를 사용해야 합니다. 예를 들어, 새 계정은 최소한 하나의 반송 불가 내부 메시지가 전송되지 않으면 생성될 수 없습니다. 이 메시지에 새 스마트 컨트랙트의 코드와 데이터가 포함된 `StateInit`이 포함되어 있지 않는 한, 반송 불가 내부 메시지에 비어 있지 않은 본문을 포함하는 것은 의미가 없습니다.
+Non-bounceable messages are essential for account initialization. A new account cannot be created without receiving at least one non-bounceable internal message containing its `StateInit` (with contract code and initial data).
 
-:::tip
-최종 사용자(예: 지갑 사용자)가 많은 양의 값(예: 5 Toncoin 이상)이 포함된 반송 불가 메시지를 보내지 `못하게 하거나` 보내는 경우 경고하는 것이 좋습니다. 먼저 작은 금액을 보내고, 그 다음 새 스마트 컨트랙트를 초기화한 후, 더 큰 금액을 보내는 것이 `더 나은 방법`입니다.
-:::
+For all other cases:
+
+- The message body should typically be empty
+- Only use when bounce handling isn't needed
+- Avoid them for regular contract interactions
+
+## Best practice
+
+It is a good idea not to allow the end user (e.g., of a wallet) to send unbounceable messages containing large amounts of value (e.g., more than five Toncoins) or to warn them if they do. To prevent loss of big funds, break process in two steps:
+
+1. Send a small amount first, initialize the new smart contract
+2. Next, send a more considerable amount.
+
+<Feedback />
+

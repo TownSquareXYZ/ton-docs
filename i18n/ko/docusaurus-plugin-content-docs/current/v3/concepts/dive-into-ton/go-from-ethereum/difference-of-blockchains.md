@@ -1,59 +1,152 @@
-# 블록체인의 차이점
+import Feedback from '@site/src/components/Feedback';
 
-이번 장에서는 이더리움 블록체인과 TON 블록체인 간의 주요 차이점을 살펴보겠습니다. 이 분석에는 네트워크 아키텍처에 대한 개요, 각각의 고유한 특징, 그리고 각각의 장단점 평가가 포함될 것입니다.
+# The differences of blockchains
 
-이더리움과 TON 생태계에 대한 개요부터 시작하면, 두 플랫폼 모두 자산을 보유하고 거래하는 사용자, 네트워크를 유지하고 보호하는 검증자, 그리고 블록체인을 제품과 서비스의 기반으로 사용하는 애플리케이션 개발자를 포함하여 유사한 참여자와 서비스 구조를 제공합니다. 두 생태계 모두 사용자에게 자산에 대한 다양한 수준의 통제권을 제공하는 수탁형(custodial) 및 비수탁형(non-custodial) 서비스를 포함합니다.
+## Introduction
 
-또한, 두 플랫폼 모두 탈중앙화 애플리케이션(DApps) 생성을 용이하게 하여, 개발자들에게 강력한 개발 도구와 표준을 제공한다는 점을 강조할 만합니다.
+In this chapter, we will examine the key differences between the Ethereum blockchain and the TON blockchain. The analysis will include an overview of the network architectures, highlight their unique features, and evaluate the advantages and disadvantages of each.
 
-하지만 전반적인 구조와 제공되는 기능의 유사성에도 불구하고, 이더리움과 TON의 주요 기술적 측면과 네트워크 설계 접근 방식은 크게 다릅니다. 이러한 차이점은 각 플랫폼의 고유한 장점과 한계를 철저히 이해하는 기반이 되며, 이는 각 네트워크의 기능을 최대한 활용하고자 하는 개발자들에게 특히 중요합니다. 다음 하위 섹션에서는 개발자들에게 필요한 통찰력을 제공하기 위해 네트워크 아키텍처, 모델, 거래 메커니즘, 그리고 거래 정산 시스템에 초점을 맞춰 이러한 차이점들을 자세히 살펴보겠습니다.
+Starting with an overview of the Ethereum and TON ecosystems, we can note that both platforms offer a similar structure of participants and services, including users who hold assets and make transactions, validators who keep the network up and running and secure, and application developers who use the blockchain as the basis for their products and services. Both ecosystems include custodial and non-custodial services that give users different control over their assets.
 
-## 블록체인 아키텍처
+Additionally, it is worth highlighting that both platforms facilitate the creation of **decentralized applications (DApps)**, offering developers powerful tools and standards for development.
 
-이더리움은 비트코인의 기본 원칙을 계승하고 확장함으로써, 개발자들에게 복잡한 탈중앙화 애플리케이션(DApps)을 만드는 데 필요한 유연성을 제공했습니다. 이더리움의 독특한 특징은 각 계정에 개별화된 데이터 저장소를 제공하여, 거래가 단순히 토큰 전송뿐만 아니라 스마트 컨트랙트와 상호작용함으로써 블록체인의 상태를 변경할 수 있다는 것입니다. 계정 간의 이러한 동기식 상호작용 능력은 애플리케이션 개발에 큰 가능성을 제공하지만, 동시에 확장성 문제도 제기합니다. 이더리움 네트워크의 각 거래는 노드가 블록체인의 전체 상태를 업데이트하고 유지해야 하므로, 네트워크 사용량이 증가함에 따라 상당한 지연과 가스 비용 증가를 초래합니다.
+However, despite the similarities in overall structure and features offered, the key technological aspects and network design approaches of Ethereum and TON differ significantly. These differences lay the foundation for a thorough understanding of each platform's unique advantages and limitations, which is particularly important for developers seeking to maximize the capabilities of each network. In the following subsections, we will explore these differences in more detail, focusing on the network architecture, models, transaction mechanisms, and transaction settlement system to provide developers with the necessary insights.
 
-이러한 과제들에 대응하여, TON은 확장성과 성능을 개선하기 위한 대안적 접근 방식을 제공합니다. 개발자들에게 다양한 애플리케이션을 만들 수 있는 최대한의 유연성을 제공하겠다는 야심을 가지고 설계된 TON은 블록 생성 과정을 최적화하기 위해 샤드와 마스터체인의 개념을 사용합니다. 각 TON 샤드체인과 마스터체인에서는 평균 5초마다 새로운 블록이 생성되어 빠른 거래 실행을 보장합니다. 상태 업데이트가 동기식인 이더리움과 달리, TON은 스마트 컨트랙트 간의 비동기 메시징을 구현하여 각 거래를 독립적이고 병렬로 처리할 수 있게 함으로써, 네트워크의 거래 처리 속도를 크게 향상시킵니다. 숙지해야 할 섹션과 문서들:
+## Differences between TON and Ethereum
 
-- [샤드](/v3/documentation/smart-contracts/shards/shards-intro)
-- [블록체인 비교 문서](https://ton.org/comparison_of_blockchains.pdf)
-- [블록체인 비교 표(문서보다 덜 정보적이지만 더 시각적임)](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-comparison)
+### Account
 
-결론적으로, TON과 이더리움의 아키텍처와 기술적 기반을 비교해보면, TON이 상당한 이점을 제공한다는 것이 분명합니다. 비동기 거래 처리에 대한 혁신적인 접근 방식과 독특한 샤드 및 마스터체인 아키텍처를 통해, TON은 보안이나 중앙화를 손상시키지 않고도 초당 수백만 건의 거래를 지원할 수 있는 잠재력을 보여줍니다. 이는 플랫폼에 뛰어난 유연성과 효율성을 제공하여 광범위한 애플리케이션에 이상적입니다.
+In the first subsection, we compared Ethereum and TON, highlighting their key architectural differences and the main challenges faced by Ethereum. Of particular note are the different approaches to organizing interactions in these blockchains and using models. These differences come from the unique architectural choices of each platform. For developers accustomed to Ethereum, it is essential to deeply understand these differences to effectively transition to developing on TON. This understanding will allow the architecture to adapt and optimize the interaction of smart contracts in the new environment.
 
-## 계정 기반 모델(이더리움) vs 액터 모델(TON)
+#### Ethereum
 
-첫 번째 하위 섹션에서 우리는 이더리움과 TON을 비교하며, 그들의 주요 아키텍처 차이점과 이더리움이 직면한 주요 과제들을 강조했습니다. 특히 주목할 만한 것은 이러한 블록체인들의 상호작용 조직과 모델 사용에 대한 서로 다른 접근 방식입니다. 이러한 차이점들은 각 플랫폼의 고유한 아키텍처 선택에서 비롯됩니다. 이더리움에 익숙한 개발자들에게는 TON에서의 개발로 효과적으로 전환하기 위해 이러한 차이점들을 깊이 이해하는 것이 중요합니다. 이러한 이해를 통해 새로운 환경에서 스마트 컨트랙트의 상호작용을 적응시키고 최적화할 수 있습니다.
+Ethereum uses an account-based model to track balances. An account stores information about different coin balances, like a regular bank account. There are two types of accounts:
 
-그럼, 이더리움에서 계정 기반 모델이 어떻게 작동하는지 살펴보겠습니다. 이더리움은 이 모델을 잔액을 추적하는 데 사용합니다. 은행 계좌처럼, 자금은 개별 코인이 아닌 계정에 저장됩니다. 계정에는 두 가지 유형이 있습니다:
+- **Externally-owned accounts (EOAs)** - externally managed accounts are controlled by the user using public and private key pairs. The public key allows others to send payments to the account.
+- Contract accounts are controlled by smart contract code rather than private keys. Contract accounts cannot initiate transactions independently because they do not have a private key.
 
-- 외부 소유 계정(EOAs) - 외부에서 관리되는 계정으로, 공개 키와 개인 키 쌍을 사용하여 사용자가 제어합니다. 공개 키를 통해 다른 사람들이 계정으로 지불을 보낼 수 있습니다.
-- 컨트랙트 계정 - 개인 키가 아닌 스마트 컨트랙트 코드에 의해 제어됩니다. 개인 키가 없기 때문에 컨트랙트 계정은 자체적으로 거래를 시작할 수 없습니다.
+When an Ethereum user creates a wallet, an EOA is added to the global state on all nodes in the decentralized network. Deploying a smart contract creates a contract account capable of storing and distributing funds programmatically based on certain conditions. All account types have balances and storage and can trigger transactions by calling functions in other accounts. This structure provides Ethereum's ability to serve as programmable money.
 
-이더리움 사용자가 지갑을 생성할 때, 첫 거래가 호출되거나 첫 자금을 받을 때 탈중앙화 네트워크의 모든 노드에서 전역 상태에 외부 계정이 추가됩니다. 스마트 컨트랙트를 배포하면 특정 조건에 따라 프로그래밍 방식으로 자금을 저장하고 분배할 수 있는 컨트랙트 계정이 생성됩니다. 모든 계정 유형은 잔액과 저장소를 가지고 있으며, 다른 계정의 함수를 호출하여 거래를 촉발할 수 있습니다. 이러한 구조는 이더리움이 프로그래밍 가능한 돈으로 기능할 수 있게 합니다.
+Ethereum has synchronous transaction processing, where each transaction is processed sequentially and in strict order. Synchronous processing ensures that the state of the blockchain always remains consistent and predictable for all participants in the network. All transactions are atomic; they either complete successfully or unsuccessfully without partial or incomplete execution. Moreover, when a smart contract invokes another smart contract, the invocation occurs instantaneously within the same transaction. But here again, there are disadvantages — a transaction can grow as much as it can. A negative effect of synchronicity is still overloading, as computations cannot run in parallel. The number of contracts and users grows, and the inability to parallelize computations becomes a major limiting factor in the growth of the network.
 
-이더리움은 각 거래가 순차적으로, 엄격한 순서에 따라 처리되는 동기식 거래 처리를 사용합니다. 이는 블록체인의 상태가 네트워크의 모든 참여자에게 항상 일관되고 예측 가능하게 유지되도록 보장합니다. 모든 거래는 원자적이며, 부분적이거나 불완전한 실행 없이 완전히 성공적으로 완료되거나 완전히 실패로 완료됩니다. 더욱이, 스마트 컨트랙트가 호출되고 이어서 다른 스마트 컨트랙트를 호출할 때, 호출은 동일한 거래 내에서 즉시 이루어집니다. 하지만 여기서도 단점이 있습니다. 거래는 허용된 만큼 커질 수 있습니다. 동기성의 부정적인 효과는 여전히 과부하입니다. 계산을 병렬로 실행할 수 없기 때문입니다. 컨트랙트와 사용자 수가 증가함에 따라 계산을 병렬화할 수 없다는 것이 네트워크 성장의 주요 제한 요인이 됩니다.
+#### TON
 
-이제 액터 모델이 무엇인지 이해해보겠습니다. 액터 모델은 주요 요소가 액터 - 독립적으로 실행 가능한 코드 블록인 병렬 및 분산 컴퓨팅에 대한 접근 방식입니다. 원래 클러스터 컴퓨팅을 위해 개발된 이 모델은 확장성, 병렬성, 결함 허용성 능력으로 인해 현대 분산 시스템의 요구를 충족시키기 위해 마이크로서버 아키텍처에서 널리 사용됩니다. 액터는 메시지를 수신하고 처리하며, 메시지의 로직에 따라 로컬 변경을 수락하거나 응답으로 작업을 수행하여 응답하고, 다른 액터를 생성하거나 메시지를 전달할 수 있습니다. 액터들은 스레드 안전하고 재진입 가능하여 잠금이 필요 없고 작업의 병렬 처리를 단순화합니다. 이 모델은 효율적인 동시 접근 제어와 동기식 및 비동기식 메시징 모두를 지원하여 확장 가능하고 신뢰할 수 있는 서버 솔루션을 구축하는 데 이상적입니다.
+The actor model is an approach to parallel and distributed computing where the main element is an actor - an independent executable block of code. Initially developed for cluster computing, this model is widely used in micro-server architectures to meet the needs of modern distributed systems due to its ability to scale, parallelism, and fault tolerance. Actors receive and process messages, depending on the logic of the message, respond by accepting local changes or performing actions in response, and can create other actors or send messages onward. They are thread-safe and reentrant, eliminating the need for locks and simplifying parallel processing of tasks. This model is ideal for building scalable and reliable server solutions, providing efficient concurrent access control and support for synchronous and asynchronous messaging.
 
-TON에서는 모든 것이 스마트 컨트랙트로 표현되며, 이는 액터 모델의 맥락에서 액터라고도 할 수 있습니다. 스마트 컨트랙트는 주소, 코드, 데이터, 잔액과 같은 속성을 가진 객체입니다. 데이터를 저장할 수 있는 능력이 있으며 다른 스마트 컨트랙트로부터 받은 지시에 따라 행동합니다. 컨트랙트가 메시지를 받고 TVM에서 코드를 실행하여 처리한 후, 다양한 시나리오가 발생할 수 있습니다:
+In TON, smart contracts represent everything and are called actors within the actor model context. A smart contract is an object with address, code, data, and balance properties. It can store data and behaves according to instructions received from other smart contracts. After a contract receives a message and processes it by executing its code in the TVM, various scenarios can occur:
 
-- 컨트랙트가 자신의 속성 `코드, 데이터, 잔액`을 변경합니다
+- The contract changes its properties `code`, `data`, and `balance`
 - 컨트랙트가 선택적으로 발신 메시지를 생성합니다
 - 컨트랙트가 다음 이벤트가 발생할 때까지 대기 모드로 들어갑니다
 
-스크립트의 결과는 항상 거래의 생성입니다. 거래 자체는 비동기식이며, 이는 시스템이 과거 거래의 완료를 기다리는 동안 다른 거래를 계속 처리할 수 있다는 것을 의미합니다. 이는 복잡한 거래를 처리할 때 더 많은 유연성을 제공합니다. 때로는 단일 거래가 특정 순서로 실행되어야 하는 여러 스마트 컨트랙트 호출을 필요로 할 수 있습니다. 이러한 호출이 비동기식이기 때문에, 개발자들은 여러 동시 작업을 포함할 수 있는 복잡한 거래 흐름을 더 쉽게 설계하고 구현할 수 있습니다. 이더리움에서 온 개발자는 TON 블록체인의 스마트 컨트랙트들이 비동기 메시지를 보내는 방식으로만 서로 통신할 수 있다는 것을 인식해야 합니다. 이는 다른 컨트랙트에서 데이터를 요청하고 즉각적인 응답이 필요한 경우, 이것이 불가능하다는 것을 의미합니다. 대신 `get methods`는 이더리움의 지갑이 스마트 컨트랙트 상태를 요청하기 위해 Infura와 같은 RPC 노드를 사용하는 것처럼, 네트워크 외부의 클라이언트에 의해 호출되어야 합니다. 이는 여러 가지 이유로 중요한 제한사항입니다. 예를 들어, 플래시 론은 동일한 거래 내에서 대출과 상환 능력에 의존하여 단일 블록 내에서 실행되어야 하는 거래입니다. 이는 이더리움 EVM의 동기식 특성에 의해 용이해지지만, TON에서는 모든 거래의 비동기식 특성으로 인해 플래시 론의 실행이 불가능합니다. 또한 스마트 컨트랙트에 외부 데이터를 제공하는 오라클은 TON에서 더 복잡한 설계 과정을 포함합니다. 오라클이 무엇이고 TON에서 어떻게 사용하는지는 [여기](/v3/documentation/dapps/oracles/about_blockchain_oracles)에서 확인할 수 있습니다.
+The result of the scripts is always the creation of a transaction. The transactions themselves are asynchronous, meaning that the system can continue processing other transactions while waiting for past transactions to complete. This approach provides more flexibility when processing complex transactions. Sometimes a single transaction may require multiple smart contract calls to be executed in a specific sequence. Because these calls are asynchronous, developers can more easily design and implement complex transaction flows that may involve multiple concurrent operations.
 
-## 지갑의 차이점
+A developer coming from Ethereum needs to realize that smart contracts in the TON blockchain can only communicate with each other by sending asynchronous messages, which means that if there is a need to request data from another contract and an immediate response is required, this will not be possible. Instead, clients outside the network must call `get methods`, much like a wallet in Ethereum that uses RPC nodes such as Infura to request smart contract states. This is an important limitation for several reasons. For example, flash loans are transactions executed within a single block, relying on the ability to borrow and repay in the same transaction.
 
-우리는 이미 이더리움에서 사용자의 지갑이 공개 키와 1대1 관계에 있는 주소를 기반으로 생성된다는 것을 논의했습니다. 하지만 TON에서는 모든 지갑이 사용자가 직접 배포해야 하는 스마트 컨트랙트입니다. 스마트 컨트랙트는 다양한 방식으로 구성될 수 있고 다른 기능을 가질 수 있기 때문에, [여기](/v3/documentation/smart-contracts/contracts-specs/wallet-contracts)에서 읽을 수 있는 여러 버전의 지갑이 있습니다. 지갑이 스마트 컨트랙트이기 때문에, 사용자는 서로 다른 주소와 초기 매개변수를 가진 여러 지갑을 가질 수 있습니다. 거래를 보내기 위해서는 사용자가 자신의 개인 키로 메시지에 서명하고 이를 자신의 지갑 컨트랙트로 보내야 하며, 이는 다시 특정 DApp 애플리케이션의 스마트 컨트랙트로 전달됩니다. 이러한 접근 방식은 지갑 설계의 유연성을 크게 증가시키며 개발자들이 미래에 새로운 버전의 지갑을 추가할 수 있습니다. 이더리움에서는 현재 개발자들이 gnosis와 같은 다중 서명 지갑(스마트 컨트랙트)을 적극적으로 사용하고 있고, ERC-4337과 같은 이른바 '계정-추상화'를 도입하기 시작하고 있습니다. 여기서 지갑은 네이티브 토큰 없이 거래 보내기, 분실 후 계정 복구 등과 같은 기능을 갖추게 될 것입니다. 하지만 이더리움에서는 지갑 계정이 EOA에 비해 가스 수수료 측면에서 훨씬 더 비용이 많이 든다는 점을 주목할 필요가 있습니다.
+The synchronous nature of Ethereum's EVM facilitates such transactions, whereas the asynchronous nature of all transactions in TON makes executing a flash loan infeasible. Oracles, which provide smart contracts with external data, also involve a more intricate design process in TON. What Oracles are and how to use them in TON can be found [here](/v3/documentation/dapps/oracles/about_blockchain_oracles/).
 
-## 메시지와 거래
+### Wallets
 
-두 컨트랙트 사이에서 일어나는 것을 메시지라고 합니다 - 작은 수의 토큰과 임의의 데이터가 지정된 주소로 전송됩니다. 메시지가 컨트랙트에 도착하면, 컨트랙트 코드에 의해 처리되고, 컨트랙트는 자신의 상태를 업데이트하고 선택적으로 새로운 메시지를 보냅니다. 컨트랙트에서의 이러한 모든 작업은 거래로 기록됩니다. 예를 들어보겠습니다. 컨트랙트 `A`에서 컨트랙트 `B`로, 컨트랙트 `B`에서 컨트랙트 `C`로 이어지는 메시지 체인이 있다면, 우리는 두 개의 메시지와 세 개의 거래를 갖게 됩니다. 하지만 초기에 블록체인의 상태를 변경하기 위해서는 외부 신호가 필요합니다. 스마트 컨트랙트를 호출하기 위해서는 검증자에게 가는 외부 메시지를 보내야 하며, 그들이 이를 스마트 컨트랙트에 적용합니다. 그리고 우리는 앞 하위 섹션에서 지갑이 스마트 컨트랙트라는 것을 논의했으므로, 이 외부 메시지는 보통 먼저 지갑의 스마트 컨트랙트로 가서 첫 번째 거래로 기록되며, 이 첫 번째 거래는 보통 실제 목적지 컨트랙트를 위한 임베디드 메시지를 포함합니다. 지갑 스마트 컨트랙트가 메시지를 받으면, 이를 처리하고 목적지 컨트랙트로 전달합니다(우리 예시에서는 컨트랙트 `A`가 지갑이 될 수 있고, 외부 메시지를 받으면 첫 번째 거래를 갖게 됩니다). 거래의 순서는 체인을 형성합니다. 따라서 각 스마트 컨트랙트가 자신만의 거래를 가지고 있다는 것을 알 수 있으며, 이는 각 컨트랙트가 자신만의 '작은 블록체인'을 가지고 있다는 것을 의미합니다([여기](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains)에서 자세히 읽을 수 있음). 따라서 네트워크는 이로 인해 거래를 서로 완전히 독립적으로 처리할 수 있습니다.
+#### Ethereum
 
-## 가스 시스템의 차이점
+We have already discussed that in Ethereum, a user's wallet is generated based on their address, which is in a 1-to-1 relationship with their public key.
 
-이더리움에서 거래 비용은 거래에 필요한 컴퓨팅 자원의 양을 반영하는 `가스`로 측정됩니다. `가스` 비용은 프로토콜에 의해 설정된 `기본 수수료`와 사용자가 검증자의 거래 처리를 가속화하기 위해 추가하는 `우선순위 수수료`로 나뉩니다. `총 수수료`는 = `사용된 가스 단위` \* (`기본 수수료` + `우선순위 수수료`)가 됩니다.
-또한, 이더리움의 저장소는 기본적으로 무료입니다. 즉, 데이터가 블록체인에 저장되면 그것을 유지하는 데 지속적인 비용이 들지 않습니다.
+In Ethereum, developers use multi-signature wallets like gnosis. They are just introducing so-called **account abstraction** with the ERC-4337 standard. This standard extends the functionality of wallets, such as sending transactions without a native token, recovering accounts after loss, etc.
 
-TON에서 거래 수수료의 계산은 복잡하며 여러 종류의 수수료를 포함합니다: 블록체인에 스마트 컨트랙트를 저장하는 수수료, 블록체인에 메시지를 가져오는 수수료, 가상 머신에서 코드를 실행하는 수수료, 코드 실행 후 작업을 처리하는 수수료, 그리고 TON 블록체인 외부로 메시지를 보내는 수수료 등입니다. 가스 가격과 일부 다른 매개변수는 메인 네트워크에서의 투표로 변경될 수 있습니다. 이더리움과 달리 TON 사용자들은 직접 가스 가격을 설정할 수 없습니다. 또한, 개발자는 남은 가스 자금을 수동으로 소유자에게 반환해야 하며, 그렇지 않으면 잠금 상태로 남게 됩니다. 스마트 컨트랙트 저장소의 사용도 가격에 영향을 미칩니다: 지갑의 스마트 컨트랙트가 오랫동안 사용되지 않았다면, 다음 거래는 더 많은 비용이 들 것입니다.
+Still, it's worth noting that wallet accounts are much more expensive to use in terms of gas fees compared to EOA in Ethereum.
+
+#### TON
+
+In TON, all wallets are smart contracts that the user must deploy. Since developers can configure smart contracts in different ways and have other features, there are several versions of wallets, which you can read about [here](/v3/documentation/smart-contracts/contracts-specs/wallet-contracts/).
+
+Because wallets are smart contracts, users can have multiple wallets with different addresses and initial parameters. To send a transaction, the user must sign the message with their private key and send it to their wallet contract, which forwards it to the smart contract of a particular DApp application. This approach dramatically increases flexibility in wallet design, and developers can add new versions of the wallet in the future.
+
+### Transaction
+
+#### Ethereum
+
+Recall that in Ethereum transactions are cryptographically signed instructions from accounts. An account will initiate a transaction to update the state of the Ethereum network. The most straightforward transaction is transferring ETH from one account to another.
+
+Transaction flow
+
+1. A transaction hash is cryptographically generated: `0x97d99bc7729211111a21b12c933c949d4f31684f1d6954ff477d0477538ff017`
+2. The transaction is then broadcast to the network and added to a transaction pool consisting of all other pending network transactions.
+3. A validator must pick your transaction and include it in a block to verify and consider it successful.
+4. As time passes, the block containing your transaction will be upgraded to `justified` and then `finalized.` These upgrades ensure that your transaction was successful and will never be altered. Once a block is finalized, it could only ever be changed by a network-level attack that would cost many billions of dollars.
+
+#### TON
+
+In TON, the entity that transfers data between two contracts is called a message. For example, a message contains arbitrary data about a token transfer sent to a specified address. When the message arrives at the contract, the contract processes this according to the code. The contract updates its state and optionally sends a new message. [Transaction](/v3/documentation/smart-contracts/message-management/messages-and-transactions/) is an entire flow from receiving messages to executing actions on the account.
+
+For example, consider the interaction of accounts where we have messages from contract **A** to contract **B**. In this case, we have one message and two transactions.
+
+But initially, to change the state of the blockchain, you need an outside signal. To invoke a smart contract, you need to send an external message to the validators, and they will apply it to the smart contract.
+
+As we already discussed, a wallet is a smart contract, so this external message usually first goes to the wallet's smart contract, which records them as the first transaction, and that first transaction usually contains an embedded message for the actual destination contract.
+
+When the wallet smart contract receives the message, it processes it and delivers it to the destination contract. In our example, contract **A** could be a wallet; when it receives the external message, it will have the first transaction.
+
+We can represent the sequence of transactions as a chain. In this representation, each smart contract has its transactions, which means that each contract has its blockchain, so the network can process the transactions independently.
+
+:::info
+Read more in [Blockchain of blockchain](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains)
+:::
+
+### Gas
+
+#### Ethereum
+
+In Ethereum, users pay fees in their native currency, ether (ETH). Usually, one quotes gas prices in gwei, which is a denomination of ETH. Each gwei is equal to one billionth of an ETH.
+
+For example, 0.000000001 ether is equal to 1 gwei.
+
+The gas cost is divided into a base fee set by the protocol and a `priority fee` that the user adds to speed up transaction processing by validators.
+
+The `total fee` is equal:
+
+```
+total fee = units of gas used * (base fee + priority fee).
+```
+
+Additionally, storage in Ethereum is essentially free, meaning that once data is stored on the blockchain, there is no ongoing cost for keeping it there.
+
+#### TON
+
+The contract nominates all computation costs in gas units and fixes them in a specific gas amount. The blockchain config defines the gas, and one pays for it in Toncoins.
+
+The chain configuration determines the price of gas units and may be changed only by consensus of validators. Note that, unlike in other systems, the user cannot set their gas price, and there is no fee market.
+In TON, the calculation of transaction fees is complex. It includes several types of fees:
+
+- fees for storing smart contracts in the blockchain
+- fees for importing messages into the blockchain
+- fees for executing code on a virtual machine
+- fees for processing actions after code execution
+- fees for sending messages outside the TON blockchain
+
+The price of gas and some other parameters can be changed by voting on the main network. Unlike Ethereum, TON users cannot set the gas price themselves. Also, the developer needs to return the remaining gas funds to the owner manually, otherwise they will remain locked. Smart contract storage also affects the price: if a wallet's smart contract remains unused for a long time, the next transaction will incur higher costs.
+
+:::info
+Read more about [gas](/v3/documentation/smart-contracts/transaction-fees/fees/)
+:::
+
+### Architecture
+
+#### Ethereum
+
+Ethereum inherits and extends the foundational principles of Bitcoin. This approach gives developers the flexibility to create complex DApps. A unique feature of Ethereum is its ability to provide each account with an individualized data store, allowing transactions to perform token transfers and change the state of the blockchain by interacting with smart contracts. As we know, this ability to synchronously interact between accounts offers great promise for application development, but also raises the issue of scalability. Each transaction on the Ethereum network requires nodes to update and maintain the entire state of the blockchain, which leads to significant latency and increases the cost of gas as network utilization increases.
+
+#### TON
+
+TON offers an alternative approach to improve scalability and performance in response to these challenges. Designed to provide developers with maximum flexibility to create various applications, TON uses the concept of shards and the MasterChain to optimize the block creation process. Each TON ShardChain and MasterChain generates a new block on average every 3 seconds, ensuring fast transaction execution. Unlike Ethereum, where state updates are synchronous, TON implements asynchronous messaging between smart contracts, allowing each transaction to be processed independently and in parallel, significantly speeding up transaction processing on the network. Sections and articles to familiarize yourself with:
+
+- [Shards](/v3/documentation/smart-contracts/shards/shards-intro/)
+- [Comparison of blockchains](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-comparison)
+
+In conclusion, by comparing TON and Ethereum's architecture and technological underpinnings, it's clear that TON offers significant advantages. With its innovative approach to asynchronous transaction processing and unique shard and MasterChain architecture, TON demonstrates the potential to support millions of transactions per second without compromising security or centralization. High scalability provides the platform with outstanding flexibility and efficiency, making it ideal for various applications.
+
+## See also
+
+- [Smart contract addresses](/v3/concepts/dive-into-ton/ton-blockchain/smart-contract-addresses/)
+
+<Feedback />
+

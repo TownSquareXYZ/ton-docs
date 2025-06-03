@@ -1,40 +1,42 @@
-# ADNL 프로토콜
+import Feedback from '@site/src/components/Feedback';
 
-구현:
+# ADNL protocol
 
-- https://github.com/ton-blockchain/ton/tree/master/adnl
+Please see the [**implementation**](https://github.com/ton-blockchain/ton/tree/master/adnl) first.
 
 ## 개요
 
-ADNL(Abstract Datagram Network Layer)은 TON의 핵심 기술입니다.
+The Abstract Datagram Network Layer (ADNL) is a fundamental component of the TON.
 
-이것은 **UDP** 기반의 **IPv4**(향후 IPv6)에서 작동하는 오버레이, P2P, 비신뢰성(소형) 데이터그램 프로토콜이며, UDP를 사용할 수 없는 경우 **TCP 폴백** 옵션이 있습니다.
+ADNL is an overlay, peer-to-peer, unreliable (small-size) datagram protocol that operates over **UDP** in **IPv4**, with plans to support **IPv6** in the future. Additionally, it has an optional **TCP fallback** for instances when UDP is unavailable.
 
 ## ADNL 주소
 
-각 참여자는 256비트 ADNL 주소를 가집니다.
+Each participant in the network possesses a 256-bit ADNL Address.
 
-ADNL 프로토콜을 사용하면 ADNL 주소만으로 데이터그램을 (비신뢰성으로) 송수신할 수 있습니다. IP 주소와 포트는 ADNL 프로토콜에 의해 숨겨집니다.
+The ADNL Protocol enables the sending and receiving of datagrams using only ADNL Addresses, concealing the underlying IP Addresses and Ports.
 
-ADNL 주소는 본질적으로 256비트 ECC 공개키와 동일합니다. 이 공개키는 임의로 생성될 수 있어 노드가 필요한 만큼 다양한 네트워크 신원을 만들 수 있습니다.
-하지만 수신자 주소로 전송된 메시지를 수신(및 복호화)하기 위해서는 해당 개인키를 알아야 합니다.
+An ADNL Address effectively functions as a 256-bit ECC public key, which can be generated arbitrarily, allowing for the creation of multiple network identities as needed by the node.
 
-실제로 ADNL 주소는 공개키 자체가 아닙니다. 대신 생성자에 따라 여러 유형의 공개키와 주소를 설명할 수 있는 직렬화된 TL-객체의 256비트 SHA256 해시입니다.
+However, the corresponding private key must be known to receive and decrypt messages intended for a specific address.
 
-## 암호화 및 보안
+In practice, the ADNL Address is not the public key itself; rather, it is a 256-bit SHA256 hash of a serialized TL object. Depending on its constructor, this TL object can represent various types of public keys and addresses.
 
-일반적으로 전송되는 각 데이터그램은 발신자가 서명하고 암호화되어 수신자만이 메시지를 복호화하고 서명으로 무결성을 확인할 수 있습니다.
+## Encryption and security
+
+Typically, each datagram sent is signed by the sender and encrypted so that only the intended recipient can decrypt the message and verify its integrity using the signature.
 
 ## 이웃 테이블
 
-일반적으로 TON ADNL 노드는 다른 알려진 노드의 추상 주소, 공개키, IP 주소, UDP 포트와 같은 정보를 포함하는 "이웃 테이블"을 가집니다. 시간이 지나면서 이러한 알려진 노드로부터 수집된 정보를 사용하여 이 테이블을 점진적으로
-확장합니다. 이 새로운 정보는 특별한 쿼리에 대한 응답이나 때로는 오래된 레코드 제거의 형태일 수 있습니다.
+A TON ADNL node will typically maintain a **neighbor table** that contains information about other known nodes, including their abstract addresses, public keys, IP addresses, and UDP ports. Over time, this table expands with information gathered from these known nodes, which may come from responses to specific queries or by removing outdated records.
 
-ADNL은 지점간 채널과 터널(프록시 체인)을 설정할 수 있습니다.
+ADNL facilitates the establishment of point-to-point channels and tunnels (chains of proxies).
 
-TCP와 유사한 스트림 프로토콜을 ADNL 위에 구축할 수 있습니다.
+A TCP-like stream protocol can be constructed on top of ADNL.
 
 ## 다음 단계
 
-- [Low-Level ADNL 문서](/v3/documentation/network/protocols/adnl/low-level-adnl)에서 ADNL에 대해 자세히 알아보세요
-- [TON 백서](https://docs.ton.org/ton.pdf)의 3.1장을 참조하세요.
+- To learn more about ADNL, refer to the [Low-level ADNL documentation](/v3/documentation/network/protocols/adnl/low-level-adnl).
+- See Chapter 3.1 of the [TON Whitepaper](https://docs.ton.org/ton.pdf).
+  <Feedback />
+

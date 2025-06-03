@@ -1,34 +1,41 @@
-# 현지화 프로그램
+import Feedback from '@site/src/components/Feedback';
 
-번역 프로그램은 TON 관련 다양한 문서를 여러 언어로 번역하여 전 세계 수십억 명의 비영어권 사용자에게 웹사이트 접근성을 높이는 협업 노력입니다.
+# Localization
 
-## 시스템 설계 철학
+The localization is a collaborative effort to translate various TON-related documents into multiple languages, making the website accessible to billions of non-English speakers worldwide.
+
+## System design philosophy
 
 ![how it works](/img/localizationProgramGuideline/localization-program.png)
 
-현지화 프로그램은 **TON**의 가장 가까운 파트너 중 하나인 [**TownSquare Labs**](https://github.com/TownSquareXYZ)에 의해 **시작**되고 **적극적으로 유지 관리**됩니다.
+The localization process is fully maintained by [TownSquare Labs](https://github.com/TownSquareXYZ).
 
-우리는 다국어 커뮤니티 협업을 위한 개방형 인프라를 구축하여 **TON을 더 나은 단계로 발전**시키는 것을 목표로 하고 있으며, 이를 위해 다음을 포함합니다:
+TownSquare is committed to creating an open infrastructure for multilingual community collaboration to advance TON to a better phase, which includes:
 
 - **다국어 커뮤니티에 적합** 이 프로그램은 여러 언어를 지원하여 다양한 언어적 배경을 가진 사용자들의 포용성과 접근성을 보장합니다.
 
-- **개발, 통합, 배포의 자동화** 자동화 도구를 통해 프로그램은 개발, 통합, 배포를 단순화하여 수동 작업을 줄이고 현지화 작업 전반에 걸쳐 효율성과 일관성을 향상시킵니다.
+- **Automate development, integration, and deployment**\
+   The program simplifies development, integration, and deployment through automation tools, reducing manual efforts and enhancing efficiency and consistency across localization efforts.
 
-- **개발자, 번역가, 검증자의 역할 분리** 우리의 접근 방식은 개발자, 번역가, 검증자의 책임을 분리하여 각 역할이 자신의 작업에 집중할 수 있게 하며, 역할 충돌 없이 고품질 번역과 원활한 협력을 보장합니다.
+- **Separation of roles for developer, translator, and verifier**\
+   Our approach divides the responsibilities of developers, translators, and verifiers, allowing each role to focus on their tasks and ensuring high-quality translations and seamless collaboration without role conflicts.
 
 - **커뮤니티 기여에 대한 인센티브** 현지화 작업에 기여하는 커뮤니티 구성원들에게 인센티브를 제공합니다. 이는 적극적인 참여를 촉진하고, 기여자들에게 보상을 제공하며, 소유권과 커뮤니티 참여 의식을 증진시킵니다.
 
 - **고급 AI 시스템 통합** AI 시스템은 지능적인 제안을 제공하고 반복적인 작업을 자동화하여 번역의 정확성과 효율성을 향상시키며, 적은 노력으로 높은 품질의 결과물을 보장합니다.
 
-이 프로젝트는 전 세계 개발자 생태계를 지원하는 것을 목표로 여러 언어 사용자를 지원하도록 설계되었습니다.
+This project is designed to support speakers of multiple languages and serve the global developer ecosystem.
 
 ## 감사의 글
 
-번역 프로그램의 핵심인 수천 명의 커뮤니티 구성원들에게 진심으로 감사드립니다. 우리는 번역가들을 인정하고 그들의 경력 성장을 지원하고자 합니다. 향후 리더보드와 프로그램 기여자 전체 목록을 만들 계획입니다.
+We sincerely appreciate the thousands of community members integral to the Translation Program. We aim to acknowledge our translators and support their career growth. In the future, we plan to create leaderboards and a list of all contributors.
 
-## 가이드 및 자료
+## Guides and resources
 
 번역 프로그램에 참여하고 있거나 참여를 고려하고 있다면, 아래의 번역 가이드를 참조하세요:
 
-- [**번역 스타일 가이드**](/v3/contribute/localization-program/translation-style-guide) – 번역가를 위한 지침과 팁.
-- [**Crowdin 온라인 편집기 가이드**](https://support.crowdin.com/online-editor/) – Crowdin 온라인 편집기와 일부 고급 기능 사용에 대한 심층 가이드.
+- [Translation style guide](/v3/contribute/localization-program/translation-style-guide) – Instructions and tips for translators.
+- [Crowdin online editor guide](https://support.crowdin.com/online-editor/) – An in-depth guide to using the Crowdin online editor and some of Crowdin's advanced features.
+
+<Feedback />
+

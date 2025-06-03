@@ -1,12 +1,16 @@
-# TON Connect의 보안
+import Feedback from '@site/src/components/Feedback';
+
+# TON Connect for security
 
 TON Connect는 사용자가 공유하는 데이터를 명시적으로 제어할 수 있도록 보장하여, 앱과 지갑 전송 중에 데이터가 유출되지 않도록 합니다. 이러한 설계를 강화하기 위해 지갑과 앱은 함께 작동하는 강력한 암호화 인증 시스템을 사용합니다.
 
 ## 사용자 데이터 및 자금 보안
 
-- TON Connect에서 사용자 데이터는 브리지를 통해 지갑으로 전송될 때 종단간 암호화됩니다. 이를 통해 앱과 지갑은 데이터 도난과 조작 가능성을 줄이는 제3자 브리지 서버를 사용할 수 있으며, 이 과정에서 데이터 무결성과 안전성을 크게 향상시킵니다.
-- TON Connect를 통해 사용자 데이터가 지갑 주소로 직접 인증될 수 있도록 보안 매개변수가 설정됩니다. 이를 통해 사용자는 여러 지갑을 사용하고 특정 앱에서 사용할 지갑을 선택할 수 있습니다.
-- TON Connect 프로토콜은 개인 데이터 항목 공유(연락처 정보 및 KYC 정보 등)를 허용하며, 이는 사용자가 해당 데이터의 공유를 명시적으로 확인함을 의미합니다.
+- On TON Connect, user data is end-to-end encrypted when transmitted to wallets via bridges. This allows apps and wallets to employ third-party bridge servers that decrease the possibility of data theft and manipulation, dramatically increasing data integrity and safety.
+- Through TON Connect, security parameters are implemented to allow users' data to be directly authenticated with their wallet address. This will enable users to use multiple wallets and choose which one is used within a particular app.
+- The TON Connect protocol allows for sharing personal data items (such as contact details and KYC info, etc.), meaning the user explicitly confirms sharing such data.
 
-TON Connect와 그 기반이 되는 보안 중심 설계에 관한 구체적인 세부 사항과 관련 코드 예시는 [TON Connect GitHub](https://github.com/ton-connect/)에서 확인할 수 있습니다.
+Specific details and related code examples about TON Connect and its underlying security-focused design can be found via [TON Connect GitHub](https://github.com/ton-connect/).
+
+<Feedback />
 
