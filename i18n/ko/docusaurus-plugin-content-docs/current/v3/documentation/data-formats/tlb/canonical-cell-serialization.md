@@ -1,46 +1,59 @@
-# 정식 셀 직렬화
+import Feedback from '@site/src/components/Feedback';
+
+# Canonical cell serialization
 
 ## 셀 가중치
 
-`가중치`는 셀 트리의 각 셀의 특성이며 다음과 같이 정의됩니다:
+`Weight` is a property of each cell in the cell tree, defined as follows:
 
-- 셀이 트리의 리프 노드인 경우: `가중치 = 1`
-- 일반 셀(리프가 아닌)의 경우 가중치는 합계: `셀 가중치 = 자식 가중치 + 1`
-- 셀이 *특수* 셀인 경우 가중치는 0으로 설정
+- If the cell is a leaf node: `weight = 1`
+- For ordinary (non-leaf) cells: `weight = sum of children’s weights + 1`
+- If the cell is *special* : `weight = 0`
 
-아래 알고리즘은 가중치 균형 트리를 만들기 위해 각 셀에 가중치를 할당하는 방법과 시기를 설명합니다.
+This concept is used to construct a weight-balanced tree structure when serializing cells. The following algorithm outlines how weights are assigned to each cell and how the tree is reordered accordingly.
 
 ## 가중치 재정렬 알고리즘
 
-각 셀은 가중치 균형 트리이며 [reorder_cells()](https://github.com/ton-blockchain/ton/blob/15088bb8784eb0555469d223cd8a71b4e2711202/crypto/vm/boc.cpp#L249) 메서드는 누적 자식 가중치를 기반으로 가중치를 재할당합니다. 순회 순서는 루트 -> 자식입니다. 캐시 선형성을 유지하기 위해 *아마도* 너비 우선 탐색을 사용합니다. 또한 해시 크기 재계산을 트리거하고 bag(루트)과 각 트리를 재인덱싱하며, 빈 참조에 대한 새 인덱스를 설정합니다. 재인덱싱은 깊이 우선이지만, 백서에서 이 인덱싱 순서가 선호된다고 명시하고 있어 이 순서에 의존하는 무언가가 있을 것 같습니다.
+Each cell is part of a weight-balanced tree, and the [reorder_cells()](https://github.com/ton-blockchain/ton/blob/15088bb8784eb0555469d223cd8a71b4e2711202/crypto/vm/boc.cpp#L249) method recalculates weights based on the cumulative weight of child cells.
+The traversal order for recalculating weights is breadth-first, starting from the roots and moving toward the children. This is *likely* chosen to preserve cache linearity.
+The method also:
 
-원본 노드의 셀 bag 직렬화를 따르려면:
+- Recalculates hash sizes
+- Reindexes the bag of cells (roots), and each tree
+- Assigns new indexes for empty references
 
-- 먼저, 셀의 가중치가 설정되지 않은 경우(노드는 셀 가져오기에서 이를 수행) 각 셀의 가중치를 `1 + sum_child_weight`로 설정합니다. 여기서 `sum_child_weight`는 자식 노드 가중치의 합입니다. 리프가 가중치 1을 갖도록 1을 더합니다.
+Reindexing is performed in depth-first order, likely due to specific dependencies or optimizations. As stated in the whitepaper, this indexing order is preferred.
 
-- 모든 루트를 순회하면서 각 루트 셀에 대해:
-  - 각 참조의 가중치가 루트 셀의 참조 수로 나눈 `maximum_possible_weight - 1 + ref_index`보다 작은지 확인하여 부모 가중치를 균등하게 공유하도록 합니다. (+ index)를 사용하여 언어가 나눗셈에서 0으로 캐스팅되는 경우에도 수학적으로 반올림된 숫자를 얻도록 합니다(예: 5 / 3의 경우 c++에서는 1을 반환하지만 여기서는 2가 필요)
+To follow the original node’s bag of cells (BoC) serialization format, the following steps should be applied:
 
-  - 일부 참조가 해당 규칙을 위반하는 경우, 목록에 추가하고(또는 원본 노드처럼 비트마스크를 더 효율적으로 생성) 해당 참조들을 다시 순회하여 가중치를 `weight_left / invalid_ref_count`로 제한합니다. 여기서 `weight_left`는 `maximum_possible_weight - 1 - sum_of_valid_refs_weights`입니다. 코드에서는 카운터 변수를 먼저 `maximum_possible_weight - 1`로 초기화한 다음 `counter -= valid_ref_weight`로 감소시키는 방식으로 구현할 수 있습니다. 본질적으로 남은 가중치를 이 노드들 사이에 재분배(균형)합니다.
+- First, if the cell's weights have not been set, this is typically handled during cell import; the weight for each cell is set to `1 + sum_child_weight`, where `sum_child_weight` represents the total weight of its child nodes. The additional 1 ensures that leaf nodes receive a weight of 1.
 
-- 루트를 다시 순회하면서 각 루트에 대해:
-  - 참조의 새로운 가중치 합이 `maximum_possible_weight`보다 작은지 확인하고, 새로운 합이 이전 루트 셀의 가중치보다 작아졌는지 확인한 후 가중치를 새로운 합으로 제한합니다. (`new_sum < root_cell_weight`이면 `root_cell_weight`를 `new_sum`과 같게 설정)
-  - 새로운 합이 루트의 가중치보다 큰 경우, 가중치가 0인 특수 노드여야 하므로 그렇게 설정합니다. (여기서 노드의 해시 수만큼 내부 해시 수 증가)
+- Iterate over all root cells. For each root cell:
+  - Check whether each of its references has a weight less than `(maximum_possible_weight - 1 + ref_index) / num_references`, where `num_references` is the number of references in the root cell. This ensures that the parent’s weight is distributed uniformly among its children. The `ref_index` adjustment accounts for integer division rounding behavior in some languages (e.g., in C++, 5 / 3 yields 1, but we want 2 in this case).
+  - If any reference violates this rule, add it to a list or, for efficiency, use a bitmask as done in the original implementation. Then, iterate over the invalid references and clamp their weight to `weight_left / invalid_ref_count`, where `weight_left` is calculated as `maximum_possible_weight - 1 - sum_of_valid_ref_weights`.
+  - This can be implemented in code using a counter initialized to `maximum_possible_weight - 1`, which is then decremented for each valid reference as `counter -= valid_ref_weight`. This effectively redistributes the remaining weight among the invalid references to balance them.
 
-- 루트를 다시 순회하면서 각 루트에 대해:
-  특수 노드가 아닌 경우(가중치 > 0), 노드의 해시 수만큼 상단 해시 수를 증가시킵니다.
+- Iterate over the root cells again. For each root:
+  - Ensure that the new sum of its reference weights is less than `maximum_possible_weight`. If this new sum is less than the root cell’s previous weight, clamp the root cell’s weight to the new sum (i.e., if `new_sum < root_cell_weight`, then set `root_cell_weight = new_sum`).
+  - If the new sum exceeds the root cell’s weight, the node is considered a special node with a weight of 0. Set the weight to 0 accordingly. At this point, increment the Internal hashes count by the hash count of the node.
+
+- Iterate over the root cells once more. For each root:
+  - If the node is not special (i.e., weight > 0), increment the Top hashes count by the node’s hash count.
 
 - 트리를 재귀적으로 재인덱싱:
-  - 먼저 모든 루트 셀을 사전 방문합니다. 이전에 사전 방문이나 방문하지 않은 경우, 재귀적으로 모든 참조를 특수 노드에 대해 확인합니다. 특수 노드를 찾으면 다른 노드보다 먼저 사전 방문하고 방문해야 합니다. 즉, 특수 노드의 자식이 목록에서 가장 먼저 오게 됩니다(가장 낮은 인덱스를 가짐). 그런 다음 다른 노드의 자식을 추가합니다(가장 깊은 -> 가장 높은 순서). 루트는 목록의 맨 끝에 옵니다(가장 큰 인덱스를 가짐). 결과적으로 노드가 깊을수록 더 낮은 인덱스를 갖는 정렬된 목록을 얻습니다.
+  - Begin by revisiting all root cells. If each node has not been revisited or visited, recursively check all its references for special nodes. If a special node is encountered, it must be revisited and visited before any other node. This ensures that the children of special nodes are added first to the resulting list, giving them the lowest indexes.
+  - After handling special nodes, process the remaining children in order from the deepest to the highest in the tree.
+  - Root nodes are added at the end of the list, thus receiving the highest indexes.
 
-`maximum_possible_weight`는 상수 64입니다.
+- The result is a sorted list in which deeper nodes receive lower indexes.
 
-## 주의사항
+`maximum_possible_weight` is a constant value set to 64.
 
-- 특수 셀은 가중치가 없습니다(0)
+## Notes
 
-- 가져올 때 가중치가 8비트에 맞는지 확인(가중치 <= 255)
+- A special cell weights 0.
+- On import, ensure that the weight fits within 8 bits (weight \<= 255).
+- Internal hashes count is the sum of hash counts of all special root nodes.
+- The top hashes count is the sum of hash counts of all non-special (i.e., regular) root nodes.
+  <Feedback />
 
-- 내부 해시 수는 모든 특수 루트 노드의 해시 수의 합계
-
-- 상단 해시 수는 다른 모든(특수하지 않은) 루트 노드의 해시 수의 합계

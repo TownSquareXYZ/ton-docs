@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # توکن بومی: Toncoin
 
 رمزارز بومی بلاکچین TON **تونکوین** است.
@@ -27,3 +29,6 @@ TLB: `extra_currencies$_ dict:(HashmapE 32 (VarUInteger 32)) = ExtraCurrencyColl
 [جتون‌ها](/v3/documentation/dapps/defi/tokens#jettons-fungible-tokens) برای وظایف دیگر مناسب هستند.
 
 در حال حاضر، هیچ ارز اضافی در بلاکچین TON ایجاد نشده است. بلاکچین TON دارای پشتیبانی کامل از ارزهای اضافی از طریق حساب‌ها و پیام‌ها است ولی قرارداد سیستم برای ایجاد آن‌ها هنوز ایجاد نشده است.
+
+<Feedback />
+

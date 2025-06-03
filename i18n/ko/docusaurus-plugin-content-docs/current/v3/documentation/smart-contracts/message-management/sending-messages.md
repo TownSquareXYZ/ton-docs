@@ -1,24 +1,26 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 메시지 전송
 
-메시지의 구성, 파싱, 전송은 [TL-B 스키마](/v3/documentation/data-formats/tlb/tl-b-language), [트랜잭션 단계와 TVM](/v3/documentation/tvm/tvm-overview)이 교차하는 지점에 있습니다.
+Composition, parsing, and sending messages lie at the intersection of [TL-B schemas](/v3/documentation/data-formats/tlb/tl-b-language), [transaction phases, and TVM](/v3/documentation/tvm/tvm-overview).
 
-실제로 FunC는 직렬화된 메시지를 인자로 받는 [send_raw_message](/v3/documentation/smart-contracts/func/docs/stdlib#send_raw_message) 함수를 제공합니다.
+Indeed, FunC exposes the [send_raw_message](/v3/documentation/smart-contracts/func/docs/stdlib#send_raw_message) function which expects a serialized message as an argument.
 
-TON은 광범위한 기능을 가진 포괄적인 시스템이기 때문에, 이러한 모든 기능을 지원해야 하는 메시지는 매우 복잡해 보일 수 있습니다. 하지만 대부분의 기능은 일반적인 시나리오에서 사용되지 않으며, 대부분의 경우 메시지 직렬화는 다음과 같이 단순화될 수 있습니다:
+Since TON is a comprehensive system with wide functionality, messages that need to support all of this functionality may appear quite complicated. However, most of that functionality is not used in common scenarios, and message serialization, in most cases, can be simplified to:
 
 ```func
-  cell msg = begin_cell()
-    .store_uint(0x18, 6)
-    .store_slice(addr)
-    .store_coins(amount)
-    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-    .store_slice(message_body)
-  .end_cell();
+ cell msg = begin_cell()
+ .store_uint(0x18, 6)
+ .store_slice(addr)
+ .store_coins(amount)
+ .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+ .store_slice(message_body)
+ .end_cell();
 ```
 
-따라서 개발자는 두려워할 필요가 없으며, 이 문서의 내용이 처음 읽을 때 이해가 되지 않더라도 괜찮습니다. 전체적인 개념만 파악하면 됩니다.
+Therefore, the developer should not worry; if something in this document seems incomprehensible on first reading, that's okay. Just grasp the general idea.
 
-때로는 문서에서 \*\*'gram'\*\*이라는 단어가 언급될 수 있는데, 주로 코드 예제에서 나타나며, 이는 **toncoin**의 구 명칭입니다.
+Sometimes, the word **`gram`** appears in the documentation, primarily in code examples; it is simply an outdated name for **Toncoin**.
 
 자세히 살펴보겠습니다!
 
@@ -26,157 +28,187 @@ TON은 광범위한 기능을 가진 포괄적인 시스템이기 때문에, 이
 
 메시지에는 세 가지 유형이 있습니다:
 
-- external - 블록체인 외부에서 블록체인 내부의 스마트 계약으로 전송되는 메시지입니다. 이러한 메시지는 'credit_gas' 단계에서 스마트 계약에 의해 명시적으로 수락되어야 합니다. 메시지가 수락되지 않으면, 노드는 그것을 블록에 포함시키거나 다른 노드로 전달해서는 안 됩니다.
-- internal - 하나의 블록체인 엔티티에서 다른 엔티티로 전송되는 메시지입니다. 이러한 메시지는 (external과 달리) TON을 전달할 수 있고 스스로 비용을 지불할 수 있습니다. 따라서 이러한 메시지를 받는 스마트 계약은 이를 수락하지 않을 수 있습니다. 이 경우, 가스 비용은 메시지 값에서 차감됩니다.
-- logs - 블록체인 엔티티에서 외부 세계로 전송되는 메시지입니다. 일반적으로 말하자면, 이러한 메시지를 블록체인 밖으로 보내는 메커니즘은 없습니다. 실제로, 네트워크의 모든 노드가 메시지가 생성되었는지 여부에 대해 합의하지만, 이를 처리하는 방법에 대한 규칙은 없습니다. 로그는 직접 `/dev/null`로 전송되거나, 디스크에 기록되거나, 인덱스된 데이터베이스에 저장되거나, 심지어 비블록체인 수단(이메일/텔레그램/SMS)으로 전송될 수 있으며, 이 모든 것은 해당 노드의 전적인 재량에 달려있습니다.
+- **External** - messages sent from outside the blockchain to a smart contract inside the blockchain. Smart contracts should explicitly accept such messages during the so-called `credit_gas`. The node should not accept the message into a block or relay it to other nodes if it is not accepted.
+- **Internal** - messages sent from one blockchain entity to another. In contrast to external messages, such messages may carry some TON and pay for themselves. Thus, smart contracts that receive such messages may not accept them. In this case, gas will be deducted from the message value.
+- **Logs** - messages sent from a blockchain entity to the outer world. Generally, there is no mechanism for sending such messages out of the blockchain. While all nodes in the network have a consensus on whether a message was created, there are no rules for processing them. Logs may be directly sent to `/dev/null`, logged to disk, saved in an indexed database, or even sent by non-blockchain means (email/telegram/sms); these are at the sole discretion of the given node.
 
 ## 메시지 구조
 
 먼저 내부 메시지 구조부터 시작하겠습니다.
 
-스마트 계약이 보낼 수 있는 메시지를 설명하는 TL-B 스키마는 다음과 같습니다:
+TL-B scheme, which describes messages that smart contracts can send, is as follows:
 
 ```tlb
-message$_ {X:Type} info:CommonMsgInfoRelaxed 
-  init:(Maybe (Either StateInit ^StateInit))
-  body:(Either X ^X) = MessageRelaxed X;
+message$_ {X:Type} info:CommonMsgInfoRelaxed
+ init:(Maybe (Either StateInit ^StateInit))
+ body:(Either X ^X) = MessageRelaxed X;
 ```
 
-이를 자세히 설명하면 다음과 같습니다. 모든 메시지의 직렬화는 세 가지 필드로 구성됩니다: info(소스, 대상 및 기타 메타데이터를 설명하는 헤더), init(메시지 초기화에만 필요한 필드), body(메시지 페이로드).
+Let's put it into words: The serialization of any message consists of three fields:
+
+- `info`, a header that describes the source, destination, and other metadata.
+- `init`, a field that is only required for initializing messages.
+- `body`, the message payload.
 
 `Maybe`와 `Either` 및 기타 유형의 표현은 다음을 의미합니다:
 
-- `info:CommonMsgInfoRelaxed` 필드가 있을 때, 이는 `CommonMsgInfoRelaxed`의 직렬화가 직렬화 셀에 직접 삽입됨을 의미합니다.
-- `body:(Either X ^X)` 필드가 있을 때, 이는 유형 `X`를 (역)직렬화할 때 먼저 `either` 비트를 넣는데, 이는 `X`가 같은 셀에 직렬화되면 `0`, 별도의 셀에 직렬화되면 `1`임을 의미합니다.
-- `init:(Maybe (Either StateInit ^StateInit))` 필드가 있을 때, 이는 먼저 이 필드가 비어있는지 여부에 따라 `0` 또는 `1`을 넣는다는 것을 의미합니다; 비어있지 않다면, `Either StateInit ^StateInit`을 직렬화합니다(다시 말해, `StateInit`이 같은 셀에 직렬화되면 `0`, 별도의 셀에 직렬화되면 `1`인 하나의 `either` 비트를 넣습니다).
+- When we have the field `info:CommonMsgInfoRelaxed`, it means that the serialization of `CommonMsgInfoRelaxed` is injected directly into the serialization cell.
+- When we have the field `body:(Either X ^X)`, it means that when we (de)serialize some type `X`, we first put one `either` bit, which is `0` if `X` is serialized to the same cell, or `1` if it is serialized to the separate cell.
+- When we have the field `init:(Maybe (Either StateInit ^StateInit))`, we first put `0` or `1` depending on whether this field is empty. If it is not empty, we serialize `Either StateInit ^StateInit` (again, put one `either` bit, which is `0` if `StateInit` is serialized to the same cell or `1` if it is serialized to a separate cell).
 
-`CommonMsgInfoRelaxed` 구조는 다음과 같습니다:
+Let's focus on one particular `CommonMsgInforRelaxed` type, the internal message definition declared with the `int_msg_info$0` constructor.
 
 ```tlb
 int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool
-  src:MsgAddress dest:MsgAddressInt 
-  value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
-  created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
-
-ext_out_msg_info$11 src:MsgAddress dest:MsgAddressExt
-  created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
+ src:MsgAddress dest:MsgAddressInt
+ value:CurrencyCollection ihr_fee:Grams fwd_fee:Grams
+ created_lt:uint64 created_at:uint32 = CommonMsgInfoRelaxed;
 ```
 
-우선 `int_msg_info`에 집중하겠습니다.
-이는 1비트 접두사 `0`으로 시작하고, 그 다음에는 세 개의 1비트 플래그가 있습니다. 즉, Instant Hypercube Routing이 비활성화되었는지(현재는 항상 true), 메시지 처리 중 오류가 발생했을 때 반송되어야 하는지, 메시지 자체가 반송의 결과인지를 나타냅니다. 그런 다음 소스와 대상 주소가 직렬화되고, 메시지 값과 메시지 전달 수수료 및 시간과 관련된 네 개의 정수가 뒤따릅니다.
+It starts with the 1-bit prefix `0`.
 
-메시지가 스마트 계약에서 전송되는 경우, 이러한 필드 중 일부는 올바른 값으로 다시 작성됩니다. 특히, 검증자는 `bounced`, `src`, `ihr_fee`, `fwd_fee`, `created_lt`, `created_at`을 다시 작성합니다. 이는 두 가지를 의미합니다: 첫째, 메시지를 처리하는 동안 다른 스마트 계약은 이러한 필드를 신뢰할 수 있습니다(발신자는 소스 주소, `bounced` 플래그 등을 위조할 수 없음); 둘째, 직렬화 중에 우리는 이러한 필드에 유효한 값을 넣을 수 있습니다(어차피 이러한 값은 덮어쓰여질 것이므로).
+Then, there are three 1-bit flags:
+
+- Whether Instant Hypercube Routing is disabled (currently always true)
+- Whether a message should be bounced if there are errors during its processing
+- Whether the message itself is the result of a bounce.
+
+Then, source and destination addresses are serialized, followed by the message value and four integers related to message forwarding fees and time.
+
+If a message is sent from the smart contract, some fields will be rewritten to the correct values. In particular, the validator will rewrite `bounced`, `src`, `ihr_fee`, `fwd_fee`, `created_lt`, and `created_at`. That means two things: first, another smart contract while handling the message may trust those fields (sender may not forge source address, `bounced` flag, etc.), and second, during serialization, we may put to those fields any valid values because those values will be overwritten anyway.
 
 메시지의 직접적인 직렬화는 다음과 같을 것입니다:
 
 ```func
-  var msg = begin_cell()
-    .store_uint(0, 1) ;; tag
-    .store_uint(1, 1) ;; ihr_disabled
-    .store_uint(1, 1) ;; allow bounces
-    .store_uint(0, 1) ;; not bounced itself
-    .store_slice(source)
-    .store_slice(destination)
-    ;; serialize CurrencyCollection (see below)
-    .store_coins(amount)
-    .store_dict(extra_currencies)
-    .store_coins(0) ;; ihr_fee
-    .store_coins(fwd_value) ;; fwd_fee 
-    .store_uint(cur_lt(), 64) ;; lt of transaction
-    .store_uint(now(), 32) ;; unixtime of transaction
-    .store_uint(0,  1) ;; no init-field flag (Maybe)
-    .store_uint(0,  1) ;; inplace message body flag (Either)
-    .store_slice(msg_body)
-  .end_cell();
+ var msg = begin_cell()
+ .store_uint(0, 1) ;; tag
+ .store_uint(1, 1) ;; ihr_disabled
+ .store_uint(1, 1) ;; allow bounces
+ .store_uint(0, 1) ;; not bounced itself
+ .store_slice(source)
+ .store_slice(destination)
+ ;; serialize CurrencyCollection (see below)
+ .store_coins(amount)
+ .store_dict(extra_currencies)
+ .store_coins(0) ;; ihr_fee
+ .store_coins(fwd_value) ;; fwd_fee
+ .store_uint(cur_lt(), 64) ;; lt of transaction
+ .store_uint(now(), 32) ;; unixtime of transaction
+ .store_uint(0,  1) ;; no init-field flag (Maybe)
+ .store_uint(0,  1) ;; inplace message body flag (Either)
+ .store_slice(msg_body)
+ .end_cell();
 ```
 
-하지만, 모든 필드를 단계별로 직렬화하는 대신, 개발자들은 일반적으로 단축된 방법을 사용합니다. 따라서, [elector-code](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/elector-code.fc#L153)의 예제를 통해 스마트 계약에서 메시지를 어떻게 보낼 수 있는지 살펴보겠습니다.
+However, instead of serializing all fields step-by-step, developers usually use shortcuts. Thus, let's consider how messages can be sent from the smart contract using an example from [elector-code](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/elector-code.fc#L153).
 
 ```func
 () send_message_back(addr, ans_tag, query_id, body, grams, mode) impure inline_ref {
-  ;; int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool src:MsgAddress -> 011000
-  var msg = begin_cell()
-    .store_uint(0x18, 6)
-    .store_slice(addr)
-    .store_coins(grams)
-    .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-    .store_uint(ans_tag, 32)
-    .store_uint(query_id, 64);
-  if (body >= 0) {
-    msg~store_uint(body, 32);
-  }
-  send_raw_message(msg.end_cell(), mode);
+ ;; int_msg_info$0 ihr_disabled:Bool bounce:Bool bounced:Bool src:MsgAddress -> 011000
+ var msg = begin_cell()
+ .store_uint(0x18, 6)
+ .store_slice(addr)
+ .store_coins(grams)
+ .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+ .store_uint(ans_tag, 32)
+ .store_uint(query_id, 64);
+ if (body >= 0) {
+ msg~store_uint(body, 32);
+ }
+ send_raw_message(msg.end_cell(), mode);
 }
 ```
 
-먼저, 6비트에 `0x18` 값을 넣습니다. 즉, `0b011000`을 넣습니다. 이것은 무엇일까요?
+First, it combined `0b011000` into the `0x18` value. What is this?
 
-- 첫 번째 비트는 `0`입니다 - 이는 `int_msg_info`임을 나타내는 1비트 접두사입니다.
+- The first bit is a `0` - 1-bit prefix, which indicates that it is `int_msg_info`.
 
-- 그 다음에는 3비트 `1`, `1`, `0`이 있는데, 이는 Instant Hypercube Routing이 비활성화되어 있고, 메시지가 반송될 수 있으며, 메시지가 반송의 결과가 아님을 의미합니다.
+- Then there are 3 bits `1`, `1`, and `0`, meaning Instant Hypercube Routing is disabled, messages can be bounced, and that message is not the result of bouncing itself.
 
-- 그 다음에는 발신자 주소가 있어야 하지만, 어차피 동일한 효과로 다시 작성될 것이므로 유효한 주소를 저장할 수 있습니다. 가장 짧은 유효한 주소 직렬화는 `addr_none`의 것이며, 이는 2비트 문자열 `00`으로 직렬화됩니다.
+- Then, there should be a sender address; however, since it will be rewritten with the same effect, any valid address may be stored there. The shortest valid address serialization is that of `addr_none`, which serializes as a two-bit string `00`.
 
-따라서, `.store_uint(0x18, 6)`은 태그와 첫 4개 필드를 직렬화하는 최적화된 방법입니다.
+Thus, `.store_uint(0x18, 6)` is the optimized serialization method for the tag and the first four fields.
 
-다음 줄은 대상 주소를 직렬화합니다.
+The following line serializes the destination address.
 
-그 다음에는 값을 직렬화해야 합니다. 일반적으로, 메시지 값은 다음과 같은 스키마를 가진 `CurrencyCollection` 객체입니다:
+Then, we should serialize values. Generally, the message value is a `CurrencyCollection` object with the following scheme:
 
 ```tlb
 nanograms$_ amount:(VarUInteger 16) = Grams;
 
-extra_currencies$_ dict:(HashmapE 32 (VarUInteger 32)) 
-                 = ExtraCurrencyCollection;
+extra_currencies$_ dict:(HashmapE 32 (VarUInteger 32))
+ = ExtraCurrencyCollection;
 
-currencies$_ grams:Grams other:ExtraCurrencyCollection 
-           = CurrencyCollection;
+currencies$_ grams:Grams other:ExtraCurrencyCollection
+ = CurrencyCollection;
 ```
 
-이 스키마는 TON 값 외에도 메시지가 추가 _extra-currencies_의 사전을 전달할 수 있음을 의미합니다. 하지만, 현재는 이를 무시하고 메시지 값이 "변수 정수로서의 나노톤 수"와 "`0` - 빈 사전 비트"로 직렬화된다고 가정할 수 있습니다.
+This scheme means the message may carry the dictionary of additional *extra-currencies* with the TON value. However, we may neglect it and assume that the message value is serialized as number of nanotons as variable integer and "`0` - empty dictionary bit".
 
-실제로, 위의 elector 코드에서는 `.store_coins(toncoins)`를 통해 코인 양을 직렬화하지만, 그 다음에는 `1 + 4 + 4 + 64 + 32 + 1 + 1` 길이의 0으로 된 문자열을 넣습니다. 이것은 무엇일까요?
+Indeed, in the elector code above, we serialize coins amounts via `.store_coins(toncoins)` but then just put a string of zeros with a length equal to `1 + 4 + 4 + 64 + 32 + 1 + 1`. What is it?
 
-- 첫 번째 비트는 빈 extra-currencies 사전을 나타냅니다.
-- 그 다음에는 두 개의 4비트 길이 필드가 있습니다. 이들은 `VarUInteger 16`으로 0을 인코딩합니다. 실제로, `ihr_fee`와 `fwd_fee`는 덮어쓰여질 것이므로, 여기에 0을 넣어도 됩니다.
-- 그런 다음 `created_lt`와 `created_at` 필드에 0을 넣습니다. 이 필드들도 덮어쓰여질 것입니다; 하지만 수수료와 달리, 이 필드들은 고정 길이를 가지며 따라서 64비트와 32비트 길이의 문자열로 인코딩됩니다.
-- *(이 시점에서 우리는 이미 메시지 헤더를 직렬화했고 init/body로 넘어갔습니다)*
+- The first bit stands for empty extra-currencies dictionary.
+- Then we have two 4-bit long fields. They encode 0 as `VarUInteger 16`. Since `ihr_fee` and `fwd_fee` will be overwritten, we may as well put them as zeroes.
+- Then we put zero to the `created_lt` and `created_at` fields. Those fields will also be overwritten; however, in contrast to fees, these fields have a fixed length and are thus encoded as 64- and 32-bit long strings.
+ > *We had already serialized the message header and passed to init/body at that moment*
 - 다음 0비트는 `init` 필드가 없음을 의미합니다.
 - 마지막 0비트는 msg_body가 인라인으로 직렬화될 것임을 의미합니다.
-- 그 후에, 메시지 본문(임의의 레이아웃을 가진)이 인코딩됩니다.
+- After that, the message body (with an arbitrary layout) is encoded.
 
-이런 방식으로, 14개의 매개변수를 개별적으로 직렬화하는 대신 4개의 직렬화 프리미티브를 실행합니다.
+Instead of individual serialization of 14 parameters, we execute 4 serialization primitives.
 
 ## 전체 스키마
 
-메시지 레이아웃과 모든 구성 필드의 레이아웃(그리고 TON의 모든 객체의 스키마)은 [block.tlb](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb)에 제시되어 있습니다.
+The entire scheme of the message layout and the layout of all constituting fields, as well as the scheme of ALL objects in TON, are presented in [block.tlb](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb).
 
 ## 메시지 크기
 
 :::info 셀 크기
-[Cell](/v3/concepts/dive-into-ton/ton-blockchain/cells-as-data-storage)은 최대 `1023` 비트를 포함할 수 있습니다. 더 많은 데이터를 저장해야 하는 경우, 이를 청크로 분할하여 참조 셀에 저장해야 합니다.
+Note that any [Cell](/v3/concepts/dive-into-ton/ton-blockchain/cells-as-data-storage) may contain up to `1023` bits. If you need to store more data, you should split it into chunks and store it in reference cells.
 :::
 
-예를 들어, 메시지 본문 크기가 900비트인 경우, 메시지 헤더와 동일한 셀에 저장할 수 없습니다.
-실제로, 메시지 헤더 필드 외에도 셀의 총 크기가 1023비트를 초과하게 되어, 직렬화 중에 `cell overflow` 예외가 발생할 것입니다. 이 경우, "인라인 메시지 본문 플래그(Either)"를 나타내는 `0` 대신 `1`이 있어야 하며 메시지 본문은 참조 셀에 저장되어야 합니다.
+For example, if your message body is 900 bits long, you can't store it in the same cell as the message header. Including the message header fields would make the total cell size exceed 1023 bits, triggering a `cell overflow` exception during serialization.
 
-일부 필드가 가변 크기를 가지기 때문에 이러한 사항을 주의 깊게 처리해야 합니다.
+In this case, use `1` instead of `0` for the in-place message body flag (Either), which will store the message body in a separate reference cell.
 
-예를 들어, `MsgAddress`는 `addr_none`, `addr_std`, `addr_extern`, `addr_var`의 네 가지 생성자로 표현될 수 있으며, 길이는 (`addr_none`의 경우) 2비트에서 (`addr_var`의 가장 큰 형태의 경우) 586비트까지 다양합니다. `VarUInteger 16`으로 직렬화되는 나노톤의 양에도 동일하게 적용됩니다. 이는 정수의 바이트 길이를 나타내는 4비트와 그 다음에 앞서 표시된 정수의 바이트를 의미합니다. 이런 방식으로, 0 나노톤은 `0b0000`(0길이 바이트 문자열을 인코딩하는 4비트와 그 다음 0바이트)으로 직렬화되는 반면, 100.000.000 TON(또는 100000000000000000 나노톤)은 `0b10000000000101100011010001010111100001011101100010100000000000000000`(`0b1000`은 8바이트를 나타내고 그 다음 8바이트 자체)로 직렬화됩니다.
+Those things should be handled carefully because some fields have variable sizes.
+
+For instance, `MsgAddress` may be represented by four constructors:
+
+- `addr_none`
+- `addr_std`
+- `addr_extern`
+- `addr_var`
+
+With length from 2 bits for `addr_none` to 586 bits for `addr_var` in the largest form.
+
+The same stands for nanotons' amounts, which is serialized as `VarUInteger 16`.
+That means 4 bits indicating the byte length of the integer and then bytes for the integer itself.
+
+That way:
+
+- `0` nanotons serialized as `0b0000` (4 bits indicating zero-length byte string + no bytes)
+- `100000000000000000` nanotons (100,000,000 TON) serializes as:
+ `0b10000000000101100011010001010111100001011101100010100000000000000000`
+ (where `0b1000` specifies 8 bytes length followed by the 8-byte value)
 
 :::info 메시지 크기
 
-더 많은 구성 매개변수와 그 값은 [여기](/v3/documentation/network/configs/blockchain-configs#param-43)에서 찾을 수 있습니다.
+More configuration parameters and their values can be found [here](/v3/documentation/network/configs/blockchain-configs#param-43).
 :::
 
-## 메시지 모드
+## Message modes
 
-보셨듯이, 우리는 메시지 자체를 소비하는 것 외에도 모드를 받아들이는 `send_raw_message`로 메시지를 보냅니다. 이 모드는 연료를 별도로 지불할지 여부와 오류를 처리하는 방법을 포함하여 메시지를 보내는 모드를 결정하는 데 사용됩니다. TON Virtual Machine(TVM)이 메시지를 분석하고 처리할 때, 모드 값에 따라 차별화된 처리를 수행합니다. 혼동하기 쉬운 것은 모드 매개변수의 값에 모드와 플래그라는 두 가지 변수가 있다는 것입니다. 모드와 플래그는 서로 다른 기능을 가집니다:
+:::info
+For the latest information, refer to the [message modes cookbook](/v3/documentation/smart-contracts/message-management/message-modes-cookbook).
+:::
 
-- mode : 메시지를 보낼 때의 기본 동작을 정의합니다. 예를 들어 잔액을 전달할지, 메시지 처리 결과를 기다릴지 등입니다. 다른 모드 값은 다른 전송 특성을 나타내며, 다른 값들을 결합하여 특정 전송 요구사항을 충족할 수 있습니다.
-- flag : 모드에 대한 추가로서, 특정 메시지 동작을 구성하는 데 사용됩니다. 예를 들어 전송 수수료를 별도로 지불하거나 처리 오류를 무시하는 것입니다. 플래그는 모드에 추가되어 최종 메시지 전송 모드를 만듭니다.
+As you may have noticed, we send messages using `send_raw_message`, which also accepts a mode parameter and consumes the message. This mode determines how the message is sent, including whether to pay for gas separately and how to handle errors. The TON Virtual Machine (TVM) processes messages differently depending on the mode value. It’s important to note that the mode parameter consists of two components, **mode** and **flag**, which serve different purposes:
 
-`send_raw_message` 함수를 사용할 때는 필요에 맞는 적절한 모드와 플래그 조합을 선택하는 것이 중요합니다. 귀하의 필요에 가장 잘 맞는 모드를 파악하려면 다음 표를 참조하세요:
+- **Mode**: Defines the basic behavior when sending a message, such as whether to carry a balance or wait for message processing results. Different mode values represent different sending characteristics, which can be combined to meet specific requirements.
+- **Flag**: Acts as an addition to the mode, configuring specific message behaviors, such as paying transfer fees separately or ignoring processing errors. The flag is added to the mode to create the final message-sending configuration.
+
+When using the `send_raw_message` function, choosing the appropriate combination of mode and flag for your needs is crucial. Refer to the following table to determine the best mode for your use case:
 
 | 모드    | 설명                                        |
 | :---- | :---------------------------------------- |
@@ -184,62 +216,130 @@ currencies$_ grams:Grams other:ExtraCurrencyCollection
 | `64`  | 새 메시지에 처음 표시된 값 외에도 인바운드 메시지의 남은 값을 모두 전달 |
 | `128` | 메시지에 원래 표시된 값 대신 현재 스마트 계약의 남은 잔액을 모두 전달  |
 
-| 플래그   | 설명                                                                   |
-| :---- | :------------------------------------------------------------------- |
-| `+1`  | 메시지 값과 별도로 전송 수수료 지불                                                 |
-| `+2`  | 액션 단계에서 이 메시지를 처리하는 동안 발생하는 일부 오류 무시(아래 참고 사항 확인) |
-| `+16` | 액션 실패의 경우 - 트랜잭션 반송. `+2`가 사용되는 경우 효과 없음             |
-| `+32` | 결과 잔액이 0인 경우 현재 계정이 파괴되어야 함(종종 Mode 128과 함께 사용됨)  |
+| 플래그   | 설명                                                                                                                |
+| :---- | :---------------------------------------------------------------------------------------------------------------- |
+| `+1`  | 메시지 값과 별도로 전송 수수료 지불                                                                                              |
+| `+2`  | Ignore some errors arising while processing this message during the action phase                                  |
+| `+16` | In the case of action failure, bounce the transaction. No effect if `+2` is used. |
+| `+32` | Destroy the current account if its resulting balance is zero (often used with Mode 128)        |
 
-:::info +2 플래그
+:::info +16 Flag
 
-1. 톤코인이 부족한 경우:
-   - 메시지와 함께 전송할 값이 부족함(인바운드 메시지 값이 모두 소비됨).
-   - 메시지를 처리할 자금이 부족함.
-   - 전달 수수료를 지불하기 위해 메시지에 첨부된 값이 부족함.
-   - 메시지와 함께 보낼 추가 통화가 부족함.
-   - 외부 메시지에 대한 비용을 지불할 자금이 부족함.
-2. 메시지가 너무 큼([메시지 크기](#메시지-크기) 참조).
-3. 메시지의 머클 깊이가 너무 큼.
-
-하지만 다음 시나리오의 오류는 무시하지 않습니다:
-
-1. 메시지의 형식이 잘못됨.
-2. 메시지 모드에 64와 128 모드가 모두 포함됨.
-3. 아웃바운드 메시지에 StateInit의 잘못된 라이브러리가 포함됨.
-4. 외부 메시지가 일반적이지 않거나 +16이나 +32 플래그 또는 둘 다를 포함함.
-   :::
-
-:::info +16 플래그
-
-그렇지 않으면, `storage` 단계 **전에** `credit` 단계를 처리합니다.
-
-`bounce-enable` 플래그에 대한 [검사가 있는 소스 코드](https://github.com/ton-blockchain/ton/blob/master/validator/impl/collator.cpp#L2810)를 확인하세요.
+For more details, check the [source code with checks for the `bounce-enable` flag](https://github.com/ton-blockchain/ton/blob/master/validator/impl/collator.cpp#L2810).
 :::
 
 :::warning
 
-1. **+16 플래그** - 외부 메시지에서는 사용하지 마세요(예: 지갑으로). 반송된 메시지를 받을 발신자가 없기 때문입니다.
-2. **+2 플래그** - 외부 메시지에서 중요합니다(예: 지갑으로).
-   :::
+1. **+16 flag** - do not use it in external messages (e.g., to wallets) because there is no sender to receive the bounced message.
 
-### 사용 사례 예시
+2. **+2 flag** - important in external messages (e.g. to wallets).
 
-더 명확하게 하기 위해 예시를 살펴보겠습니다. 우리의 스마트 계약 잔액에 100 Toncoin이 있고 50 Toncoin의 내부 메시지를 받은 다음 20 Toncoin의 메시지를 보내는 상황을 가정해 보겠습니다. 총 수수료는 3 Toncoin입니다.
+:::
 
-`중요`: 오류 사례의 결과는 오류가 발생했을 때를 기준으로 설명됩니다.
+## Recommended approach: mode=3 {#mode3}
 
-| 사례                                                                                                                                        | 모드와 플래그                        | 코드                           | 결과                                                                                |
-| :---------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------- | :--------------------------- | :-------------------------------------------------------------------------------- |
-| 일반 메시지 보내기                                                                                                                                | `mode` = 0, `flag` 없음          | `send_raw_message(msg, 0)`   | `잔액` - 100 + 50 - 20 = 130, `전송` - 20 - 3 = 17                                    |
-| 일반 메시지를 보내되, 액션 처리 중 오류가 있었다면 트랜잭션을 롤백하지 말고 무시                                                                                            | `mode` = 0, `flag` = 2         | `send_raw_message(msg, 2)`   | `잔액` - 100 + 50, `전송` - 0                                                         |
-| 일반 메시지를 보내되, 액션 처리 중 오류가 있었다면 트랜잭션을 롤백하는 것 외에도 메시지 반송                                                                                     | `mode` = 0, `flag` = 16        | `send_raw_message(msg, 16)`  | `잔액` - 100 + 50 = 167 + 17 (반송됨), `전송` - 20 - 3 = `17로 반송 메시지` |
-| 일반 메시지를 보내고 전송 수수료를 별도로 지불                                                                                                                | `mode` = 0, `flag` = 1         | `send_raw_message(msg, 1)`   | `잔액` - 100 + 50 - 20 - 3 = 127, `전송` - 20                                         |
-| 일반 메시지를 보내고 전송 수수료를 별도로 지불하되, 액션 처리 중 오류가 있었다면 트랜잭션을 롤백하는 것 외에도 메시지 반송                                                                    | `mode` = 0, `flags` = 1 + 16   | `send_raw_message(msg, 17)`  | `잔액` - 100 + 50 - 20 - 3 = 127 + `20 (반송됨)`, `전송` - 20 = `20으로 반송 메시지`            |
-| 새 메시지에 처음 표시된 값 외에도 인바운드 메시지의 남은 값을 모두 전달                                                                                                 | `mode` = 64, `flag` = 0        | `send_raw_message(msg, 64)`  | `잔액` - 100 - 20 = 80, `전송` - 20 + 50 - 3 = 67                                     |
-| 새 메시지에 처음 표시된 값 외에도 인바운드 메시지의 남은 값을 모두 전달하고 전송 수수료를 별도로 지불                                                                                | `mode` = 64, `flag` = 1        | `send_raw_message(msg, 65)`  | `잔액` - 100 - 20 - 3 = 77, `전송` - 20 + 50 = 70                                     |
-| 새 메시지에 처음 표시된 값 외에도 인바운드 메시지의 남은 값을 모두 전달하고 전송 수수료를 별도로 지불하되, 액션 처리 중 오류가 있었다면 트랜잭션을 롤백하는 것 외에도 메시지 반송                                    | `mode` = 64, `flags` = 1 + 16  | `send_raw_message(msg, 81)`  | `잔액` - 100 - 20 - 3 = 77 + `70 (반송됨)`, `전송` - 20 + 50 = `70으로 반송 메시지`             |
-| 받은 토큰을 계약 잔액과 함께 모두 전송                                                                                                                    | `mode` = 128, `flag` = 0       | `send_raw_message(msg, 128)` | `잔액` - 0, `전송` - 100 + 50 - 3 = 147                                               |
-| 받은 토큰을 계약 잔액과 함께 모두 전송하되, 액션 처리 중 오류가 있었다면 트랜잭션을 롤백하는 것 외에도 메시지 반송                                                                        | `mode` = 128, `flag` = 16      | `send_raw_message(msg, 144)` | `잔액` - 0 + `147 (반송됨)`, `전송` - 100 + 50 - 3 = `147로 반송 메시지`                       |
-| 받은 토큰을 계약 잔액과 함께 모두 전송하고 스마트 계약 파기                                                                                                        | `mode` = 128, `flag` = 32      | `send_raw_message(msg, 160)` | `잔액` - 0, `전송` - 100 + 50 - 3 = 147                                               |
-| 받은 토큰을 계약 잔액과 함께 모두 전송하고 스마트 계약을 파기하되, 액션 처리 중 오류가 있었다면 트랜잭션을 롤백하는 것 외에도 메시지 반송. `중요: 이미 삭제된 계약으로 환불이 가기 때문에 이 동작은 피하세요.` | `mode` = 128, `flag` = 32 + 16 | `send_raw_message(msg, 176)` | `잔액` - 0 + `147 (반송됨)`, `전송` - 100 + 50 - 3 = `147로 반송 메시지`                       |
+```func
+send_raw_message(msg, SEND_MODE_PAY_FEES_SEPARATELY | SEND_MODE_IGNORE_ERRORS); ;; stdlib.fc L833
+```
+
+The `mode=3` combines the `0` mode and two flags:
+
+- `+1` : Pay transfer fees separately from the message value
+- `+2` : Suppresses specific errors during message processing
+
+This combination is the standard method for sending messages in TON.
+
+---
+
+### Behavior without +2 flag
+
+If the `IGNORE_ERRORS` flag is omitted and a message fails to process (e.g., due to insufficient balance), the transaction reverts. For wallet contracts, this prevents updates to critical data like the `seqno`.
+
+```func
+throw_unless(33, msg_seqno == stored_seqno);
+throw_unless(34, subwallet_id == stored_subwallet);
+throw_unless(35, check_signature(slice_hash(in_msg), signature, public_key));
+accept_message();
+set_data(begin_cell()
+ .store_uint(stored_seqno + 1, 32)
+ .store_uint(stored_subwallet, 32)
+ .store_uint(public_key, 256)
+ .store_dict(plugins)
+ .end_cell());
+commit(); ;; This will be reverted on action error.
+```
+
+As a result, unprocessed external messages can be replayed until they expire or drain the contract's balance.
+
+---
+
+### Error handling with +2 flag
+
+The `IGNORE ERRORS` flag (`+2`) suppresses these specific errors during the Action Phase:
+
+#### Suppressed errors
+
+1. **Insufficient funds**
+
+ - Message transfer value exhaustion
+ - Insufficient balance for message processing
+ - Inadequate attached value for forwarding fees
+ - Missing extra currency for message transfer
+ - Insufficient funds for external message delivery
+
+2. **[Oversized message](#message-size)**
+
+3. **Excessive Merkle depth**
+
+ Message exceeds allowed Merkle tree complexity.
+
+#### Non-suppressed errors
+
+1. Malformed message structure
+2. Conflicting mode flags (`+64` and `+128` used together)
+3. Invalid libraries in `StateInit` of the outbound message
+4. Non-ordinary external messages (e.g., using `+16` or `+32` flags)
+
+---
+
+### Security considerations
+
+#### Current mitigations
+
+- Most wallet apps auto-include `IGNORE_ERRORS` in transactions
+- Wallet UIs often display transaction simulation results
+- V5 wallets enforce `IGNORE_ERRORS` usage
+- Validators limit message replays per block
+
+#### Potential risks
+
+- **Race conditions** causing stale backend balance checks
+- **Legacy wallets** (V3/V4) without enforced checks
+- **Incomplete validations** by wallet applications
+
+---
+
+### Example: jetton transfer pitfall
+
+Consider this simplified Jetton wallet code:
+
+```func
+() send_jettons(slice in_msg_body, slice sender_address, int msg_value, int fwd_fee) impure inline_ref {
+int jetton_amount = in_msg_body~load_coins();
+balance -= jetton_amount;
+send_raw_message(msg, SEND_MODE_CARRY_ALL_REMAINING_MESSAGE_VALUE | SEND_MODE_BOUNCE_ON_ACTION_FAIL);
+save_data(status, balance, owner_address, jetton_master_address); }
+```
+
+If a transfer using `mode=3` fails due to a suppressed error:
+
+1. Transfer action is not executed
+2. Contract state updates persist (no rollback)
+3. **Result:** permanent loss of `jetton_amount` from the balance
+
+**Best practice**
+
+Always pair `IGNORE_ERRORS` with robust client-side validations and real-time balance checks to prevent unintended state changes.
+
+<Feedback />
+

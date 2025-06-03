@@ -1,51 +1,48 @@
-# مدیریت سایت و دامنه
+import Feedback from '@site/src/components/Feedback';
+
+# Site & domain management
 
 ## چگونه یک دامنه را برای ویرایش باز کنیم
 
-1. مرورگر Google Chrome را روی کامپیوتر خود باز کنید.
+1. Open Google Chrome on your computer.
+2. Install the [TON Chrome extension](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd).
+3. Open the extension, click "Import wallet", and import the wallet that holds the domain.
 
-2. افزونه TON برای Google Chrome را از این [لینک](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) نصب کنید.
-
-3. افزونه را باز کنید، روی "وارد کردن کیف پول" کلیک کنید و کیف پولی که دامنه در آن ذخیره شده است را وارد کنید.
-
-> عبارت‌های بازیابی
+> **Recovery phrases**
 >
-> عبارت بازیابی شما شامل ۲۴ کلمه‌ای است که هنگام ایجاد کیف پول خود یادداشت کرده‌اید.
+> Your recovery phrase consists of 24 words written down when the wallet was created.
 >
-> اگر عبارت بازیابی خود را گم کنید، می‌توانید آن را با استفاده از هر کیف پول TON بازیابی کنید.
-> در Tonkeeper: به تنظیمات > محافظت از کیف پول > کلید خصوصی خود بروید.
+> You can restore this phrase using any TON wallet if you lose it.
+> In Tonkeeper: go to Settings → Wallet protection → Your private key.
 >
-> حتماً این ۲۴ کلمه را یادداشت کرده و در محلی امن نگه دارید. در صورت بروز وضعیت اضطراری، شما تنها با استفاده از عبارت بازیابی خود می‌توانید به کیف پول دسترسی پیدا کنید.
-> عبارات بازیابی خود را به طور کامل محرمانه نگهدارید. هر کسی که به عبارات بازیابی شما دسترسی پیدا کند، به‌طور کامل به وجوه شما دسترسی پیدا خواهد کرد.
+> Store your 24 words securely. In case of an emergency, you will be able to restore access to the wallet using only your recovery phrase.
+> Please do not share them. Anyone with access to your phrase can access your funds.
 
-4. اکنون دامنه خود را در https://dns.ton.org باز کرده و دکمه "ویرایش" را کلیک کنید.
+4. Go to [dns.ton.org](https://dns.ton.org), open your domain, and click "Edit".
 
 ## چگونه یک کیف پول را به یک دامنه پیوند دهیم
 
-شما می‌توانید یک کیف پول را به یک دامنه پیوند بزنید تا کاربران بتوانند با وارد کردن دامنه به عنوان آدرس گیرنده به جای آدرس کیف پول، سکه‌ها را به آن کیف پول ارسال کنند.
+You can link a wallet address to a domain, allowing users to send coins directly to that domain name instead of a wallet address.
 
-1. دامنه را برای ویرایش طبق توضیحات بالا باز کنید.
-
-2. آدرس کیف پول خود را در فیلد "آدرس کیف پول" کپی کرده و روی "ذخیره" کلیک کنید.
-
-3. ارسال تراکنش را در افزونه تایید کنید.
+1. Open your domain for editing. See steps above.
+2. Paste your wallet address into the "Wallet address" field and click "Save".
+3. Confirm the transaction in the extension.
 
 ## چگونه یک سایت TON را به یک دامنه پیوند دهید
 
-1. دامنه را برای ویرایش طبق توضیحات بالا باز کنید.
-
-2. آدرس ADNL سایت TON خود را به فرمت HEX در فیلد "سایت" کپی کرده و روی "ذخیره" کلیک کنید.
-
-3. ارسال تراکنش را در افزونه تایید کنید.
+1. Open your domain for editing. See steps above.
+2. Copy the ADNL address of your TON Site in HEX format, paste it into the "Site" field, and click "Save".
+3. Confirm the transaction in the extension.
 
 ## چگونه زیر دامنه‌ها را تنظیم کنیم
 
-1. یک قرارداد هوشمند در شبکه ایجاد کنید تا زیر دامنه‌های وب سایت یا سرویس خود را مدیریت کنید. می‌توانید از قراردادهای هوشمند آماده‌ی [manual-dns](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/dns-manual-code.fc) یا [auto-dns](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/dns-auto-code.fc) یا هر قرارداد هوشمند دیگری که نمایه TON DNS را پیاده‌سازی می‌کند استفاده کنید.
+1. Create a smart contract on the network to manage the subdomains of your website or service.
+2. You can use one of the following ready-made smart contracts:
+   - [manual-dns](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/dns-manual-code.fc)
+   - [auto-dns](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/dns-auto-code.fc)
+3. Open your domain for editing. See steps above.
+4. Paste the smart contract address of the subdomain manager into the "Subdomains" field and click "Save".
+5. Confirm the transaction in the extension.
 
-2. دامنه را برای ویرایش طبق توضیحات بالا باز کنید.
-
-3. آدرس قرارداد هوشمند زیر دامنه‌ها را در فیلد "زیر دامنه‌ها" کپی کرده و روی "ذخیره" کلیک کنید.
-
-4. ارسال تراکنش را در افزونه تایید کنید.
-
+<Feedback />
 

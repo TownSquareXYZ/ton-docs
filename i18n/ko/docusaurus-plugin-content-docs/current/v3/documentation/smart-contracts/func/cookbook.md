@@ -1,14 +1,18 @@
-# FunC Cookbook
+import Feedback from '@site/src/components/Feedback';
 
-FunC Cookbook를 만든 핵심 이유는 FunC 개발자들의 모든 경험을 한 곳에 모아 미래의 개발자들이 이를 활용할 수 있도록 하기 위함입니다!
+# FunC cookbook
 
-[FunC Documentation](/v3/documentation/smart-contracts/func/docs/types)과 비교했을 때, 이 문서는 FunC 개발자들이 스마트 컨트랙트 개발 중에 매일 해결하는 일상적인 작업에 더 초점을 맞추고 있습니다.
+The FunC cookbook was created to consolidate all the knowledge and best practices from experienced FunC developers in one place. The goal is to make it easier for future developers to build smart contracts efficiently.
+
+Unlike the official [FunC documentation](/v3/documentation/smart-contracts/func/docs/types), this guide focuses on solving everyday challenges that FunC developers encounter during smart contract development.
 
 ## 기초
 
 ### if 문을 작성하는 방법
 
 이벤트가 관련이 있는지 확인하고 싶다고 가정해봅시다. 이를 위해 플래그 변수를 사용합니다. FunC에서 `true`는 `-1`이고 `false`는 `0`임을 기억하세요.
+
+To check whether an event is relevant, use a flag variable. In FunC, `true` is represented by `-1`, and `false` is `0`.
 
 ```func
 int flag = 0; ;; false
@@ -21,17 +25,13 @@ else {
 }
 ```
 
-> 💡 참고
->
-> `0`이 `false`이므로 다른 모든 값은 `true`가 되기 때문에 `==` 연산자가 필요하지 않습니다.
+**Note:** The `==` operator is unnecessary, as `0` already evaluates to `false`, and any nonzero value is considered `true`.
 
-> 💡 유용한 링크
->
-> [문서의 "If statement"](/v3/documentation/smart-contracts/func/docs/statements#if-statements)
+**Reference:** [`If statement` in docs](/v3/documentation/smart-contracts/func/docs/statements#if-statements)
 
-### repeat 루프를 작성하는 방법
+### How to write a repeat loop
 
-예시로 거듭제곱을 살펴보겠습니다.
+A repeat loop helps execute an action a fixed number of times. The example below demonstrates exponentiation:
 
 ```func
 int number = 2;
@@ -44,50 +44,42 @@ repeat(degree - 1) {
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Repeat loop"](/v3/documentation/smart-contracts/func/docs/statements#repeat-loop)
+**Reference:** [`Repeat loop` in docs](/v3/documentation/smart-contracts/func/docs/statements#repeat-loop)
 
 ### while 루프를 작성하는 방법
 
-while은 특정 작업을 얼마나 자주 수행해야 하는지 모를 때 유용합니다. 예를 들어, 최대 4개의 다른 셀에 대한 참조를 저장할 수 있다고 알려진 `cell`을 살펴보겠습니다.
+A while loop is useful when the number of iterations is unknown. The following example processes a `cell` which can store up to four references to other cells:
 
 ```func
-cell inner_cell = begin_cell() ;; create a new empty builder
-        .store_uint(123, 16) ;; store uint with value 123 and length 16 bits
-        .end_cell(); ;; convert builder to a cell
+cell inner_cell = begin_cell() ;; Create a new empty builder
+        .store_uint(123, 16) ;; Store uint with value 123 and length 16 bits
+        .end_cell(); ;; Convert builder to a cell
 
 cell message = begin_cell()
-        .store_ref(inner_cell) ;; store cell as reference
+        .store_ref(inner_cell) ;; Store cell as reference
         .store_ref(inner_cell)
         .end_cell();
 
-slice msg = message.begin_parse(); ;; convert cell to slice
-while (msg.slice_refs_empty?() != -1) { ;; we should remind that -1 is true
-    cell inner_cell = msg~load_ref(); ;; load cell from slice msg
+slice msg = message.begin_parse(); ;; Convert cell to slice
+while (msg.slice_refs_empty?() != -1) { ;; We should remind that -1 is true
+    cell inner_cell = msg~load_ref(); ;; Load cell from slice msg
     ;; do something
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "While loop"](/v3/documentation/smart-contracts/func/docs/statements#while-loop)
->
-> [문서의 "Cell"](/v3/concepts/dive-into-ton/ton-blockchain/cells-as-data-storage)
->
-> [문서의 "slice_refs_empty?()"](/v3/documentation/smart-contracts/func/docs/stdlib#slice_refs_empty)
->
-> [문서의 "store_ref()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_ref)
->
-> [문서의 "begin_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
->
-> [문서의 "end_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#end_cell)
->
-> [문서의 "begin_parse()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_parse)
+**References:**
+
+- [`While loop` in docs](/v3/documentation/smart-contracts/func/docs/statements#while-loop)
+- [`Cell` in docs](/v3/concepts/dive-into-ton/ton-blockchain/cells-as-data-storage)
+- [`slice_refs_empty?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#slice_refs_empty)
+- [`store_ref()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_ref)
+- [`begin_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
+- [`end_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#end_cell)
+- [`begin_parse()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_parse)
 
 ### do until 루프를 작성하는 방법
 
-사이클이 최소한 한 번은 실행되어야 할 때 `do until`을 사용합니다.
+Use a `do-until` loop when the loop must execute at least once.
 
 ```func
 int flag = 0;
@@ -97,154 +89,143 @@ do {
 } until (flag == -1); ;; -1 is true
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Until loop"](/v3/documentation/smart-contracts/func/docs/statements#until-loop)
+**Reference:** [`Until loop` in docs](/v3/documentation/smart-contracts/func/docs/statements#until-loop)
 
 ### slice가 비어있는지 확인하는 방법
 
-`slice`로 작업하기 전에, 올바른 처리를 위해 데이터가 있는지 확인해야 합니다. 이를 위해 `slice_empty?()`를 사용할 수 있지만, 최소 하나의 `bit` 데이터나 하나의 `ref`가 있다면 `0`(`false`)을 반환한다는 점을 고려해야 합니다.
+Before working with a `slice`, checking whether it contains any data is essential to ensure proper processing. The `slice_empty?()` method can be used for this purpose. However, it returns `0` (`false`) if the slice contains at least one `bit` of data or one `ref`.
 
 ```func
-;; creating empty slice
+;; Creating empty slice
 slice empty_slice = "";
-;; `slice_empty?()` returns `true`, because slice doesn't have any `bits` and `refs`
+;; `slice_empty?()` returns `true` because the slice doesn't have any `bits` and `refs`.
 empty_slice.slice_empty?();
 
-;; creating slice which contains bits only
+;; Creating slice which contains bits only
 slice slice_with_bits_only = "Hello, world!";
-;; `slice_empty?()` returns `false`, because slice have any `bits`
+;; `slice_empty?()` returns `false` because the slice has `bits`.
 slice_with_bits_only.slice_empty?();
 
-;; creating slice which contains refs only
+;; Creating slice which contains refs only
 slice slice_with_refs_only = begin_cell()
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_empty?()` returns `false`, because slice have any `refs`
+;; `slice_empty?()` returns `false` because the slice has `refs`.
 slice_with_refs_only.slice_empty?();
 
-;; creating slice which contains bits and refs
+;; Creating slice which contains bits and refs
 slice slice_with_bits_and_refs = begin_cell()
     .store_slice("Hello, world!")
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_empty?()` returns `false`, because slice have any `bits` and `refs`
+;; `slice_empty?()` returns `false` because the slice has `bits` and `refs`.
 slice_with_bits_and_refs.slice_empty?();
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "slice_empty?()"](/v3/documentation/smart-contracts/func/docs/stdlib#slice_empty)
->
-> [문서의 "store_slice()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
->
-> [문서의 "store_ref()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_ref)
->
-> [문서의 "begin_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
->
-> [문서의 "end_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#end_cell)
->
-> [문서의 "begin_parse()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_parse)
+**References:**
 
-### slice가 비어있는지 확인하는 방법 (refs는 있을 수 있지만 bits는 없는 경우)
+- [`slice_empty?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#slice_empty)
+- [`store_slice()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
+- [`store_ref()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_ref)
+- [`begin_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
+- [`end_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#end_cell)
+- [`begin_parse()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_parse)
 
-`slice`에서 `bits`만 확인하고 `refs`가 있는지는 중요하지 않다면, `slice_data_empty?()`를 사용해야 합니다.
+### How to determine if slice is empty (no bits, but may have refs)
+
+If only the presence of `bits` matters and `refs` in `slice` can be ignored, use the `slice_data_empty?()`.
 
 ```func
-;; creating empty slice
+;; Creating empty slice
 slice empty_slice = "";
-;; `slice_data_empty?()` returns `true`, because slice doesn't have any `bits`
+;; `slice_data_empty?()` returns `true` because the slice doesn't have any `bits`.
 empty_slice.slice_data_empty?();
 
-;; creating slice which contains bits only
+;; Creating slice which contains bits only
 slice slice_with_bits_only = "Hello, world!";
-;; `slice_data_empty?()` returns `false`, because slice have any `bits`
+;; `slice_data_empty?()` returns `false` because the slice has  `bits`.
 slice_with_bits_only.slice_data_empty?();
 
-;; creating slice which contains refs only
+;; Creating slice which contains refs only
 slice slice_with_refs_only = begin_cell()
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_data_empty?()` returns `true`, because slice doesn't have any `bits`
+;; `slice_data_empty?()` returns `true` because the slice doesn't have any `bits`
 slice_with_refs_only.slice_data_empty?();
 
-;; creating slice which contains bits and refs
+;; Creating slice which contains bits and refs
 slice slice_with_bits_and_refs = begin_cell()
     .store_slice("Hello, world!")
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_data_empty?()` returns `false`, because slice have any `bits`
+;; `slice_data_empty?()` returns `false` because the slice has `bits`.
 slice_with_bits_and_refs.slice_data_empty?();
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "slice_data_empty?()"](/v3/documentation/smart-contracts/func/docs/stdlib#slice_data_empty)
->
-> [문서의 "store_slice()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
->
-> [문서의 "store_ref()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_ref)
->
-> [문서의 "begin_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
->
-> [문서의 "end_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#end_cell)
->
-> [문서의 "begin_parse()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_parse)
+**References:**
 
-### slice가 비어있는지 확인하는 방법 (bits는 있을 수 있지만 refs는 없는 경우)
+- [`slice_data_empty?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#slice_data_empty)
+- [`store_slice()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
+- [`store_ref()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_ref)
+- [`begin_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
+- [`end_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#end_cell)
+- [`begin_parse()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_parse)
+
+### How to determine if slice is empty (no refs, but may have bits)
 
 `refs`만 관심이 있다면, `slice_refs_empty?()`를 사용하여 존재 여부를 확인해야 합니다.
 
+If only `refs` are of interest, their presence can be checked using the `slice_refs_empty?()`.
+
 ```func
-;; creating empty slice
+;; Creating empty slice
 slice empty_slice = "";
-;; `slice_refs_empty?()` returns `true`, because slice doesn't have any `refs`
+;; `slice_refs_empty?()` returns `true` because the slice doesn't have any `refs`.
 empty_slice.slice_refs_empty?();
 
-;; creating slice which contains bits only
+;; Creating slice which contains bits only
 slice slice_with_bits_only = "Hello, world!";
-;; `slice_refs_empty?()` returns `true`, because slice doesn't have any `refs`
+;; `slice_refs_empty?()` returns `true` because the slice doesn't have any `refs`.
 slice_with_bits_only.slice_refs_empty?();
 
-;; creating slice which contains refs only
+;; Creating slice which contains refs only
 slice slice_with_refs_only = begin_cell()
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_refs_empty?()` returns `false`, because slice have any `refs`
+;; `slice_refs_empty?()` returns `false` because the slice has `refs`.
 slice_with_refs_only.slice_refs_empty?();
 
-;; creating slice which contains bits and refs
+;; Creating slice which contains bits and refs
 slice slice_with_bits_and_refs = begin_cell()
     .store_slice("Hello, world!")
     .store_ref(null())
     .end_cell()
     .begin_parse();
-;; `slice_refs_empty?()` returns `false`, because slice have any `refs`
+;; `slice_refs_empty?()` returns `false` because the slice has `refs`.
 slice_with_bits_and_refs.slice_refs_empty?();
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "slice_refs_empty?()"](/v3/documentation/smart-contracts/func/docs/stdlib#slice_refs_empty)
->
-> [문서의 "store_slice()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
->
-> [문서의 "store_ref()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_ref)
->
-> [문서의 "begin_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
->
-> [문서의 "end_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#end_cell)
->
-> [문서의 "begin_parse()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_parse)
+**References:**
 
-### cell이 비어있는지 확인하는 방법
+- [`slice_refs_empty?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#slice_refs_empty)
+- [`store_slice()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
+- [`store_ref()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_ref)
+- [`begin_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
+- [`end_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#end_cell)
+- [`begin_parse()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_parse)
 
-`cell`에 데이터가 있는지 확인하려면 먼저 `slice`로 변환해야 합니다. `bits`만 관심이 있다면 `slice_data_empty?()`, `refs`만 관심이 있다면 `slice_refs_empty?()`를 사용해야 합니다. `bit`나 `ref` 여부와 관계없이 데이터 존재 여부를 확인하려면 `slice_empty?()`를 사용해야 합니다.
+### How to determine if a cell is empty
+
+To check whether a `cell` contains any data, it must first be converted into a `slice`.
+
+- If only `bits` matter, use `slice_data_empty?()`.
+- If only `refs` matter, use `slice_refs_empty?()`.
+- If the presence of any data (`bits` or `refs`) needs to be checked, use `slice_empty?()`.
 
 ```func
 cell cell_with_bits_and_refs = begin_cell()
@@ -252,40 +233,36 @@ cell cell_with_bits_and_refs = begin_cell()
     .store_ref(null())
     .end_cell();
 
-;; Change `cell` type to slice with `begin_parse()`
+;; Change the `cell` type to slice with `begin_parse()`.
 slice cs = cell_with_bits_and_refs.begin_parse();
 
-;; determine if slice is empty
+;; Determine if the slice is empty.
 if (cs.slice_empty?()) {
-    ;; cell is empty
+    ;; Cell is empty
 }
 else {
-    ;; cell is not empty
+    ;; Cell is not empty
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "slice_empty?()"](/v3/documentation/smart-contracts/func/docs/stdlib#slice_empty)
->
-> [문서의 "begin_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
->
-> [문서의 "store_uint()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_uint)
->
-> [문서의 "end_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#end_cell)
->
-> [문서의 "begin_parse()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_parse)
+**References:**
 
-### dict가 비어있는지 확인하는 방법
+- [`slice_empty?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#slice_empty)
+- [`begin_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
+- [`store_uint()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_uint)
+- [`end_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#end_cell)
+- [`begin_parse()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_parse)
 
-dict에 데이터가 있는지 확인하기 위한 `dict_empty?()` 메서드가 있습니다. 이 메서드는 보통 `null`-cell이 빈 딕셔너리이기 때문에 `cell_null?()`와 동일합니다.
+### How to determine if a dict is empty
+
+The `dict_empty?()` checks whether a dictionary contains any data. This method is functionally equivalent to `cell_null?()`, as a `null` cell typically represents an empty dictionary.
 
 ```func
 cell d = new_dict();
 d~udict_set(256, 0, "hello");
 d~udict_set(256, 1, "world");
 
-if (d.dict_empty?()) { ;; Determine if dict is empty
+if (d.dict_empty?()) { ;; Determine if the dict is empty
     ;; dict is empty
 }
 else {
@@ -293,17 +270,16 @@ else {
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "dict_empty?()"](/v3/documentation/smart-contracts/func/docs/stdlib#dict_empty)
->
-> [문서의 "new_dict()"](/v3/documentation/smart-contracts/func/docs/stdlib/#new_dict) - 빈 dict 생성
->
-> [문서의 "dict_set()"](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_set) - dict d에 함수로 요소를 추가하여 비어있지 않게 함
+**References:**
 
-### tuple이 비어있는지 확인하는 방법
+- [`dict_empty?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#dict_empty)
+- [`new_dict()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#new_dict), creating an empty dict
+- [`dict_set()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_set), adding some elements in dict `d` with function, so it is not empty
 
-`tuple`로 작업할 때는 추출할 값이 있는지 항상 알아야 합니다. 빈 `tuple`에서 값을 추출하려고 하면 "not a tuple of valid size"라는 `exit code 7` 오류가 발생합니다.
+### How to determine if a tuple is empty
+
+When working with `tuples`, checking for existing values before extracting them is crucial. Extracting a value from an empty tuple will result in an error:
+["not a tuple of valid size" - `exit code 7`](/v3/documentation/tvm/tvm-exit-codes#7)
 
 ```func
 ;; Declare tlen function because it's not presented in stdlib
@@ -323,19 +299,18 @@ else {
 }
 ```
 
-> 💡 참고
->
-> tlen 어셈블리 함수를 선언하고 있습니다. 자세한 내용은 [여기](/v3/documentation/smart-contracts/func/docs/functions#assembler-function-body-definition)에서, [모든 어셈블러 명령어 목록](/v3/documentation/tvm/instructions)은 여기서 확인할 수 있습니다.
+**Note:**
+We are defining the `tlen` assembly function. You can find more details [here](/v3/documentation/smart-contracts/func/docs/functions#assembler-function-body-definition) and a see a [list of assembler commands](/v3/documentation/tvm/instructions).
 
-> 💡 유용한 링크
->
-> [문서의 "empty_tuple?()"](/v3/documentation/smart-contracts/func/docs/stdlib#empty_tuple)
->
-> [문서의 "tpush()"](/v3/documentation/smart-contracts/func/docs/stdlib/#tpush)
->
-> [문서의 "Exit codes"](/v3/documentation/tvm/tvm-exit-codes)
+**References:**
 
-### lisp-style 리스트가 비어있는지 확인하는 방법
+- [`empty_tuple?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#empty_tuple)
+- [`tpush()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#tpush)
+- [`Exit codes` in docs](/v3/documentation/tvm/tvm-exit-codes)
+
+### How to determine if a lisp-style list is empty
+
+We can use the [cons](/v3/documentation/smart-contracts/func/docs/stdlib/#cons) function to add an element to determine if a lisp-style list is empty. For example, adding 100 to the list ensures it is not empty.
 
 ```func
 tuple numbers = null();
@@ -348,11 +323,10 @@ if (numbers.null?()) {
 }
 ```
 
-[cons](/v3/documentation/smart-contracts/func/docs/stdlib/#cons) 함수를 사용하여 숫자 100을 리스트 스타일 리스트에 추가하므로 비어있지 않습니다.
-
 ### 스마트 컨트랙트의 상태가 비어있는지 확인하는 방법
 
-거래 횟수를 저장하는 `counter`가 있다고 가정해보겠습니다. 이 변수는 상태가 비어있기 때문에 스마트 컨트랙트의 첫 번째 거래 동안에는 사용할 수 없으므로, 이러한 경우를 처리해야 합니다. 상태가 비어있다면, `counter` 변수를 생성하고 저장합니다.
+Consider a smart contract with a `counter` that tracks the number of transactions. This variable does not exist in the contract state during the first transaction because it is empty.
+It is important to handle this scenario by checking if the state is empty and initializing the `counter` accordingly.
 
 ```func
 ;; `get_data()` will return the data cell from contract state
@@ -360,36 +334,32 @@ cell contract_data = get_data();
 slice cs = contract_data.begin_parse();
 
 if (cs.slice_empty?()) {
-    ;; contract data is empty, so we create counter and save it
+    ;; Contract data is empty, so we create counter and save it
     int counter = 1;
-    ;; create cell, add counter and save in contract state
+    ;; Create cell, add counter and save in contract state
     set_data(begin_cell().store_uint(counter, 32).end_cell());
 }
 else {
-    ;; contract data is not empty, so we get our counter, increase it and save
+    ;; Contract data is not empty, so we get our counter, increase it and save
     ;; we should specify correct length of our counter in bits
     int counter = cs~load_uint(32) + 1;
     set_data(begin_cell().store_uint(counter, 32).end_cell());
 }
 ```
 
-> 💡 참고
->
-> [cell이 비어있는지 확인하는 방법](/v3/documentation/smart-contracts/func/cookbook#how-to-determine-if-cell-is-empty)을 통해 컨트랙트의 상태가 비어있는지 확인할 수 있습니다.
+**Note:**
+The contract state can be determined as empty by verifying whether the [cell is empty](/v3/documentation/smart-contracts/func/cookbook#how-to-determine-if-cell-is-empty).
 
-> 💡 유용한 링크
->
-> [문서의 "get_data()"](/v3/documentation/smart-contracts/func/docs/stdlib#get_data)
->
-> [문서의 "begin_parse()"](/v3/documentation/smart-contracts/func/docs/stdlib/#begin_parse)
->
-> [문서의 "slice_empty?()"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_empty)
->
-> [문서의 "set_data?()"](/v3/documentation/smart-contracts/func/docs/stdlib#set_data)
+**References:**
 
-### 내부 메시지 cell을 구성하는 방법
+- [`get_data()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#get_data)
+- [`begin_parse()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#begin_parse)
+- [`slice_empty?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_empty)
+- [`set_data?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#set_data)
 
-컨트랙트가 내부 메시지를 보내도록 하려면, 먼저 기술적인 플래그, 수신자 주소, 나머지 데이터를 지정하여 `cell`로 적절하게 생성해야 합니다.
+### How to build an internal message cell
+
+When a smart contract needs to send an internal message, it must first construct the message as a `cell`. This includes specifying technical flags, the recipient's address, and additional data.
 
 ```func
 ;; We use literal `a` to get valid address inside slice from string containing address 
@@ -409,33 +379,25 @@ cell msg = begin_cell()
 send_raw_message(msg, 3); ;; mode 3 - pay fees separately and ignore errors 
 ```
 
-> 💡 참고
->
-> 이 예시에서는 리터럴 `a`를 사용하여 주소를 가져옵니다. 문자열 리터럴에 대해 자세히 알아보려면 [문서](/v3/documentation/smart-contracts/func/docs/literals_identifiers#string-literals)를 참조하세요.
+**Note:**
 
-> 💡 참고
->
-> 자세한 내용은 [문서](/v3/documentation/smart-contracts/message-management/sending-messages)에서 확인할 수 있습니다. 또한 이 링크로 [레이아웃](/v3/documentation/smart-contracts/message-management/sending-messages#message-layout)으로 이동할 수 있습니다.
+- In this example, we use the literal `a` to obtain an address. More details on string literals can be found in the [documentation](/v3/documentation/smart-contracts/func/docs/literals_identifiers#string-literals).
+- You can find more details in the [documentation](/v3/documentation/smart-contracts/message-management/sending-messages). A direct link to the [layout](/v3/documentation/smart-contracts/message-management/sending-messages#message-layout) is also available.
 
-> 💡 유용한 링크
->
-> [문서의 "begin_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
->
-> [문서의 "store_uint()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_uint)
->
-> [문서의 "store_slice()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
->
-> [문서의 "store_coins()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_coins)
->
-> [문서의 "end_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib/#end_cell)
->
-> [문서의 "send_raw_message()"](/v3/documentation/smart-contracts/func/docs/stdlib/#send_raw_message)
+**References:**
 
-### 내부 메시지 cell에 ref로 본문을 포함하는 방법
+- [`begin_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
+- [`store_uint()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_uint)
+- [`store_slice()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
+- [`store_coins()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_coins)
+- [`end_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#end_cell)
+- [`send_raw_message()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#send_raw_message)
 
-플래그와 다른 기술적 데이터 다음에 오는 메시지 본문에서 `int`, `slice`, `cell`을 보낼 수 있습니다. 후자의 경우, `cell`이 계속될 것임을 나타내기 위해 `store_ref()` 전에 비트를 `1`로 설정해야 합니다.
+### How to contain a body as a ref in an internal message cell
 
-충분한 공간이 있다고 확신한다면 메시지 본문을 헤더와 같은 `cell` 내에 보낼 수도 있습니다. 이 경우 비트를 `0`으로 설정해야 합니다.
+The message body can contain `int`, `slices`, or `cells` following flags and other technical data. If a `cell` is used, a bit must be set to `1` before calling `store_ref()`, indicating that the `cell` will be included.
+
+Alternatively, if there is sufficient space, the message body can be stored in the same `cell` as the header. In this case, the bit should be set to `0`.
 
 ```func
 ;; We use literal `a` to get valid address inside slice from string containing address 
@@ -459,35 +421,26 @@ cell msg = begin_cell()
 send_raw_message(msg, 3); ;; mode 3 - pay fees separately and ignore errors 
 ```
 
-> 💡 참고
->
-> 이 예시에서는 리터럴 `a`를 사용하여 주소를 가져옵니다. 문자열 리터럴에 대해 자세히 알아보려면 [문서](/v3/documentation/smart-contracts/func/docs/literals_identifiers#string-literals)를 참조하세요.
+**Note:**
 
-> 💡 참고
->
-> 이 예시에서는 mode 3을 사용하여 수신된 ton을 가져와서 지정된 만큼(amount) 정확히 보내면서 수수료는 컨트랙트 잔액에서 지불하고 오류를 무시합니다. Mode 64는 수수료를 제외한 모든 ton을 반환하는 데 필요하고, mode 128은 전체 잔액을 보냅니다.
+- In this example, we use the literal `a` to obtain an address. More details on string literals can be found in the [documentation](/v3/documentation/smart-contracts/func/docs/literals_identifiers#string-literals).
+- The example uses [`mode 3`](/v3/documentation/smart-contracts/message-management/sending-messages#mode3), which ensures the contract deducts the specified amount while covering the transaction fee from the contract balance and ignoring errors.
+  - `mode 64` returns all received tokens, subtracting the commission.
+  - `mode 128` transfers the entire balance.
+- The [message](/v3/documentation/smart-contracts/func/cookbook#how-to-build-an-internal-message-cell) is constructed with the body added separately.
 
-> 💡 참고
->
-> [메시지를 구성](/v3/documentation/smart-contracts/func/cookbook#how-to-build-an-internal-message-cell)하고 있지만 메시지 본문은 별도로 추가합니다.
+**References:**
 
-> 💡 유용한 링크
->
-> [문서의 "begin_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
->
-> [문서의 "store_uint()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_uint)
->
-> [문서의 "store_slice()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
->
-> [문서의 "store_coins()"](/v3/documentation/smart-contracts/func/docs/stdlib#store_coins)
->
-> [문서의 "end_cell()"](/v3/documentation/smart-contracts/func/docs/stdlib/#end_cell)
->
-> [문서의 "send_raw_message()"](/v3/documentation/smart-contracts/func/docs/stdlib/#send_raw_message)
+- [`begin_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#begin_cell)
+- [`store_uint()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_uint)
+- [`store_slice()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_slice)
+- [`store_coins()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#store_coins)
+- [`end_cell()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#end_cell)
+- [`send_raw_message()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#send_raw_message)
 
-### 내부 메시지 cell에 slice로 본문을 포함하는 방법
+### How to contain a body as a slice in an internal message cell
 
-메시지를 보낼 때 메시지 본문을 `cell`이나 `slice`로 보낼 수 있습니다. 이 예시에서는 메시지 본문을 `slice` 내에 보냅니다.
+A message body can be sent as either a `cell` or a `slice`. In this example, the body is sent inside a `slice`.
 
 ```func
 ;; We use literal `a` to get valid address inside slice from string containing address 
@@ -508,21 +461,15 @@ cell msg = begin_cell()
 send_raw_message(msg, 3); ;; mode 3 - pay fees separately and ignore errors 
 ```
 
-> 💡 참고
->
-> 이 예시에서는 리터럴 `a`를 사용하여 주소를 가져옵니다. 문자열 리터럴에 대해 자세히 알아보려면 [문서](/v3/documentation/smart-contracts/func/docs/literals_identifiers#string-literals)를 참조하세요.
+**Note:**
 
-> 💡 참고
->
-> 이 예시에서는 mode 3을 사용하여 수신된 ton을 가져와서 지정된 만큼(amount) 정확히 보내면서 수수료는 컨트랙트 잔액에서 지불하고 오류를 무시합니다. Mode 64는 수수료를 제외한 모든 ton을 반환하는 데 필요하고, mode 128은 전체 잔액을 보냅니다.
+- The literal `a` is used to obtain an address. See the [documentation](/v3/documentation/smart-contracts/func/docs/literals_identifiers#string-literals) for details on string literals.
+- The example uses `mode 3`, `mode 64`, and `mode 128`, as described above.
+- The [message](/v3/documentation/smart-contracts/func/cookbook#how-to-build-an-internal-message-cell) is constructed with the body included as a slice.
 
-> 💡 참고
->
-> [메시지를 구성](/v3/documentation/smart-contracts/func/cookbook#how-to-build-an-internal-message-cell)하고 있지만 메시지를 slice로 추가합니다.
+### How to iterate tuples (both directions)
 
-### tuple을 순회하는 방법 (양방향)
-
-FunC에서 배열이나 스택으로 작업하려면 tuple이 필요합니다. 그리고 무엇보다도 값들을 순회할 수 있어야 합니다.
+When working with arrays or stacks in FunC, tuples are essential. The first step is learning how to iterate through tuple values for processing.
 
 ```func
 (int) tlen (tuple t) asm "TLEN";
@@ -548,30 +495,29 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 }
 ```
 
-> 💡 참고
->
-> `tlen` 어셈블리 함수를 선언하고 있습니다. 자세한 내용은 [여기](/v3/documentation/smart-contracts/func/docs/functions#assembler-function-body-definition)에서, [모든 어셈블러 명령어 목록](/v3/documentation/tvm/instructions)은 여기서 확인할 수 있습니다.
->
-> 또한 `to_tuple` 함수도 선언하고 있습니다. 이는 단순히 모든 입력의 데이터 타입을 tuple로 변경하므로 사용 시 주의해야 합니다.
+**Note:**
 
-### `asm` 키워드를 사용하여 자체 함수 작성하는 방법
+- The `tlen` assembly function is declared [here](/v3/documentation/smart-contracts/func/docs/functions#assembler-function-body-definition). You can read more about it and explore a [list of all assembler commands](/v3/documentation/tvm/instructions).
+- The `to_tuple` function is also declared. This function converts any input into a tuple, so use it carefully.
 
-모든 기능을 사용할 때 실제로는 `stdlib.fc` 내에 미리 준비된 메서드를 사용합니다. 하지만 실제로는 더 많은 기회가 있으며, 이를 직접 작성하는 방법을 배워야 합니다.
+### How to write own functions using asm keyword
 
-예를 들어, `tuple`에 요소를 추가하는 `tpush` 메서드는 있지만 `tpop`은 없습니다. 이 경우 다음과 같이 해야 합니다:
+Many features we use in FunC come from pre-prepared methods inside `stdlib.fc`. However, we have many more capabilities, and learning to write custom functions unlocks new possibilities.
+
+For example, while `tpush`, which adds an element to a `tuple`, exists, there is no built-in `tpop` function. In such cases, we must implement it ourselves.
 
 ```func
 ;; ~ means it is modifying method
 forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP"; 
 ```
 
-반복을 위해 `tuple`의 길이를 알고 싶다면 `TLEN` asm 명령어로 새 함수를 작성해야 합니다:
+We must determine its length if we want to iterate over a `tuple`. We can achieve this by writing a new function using the `TLEN` asm instruction.
 
 ```func
 int tuple_length (tuple t) asm "TLEN";
 ```
 
-stdlib.fc에서 이미 알고 있는 함수들의 몇 가지 예시:
+Examples of functions from `stdlib.fc`:
 
 ```func
 slice begin_parse(cell c) asm "CTOS";
@@ -579,17 +525,15 @@ builder begin_cell() asm "NEWC";
 cell end_cell(builder b) asm "ENDC";
 ```
 
-> 💡 유용한 링크:
->
-> [문서의 "modifying method"](/v3/documentation/smart-contracts/func/docs/statements#modifying-methods)
->
-> [문서의 "stdlib"](/v3/documentation/smart-contracts/func/docs/stdlib)
->
-> [문서의 "TVM instructions"](/v3/documentation/tvm/instructions)
+**References:**
+
+- [`modifying method` in docs](/v3/documentation/smart-contracts/func/docs/statements#modifying-methods)
+- [`stdlib` in docs](/v3/documentation/smart-contracts/func/docs/stdlib)
+- [`TVM instructions` in docs](/v3/documentation/tvm/instructions)
 
 ### n중 중첩 tuple 순회하기
 
-때로는 중첩된 tuple을 순회하고 싶을 수 있습니다. 다음 예시는 `[[2,6],[1,[3,[3,5]]], 3]` 형식의 tuple에서 헤드부터 시작하여 모든 항목을 순회하고 출력합니다.
+Sometimes, we need to iterate through nested tuples. The following example iterates through a tuple formatted as: `[[2,6],[1,[3,[3,5]]], 3]` starting from the head.
 
 ```func
 int tuple_length (tuple t) asm "TLEN";
@@ -599,7 +543,7 @@ forall X -> tuple cast_to_tuple (X x) asm "NOP";
 forall X -> int cast_to_int (X x) asm "NOP";
 forall X -> (tuple) to_tuple (X x) asm "NOP";
 
-;; define global variable
+;; Define a global variable
 global int max_value;
 
 () iterate_tuple (tuple t) impure {
@@ -620,19 +564,17 @@ global int max_value;
 () main () {
     tuple t = to_tuple([[2,6], [1, [3, [3, 5]]], 3]);
     int len = t.tuple_length();
-    max_value = 0; ;; reset max_value;
-    iterate_tuple(t); ;; iterate tuple and find max value
+    max_value = 0; ;; Reset max_value;
+    iterate_tuple(t); ;; Iterate tuple and find max value
     ~dump(max_value); ;; 6
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Global variables"](/v3/documentation/smart-contracts/func/docs/global_variables)
->
-> [문서의 "~dump"](/v3/documentation/smart-contracts/func/docs/builtins#dump-variable)
->
-> [문서의 "TVM instructions"](/v3/documentation/tvm/instructions)
+**References:**
+
+- [`global variables` in docs](/v3/documentation/smart-contracts/func/docs/global_variables)
+- [`~dump` in docs](/v3/documentation/smart-contracts/func/docs/builtins#dump-variable)
+- [`TVM instructions` in docs](/v3/documentation/tvm/instructions)
 
 ### tuple에서의 기본 연산
 
@@ -666,7 +608,7 @@ forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP";
 
 ### X 타입 해결하기
 
-다음 예시는 tuple에 어떤 값이 포함되어 있는지 확인하지만, tuple에는 X 타입(cell, slice, int, tuple, int)의 값이 포함되어 있습니다. 값을 확인하고 적절하게 캐스트해야 합니다.
+If a tuple contains various data types X (cell, slice, int, tuple, etc.), we may need to check the value and cast it accordingly before processing.
 
 ```func
 forall X -> int is_null (X x) asm "ISNULL";
@@ -681,7 +623,7 @@ forall X -> tuple cast_to_tuple (X x) asm "NOP";
 forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP";
 
 forall X -> () resolve_type (X value) impure {
-    ;; value here is of type X, since we dont know what is the exact value - we would need to check what is the value and then cast it
+    ;; Value here is of type X, since we dont know what is the exact value - we would need to check what is the value and then cast it
     
     if (is_null(value)) {
         ;; do something with the null
@@ -716,9 +658,7 @@ forall X -> () resolve_type (X value) impure {
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "TVM instructions"](/v3/documentation/tvm/instructions)
+**Reference:** [`TVM instructions` in docs](/v3/documentation/tvm/instructions)
 
 ### 현재 시간 가져오기
 
@@ -730,11 +670,12 @@ if (current_time > 1672080143) {
 }
 ```
 
-### 난수 생성하기
+### How to generate a random number
 
 :::caution draft
 
-자세한 내용은 [난수 생성](/v3/guidelines/smart-contracts/security/random-number-generation)을 참조하세요.
+This method is not cryptographically secure.
+For more details, see [Random number generation](/v3/guidelines/smart-contracts/security/random-number-generation) section.
 :::
 
 ```func
@@ -747,8 +688,14 @@ int c = random();
 
 ### 모듈로 연산
 
-예를 들어 256개의 모든 숫자에 대해 `(xp + zp)*(xp-zp)` 계산을 수행한다고 가정해보겠습니다. 이러한 연산 대부분이 암호화에 사용되므로, 다음 예시에서는 몽고메리 곡선에 대한 모듈로 연산자를 사용합니다.
-xp+zp는 유효한 변수 이름입니다(공백 없음).
+As an example, let’s say we need to perform the following calculation for all 256 numbers:
+
+`(xp + zp) * (xp - zp)`.
+
+Since these operations are commonly used in cryptography, we utilize the modulo operator for montgomery curves.
+
+**Note:**
+Variable names like `xp+zp` are valid as long as there are no spaces between the operators.
 
 ```func
 (int) modulo_operations (int xp, int zp) {  
@@ -763,9 +710,7 @@ xp+zp는 유효한 변수 이름입니다(공백 없음).
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "muldivmod"](/v3/documentation/tvm/instructions#A98C)
+**Reference:** [`muldivmod` in docs](/v3/documentation/tvm/instructions#A98C)
 
 ### 오류를 발생시키는 방법
 
@@ -779,11 +724,11 @@ throw_unless(39, number == 198); ;; the error will be triggered only if the numb
 throw(36); ;; the error will be triggered anyway
 ```
 
-[표준 tvm 예외 코드](/v3/documentation/tvm/tvm-exit-codes)
+[Standard TVM exception codes](/v3/documentation/tvm/tvm-exit-codes)
 
 ### tuple 뒤집기
 
-tuple이 데이터를 스택으로 저장하기 때문에, 때로는 다른 쪽 끝에서 데이터를 읽기 위해 tuple을 뒤집어야 합니다.
+Since tuples behave as stacks in FunC, sometimes we need to **reverse** them to access data from the opposite end.
 
 ```func
 forall X -> (tuple, X) ~tpop (tuple t) asm "TPOP";
@@ -806,9 +751,7 @@ forall X -> (tuple) to_tuple (X x) asm "NOP";
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "tpush()"](/v3/documentation/smart-contracts/func/docs/stdlib/#tpush)
+**Reference:** [`tpush()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#tpush)
 
 ### 리스트에서 특정 인덱스의 항목을 제거하는 방법
 
@@ -844,9 +787,12 @@ int tlen (tuple t) asm "TLEN";
 }
 ```
 
-### slice가 동일한지 확인하는 방법
+### Determine if the slices are equal
 
-slice 해시를 기반으로 하는 방법과 SDEQ asm 명령어를 사용하는 방법, 두 가지 다른 방식으로 동일성을 확인할 수 있습니다.
+There are two main ways to check if two slices are equal:
+
+- Comparing their hashes.
+- Using the SDEQ asm instruction.
 
 ```func
 int are_slices_equal_1? (slice a, slice b) {
@@ -867,14 +813,14 @@ int are_slices_equal_2? (slice a, slice b) asm "SDEQ";
 }
 ```
 
-#### 💡 유용한 링크
+**References:**
 
-- [문서의 "slice_hash()"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_hash)
-- [문서의 "SDEQ"](/v3/documentation/tvm/instructions#C705)
+- [`slice_hash()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_hash)
+- [`SDEQ` in docs](/v3/documentation/tvm/instructions#C705)
 
-### cell이 동일한지 확인하는 방법
+### Determine if the cells are equal
 
-cell의 해시를 기반으로 하여 쉽게 동일성을 확인할 수 있습니다.
+We can determine if two cells are equal by comparing their hashes.
 
 ```func
 int are_cells_equal? (cell a, cell b) {
@@ -894,13 +840,11 @@ int are_cells_equal? (cell a, cell b) {
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "cell_hash()"](/v3/documentation/smart-contracts/func/docs/stdlib/#cell_hash)
+**Reference:** [`cell_hash()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#cell_hash)
 
-### tuple이 동일한지 확인하는 방법
+### Determine if the tuples are equal
 
-더 고급스러운 예시로는 tuple의 각 값을 순회하며 비교하는 것입니다. 값들이 X 타입이므로 해당하는 타입으로 확인하고 캐스트해야 하며, tuple인 경우 재귀적으로 순회해야 합니다.
+A more advanced approach involves iterating through tuples and comparing each value recursively. Since tuples can contain different data types, we must check and cast values dynamically.
 
 ```func
 int tuple_length (tuple t) asm "TLEN";
@@ -976,17 +920,16 @@ int are_cells_equal? (cell a, cell b) {
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "cell_hash()"](/v3/documentation/smart-contracts/func/docs/stdlib/#cell_hash)
->
-> [문서의 "TVM instructions"](/v3/documentation/tvm/instructions)
+**References:**
 
-### 내부 주소 생성하기
+- [`cell_hash()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#cell_hash)
+- [`TVM instructions` in docs](/v3/documentation/tvm/instructions)
 
-새 컨트랙트를 배포해야 하지만 주소를 모를 때 내부 주소를 생성해야 합니다. 새 컨트랙트의 코드와 데이터인 `state_init`이 이미 있다고 가정하겠습니다.
+### Generate an internal address
 
-해당 MsgAddressInt TLB에 대한 내부 주소를 생성합니다.
+When deploying a new contract, we need to generate its internal address because it is initially unknown. Suppose we already have `state_init`, which contains the code and data of the new contract.
+
+This function creates an internal address corresponding to the `MsgAddressInt` TLB.
 
 ```func
 (slice) generate_internal_address (int workchain_id, cell state_init) {
@@ -1006,17 +949,13 @@ int are_cells_equal? (cell a, cell b) {
 }
 ```
 
-> 💡 참고
->
-> 이 예시에서는 `workchain()`을 사용하여 workchain의 id를 가져옵니다. Workchain ID에 대해 자세히 알아보려면 [문서](/v3/documentation/smart-contracts/addresses#workchain-id)를 참조하세요.
+**Note:** In this example, we use `workchain()` to retrieve the WorkChain ID. You can learn more about the WorkChain ID in [docs](/v3/documentation/smart-contracts/addresses#workchain-id).
 
-> 💡 유용한 링크
->
-> [문서의 "cell_hash()"](/v3/documentation/smart-contracts/func/docs/stdlib/#cell_hash)
+**Reference:** [`cell_hash()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#cell_hash)
 
-### 외부 주소 생성하기
+### Generate an external address
 
-[block.tlb](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/block/block.tlb#L101C1-L101C12)의 TL-B 스키마를 사용하여 이 형식으로 주소를 생성해야 하는 방법을 이해합니다.
+We use the TL-B scheme from [block.tlb](https://github.com/ton-blockchain/ton/blob/24dc184a2ea67f9c47042b4104bbb4d82289fac1/crypto/block/block.tlb#L101C1-L101C12) to determine the address format to generate an external address.
 
 ```func
 (int) ubitsize (int a) asm "UBITSIZE";
@@ -1034,15 +973,13 @@ slice generate_external_address (int address) {
 }
 ```
 
-주소가 차지하는 비트 수를 결정해야 하므로, 숫자를 저장하는 데 필요한 최소 비트 수를 반환하는 `UBITSIZE` 코드로 [asm 함수를 선언](#how-to-write-own-functions-using-asm-keyword)해야 합니다.
+Since we need to find the exact number of bits occupied by the address, we must [declare an asm function](#how-to-write-custom-functions-using-the-asm-keyword) with the `UBITSIZE` opcode. This function will return the minimum number of bits required to store a given number.
 
-> 💡 유용한 링크
->
-> [문서의 "TVM Instructions"](/v3/documentation/tvm/instructions#B603)
+**Reference:** ["TVM instructions" in docs](/v3/documentation/tvm/instructions#B603)
 
-### 로컬 스토리지에 딕셔너리를 저장하고 로드하는 방법
+### How to store and load dictionary in a local storage
 
-딕셔너리를 로드하는 로직:
+The logic for loading a dictionary from local storage is as follows:
 
 ```func
 slice local_storage = get_data().begin_parse();
@@ -1052,27 +989,23 @@ if (~ slice_empty?(local_storage)) {
 }
 ```
 
-딕셔너리를 저장하는 로직은 다음 예시와 같습니다:
+Storing the dictionary follows a similar approach, ensuring data persistence.
 
 ```func
 set_data(begin_cell().store_dict(dictionary_cell).end_cell());
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "get_data()"](/v3/documentation/smart-contracts/func/docs/stdlib/#get_data)
->
-> [문서의 "new_dict()"](/v3/documentation/smart-contracts/func/docs/stdlib/#new_dict)
->
-> [문서의 "slice_empty?()"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_empty)
->
-> [문서의 "load_dict()"](/v3/documentation/smart-contracts/func/docs/stdlib/#load_dict)
->
-> [문서의 "~"](/v3/documentation/smart-contracts/func/docs/statements#unary-operators)
+**References:**
+
+- [`get_data()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#get_data)
+- [`new_dict()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#new_dict)
+- [`slice_empty?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_empty)
+- [`load_dict()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#load_dict)
+- [`~` in docs](/v3/documentation/smart-contracts/func/docs/statements#unary-operators)
 
 ### 간단한 메시지를 보내는 방법
 
-코멘트와 함께 ton을 보내는 일반적인 방법은 실제로 간단한 메시지입니다. 메시지 본문이 `코멘트`임을 지정하려면 메시지 텍스트 앞에 `32 비트`를 0으로 설정해야 합니다.
+To send a simple message with a comment, prepend the message body with `32 bits` set to `0`, indicating that it is a `comment`.
 
 ```func
 cell msg = begin_cell()
@@ -1086,13 +1019,11 @@ cell msg = begin_cell()
 send_raw_message(msg, 3); ;; mode 3 - pay fees separately, ignore errors
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Message layout"](/v3/documentation/smart-contracts/message-management/sending-messages)
+**Reference:** [`Message layout` in docs](/v3/documentation/smart-contracts/message-management/sending-messages)
 
 ### 들어오는 계정으로 메시지를 보내는 방법
 
-아래 컨트랙트 예시는 사용자와 메인 컨트랙트 사이에 작업을 수행해야 할 때, 즉 프록시 컨트랙트가 필요할 때 유용합니다.
+A proxy contract can facilitate secure message exchange if interaction between a user and the main contract is needed.
 
 ```func
 () recv_internal (slice in_msg_body) {
@@ -1116,15 +1047,14 @@ send_raw_message(msg, 3); ;; mode 3 - pay fees separately, ignore errors
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Message layout"](/v3/documentation/smart-contracts/message-management/sending-messages)
->
-> [문서의 "load_msg_addr()"](/v3/documentation/smart-contracts/func/docs/stdlib/#load_msg_addr)
+**References:**
+
+- [`Message layout` in docs](/v3/documentation/smart-contracts/message-management/sending-messages)
+- [`load_msg_addr()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#load_msg_addr)
 
 ### 전체 잔액을 가진 메시지를 보내는 방법
 
-스마트 컨트랙트의 전체 잔액을 보내야 하는 경우, `mode 128`을 사용하여 보내야 합니다. 이러한 경우의 예시로는 결제를 받아서 메인 컨트랙트로 전달하는 프록시 컨트랙트가 있습니다.
+To transfer the entire balance of a smart contract, use send `mode 128`. This is particularly useful for proxy contracts that receive payments and forward them to the main contract.
 
 ```func
 cell msg = begin_cell()
@@ -1138,15 +1068,15 @@ cell msg = begin_cell()
 send_raw_message(msg, 128); ;; mode = 128 is used for messages that are to carry all the remaining balance of the current smart contract
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Message layout"](/v3/documentation/smart-contracts/message-management/sending-messages)
->
-> [문서의 "Message modes"](/v3/documentation/smart-contracts/func/docs/stdlib/#send_raw_message)
+**References:**
+
+- [`Message layout` in docs](/v3/documentation/smart-contracts/message-management/sending-messages)
+- [`Message modes` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#send_raw_message)
 
 ### 긴 텍스트 코멘트가 있는 메시지를 보내는 방법
 
-단일 `cell`에는 127개의 문자(\<1023 비트)만 들어갈 수 있다는 것을 알고 있습니다. 더 많이 필요한 경우 - snake cells를 구성해야 합니다.
+A `cell` can store up to 127 characters (`<1023 bits`).
+A sequence of linked cells ("snake cells") must be used if more space is required.
 
 ```func
 {-
@@ -1178,13 +1108,11 @@ cell msg = begin_cell()
 send_raw_message(msg, 3); ;; mode 3 - pay fees separately, ignore errors
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Internal messages"](/v3/documentation/smart-contracts/message-management/internal-messages)
+**Reference:** [`Internal messages` in docs](/v3/documentation/smart-contracts/message-management/internal-messages)
 
 ### slice에서 refs 없이 데이터 비트만 가져오는 방법
 
-`slice` 내의 `refs`에 관심이 없다면 날짜만 따로 가져와서 작업할 수 있습니다.
+If `refs` within a `slice` are unnecessary, only the raw data bits can be extracted for further processing.
 
 ```func
 slice s = begin_cell()
@@ -1196,17 +1124,15 @@ slice s = begin_cell()
 slice s_only_data = s.preload_bits(s.slice_bits());
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Slice primitives"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice-primitives)
->
-> [문서의 "preload_bits()"](/v3/documentation/smart-contracts/func/docs/stdlib/#preload_bits)
->
-> [문서의 "slice_bits()"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_bits)
+**References:**
 
-### 자체 수정 메서드를 정의하는 방법
+- [`Slice primitives` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#slice-primitives)
+- [`preload_bits()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#preload_bits)
+- [`slice_bits()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_bits)
 
-수정 메서드를 사용하면 동일한 변수 내에서 데이터를 수정할 수 있습니다. 이는 다른 프로그래밍 언어의 참조와 비교할 수 있습니다.
+### How to define a custom modifying method
+
+Modifying methods allow data to be updated within the same variable, similar to references in other programming languages.
 
 ```func
 (slice, (int)) load_digit (slice s) {
@@ -1224,9 +1150,7 @@ slice s_only_data = s.preload_bits(s.slice_bits());
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Modifying methods"](/v3/documentation/smart-contracts/func/docs/statements#modifying-methods)
+**Reference:** [`Modifying methods` in docs](/v3/documentation/smart-contracts/func/docs/statements#modifying-methods)
 
 ### 숫자를 n제곱하는 방법
 
@@ -1299,7 +1223,7 @@ slice result = string.end_cell().begin_parse();
 
 ### 딕셔너리를 순회하는 방법
 
-딕셔너리는 많은 데이터를 다룰 때 매우 유용합니다. 내장 메서드 `dict_get_min?`와 `dict_get_max?`를 사용하여 최소값과 최대값 키를 각각 가져올 수 있습니다. 또한 `dict_get_next?`를 사용하여 딕셔너리를 순회할 수 있습니다.
+Dictionaries are useful for managing large datasets. The built-in methods `dict_get_min?` and `dict_get_max` retrieve the minimum and maximum key values, while `dict_get_next?` allows dictionary iteration.
 
 ```func
 cell d = new_dict();
@@ -1316,17 +1240,13 @@ while (flag) {
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Dictonaries primitives"](/v3/documentation/smart-contracts/func/docs/stdlib/#dictionaries-primitives)
->
-> [문서의 "dict_get_max?()"](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_get_max)
->
-> [문서의 "dict_get_min?()"](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_get_min)
->
-> [문서의 "dict_get_next?()"](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_get_next)
->
-> [문서의 "dict_set()"](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_set)
+**References:**
+
+- [`Dictonaries primitives` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#dictionaries-primitives)
+- [`dict_get_max?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_get_max)
+- [`dict_get_min?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_get_min)
+- [`dict_get_next?()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_get_next)
+- [`dict_set()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#dict_set)
 
 ### 딕셔너리에서 값을 삭제하는 방법
 
@@ -1341,9 +1261,9 @@ names~udict_delete?(256, 27);
 ~dump(val); ;; null() -> means that key was not found in a dictionary
 ```
 
-### cell 트리를 재귀적으로 순회하는 방법
+### How to iterate a cell tree recursively
 
-하나의 `cell`이 최대 `1023 비트`의 데이터와 최대 `4개의 refs`를 저장할 수 있다는 것을 알고 있습니다. 이 제한을 우회하기 위해 cell 트리를 사용할 수 있지만, 적절한 데이터 처리를 위해 이를 순회할 수 있어야 합니다.
+Each `cell` can store up to `1023 bits` of data and `4 refs`. A tree of cells can be used to handle more complex data structures, requiring recursive iteration.
 
 ```func
 forall X -> int is_null (X x) asm "ISNULL";
@@ -1387,17 +1307,15 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Lisp-style lists"](/v3/documentation/smart-contracts/func/docs/stdlib/#lisp-style-lists)
->
-> [문서의 "null()"](/v3/documentation/smart-contracts/func/docs/stdlib/#null)
->
-> [문서의 "slice_refs()"](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_refs)
+**References:**
+
+- [`Lisp-style lists` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#lisp-style-lists)
+- [`null()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#null)
+- [`slice_refs()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#slice_refs)
 
 ### lisp-style 리스트를 순회하는 방법
 
-tuple 데이터 타입은 최대 255개의 값을 보유할 수 있습니다. 이것으로 충분하지 않다면, lisp-style 리스트를 사용해야 합니다. tuple 안에 tuple을 넣을 수 있어서 제한을 우회할 수 있습니다.
+A tuple can hold up to 255 values. If more space is needed, a lisp-style list can be used by nesting tuples within tuples, effectively bypassing the limit.
 
 ```func
 forall X -> int is_null (X x) asm "ISNULL";
@@ -1421,11 +1339,10 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 }
 ```
 
-> 💡 유용한 링크
->
-> [문서의 "Lisp-style lists"](/v3/documentation/smart-contracts/func/docs/stdlib/#lisp-style-lists)
->
-> [문서의 "null()"](/v3/documentation/smart-contracts/func/docs/stdlib/#null)
+**References:**
+
+- [`Lisp-style lists` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#lisp-style-lists)
+- [`null()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib/#null)
 
 ### 배포 메시지를 보내는 방법 (stateInit만 있는 경우, stateInit과 body가 모두 있는 경우)
 
@@ -1487,7 +1404,7 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 
 ### 스마트 컨트랙트 로직을 업데이트하는 방법
 
-아래는 카운터를 증가시키고 스마트 컨트랙트 로직을 업데이트하는 기능이 있는 간단한 `CounterV1` 스마트 컨트랙트입니다.
+Below is an example of a simple `CounterV1` smart contract that allows the counter to be incremented and includes logic for updating the contract.
 
 ```func
 () recv_internal (slice in_msg_body) {
@@ -1508,7 +1425,7 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 }
 ```
 
-스마트 컨트랙트를 운영한 후, 미터 감소 기능이 빠져있다는 것을 알게 됩니다. `CounterV1` 스마트 컨트랙트의 코드를 복사하고 `increase` 함수 옆에 새로운 `decrease` 함수를 추가해야 합니다. 이제 코드는 다음과 같습니다:
+After interacting with the contract, you may realize that the functionality for decrementing the counter is missing. To fix this, copy the code from `CounterV1` and add a new `decrease` function next to the existing `increase` function. Your updated code will look like this:
 
 ```func
 () recv_internal (slice in_msg_body) {
@@ -1536,7 +1453,7 @@ forall X -> (tuple, (X)) pop_back (tuple t) asm "UNCONS";
 }
 ```
 
-`CounterV2` 스마트 컨트랙트가 준비되면, 오프체인에서 `cell`로 컴파일하고 `CounterV1` 스마트 컨트랙트에 업그레이드 메시지를 보내야 합니다.
+Once the `CounterV2` smart contract is ready, you need to compile it off-chain into a `cell` and send an upgrade message to the `CounterV1` contract:
 
 ```javascript
 await contractV1.sendUpgrade(provider.sender(), {
@@ -1545,8 +1462,10 @@ await contractV1.sendUpgrade(provider.sender(), {
 });
 ```
 
-> 💡 유용한 링크
->
-> [기존 주소에 코드를 다시 배포할 수 있나요, 아니면 새 컨트랙트로 배포해야 하나요?](/v3/documentation/faq#is-it-possible-to-re-deploy-code-to-an-existing-address-or-does-it-have-to-be-deployed-as-a-new-contract)
->
-> [문서의 "set_code()"](/v3/documentation/smart-contracts/func/docs/stdlib#set_code)
+**References:**
+
+- [Is it possible to redeploy code to an existing address or does it have to be deployed as a new contract?](/v3/documentation/faq#is-it-possible-to-re-deploy-code-to-an-existing-address-or-does-it-have-to-be-deployed-as-a-new-contract)
+- [`set_code()` in docs](/v3/documentation/smart-contracts/func/docs/stdlib#set_code)
+
+<Feedback />
+

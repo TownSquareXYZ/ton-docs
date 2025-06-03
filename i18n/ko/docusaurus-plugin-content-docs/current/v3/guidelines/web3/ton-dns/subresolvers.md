@@ -1,13 +1,15 @@
+import Feedback from '@site/src/components/Feedback';
+
 # TON DNS 리졸버
 
 ## 소개
 
-TON DNS는 강력한 도구입니다. TON 사이트/스토리지 백을 도메인에 할당할 수 있을 뿐만 아니라 서브도메인 리졸빙도 설정할 수 있습니다.
+TON DNS is a powerful tool for assigning TON Sites or Storage bags to domains and configuring subdomain resolution.
 
 ## 관련 링크
 
-1. [TON 스마트 컨트랙트 주소 시스템](/v3/documentation/smart-contracts/addresses)
-2. [TEP-0081 - TON DNS 표준](https://github.com/ton-blockchain/TEPs/blob/master/text/0081-dns-standard.md)
+1. [TON smart contract address system](/v3/documentation/smart-contracts/addresses)
+2. [TEP-0081 - TON DNS standard](https://github.com/ton-blockchain/TEPs/blob/master/text/0081-dns-standard.md)
 3. [.ton DNS 컬렉션 소스 코드](https://tonscan.org/address/EQC3dNlesgVD8YbAazcauIrXBPfiVhMMr5YYk2in0Mtsz0Bz#source)
 4. [.t.me DNS 컬렉션 소스 코드](https://tonscan.org/address/EQCA14o1-VWhS2efqoh_9M1b_A9DtKTuoqfmkn83AbJzwnPi#source)
 5. [도메인 컨트랙트 검색기](https://tonscan.org/address/EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH_Zp#source)
@@ -15,39 +17,39 @@ TON DNS는 강력한 도구입니다. TON 사이트/스토리지 백을 도메�
 
 ## 도메인 컨트랙트 검색기
 
-서브도메인은 실용적입니다. 예를 들어, 현재 블록체인 탐색기는 도메인 이름으로 도메인 컨트랙트를 찾는 방법을 제공하지 않습니다. 이러한 도메인을 찾을 수 있는 컨트랙트를 만드는 방법을 알아보겠습니다.
+Subdomains provide helpful functionality. For example, most blockchain explorers do not support looking up a domain contract by its name. This section explains how to create a contract that enables this functionality.
 
 :::info
-This contract is deployed at [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH\_Zp](https://tonscan.org/address/EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH_Zp#source) and linked to `resolve-contract.ton`. To test it, you may write `<your-domain.ton>.resolve-contract.ton` in the address bar of your favourite TON explorer and get to the page of TON DNS domain contract. Subdomains and .t.me domains are supported as well.
+The example contract is deployed at [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH\_Zp](https://tonscan.org/address/EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH_Zp#source) and is associated with `resolve-contract.ton`. To test it, enter `<your-domain.ton>.resolve-contract.ton` in the address bar of your preferred TON explorer. This resolves to the corresponding TON DNS domain contract page. Subdomains and `.t.me` domains are supported.
 
-`resolve-contract.ton.resolve-contract.ton`으로 이동하여 리졸버 코드를 볼 수 있습니다. 안타깝게도 서브리졸버(다른 스마트 컨트랙트)는 볼 수 없고 도메인 컨트랙트 페이지만 볼 수 있습니다.
+To view the resolver’s code, navigate to `resolve-contract.ton.resolve-contract.ton`. Note that this does not show the subresolver contract; it is a separate smart contract. Instead, it displays the domain contract itself.
 :::
 
 ### dnsresolve() 코드
 
-일부 반복되는 부분은 생략되었습니다.
+Some repetitive parts are omitted.
 
 ```func
 (int, cell) dnsresolve(slice subdomain, int category) method_id {
   int subdomain_bits = slice_bits(subdomain);
   throw_unless(70, (subdomain_bits % 8) == 0);
   
-  int starts_with_zero_byte = subdomain.preload_int(8) == 0;  ;; assuming that 'subdomain' is not empty
+  int starts_with_zero_byte = subdomain.preload_int(8) == 0;  ;; Assuming that 'subdomain' is not empty.
   if (starts_with_zero_byte) {
     subdomain~load_uint(8);
-    if (subdomain.slice_bits() == 0) {   ;; current contract has no DNS records by itself
+    if (subdomain.slice_bits() == 0) {   ;; Current contract has no DNS records by itself.
       return (8, null());
     }
   }
   
-  ;; we are loading some subdomain
-  ;; supported subdomains are "ton\\0", "me\\0t\\0" and "address\\0"
+  ;; We are loading some subdomain.
+  ;; Supported subdomains are "ton\\0", "me\\0t\\0" and "address\\0"
   
   slice subdomain_sfx = null();
   builder domain_nft_address = null();
   
   if (subdomain.starts_with("746F6E00"s)) {
-    ;; we're resolving
+    ;; we are resolving
     ;; "ton" \\0 <subdomain> \\0 [subdomain_sfx]
     subdomain~skip_bits(32);
     
@@ -72,14 +74,14 @@ This contract is deployed at [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH\_Zp]
   }
   
   if (slice_empty?(subdomain_sfx)) {
-    ;; example of domain being resolved:
+    ;; Example of domain being resolved:
     ;; [initial, not accessible in this contract] "ton\\0resolve-contract\\0ton\\0ratelance\\0"
     ;; [what is accessible by this contract]      "ton\\0ratelance\\0"
     ;; subdomain          "ratelance"
     ;; subdomain_sfx      ""
     
-    ;; we want the resolve result to point at contract of 'ratelance.ton', not its owner
-    ;; so we must answer that resolution is complete + "wallet"H is address of 'ratelance.ton' contract
+    ;; We want the resolved result to point to the 'ratelance.ton' contract, not its owner.
+    ;; So we must answer that the resolution is complete + "wallet"H is the address of the 'ratelance.ton' contract
     
     ;; dns_smc_address#9fd3 smc_addr:MsgAddressInt flags:(## 8) { flags <= 1 } cap_list:flags . 0?SmcCapList = DNSRecord;
     ;; _ (HashmapE 256 ^DNSRecord) = DNS_RecordSet;
@@ -108,58 +110,67 @@ This contract is deployed at [EQDkAbAZNb4uk-6pzTPDO2s0tXZweN-2R08T2Wy6Z3qzH\_Zp]
 }
 ```
 
-### dnsresolve() 설명
+### dnsresolve() explanation
 
-- 사용자가 `"stabletimer.ton.resolve-contract.ton"`을 요청합니다.
-- 애플리케이션은 이를 `"\0ton\0resolve-contract\0ton\0stabletimer\0"`로 변환합니다(첫 번째 0 바이트는 선택사항).
-- 루트 DNS 리졸버는 요청을 TON DNS 컬렉션으로 보내고, 나머지 부분은 `"\0resolve-contract\0ton\0stabletimer\0"`입니다.
-- TON DNS 컬렉션은 요청을 특정 도메인에 위임하고, `"\0ton\0stabletimer\0"`를 남깁니다.
-- .TON DNS 도메인 컨트랙트는 리졸브를 에디터가 지정한 서브리졸버에 전달하고, 서브도메인은 `"ton\0stabletimer\0"`입니다.
+Here's a step-by-step breakdown of when a user resolves a domain like `stabletimer.ton.resolve-contract.ton`:
 
-**이 시점에서 dnsresolve()가 호출됩니다.** 작동 방식의 단계별 설명:
+1. The user requests the domain: `"stabletimer.ton.resolve-contract.ton"`.
+2. The application encodes it as a byte string: `"\0ton\0resolve-contract\0ton\0stabletimer\0"`.  Note: the leading null byte is optional.
+3. The root DNS resolver forwards the request to the TON DNS collection, leaving: `"\0resolve-contract\0ton\0stabletimer\0"`.
+4. The TON DNS collection delegates the request to the specified domain, leaving: `"\0ton\0stabletimer\0"`.
+5. The `.ton` DNS domain contract passes the resolution to the subresolver specified by the editor. The subdomain is: `"ton\0stabletimer\0"`.
 
-1. 서브도메인과 카테고리를 입력으로 받습니다.
-2. 시작 부분에 0 바이트가 있으면 건너뜁니다.
-3. 서브도메인이 `"ton\0"`으로 시작하는지 확인합니다. 그렇다면:
-  1. 처음 32비트를 건너뜁니다(subdomain = `"resolve-contract\0"`)
-  2. `subdomain_sfx` 값을 `subdomain`으로 설정하고, 0 바이트까지 바이트를 읽습니다
-  3. (subdomain = `"resolve-contract\0"`, subdomain_sfx = `""`)
-  4. 서브도메인 슬라이스 끝에서 0 바이트와 subdomain_sfx를 제거합니다(subdomain = `"resolve-contract"`)
-  5. slice_hash와 get_ton_dns_nft_address_by_index 함수를 사용하여 도메인 이름을 컨트랙트 주소로 변환합니다. [[Subresolvers#Appendix 1. Code of resolve-contract.ton|Appendix 1]]에서 확인할 수 있습니다.
-4. 그렇지 않으면 dnsresolve()는 서브도메인이 `"address\0"`으로 시작하는지 확인합니다. 그렇다면 해당 접두사를 건너뛰고 base64 주소를 읽습니다.
-5. 리졸브를 위해 제공된 서브도메인이 이러한 접두사와 일치하지 않으면, 함수는 `(0, null())` (0 바이트 접두사가 DNS 항목 없이 리졸브됨)을 반환하여 실패를 나타냅니다.
-6. 그런 다음 서브도메인 접미사가 비어 있는지 확인합니다. 빈 접미사는 요청이 완전히 충족되었음을 나타냅니다. 접미사가 비어 있다면:
-  1. dnsresolve()는 검색한 TON Domain 컨트랙트 주소를 사용하여 도메인의 "wallet" 하위 섹션에 대한 DNS 레코드를 생성합니다.
-  2. 카테고리 0(모든 DNS 항목)이 요청되면 레코드를 딕셔너리로 래핑하여 반환합니다.
-  3. 카테고리 "wallet"H가 요청되면 레코드를 그대로 반환합니다.
-  4. 그렇지 않으면 지정된 카테고리에 대한 DNS 항목이 없으므로 함수는 리졸브는 성공했지만 결과를 찾지 못했음을 나타냅니다.
-7. 접미사가 비어 있지 않다면:
-  1. 이전에 얻은 컨트랙트 주소를 다음 리졸버로 사용합니다. 함수는 다음 리졸버 레코드를 가리키는 리졸버 레코드를 생성합니다.
-  2. `"\0ton\0stabletimer\0"`가 해당 컨트랙트로 전달됩니다: 처리된 비트는 서브도메인의 비트입니다.
+**At this point, the `dnsresolve()` is invoked.**
 
-요약하면 dnsresolve()는 다음 중 하나를 수행합니다:
+How `dnsresolve()` works:
 
-- 서브도메인을 DNS 레코드로 완전히 리졸브
-- 리졸브를 다른 컨트랙트에 전달하기 위해 리졸버 레코드로 부분적으로 리졸브
-- 알 수 없는 서브도메인에 대해 "도메인을 찾을 수 없음" 결과 반환
+1. It takes the subdomain and category as inputs.
+2. It is skipped if the subdomain begins with zero byte.
+3. It checks if the subdomain starts with `"ton\0"`. If it does:
+  - The first 32 bits are skipped (`subdomain = "resolve-contract\0"`).
+  - A suffix variable `subdomain_sfx` is set to the `subdomain`. It reads bytes until the zero byte.
+  - At this point: `subdomain = "resolve-contract\0", subdomain_sfx = "")`.
+  - The zero byte and suffix are trimmed, resulting in `subdomain = "resolve-contract"`.
+  - The domain name is converted into a contract address using helper functions `slice_hash` and `get_ton_dns_nft_address_by_index`. See [Appendix 1](subresolvers#appendix-1-code-of-resolve-contractton) for implementation details.
+4. If the subdomain starts with `"address\0"`:
+  - The prefix is skipped, and the rest is interpreted as a base64-encoded address.
+5. If the subdomain doesn't match any known prefix:
+  - The function returns `(0, null())`, indicating a failed resolution with no entries.
+6. The function then checks if the `subdomain_sfx` is empty:
+  - If **yes**, the request is considered fully resolved.
+    - `dnsresolve()` generates a DNS record for the wallet subdomain using the previously retrieved TON DNS contract address.
+    - If category 0, i.e., all DNS records, is requested, the result is wrapped in a dictionary and returned.
+    - If the category is "wallet"H, the record is returned as-is.
+    - The function returns a successful resolution for any other category with no matching record.
+  - If **not**, the request is only partially resolved.
+    - The function builds a resolver record pointing to the next contract associated with the domain.
+    - The remaining subdomain `"\0ton\0stabletimer\0"` is forwarded to the contract, with the already processed bits corresponding to the initial part of the subdomain.
+
+The `dnsresolve()` function can:
+
+- Fully resolve a subdomain to a DNS record.
+- Partially resolve it, delegating to another resolver contract.
+- Return a "domain not found" result if the subdomain is unknown.
 
 :::warning
-실제로 base64 주소 구문 분석은 작동하지 않습니다: `<some-address>.address.resolve-contract.ton`을 입력하면 도메인이 잘못 구성되었거나 존재하지 않는다는 오류가 표시됩니다. 그 이유는 도메인 이름이 대소문자를 구분하지 않기 때문에(실제 DNS에서 물려받은 기능) 소문자로 변환되어 존재하지 않는 워크체인의 주소로 이동하기 때문입니다.
+Base64 address parsing is currently not functional. Suppose you attempt to resolve a domain like `<some-address>.address.resolve-contract.ton`, you will receive an error indicating that the domain is misconfigured or does not exist. This issue arises because domain names are case-insensitive—a behavior inherited from traditional DNS, which results in the lowercase. Consequently, the resolver may attempt to query a non-existent or invalid WorkChain address.
 :::
 
 ### 리졸버 바인딩
 
-이제 서브리졸버 컨트랙트가 배포되었으므로 도메인이 이를 가리키도록, 즉 도메인 `dns_next_resolver` 레코드를 변경해야 합니다. 다음 TL-B 구조를 가진 메시지를 도메인 컨트랙트로 보내면 됩니다.
+Now that the subresolver contract is deployed, the next step is to point the domain to it by updating domain `dns_next_resolver` record. This is done by sending a message with the following TL-B structure to the domain contract:
 
-1. `change_dns_record#4eb1f0f9 query_id:uint64 record_key#19f02441ee588fdb26ee24b2568dd035c3c9206e11ab979be62e55558a1d17ff record:^[dns_next_resolver#ba93 resolver:MsgAddressInt]`
+```
+`change_dns_record#4eb1f0f9 query_id:uint64 record_key#19f02441ee588fdb26ee24b2568dd035c3c9206e11ab979be62e55558a1d17ff record:^[dns_next_resolver#ba93 resolver:MsgAddressInt]`
+```
 
 ## 자체 서브도메인 관리자 생성
 
-서브도메인은 일반 사용자에게 유용할 수 있습니다. 예를 들어 여러 프로젝트를 하나의 도메인에 연결하거나 친구의 지갑에 연결할 수 있습니다.
+Subdomains can be helpful for everyday users. For example, they can associate multiple projects with a single domain or link to friends' wallet addresses.
 
 ### 컨트랙트 데이터
 
-컨트랙트 데이터에서 소유자의 주소와 *도메인*->*레코드 해시*->*레코드 값* 딕셔너리를 저장해야 합니다.
+The contract must store the owner's address and a dictionary structured as **domain → record hash → record value**.
 
 ```func
 global slice owner;
@@ -183,10 +194,10 @@ const int op::update_record = 0x537a3491;
 ;;     value:(Maybe ^Cell) = InMsgBody;
 
 () recv_internal(cell in_msg, slice in_msg_body) {
-  if (in_msg_body.slice_empty?()) { return (); }   ;; simple money transfer
+  if (in_msg_body.slice_empty?()) { return (); }   ;; Simple money transfer.
 
   slice in_msg_full = in_msg.begin_parse();
-  if (in_msg_full~load_uint(4) & 1) { return (); } ;; bounced message
+  if (in_msg_full~load_uint(4) & 1) { return (); } ;; Bounced message.
 
   slice sender = in_msg_full~load_msg_addr();
   load_data();
@@ -198,7 +209,7 @@ const int op::update_record = 0x537a3491;
     (cell records, _) = domains.udict_get_ref?(256, string_hash(domain));
 
     int key = in_msg_body~load_uint(256);
-    throw_if(502, key == 0);  ;; cannot update "all records" record
+    throw_if(502, key == 0);  ;; Cannot update "all records" record.
 
     if (in_msg_body~load_uint(1) == 1) {
       cell value = in_msg_body~load_ref();
@@ -213,11 +224,16 @@ const int op::update_record = 0x537a3491;
 }
 ```
 
-들어오는 메시지에 요청이 포함되어 있는지, 바운스되지 않았는지, 소유자로부터 온 것인지, 요청이 `op::update_record`인지 확인합니다.
+We begin by verifying that the incoming message:
 
-그런 다음 메시지에서 도메인 이름을 로드합니다. 도메인을 있는 그대로 딕셔너리에 저장할 수 없습니다. 길이가 다를 수 있지만 TVM 비접두 딕셔너리는 길이가 같은 키만 포함할 수 있기 때문입니다. 따라서 `string_hash(domain)` - 도메인 이름의 SHA-256을 계산합니다. 도메인 이름은 정수 개수의 옥텟을 가지므로 잘 작동합니다.
+- Contains a valid request
+- Is not bounced
+- Comes from the owner
+- Specifies the `op::update_record` operation.
 
-그 후, 지정된 도메인에 대한 레코드를 업데이트하고 새 데이터를 컨트랙트 저장소에 저장합니다.
+Next, we extract the domain name from the message. Domains cannot be stored directly in a dictionary since they may vary in length — and TVM non-prefix dictionaries require keys of fixed length. To solve this, we compute `string_hash(domain)`, which is the SHA-256 hash of the domain name. Domain names are guaranteed to contain an integer number of octets, so hashing them is safe and consistent.
+
+Finally, we update the record associated with the specified domain and write the new data to the contract storage.
 
 ### 도메인 리졸빙
 
@@ -225,7 +241,7 @@ const int op::update_record = 0x537a3491;
 (slice, slice) ~parse_sd(slice subdomain) {
   ;; "test\0qwerty\0" -> "test" "qwerty\0"
   slice subdomain_sfx = subdomain;
-  while (subdomain_sfx~load_uint(8)) { }  ;; searching zero byte
+  while (subdomain_sfx~load_uint(8)) { }  ;; Searching zero byte.
   subdomain~skip_last_bits(slice_bits(subdomain_sfx));
   return (subdomain, subdomain_sfx);
 }
@@ -241,13 +257,13 @@ const int op::update_record = 0x537a3491;
   load_data();
   (cell records, _) = domains.udict_get_ref?(256, string_hash(subdomain));
 
-  if (subdomain_suffix_bits > 0) { ;; more than "<SUBDOMAIN>\0" requested
+  if (subdomain_suffix_bits > 0) { ;; More than "<SUBDOMAIN>\0" requested.
     category = "dns_next_resolver"H;
   }
 
   int resolved = subdomain_bits - subdomain_suffix_bits;
 
-  if (category == 0) { ;; all categories are requested
+  if (category == 0) { ;; All categories are requested.
     return (resolved, records);
   }
 
@@ -256,13 +272,13 @@ const int op::update_record = 0x537a3491;
 }
 ```
 
-`dnsresolve` 함수는 요청된 서브도메인이 정수 개수의 옥텟을 포함하는지 확인하고, 서브도메인 슬라이스 시작 부분의 선택적 0 바이트를 건너뛴 다음, 최상위 레벨 도메인과 나머지 부분으로 분할합니다(`test\0qwerty\0`는 `test`와 `qwerty\0`로 분할됨). 요청된 도메인에 해당하는 레코드 딕셔너리가 로드됩니다.
+The `dnsresolve` function begins by verifying that the requested subdomain contains an integer number of octets. It skips an optional zero byte at the start of the subdomain slice, then splits the slice into the top-level domain and the remaining portion. For example, `test\0qwerty\0` is split into `test` and `qwerty\0`. Next, the function loads the record dictionary associated with the requested domain.
 
-서브도메인 접미사가 비어 있지 않으면 함수는 리졸브된 바이트 수와 `"dns_next_resolver"H` 키에서 찾은 다음 리졸버 레코드를 반환합니다. 그렇지 않으면 함수는 리졸브된 바이트 수(전체 슬라이스 길이)와 요청된 레코드를 반환합니다.
+If a non-empty subdomain suffix remains, the function returns the number of bytes resolved along with the next resolver record, which is stored under the `"dns_next_resolver"H` key. Otherwise, it returns the total number of resolved bytes, i.e., the full slice length and the requested record.
 
-오류를 더 우아하게 처리하는 방법이 있지만 엄격히 필요하지는 않습니다.
+While this function could be improved to handle errors more gracefully, such enhancements are not strictly required.
 
-## 부록 1. resolve-contract.ton의 코드
+## Appendix 1: code of resolve-contract.ton
 
 <details>
 <summary>subresolver.fc</summary>
@@ -444,3 +460,6 @@ slice decode_base64_address(slice readable) method_id {
 ```
 
 </details>
+
+<Feedback />
+

@@ -1,8 +1,6 @@
-# Подписки на контент
+import Feedback from '@site/src/components/Feedback';
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
+# Content subscriptions
 
 Благодаря тому, что транзакции в блокчейне TON выполняются быстро, а сетевые сборы низкие, вы можете обрабатывать повторяющиеся платежи on-chain с помощью смарт-контрактов.
 
@@ -39,4 +37,5 @@ Subscription contract requires authorization exactly once, on installation; then
 
 ## Реализация
 
-Хорошим примером реализации являются децентрализованные подписки на Toncoin на приватные каналы в Telegram с помощью бота [@donate](https://t.me/donate) и кошелька [Tonkeeper](https://tonkeeper.com).
+A good example of implementation is decentralized subscriptions for Toncoin to private channels in Telegram by the [@donate](https://t.me/donate) bot and the [Tonkeeper wallet](https://tonkeeper.com). <Feedback />
+

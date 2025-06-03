@@ -1,4 +1,6 @@
-# 오라클에 대하여
+import Feedback from '@site/src/components/Feedback';
+
+# About oracles
 
 블록체인 오라클은 블록체인을 외부 시스템과 연결하여 실제 세계의 입력을 기반으로 스마트 계약이 실행될 수 있게 하는 엔티티입니다.
 
@@ -56,6 +58,8 @@
 
 ## TON의 오라클 목록
 
-- [Pyth Oracles](/v3/documentation/dapps/oracles/pyth)
-- [RedStone Oracles](/v3/documentation/dapps/oracles/red_stone)
+- [Pyth oracles](/v3/documentation/dapps/oracles/pyth)
+- [RedStone oracles](/v3/documentation/dapps/oracles/red_stone)
+
+<Feedback />
 

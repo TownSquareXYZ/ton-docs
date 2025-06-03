@@ -2,6 +2,8 @@
 description: 이 글에서는 Telegram 봇에서 결제를 수락하는 과정을 안내합니다.
 ---
 
+import Feedback from '@site/src/components/Feedback';
+
 # TON 결제를 지원하는 상점 봇 만들기
 
 이 글에서는 텔레그램 봇에서 결제를 처리하는 방법을 알려드리겠습니다.
@@ -10,27 +12,26 @@ description: 이 글에서는 Telegram 봇에서 결제를 수락하는 과정�
 
 이 글에서 다음 내용을 배우게 됩니다:
 
-- Python + Aiogram을 사용하여 텔레그램 봇 만들기
-- 공개 TON API (TON Center) 사용하기
-- SQlite 데이터베이스 다루기
-
-그리고 마지막으로: 앞에서 배운 내용을 바탕으로 텔레그램 봇에서 결제를 받는 방법을 배웁니다.
+- Create a Telegram bot using Python and Aiogram,
+- Work with the public TON Center API,
+- Work with an SQlite database,
+- How to accept payments in a Telegram bot by applying the knowledge from previous steps.
 
 ## 📚 시작하기 전에
 
-최신 버전의 Python이 설치되어 있고 다음 패키지들이 설치되어 있는지 확인하세요:
+Make sure you have installed the latest version of Python and the following packages:
 
-- aiogram
-- requests
-- sqlite3
+- aiogram,
+- requests.
+- sqlite3.
 
 ## 🚀 시작하기!
 
-다음 순서로 진행하겠습니다:
+We'll follow this order:
 
-1. SQlite 데이터베이스 작업
-2. 공개 TON API (TON Center) 사용
-3. Python + Aiogram으로 텔레그램 봇 만들기
+1. Work with an SQlite database.
+2. Work with the public TON API (TON Center).
+3. Create a Telegram bot using Python and Aiogram.
 4. 완성!
 
 프로젝트 디렉토리에 다음 네 개의 파일을 만듭니다:
@@ -45,7 +46,7 @@ telegram-bot
 
 ## 설정
 
-`config.json`에 봇 토큰과 공개 TON API 키를 저장합니다.
+In `config.json`, we store our bot token and public TON API key.
 
 ```json
 {
@@ -58,7 +59,7 @@ telegram-bot
 }
 ```
 
-`config.json`에서 어떤 네트워크를 사용할지 결정합니다: `testnet` 또는 `mainnet`.
+In `config.json`, define whether you'll use use `Testnet` or `Mainnet`.
 
 ## 데이터베이스
 
@@ -66,9 +67,9 @@ telegram-bot
 
 이 예제에서는 로컬 Sqlite 데이터베이스를 사용합니다.
 
-`db.py`를 만듭니다.
+Create a file called `db.py`.
 
-데이터베이스 작업을 시작하기 위해 sqlite3 모듈과 시간 관련 작업을 위한 모듈들을 임포트해야 합니다.
+To work with the database, import sqlite3 module and some modules for handling time.
 
 ```python
 import sqlite3
@@ -76,11 +77,11 @@ import datetime
 import pytz
 ```
 
-- `sqlite3` - sqlite 데이터베이스 작업을 위한 모듈
-- `datetime` - 시간 작업을 위한 모듈
-- `pytz` - 타임존 작업을 위한 모듈
+- `sqlite3`—module for working with sqlite database,
+- `datetime`—module for working with time.
+- `pytz`—module for working with timezones.
 
-다음으로 데이터베이스 연결과 작업을 위한 커서를 생성해야 합니다:
+Next, establish a connection to the database and a cursor:
 
 ```python
 locCon = sqlite3.connect('local.db', check_same_thread=False)
@@ -89,7 +90,7 @@ cur = locCon.cursor()
 
 데이터베이스가 없으면 자동으로 생성됩니다.
 
-이제 테이블을 만들 수 있습니다. 두 개의 테이블이 필요합니다.
+We need two tables:
 
 #### 거래:
 
@@ -103,10 +104,10 @@ CREATE TABLE transactions (
 );
 ```
 
-- `source` - 송금자의 지갑 주소
-- `hash` - 거래 해시
-- `value` - 거래 금액
-- `comment` - 거래 코멘트
+- `source`—payer's wallet address,
+- `hash`—transaction hash,
+- `value`—transaction value,
+- `comment`—transaction comment.
 
 #### 사용자:
 
@@ -120,14 +121,17 @@ CREATE TABLE users (
 );
 ```
 
-- `id` - 텔레그램 사용자 ID
-- `username` - 텔레그램 사용자명
-- `first_name` - 텔레그램 사용자 이름
-- `wallet` - 사용자 지갑 주소
+- `id`—Telegram user ID,
+- `username`—Telegram username,
+- `first_name`—Telegram user's first name,
+- `wallet`—user wallet address.
 
-`users` 테이블에는 사용자를 저장합니다 :) 텔레그램 ID, @username, 이름, 지갑 주소를 저장합니다. 지갑은 첫 결제가 성공했을 때 데이터베이스에 추가됩니다.
+The `users` table stores Telegram users along with their Telegram ID, @username,
+first name, and wallet. The wallet is added to the database upon the first
+successful payment.
 
-`transactions` 테이블에는 검증된 거래를 저장합니다. 거래를 검증하기 위해서는 해시, source, value, comment가 필요합니다.
+The `transactions` table stores verified transactions.
+To verify a transaction, we need a unique transaction hash, source, value, and comment.
 
 이 테이블들을 생성하기 위해 다음 함수를 실행해야 합니다:
 
@@ -153,14 +157,14 @@ locCon.commit()
 
 이 코드는 테이블이 없는 경우에만 생성합니다.
 
-### 데이터베이스 작업
+### Work with database
 
-상황을 분석해봅시다:
-사용자가 거래를 했습니다. 어떻게 검증할까요? 어떻게 같은 거래가 두 번 확인되지 않도록 할까요?
+Let's analyze the process:
+A user makes a transaction. How do we verify it? How do we ensure that the same transaction isn't confirmed twice?
 
-거래에는 body_hash가 있어서 이를 통해 해당 거래가 데이터베이스에 있는지 쉽게 알 수 있습니다.
+Each transaction includes a `body_hash`, which allows us to easily check whether the transaction is already in the database.
 
-확실한 거래만 데이터베이스에 추가합니다. `check_transaction` 함수는 찾은 거래가 데이터베이스에 있는지 확인합니다.
+We only add transactions that have been verified. The `check_transaction` function determines whether a given transaction is already in the database.
 
 `add_v_transaction`은 거래를 transactions 테이블에 추가합니다.
 
@@ -180,7 +184,7 @@ def check_transaction(hash):
     return False
 ```
 
-`check_user`는 사용자가 데이터베이스에 있는지 확인하고 없으면 추가합니다.
+`check_user` verifies if the user exists in the database and adds them if not.
 
 ```python
 def check_user(user_id, username, first_name):
@@ -195,7 +199,7 @@ def check_user(user_id, username, first_name):
     return True
 ```
 
-사용자는 테이블에 지갑을 저장할 수 있습니다. 첫 구매가 성공하면 추가됩니다. `v_wallet` 함수는 사용자에게 연결된 지갑이 있는지 확인합니다. 있으면 반환하고, 없으면 추가합니다.
+The user can store a wallet in the table. It is added with the first successful purchase. The `v_wallet` function checks if the user has an associated wallet. If not, it adds the wallet upon the user's first successful purchase.
 
 ```python
 def v_wallet(user_id, wallet):
@@ -210,7 +214,7 @@ def v_wallet(user_id, wallet):
         return result[0]
 ```
 
-`get_user_wallet`은 단순히 사용자의 지갑을 반환합니다.
+`get_user_wallet` simply retrieves the user's wallet.
 
 ```python
 def get_user_wallet(user_id):
@@ -219,8 +223,8 @@ def get_user_wallet(user_id):
     return result[0]
 ```
 
-`get_user_payments`는 사용자의 결제 목록을 반환합니다.
-이 함수는 사용자에게 지갑이 있는지 확인합니다. 있으면 결제 목록을 반환합니다.
+`get_user_payments` returns the user's payment history.
+This function checks if the user has a wallet. If they do, it provides the list of their payments.
 
 ```python
 def get_user_payments(user_id):
@@ -248,26 +252,27 @@ def get_user_payments(user_id):
 
 ## API
 
-*블록체인 네트워크 참여자들이 제공하는 써드파티 API를 사용할 수 있습니다. 이러한 서비스를 통해 개발자는 자체 노드를 실행하고 API를 커스터마이징하는 단계를 건너뛸 수 있습니다.*
+*We can interact with the blockchain using third-party APIs provided by network members. These services allow developers to bypass the need their own node and customize their API.*
 
-### 필요한 요청들
+### Required requests
 
-사실, 사용자가 우리에게 필요한 금액을 송금했다는 것을 확인하기 위해 무엇이 필요할까요?
+What do we need to confirm that a user has transferred the required amount?
 
-우리 지갑으로의 최근 입금 내역을 보고 그 중에서 올바른 주소에서 올바른 금액으로(그리고 가능하면 고유한 코멘트와 함께) 보낸 거래를 찾기만 하면 됩니다.
-이 모든 것을 위해 TON Center에는 `getTransactions` 메소드가 있습니다.
+We simply need to check the latest incoming transfers to our wallet and find a transaction from the right address with the right amount (and possibly a unique comment).
+For this, TON Center provides the `getTransactions` method.
 
 ### getTransactions
 
-기본적으로 이 메소드를 사용하면 마지막 10개의 거래를 받습니다. 더 많이 받을 수도 있지만, 이는 응답 시간을 약간 늘릴 것입니다. 그리고 아마도 그렇게 많이 필요하지는 않을 것입니다.
+By default, this method retrieves the last 10 transactions. However, we can request more, though this slightly increases the response time. In most cases, requestin additional transactions is unnecessary.
 
-더 많이 받고 싶다면, 각 거래에는 `lt`와 `hash`가 있습니다. 예를 들어 30개의 거래를 보고 그 중에 원하는 것이 없다면, 마지막 거래의 `lt`와 `hash`를 가져와서 요청에 추가할 수 있습니다.
+If more transactions are required, each transaction includes `lt` and `hash`. We can fetch, for example, the last 30 transactions. If the required transaction is not found, we can take `lt` and `hash` of the last transaction in the list and include them in a new request.
 
-그래서 다음 30개의 거래를 받을 수 있고 이런 식으로 계속할 수 있습니다.
+This allows us to retrieve the next 30 transactions, and so on.
 
-예를 들어, 테스트넷에 `EQAVKMzqtrvNB2SkcBONOijadqFZ1gMdjmzh1Y3HB1p_zai5` 지갑이 있고, 여기에 몇 개의 거래가 있습니다:
+For example, consider the wallet in the test network `EQAVKMzqtrvNB2SkcBONOijadqFZ1gMdjmzh1Y3HB1p_zai5`.
 
-쿼리를 사용하면 두 개의 거래를 포함하는 응답을 받습니다(지금은 필요하지 않은 일부 정보는 숨겨져 있습니다, 전체 응답은 링크에서 볼 수 있습니다).
+Using a query returns a response containing two transactions.
+Note that some details have been omitted for clarity.
 
 ```json
 {
@@ -309,7 +314,7 @@ def get_user_payments(user_id):
 }
 ```
 
-이 주소에서 마지막 두 개의 거래를 받았습니다. 쿼리에 `lt`와 `hash`를 추가하면 다시 두 개의 거래를 받습니다. 하지만 두 번째 거래는 순서상 다음거래가 됩니다. 즉, 이 주소의 두 번째와 세 번째 거래를 받게 됩니다.
+By adding `lt` and `hash` to the query, we can retrieve the next two two transactions in sequence. That is, instead of getting the first and second transactions, we will receive the second and third.
 
 ```json
 {
@@ -347,13 +352,13 @@ def get_user_payments(user_id):
 }
 ```
 
-이 요청은 이렇게 보일 것입니다.
+The request will look like as follows [this.](https://testnet.toncenter.com/api/v2/getTransactions?address=EQAVKMzqtrvNB2SkcBONOijadqFZ1gMdjmzh1Y3HB1p_zai5&limit=2&lt=1943166000003&hash=hxIQqn7lYD%2Fc%2FfNS7W%2FiVsg2kx0p%2FkNIGF6Ld0QEIxk%3D&to_lt=0&archival=true)
 
 또한 `detectAddress` 메소드도 필요할 것입니다.
 
-테스트넷의 Tonkeeper 지갑 주소 예시입니다: `kQCzQJJBAQ-FrEFcvxO5sNxhV9CaOdK9CCfq2yCBnwZ4aCTb`. 만약 익스플로러에서 거래를 찾아보면, 위 주소 대신에 다음과 같이 나타납니다: `EQCzQJJBAQ-FrEFcvxO5sNxhV9CaOdK9CCfq2yCBnwZ4aJ9R`.
+Here is an example of a Tonkeeper wallet address on Testnet: `kQCzQJJBAQ-FrEFcvxO5sNxhV9CaOdK9CCfq2yCBnwZ4aCTb`. If we look for the transaction in the explorer, the address appears as: `EQCzQJJBAQ-FrEFcvxO5sNxhV9CaOdK9CCfq2yCBnwZ4aJ9R`.
 
-이 메소드는 우리에게 "올바른" 주소를 반환합니다.
+This method provides us with the correctly formatted address.
 
 ```json
 {
@@ -373,17 +378,15 @@ def get_user_payments(user_id):
 }
 ```
 
-우리에게는 `b64url`이 필요합니다.
+Additionally, we need `b64url`, which allows us to validate the user's address.
 
-이 메소드를 통해 사용자의 주소를 검증할 수 있습니다.
+Basically, that's all we need.
 
-대부분 우리가 필요한 것은 이게 전부입니다.
+### API requests and what to do with them
 
-### API 요청과 그 처리 방법
+Now, let's move to the IDE andreate the `api.py` file.
 
-IDE로 돌아가봅시다. `api.py` 파일을 만듭니다.
-
-필요한 라이브러리를 임포트합니다.
+Import the necessary libraries.
 
 ```python
 import requests
@@ -393,11 +396,11 @@ import json
 import db
 ```
 
-- `requests` - API 요청을 위해
-- `json` - json 작업을 위해
-- `db` - sqlite 데이터베이스 작업을 위해
+- `requests`—to make requests to the API,
+- `json`—to work with JSON,
+- `db`—to work with our sqlite database.
 
-요청의 시작 부분을 저장할 두 개의 변수를 만듭니다.
+Let's create two variables to store the base URLs for our requests.
 
 ```python
 # This is the beginning of our requests
@@ -405,7 +408,7 @@ MAINNET_API_BASE = "https://toncenter.com/api/v2/"
 TESTNET_API_BASE = "https://testnet.toncenter.com/api/v2/"
 ```
 
-config.json 파일에서 모든 API 토큰과 지갑을 가져옵니다.
+We get all API tokens and wallets from the config.json file.
 
 ```python
 # Find out which network we are working on
@@ -418,7 +421,7 @@ with open('config.json', 'r') as f:
     WORK_MODE = config_json['WORK_MODE']
 ```
 
-네트워크에 따라 필요한 데이터를 가져옵니다.
+Depending on the network, we take the necessary data.
 
 ```python
 if WORK_MODE == "mainnet":
@@ -431,7 +434,7 @@ else:
     WALLET = TESTNET_WALLET
 ```
 
-첫 번째 요청 함수 `detectAddress`입니다.
+Our first request function `detectAddress`.
 
 ```python
 def detect_address(address):
@@ -444,11 +447,11 @@ def detect_address(address):
         return False
 ```
 
-입력으로는 예상 주소를 받고, 출력으로는 추가 작업에 필요한 "올바른" 주소나 False를 반환합니다.
+At the input, we have the estimated address, and at the output, we have either the "correct" address necessary for us to do further work or False.
 
-요청 끝에 API 키가 추가된 것을 볼 수 있습니다. 이는 API 요청 제한을 해제하기 위해 필요합니다. 키가 없으면 초당 하나의 요청으로 제한됩니다.
+You may notice that an API key has appeared at the end of the request. It is needed to remove the limit on the number of requests to the API. Without it, we are limited to one request per second.
 
-다음은 `getTransactions`을 위한 함수입니다:
+Here is next function for `getTransactions`:
 
 ```python
 def get_address_transactions():
@@ -458,13 +461,12 @@ def get_address_transactions():
     return response['result']
 ```
 
-이 함수는 우리의 `WALLET`으로의 마지막 30개 거래를 반환합니다.
+This function returns the last 30 transactions for our `WALLET`.
 
-여기서 `archival=true`를 볼 수 있습니다. 이는 블록체인의 전체 기록을 가진 노드에서만 거래를 가져오기 위해 필요합니다.
+The `archival=true` parameter ensures that transactions are retrieved from a node with a complete blockchain history.
 
-출력으로는 거래 목록을 받습니다—[{0},{1},...,{29}]. 간단히 말해서 딕셔너리의 리스트입니다.
-
-그리고 마지막 함수입니다:
+At the output, we get a list of transactions, such as `[{0},{1},...,{29}]` which are represented as a list of dictionaries.
+And finally the last function:
 
 ```python
 def find_transaction(user_wallet, value, comment):
@@ -495,15 +497,15 @@ def find_transaction(user_wallet, value, comment):
     return False
 ```
 
-입력으로는 "올바른" 지갑 주소, 금액, 코멘트를 받습니다. 의도한 입금 거래를 찾으면 True를, 그렇지 않으면 False를 반환합니다.
+At the input, we get the correct wallet address, amount and comment. If the expected incoming transaction is found, the output is True; otherwise, it is False.
 
 ## 텔레그램 봇
 
-먼저 봇의 기본을 만들어봅시다.
+First, let's establish the bot's foundation.
 
 ### 임포트
 
-이 부분에서는 필요한 라이브러리를 임포트합니다.
+In this part, we will import the required libraries.
 
 `aiogram`에서는 `Bot`, `Dispatcher`, `types`, `executor`가 필요합니다.
 
@@ -537,7 +539,7 @@ import api
 
 ### 설정 세팅
 
-`BOT_TOKEN`과 결제를 받을 지갑 같은 데이터는 편의를 위해 `config.json`이라는 별도 파일에 저장하는 것이 좋습니다.
+It is recommended to store data such as `BOT_TOKEN` and wallet addresses for receiving payments in a separate file called `config.json` for convenience.
 
 ```json
 {
@@ -552,24 +554,22 @@ import api
 
 #### 봇 토큰
 
-`BOT_TOKEN`은 [@BotFather](https://t.me/BotFather)에서 받은 텔레그램 봇 토큰입니다.
+`BOT_TOKEN` is the Telegram bot token obtained from [@BotFather](https://t.me/BotFather)
 
 #### 작동 모드
 
-`WORK_MODE` 키에서 봇의 작동 모드를 정의합니다 - 테스트넷 또는 메인넷에서; 각각 `testnet` 또는 `mainnet`입니다.
+The `WORK_MODE` key defines whether the bot operates in the test or main network; `testnet` or `mainnet` respectively.
 
 #### API 토큰
 
-`*_API_TOKEN`용 API 토큰은 [TON Center](https://toncenter.com/) 봇에서 얻을 수 있습니다:
+API tokens for `*_API_TOKEN` can be obtained from the [TON Center](https://toncenter.com/) bots:
 
-- 메인넷용 — [@tonapibot](https://t.me/tonapibot)
-- 테스트넷용 — [@tontestnetapibot](https://t.me/tontestnetapibot)
+- Mainnet — [@tonapibot](https://t.me/tonapibot)
+- Testnet — [@tontestnetapibot](https://t.me/tontestnetapibot)
 
-#### 설정을 봇에 연결
+#### Connecting the config to our bot
 
-다음으로 봇 설정을 마무리합니다.
-
-`config.json`에서 봇 작동을 위한 토큰을 가져옵니다:
+Next, we complete the bot setup by retrieving the bot token from `config.json` :
 
 ```python
 with open('config.json', 'r') as f:
@@ -598,7 +598,7 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 
 ### 상태
 
-봇의 워크플로우를 단계별로 나누기 위해 상태가 필요합니다. 각 단계를 특정 작업에 맞게 전문화할 수 있습니다.
+States allow us to devide the bot workflow into stages, each designated for a specific task.
 
 ```python
 class DataInput (StatesGroup):
@@ -608,7 +608,7 @@ class DataInput (StatesGroup):
     PayState = State()
 ```
 
-자세한 내용과 예시는 [Aiogram 문서](https://docs.aiogram.dev/en/latest/)를 참조하세요.
+For details and examples, refer to the [Aiogram documentation](https://docs.aiogram.dev/en/latest/).
 
 ### 메시지 핸들러
 
@@ -616,7 +616,7 @@ class DataInput (StatesGroup):
 
 두 가지 유형의 핸들러를 사용할 것입니다:
 
-- `message_handler`는 사용자의 메시지를 처리하는 데 사용됩니다.
+- `message_handler` is used to handle messages from users,
 - `callback_query_handler`는 인라인 키보드의 콜백을 처리하는 데 사용됩니다.
 
 사용자의 메시지를 처리하려면 함수 위에 `@dp.message_handler` 데코레이터를 붙여 `message_handler`를 사용합니다. 이 경우 사용자가 봇에 메시지를 보낼 때 함수가 호출됩니다.
@@ -650,13 +650,13 @@ async def cmd_start(message: types.Message):
     await DataInput.firstState.set()
 ```
 
-이 핸들러의 데코레이터에서 `state='*'`를 볼 수 있습니다. 이는 봇의 상태와 관계없이 이 핸들러가 호출된다는 의미입니다. 특정 상태에서만 핸들러가 호출되도록 하려면 `state=DataInput.firstState`와 같이 작성합니다. 이 경우 봇이 `firstState` 상태일 때만 핸들러가 호출됩니다.
+In the decorator of a handler, you may see `state='*'`, meaning the handler will be triggered regardless of the bot's state. If we want the handler to activate only in a specific state, we specify it, such as `state=DataInput.firstState`, ensuring the handler runs only when the bot is in `firstState`.
 
 사용자가 `/start` 명령을 보내면, 봇은 `db.check_user` 함수를 사용하여 사용자가 데이터베이스에 있는지 확인합니다. 없다면 추가합니다. 이 함수는 bool 값을 반환하므로 사용자에게 다르게 응답할 수 있습니다. 그 후 봇은 상태를 `firstState`로 설정합니다.
 
 #### /cancel
 
-다음은 /cancel 명령 핸들러입니다. `firstState` 상태로 돌아가는 데 필요합니다.
+The /cancel command returns the bot to `firstState`.
 
 ```python
 @dp.message_handler(commands=['cancel'], state="*")
@@ -668,7 +668,7 @@ async def cmd_cancel(message: types.Message):
 
 #### /buy
 
-그리고 물론 `/buy` 명령 핸들러입니다. 이 예제에서는 다양한 종류의 공기를 판매할 것입니다. 공기 종류를 선택하기 위해 답장 키보드를 사용할 것입니다.
+And, of course, there is a `/buy` command handler. In this example, we sell different types of air and use the reply keyboard to choose the type.
 
 ```python
 # /buy command handler
@@ -717,27 +717,27 @@ Use...
 await state.update_data(air_type="Just pure 🌫")
 ```
 
-를 사용하여 FSMContext에 공기 종류를 저장합니다. 그 후 상태를 `WalletState`로 설정하고 사용자에게 지갑 주소를 보내달라고 요청합니다.
+...to store the air type in FSMContext. After that, we set the state to `WalletState` and ask the user to send their wallet address.
 
-이 핸들러는 `WalletState`가 설정되어 있을 때만 작동하며 사용자로부터 지갑 주소가 포함된 메시지를 기다립니다.
+This handler activates only in WalletState, expecting a valid wallet address.
 
-다음 핸들러는 매우 복잡해 보이지만 그렇지 않습니다. 먼저 지갑 주소가 48자인지 `len(message.text) == 48`로 확인합니다. 지갑 주소는 48자이기 때문입니다. 그 다음 `api.detect_address` 함수를 사용하여 주소가 유효한지 확인합니다. API 부분에서 기억하시겠지만, 이 함수는 또한 데이터베이스에 저장될 "올바른" 주소를 반환합니다.
+Consider the next handler. It may seem complex, but it isn’t. First, we verify whether the message contains a wallet address of the correct length using `len(message.text) == 48`. Then, we call the `api.detect_address` function to validate the address. This function also returns the standardized *correct* address, which is stored in the database.
 
 그 다음 `await state.get_data()`를 사용하여 FSMContext에서 공기 종류를 가져와 `user_data` 변수에 저장합니다.
 
 이제 결제 프로세스에 필요한 모든 데이터가 있습니다. 결제 링크를 생성하여 사용자에게 보내기만 하면 됩니다. 인라인 키보드를 사용해보겠습니다.
 
-이 예제에서는 결제를 위한 세 개의 버튼이 생성됩니다:
+The bot provides three payment buttons:
 
-- 공식 TON Wallet용
-- Tonhub용
-- Tonkeeper용
+- TON wallet,
+- Tonhub,
+- Tonkeeper.
 
-지갑별 버튼의 장점은 사용자가 아직 지갑이 없는 경우 사이트에서 설치를 안내한다는 것입니다.
+These buttons are advantageous of special buttons because they guide users to install a wallet if they don't have one
 
 원하는 대로 사용하실 수 있습니다.
 
-그리고 결제가 완료된 후 사용자가 누를 버튼도 필요합니다. 이를 통해 결제가 성공했는지 확인할 수 있습니다.
+And we need a button that the user will press after tmaking a transaction, allowing the bot to verify the payment.
 
 ```python
 @dp.message_handler(state=DataInput.WalletState)
@@ -775,7 +775,7 @@ async def user_wallet(message: types.Message, state: FSMContext):
 
 #### /me
 
-마지막으로 필요한 메시지 핸들러는 `/me` 명령을 위한 것입니다. 사용자의 결제 내역을 보여줍니다.
+One last message handler is `/me`. It shows the user's payments.
 
 ```python
 # /me command handler
@@ -794,7 +794,9 @@ async def cmd_me(message: types.Message):
 
 ### 콜백 핸들러
 
-버튼에 콜백 데이터를 설정할 수 있는데, 이는 사용자가 버튼을 누를 때 봇으로 전송됩니다. 거래 후 사용자가 누를 버튼에 "check" 콜백 데이터를 설정했습니다. 결과적으로 이 콜백을 처리해야 합니다.
+Callback data is embedded in buttons, allowing the bot to recognize user actions.
+
+For example, the “Payment Confirmed” button sends the callback "check", which the bot must process.
 
 콜백 핸들러는 메시지 핸들러와 매우 비슷하지만 `message` 대신 `types.CallbackQuery`를 인자로 받습니다. 함수 데코레이터도 다릅니다.
 
@@ -816,9 +818,9 @@ async def check_transaction(call: types.CallbackQuery, state: FSMContext):
         await DataInput.firstState.set()
 ```
 
-이 핸들러에서는 FSMContext에서 사용자 데이터를 가져와 `api.find_transaction` 함수를 사용하여 거래가 성공했는지 확인합니다. 성공했다면 데이터베이스에 지갑 주소를 저장하고 사용자에게 알림을 보냅니다. 그 후 사용자는 `/me` 명령을 사용하여 거래 내역을 찾을 수 있습니다.
+In this handler we get user data from FSMContext and use `api.find_transaction` to check if the transaction was successful. If so, the wallet address is stored in the database, and the bot notifies the user. After that, the user can check their transaction anytime using `/me`.
 
-### main.py의 마지막 부분
+### Finalizing main.py
 
 마지막으로 잊지 마세요:
 
@@ -838,20 +840,20 @@ if __name__ == '__main__':
 
 ## 봇 실행하기
 
-마침내 해냈습니다! 이제 작동하는 봇이 있어야 합니다. 테스트해보세요!
+Congratulations! The bot is ready. You can test it!
 
 봇 실행 단계:
 
 1. `config.json` 파일을 채웁니다.
 2. `main.py`를 실행합니다.
 
-모든 파일은 같은 폴더에 있어야 합니다. 봇을 시작하려면 `main.py` 파일을 실행해야 합니다. IDE에서 실행하거나 터미널에서 다음과 같이 실행할 수 있습니다:
+All files must be in the same folder. To start the bot, you need to run the `main.py` file. You can do it in your IDE or in the terminal like this:
 
 ```
 python main.py
 ```
 
-오류가 있다면 터미널에서 확인할 수 있습니다. 코드에서 뭔가를 놓쳤을 수 있습니다.
+If errors occur, check them in the terminal. Maybe you have missed something in the code.
 
 작동하는 봇의 예시 [@AirDealerBot](https://t.me/AirDealerBot)
 
@@ -860,4 +862,7 @@ python main.py
 ## 참고자료
 
 - [ton-footsteps/8](https://github.com/ton-society/ton-footsteps/issues/8)의 일부로 TON을 위해 만들어짐
-- 작성자: Lev ([텔레그램 @Revuza](https://t.me/revuza), [GitHub LevZed](https://github.com/LevZed))
+- [Telegram @Revuza](https://t.me/revuza), [LevZed on GitHub](https://github.com/LevZed) - *Lev*
+
+<Feedback />
+

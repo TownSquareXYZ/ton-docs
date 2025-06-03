@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import Button from '@site/src/components/button'
@@ -150,3 +152,6 @@ mkdir ~/ton/build && cd ~/ton/build && cmake .. -DCMAKE_BUILD_TYPE=Release && ma
 核心团队以 [GitHub Actions](https://github.com/ton-blockchain/ton/releases/latest) 的形式为多个操作系统提供自动构建功能。
 
 点击上面的链接，在左侧选择与你的操作系统相关的工作流，点击最近的绿色传递构建，然后在 "工件 "下下载 "ton-binaries"。
+
+<Feedback />
+

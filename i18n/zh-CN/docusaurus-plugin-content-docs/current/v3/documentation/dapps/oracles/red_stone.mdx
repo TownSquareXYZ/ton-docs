@@ -1,6 +1,8 @@
+import Feedback from '@site/src/components/Feedback';
+
 import ThemedImage from '@theme/ThemedImage';
 
-# RedStone Oracles
+# RedStone oracles
 
 ## RedStone oracles 如何与 TON 一起工作
 
@@ -12,7 +14,7 @@ RedStone oracles采用另一种设计，为智能合约提供预言机数据。�
 
 - [Redstone TON Connector](https://github.com/redstone-finance/redstone-oracles-monorepo/tree/main/packages/ton-connector)
 
-## 智能合约
+## Smart contracts
 
 ### price_manager.fc
 
@@ -291,7 +293,7 @@ begin_cell()
 
 这是一条内部信息--它消耗 GAS 并修改合约的存储空间，因此必须以 TON 为单位支付。
 
-## TON RedStone 有效载荷包装
+## TON RedStone payload packing
 
 由于 TON [见](/v3/documentation/data-formats/tlb/cell-boc) 中 Bag-size 的限制，
 ，RedStone 有效载荷数据（以十六进制字符串表示）需要以更复杂的方式传递给合约。
@@ -344,8 +346,10 @@ begin_cell()
   上查看数据。
 - 其他错误代码的定义见 [此处](https://github.com/redstone-finance/redstone-oracles-monorepo/blob/main/packages/ton-connector/src/config/constants.ts)
 
-## 另请参见
+## See also
 
 - [内部信息文档](/v3/documentation/smart-contracts/message-management/internal-messages)
 - [RedStone数据打包](https://docs.redstone.finance/docs/smart-contract-devs/how-it-works)
 - [RedStone oracles smart-contracts](https://github.com/redstone-finance/redstone-oracles-monorepo/tree/main/packages/ton-connector/contracts)
+
+<Feedback />

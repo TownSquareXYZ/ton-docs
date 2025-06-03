@@ -1,67 +1,79 @@
+import Feedback from '@site/src/components/Feedback';
+
 # APIهای TON مبتنی بر HTTP
 
-:::tip
+There are different ways to connect to TON Blockchain:
 
-راه‌های مختلفی برای اتصال به بلاک‌چین وجود دارد:
+1. **RPC data provider or another API** - You must rely on its stability and security.
+2. ADNL connection - Connect to a [liteserver](/v3/guidelines/nodes/running-nodes/liteserver-node). While it may be inaccessible at times, it cannot provide false data due to library-implemented validation.
+3. Tonlib binary - Also connects to a liteserver, so it shares the same advantages and limitations. However, your application includes a dynamically loaded library compiled externally.
+4. Offchain-only - These SDKs allow you to create and serialize cells, which you can then send to APIs.
 
-1. **ارائه‌دهنده داده RPC یا API دیگر**: در بیشتر مواقع، باید بر ثبات و امنیت آن تکیه کنید.
-2. اتصال ADNL: شما در حال اتصال به یک [لایت‌سرور](/v3/guidelines/nodes/running-nodes/liteserver-node) هستید. ممکن است در دسترس نباشد، اما با یک سطح خاص از تایید (که در کتابخانه پیاده‌سازی شده است) نمی‌تواند دروغ بگوید.
-3. باینری Tonlib: شما همچنین به لایت‌سرور متصل می‌شوید، بنابراین تمامی مزایا و معایب آن اعمال می‌شود، اما برنامه شما همچنین شامل یک کتابخانه با بارگذاری پویا است که در خارج کامپایل شده است.
-4. فقط آف‌چین. این‌گونه SDKها اجازه می‌دهند تا سلول‌ها را ایجاد و سریالیز کنید که می‌توانید آنها را به API ارسال کنید.
+## Pros & Cons
 
-:::
+- ✅ Easy-to-use - Ideal for newcomers exploring TON.
 
-## مزایا و معایب
+- ✅ Web-oriented - Suitable for loading data from TON smart contracts via the web and sending messages.
 
-- ✅ عادی و مناسب برای شروع سریع، این برای هر تازه‌کاری که به دنبال بازی با TON است عالی است.
+- ❌ Simplified - Does not provide indexed TON API data.
 
-- ✅ وب‌محور. برای بارگذاری داده‌ها از قراردادهای هوشمند TON از طریق وب عالی است و همچنین امکان ارسال پیام‌ها را فراهم می‌کند.
+- ❌ HTTP-middleware dependency - Server responses cannot be fully trusted unless augmented with [merkle proofs](/v3/documentation/data-formats/tlb/proofs) to verify authenticity.
 
-- ❌ ساده‌شده. نمی‌توان اطلاعاتی که نیاز به API ایندکس شده TON دارند را دریافت کرد.
+## RPC nodes
 
-- ❌ واسط میانی HTTP. شما نمی‌توانید به طور کامل به پاسخ‌های سرور اعتماد کنید مگر اینکه سرور داده‌های بلاک‌چین را با [اثبات‌های مرکل](/v3/documentation/data-formats/tlb/proofs) برای تأیید اصالت آن تقویت کند.
+:::tip TON infrastructure status
 
-## مانیتورینگ
+- [status.toncenter](https://status.toncenter.com/) - Displays various node activity statistics from the last hour.
 
-- [status.toncenter](https://status.toncenter.com/) - همه گره‌های شبکه کامل و اعتبارسنج‌ها را در ساعات اخیر، همراه با آمارهای مختلف نمایش می‌دهد.
-- [Tonstat.us](https://tonstat.us/) - داشبوردی بر اساس Grafana ارائه می‌دهد که وضعیت همه APIهای مرتبط با TON را در زمان واقعی، با به‌روزرسانی داده‌ها هر ۵ دقیقه نمایش می‌دهد.
+- [Tonstat.us](https://tonstat.us/) - A real-time Grafana dashboard, updated every 5 minutes.
+  :::
 
-## گره‌های RPC
+- [QuickNode](https://www.quicknode.com/chains/ton?utm_source=ton-docs) - A top-tier blockchain node provider, offering fast access, smart DNS routing, and load-balanced scalability.
 
-- [QuickNode](https://www.quicknode.com/chains/ton?utm_source=ton-docs) - ارائه‌دهنده پیشرو نودهای بلاکچین که با مسیریابی هوشمند DNS سریع‌ترین دسترسی را برای پوشش جهانی بهینه‌شده و مقیاس‌پذیری با توازن بار فراهم می‌کند.
-- [Chainstack](https://chainstack.com/build-better-with-ton/) — نودهای RPC و ایندکسر در چندین منطقه با توزیع جغرافیایی و توازن بار.
-- [Tatum](https://docs.tatum.io/reference/rpc-ton) — در یک پلتفرم ساده و آسان برای استفاده، به گره‌های TON RPC و ابزارهای پیشرفته توسعه‌دهنده دسترسی پیدا کنید.
-- [گره‌های GetBlock](https://getblock.io/nodes/ton/) — با استفاده از گره‌های GetBlocks می‌توانید dAppهای خود را متصل و تست کنید
-- [TON Access](https://www.orbs.com/ton-access/) - یک HTTP API برای شبکه باز (TON).
-- [Toncenter](https://toncenter.com/api/v2/) — پروژه‌ای که توسط جامعه برای شروع سریع با API میزبانی می‌شود. (کلید API خود را دریافت کنید [@tonapibot](https://t.me/tonapibot))
-- [ton-node-docker](https://github.com/fmira21/ton-node-docker) - نود کامل Docker و Toncenter AP.
-- [toncenter/ton-http-api](https://github.com/toncenter/ton-http-api) — نود RPC خود را اجرا کنید.
-- [nownodes.io](https://nownodes.io/nodes) — نودهای کامل NOWNodes و اکسپلوررهای blockbook از طریق API.
-- [Chainbase](https://chainbase.com/chainNetwork/TON) — API نود و زیرساخت داده برای شبکه باز.
+- [Chainstack](https://chainstack.com/build-better-with-ton/) — Provides RPC nodes and indexers in multiple regions with geo and load balancing.
 
-## ایندکسر
+- [Tatum](https://docs.tatum.io/reference/rpc-ton) — Offers TON RPC node access and developer tools in a simple interface.
 
-### ایندکسر Toncenter برای TON
+- [GetBlock nodes](https://getblock.io/nodes/ton/) — Enables developers to connect and test DApps using GetBlock’s nodes.
 
-ایندکسرها، نه فقط بازیابی موارد خاص، امکان لیست کردن کیف‌های Jettonها، NFTها و تراکنش‌ها بر اساس فیلترهای خاص را فراهم می‌کنند.
+- [TON access](https://www.orbs.com/ton-access/) - A public HTTP API for The Open Network (TON).
 
-- می‌توان از TON Index عمومی استفاده کرد: تست‌ها و توسعه رایگان هستند، [پریمیوم](https://t.me/tonapibot) برای تولید - [toncenter.com/api/v3/](https://toncenter.com/api/v3/).
-- TON Index خود را با استفاده از [ورکر](https://github.com/toncenter/ton-index-worker/tree/36134e7376986c5517ee65e6a1ddd54b1c76cdba) و [TON Index API wrapper](https://github.com/toncenter/ton-indexer) اجرا کنید.
+- [TON Center](https://toncenter.com/api/v2/) — A community-hosted project for quick API access. (Get an API key [@tonapibot](https://t.me/tonapibot))
+
+- [ton-node-docker](https://github.com/fmira21/ton-node-docker) - A Docker Full Node and TON Center API.
+
+- [toncenter/ton-http-api](https://github.com/toncenter/ton-http-api) — Allows you to run your own RPC node.
+
+- [nownodes.io](https://nownodes.io/nodes) — Provides full nodes and blockbook explorers via API.
+
+- [Chainbase](https://chainbase.com/chainNetwork/TON) — A node API and data infrastructure for TON.
+
+## Indexer
+
+### TON Center TON index
+
+Indexers allow you to list jetton wallets, NFTs, and transactions using filters, rather than retrieving only specific ones.
+
+- Public TON index can be used for free tests and development; [premium](https://t.me/tonapibot) plans are available for production at [toncenter.com/api/v3/](https://toncenter.com/api/v3/).
+- Run your own TON index with [Worker](https://github.com/toncenter/ton-index-worker/tree/36134e7376986c5517ee65e6a1ddd54b1c76cdba) and [TON index API wrapper](https://github.com/toncenter/ton-indexer).
 
 ### Anton
 
-Anton که به زبان Go نوشته شده است، یک ایندکسر بلاکچین The Open Network با منبع باز است که تحت مجوز Apache License ۲٫۰ در دسترس است. Anton طراحی شده است تا یک راه‌حل قابل گسترش و انعطاف‌پذیر برای توسعه‌دهندگان فراهم کند تا به داده‌های بلاکچین دسترسی پیدا کنند و آنها را تحلیل کنند. هدف ما کمک به توسعه‌دهندگان و کاربران برای درک چگونگی استفاده از بلاکچین و ایجاد امکان برای توسعه‌دهندگان برای افزودن قراردادهای خود با الگوهای پیام سفارشی به اکسپلورر ما است.
+Anton is an open-source TON Blockchain indexer written in Go and licensed under Apache 2.0. It offers a scalable, flexible way for developers to access and analyze blockchain data. Developers can also add custom smart contracts with custom message schemas.
 
-- [پروژه GitHub](https://github.com/tonindexer/anton) - برای اجرای ایندکسر خود
-- [مستندات Swagger API](https://github.com/tonindexer/anton), [نمونه‌های API Query](https://github.com/tonindexer/anton/blob/main/docs/API.md) - برای استفاده، مستندات و مثال‌ها را مطالعه کنید
-- [Apache Superset](https://github.com/tonindexer/anton) - برای مشاهده داده‌ها استفاده کنید
+- [Project GitHub](https://github.com/tonindexer/anton) - Run your own indexer.
+- [Swagger API documentation](https://github.com/tonindexer/anton), [API query examples](https://github.com/tonindexer/anton/blob/main/docs/API.md) - Learn how to use Anton.
+- [Apache superset](https://github.com/tonindexer/anton) - Visualize blockchain data.
 
-### گره‌های GraphQL
+### GraphQL nodes
 
-گره‌های GraphQL همچنین به عنوان ایندکسر عمل می‌کنند.
+GraphQL nodes also function as indexers.
 
-- [dton.io](https://dton.io/graphql) - علاوه بر ارائه داده‌های قرارداد با نشانگر‌های مجزا "is jetton" و "is NFT"، تراکنش‌ها را شبیه‌سازی کرده و ردیابی‌های اجرا را دریافت می‌کند.
+- [dton.io](https://dton.io/graphql) - Provides contract data according to contract type. It also supports transaction emulation and execution trace retrieval.
 
-## APIهای دیگر
+## Other APIs
 
-- [TonAPI](https://docs.tonconsole.com/tonapi) - API که برای ارائه تجربه‌ای ساده شده برای کاربران طراحی شده است، بدون آنکه نگران جزئیات سطح پایین قراردادهای هوشمند باشند.
+- [TonAPI](https://docs.tonconsole.com/tonapi) - A user-friendly API that abstracts low-level smart contract details for a streamlined experience.
+
+<Feedback />
+

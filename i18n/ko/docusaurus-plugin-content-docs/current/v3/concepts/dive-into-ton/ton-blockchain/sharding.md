@@ -1,24 +1,31 @@
-# TON 블록체인의 샤딩
+import Feedback from '@site/src/components/Feedback';
 
-[//]: # "TODO, this is from gpt"
+# Sharding in TON
 
-TON 블록체인은 확장성과 성능을 향상시키기 위해 고급 샤딩 메커니즘을 사용하며, 이를 통해 대량의 트랜잭션을 효율적으로 처리할 수 있습니다.
-핵심 개념은 블록체인을 **샤드**라고 불리는 더 작은 독립적인 조각들로 나누는 것입니다. 이러한 샤드들은 트랜잭션을 병렬로 처리할 수 있어, 네트워크가 성장하더라도 높은 처리량을 보장합니다.
+Sharding in TON refers to dividing the blockchain into smaller, manageable pieces, or shards, for scalability. An independent set of validators operates and maintains a shard as a smaller piece of the blockchain.
 
-TON에서 샤딩은 매우 동적입니다. 고정된 수의 샤드를 가진 다른 블록체인들과 달리, TON은 필요에 따라 새로운 샤드를 생성할 수 있습니다.
-트랜잭션 부하가 증가하면 샤드가 분할되고, 부하가 감소하면 병합됩니다.
-이러한 유연성은 시스템이 효율성을 유지하면서 다양한 작업 부하에 적응할 수 있도록 보장합니다.
+Validators in separate shards can handle transactions in parallel, ensuring high throughput even as the network grows. This approach unlocks the execution of a massive number of transactions.
 
-**마스터체인**은 네트워크 구성과 모든 **워크체인**과 **샤드체인**의 최종 상태를 유지하는 중요한 역할을 합니다.
-마스터체인이 전반적인 조정을 담당하는 동안, **워크체인**들은 각각의 특정 규칙 하에서 작동하며, 각각은 샤드체인으로 더 분할될 수 있습니다.
-현재 TON에서는 하나의 워크체인(**베이스체인**)만이 작동하고 있습니다.
+In TON, sharding is highly dynamic. Unlike other blockchains with a fixed number of shards, TON can create new shards on demand.
+Shards split as the transaction load increases, and as the load decreases, they merge.
+This flexibility ensures the system can adapt to varying workloads while maintaining efficiency.
 
-TON 효율성의 핵심은 **무한 샤딩 패러다임**으로, 각 계정을 자체 "계정체인"의 일부로 취급합니다.
-이러한 계정체인들은 효율적인 트랜잭션 처리를 용이하게 하기 위해 샤드체인 블록으로 집계됩니다.
+![](/img/docs/blockchain-fundamentals/scheme.png)
 
-샤드의 동적 생성 외에도, TON은 **분할 병합** 기능을 사용하여 네트워크가 변화하는 트랜잭션 부하에 효율적으로 대응할 수 있게 합니다. 이 시스템은 블록체인 네트워크 내의 확장성과 상호작용을 향상시키며, 효율성과 전역 일관성에 중점을 둔 TON의 일반적인 블록체인 과제 해결 접근 방식을 보여줍니다.
+The **MasterChain** is crucial in maintaining the network configuration and the final state of all **WorkChains** and **ShardChains**.
+While the MasterChain is responsible for overall coordination, WorkChains operate under their specific rules, each of which can be split further into SharChains.
+Only one WorkChain - the **BaseChain**, currently operates on TON.
 
-## 참고
+At the heart of TON's efficiency is the [Infinity sharding paradigm](/v3/documentation/smart-contracts/shards/infinity-sharding-paradigm/), which treats each account as part of its own AccountChain.
+These AccountChains are then aggregated into ShardChain blocks, facilitating efficient transaction processing.
 
-- [샤드 심층 탐구](/v3/documentation/smart-contracts/shards/shards-intro)
-- [무한 샤딩 패러다임](/v3/documentation/smart-contracts/shards/infinity-sharding-paradigm)
+In addition to dynamically creating shards, TON uses **split merge** functionality, which allows the network to efficiently respond to changing transaction loads. This system enhances scalability and interaction within the blockchain network, exemplifying TON's approach to resolving typical blockchain challenges with a focus on efficiency and global consistency.
+
+## See also
+
+- [Blockchain of blockchains](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains/)
+- [Shards dive in](/v3/documentation/smart-contracts/shards/shards-intro/)
+- [Infinity sharding paradigm](/v3/documentation/smart-contracts/shards/infinity-sharding-paradigm/)
+
+<Feedback />
+

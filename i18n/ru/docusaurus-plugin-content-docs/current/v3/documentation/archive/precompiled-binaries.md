@@ -1,12 +1,10 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import Button from '@site/src/components/button'
 
 # Предварительно скомпилированные бинарные файлы
-
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
 
 :::caution важно
 С Blueprint SDK вам больше не нужно вручную устанавливать бинарные файлы.
@@ -154,3 +152,6 @@ mkdir ~/ton/build && cd ~/ton/build && cmake .. -DCMAKE_BUILD_TYPE=Release && ma
 Основная команда предоставляет автоматические сборки для нескольких операционных систем через [GitHub Actions](https://github.com/ton-blockchain/ton/releases/latest).
 
 Перейдите по указанной выше ссылке, выберите слева рабочий процесс, соответствующий вашей операционной системе, нажмите на последнее успешное выполнение (зелёная отметка), и скачайте `ton-binaries` в разделе "Artifacts".
+
+<Feedback />
+

@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 공통 문서 원칙
+
+:::danger
+This page is outdated and will be deleted soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 최적의 사용자 경험과 명확성을 위해 새 콘텐츠를 작성할 때 docs.ton.org의 모든 문서에 적용하려는 하는 일반적이고 중요한 요구 사항 목록을 염두에 두시기 바랍니다.
 
@@ -20,4 +27,5 @@
 
 ## 피드백 받기
 
-문서를 게시하기 전에 다른 기여자나 사용자로부터 피드백을 받는 것이 좋습니다. 이를 통해 혼란스럽거나 불분명한 부분을 파악하여 문서가 공개되기 전에 개선할 수 있습니다.
+Before publishing the documentation, it is a good idea to get feedback from other contributors or users. This can help identify areas that may be confusing or unclear, and allow you to make improvements before the documentation is released. <Feedback />
+

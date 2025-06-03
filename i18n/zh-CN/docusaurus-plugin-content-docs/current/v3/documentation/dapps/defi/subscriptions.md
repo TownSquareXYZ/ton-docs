@@ -1,4 +1,6 @@
-# 内容订阅
+import Feedback from '@site/src/components/Feedback';
+
+# Content subscriptions
 
 由于 TON 区块链中的交易快速，网络费用低廉，您可以通过智能合约在链上处理定期支付。
 
@@ -35,4 +37,5 @@ Subscription contract requires authorization exactly once, on installation; then
 
 ## 实现
 
-一个良好的实现案例是通过 [@donate](https://t.me/donate) 机器人和 [Tonkeeper 钱包](https://tonkeeper.com) 对 Telegram 中私人频道的 Toncoin 进行去中心化订阅。
+A good example of implementation is decentralized subscriptions for Toncoin to private channels in Telegram by the [@donate](https://t.me/donate) bot and the [Tonkeeper wallet](https://tonkeeper.com). <Feedback />
+

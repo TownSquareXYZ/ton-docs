@@ -1,140 +1,199 @@
+import Feedback from '@site/src/components/Feedback';
+
 # ارائه دهنده‌ی ذخیره‌سازی
 
-*ارائه دهنده‌ی ذخیره‌سازی* سرویسی است که فایل‌ها را در ازای هزینه ذخیره می‌کند.
+A **storage provider** is a service that stores files for a fee.
 
 ## باینری‌ها
 
-شما می‌توانید باینری‌های `storage-daemon` و `storage-daemon-cli` برای Linux/Windows/MacOS را از [TON Auto Builds](https://github.com/ton-blockchain/ton/releases/latest) دانلود کنید.
+Precompiled binaries of `storage-daemon` and `storage-daemon-cli` are available for Linux, Windows, and macOS at [TON auto builds](https://github.com/ton-blockchain/ton/releases/latest).
 
 ## کامپایل از سورس‌ها
 
-شما می‌توانید `storage-daemon` و `storage-daemon-cli` را از سورس ها با استفاده از این [دستورالعمل](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#storage-daemon) کامپایل کنید.
+To build `storage-daemon` and `storage-daemon-cli` from the source, follow the [instruction](/v3/guidelines/smart-contracts/howto/compile/compilation-instructions#storage-daemon).
 
 ## مفاهیم کلیدی
 
-این شامل یک قرارداد هوشمند است که درخواست‌های ذخیره‌سازی را می‌پذیرد و پرداخت‌های مشتریان را مدیریت می‌کند و همچنین شامل یک برنامه است که فایل‌ها را به مشتریان ارسال و بارگذاری می‌کند. شیوه کار به این صورت است:
+A storage provider consists of:
 
-1. مالک ارائه دهنده، `storage-daemon` را راه‌اندازی می‌کند، قرارداد هوشمند اصلی را پیاده‌سازی می‌کند و پارامترها را تنظیم می‌کند. آدرس قرارداد با مشتریان احتمالی به اشتراک گذاشته می‌شود.
-2. مشتری با استفاده از `storage-daemon` یک کیف از فایل‌های خود می‌سازد و یک پیام داخلی خاص به قرارداد هوشمند ارائه‌دهنده ارسال می‌کند.
-3. قرارداد هوشمند ارائه‌دهنده یک قرارداد ذخیره‌سازی ایجاد می‌کند تا این کیف خاص را مدیریت کند.
-4. ارائه دهنده، پس از یافتن درخواست در بلاکچین، کیف را دانلود کرده و قرارداد ذخیره‌سازی را فعال می‌کند.
-5. سپس مشتری می‌تواند کارمزد ذخیره‌سازی را به قرارداد ذخیره‌سازی منتقل کند. برای دریافت کارمزد، ارائه‌دهنده به‌طور منظم به قرارداد مدرکی ارائه می‌دهد که همچنان در حال ذخیره‌سازی کیف است.
-6. اگر وجوه موجود در قرارداد ذخیره‌سازی تمام شود، قرارداد غیر فعال در نظر گرفته می‌شود و ارائه‌دهنده دیگر موظف به نگهداری کیف نیست. مشتری می‌تواند قرارداد را مجدداً شارژ کند یا فایل‌های خود را بازیابی کند.
+- A smart contract that handles storage requests and manages client payments.
+- A daemon application that uploads and serves files to clients.
+
+The process works as follows:
+
+1. The owner of the provider launches the `storage-daemon`, deploying the main smart contract, and configuring the necessary parameters. The contract address is then shared with potential clients.
+
+2. A client uses the `storage-daemon` to create **a bag** from their files and sends an internal message to the provider's smart contract.
+
+3. The smart contract creates a storage contract for **this bag**.
+
+4. The provider detects the request on-chain, downloads the bag, and activates the storage contract.
+
+5. The client transfers payment to the storage contract. The provider must regularly submit proof that the bag is still being stored to continue receiving payment.
+
+6. If the contract's funds are depleted, it becomes inactive, and the provider is no longer obligated to store the bag. The client can either refill the contract or retrieve their files.
 
 :::info
-همچنین مشتری می‌تواند در هر زمان با ارائه مدرک مالکیت به قرارداد ذخیره‌سازی فایل‌های خود را بازیابی کند. سپس قرارداد فایل‌ها را برای مشتری آزاد کرده و خود را غیرفعال می‌کند.
+Clients can retrieve their files anytime by providing proof of ownership to the storage contract. Once validated, the contract releases the files and deactivates itself.
 :::
 
 ## قرارداد هوشمند
 
-[سورس کد قرارداد هوشمند](https://github.com/ton-blockchain/ton/tree/master/storage/storage-daemon/smartcont).
+View the [smart contract source code](https://github.com/ton-blockchain/ton/tree/master/storage/storage-daemon/smartcont).
 
-## استفاده از ارائه دهنده توسط مشتریان
+## Using a provider by clients
 
-برای استفاده از ارائه‌دهنده‌ی ذخیره‌سازی، شما نیاز به دانستن آدرس قرارداد هوشمند آن دارید. مشتری می‌تواند پارامترهای ارائه دهنده را با استفاده از دستور زیر در `storage-daemon-cli` به‌دست آورد:
+To use a storage provider, you need to first know the address of its smart contract. You can retrieve the provider's parameters using the following command in `storage-daemon-cli`:
 
 ```
 get-provider-params <address>
 ```
 
-### پارامترهای ارائه دهنده:
+### Provider parameters
 
 - اینکه قراردادهای جدید ذخیره‌سازی پذیرفته می‌شوند یا خیر.
 - حداقل و حداکثر اندازه‌ی *کیف* (به بایت).
 - نرخ - هزینه‌ی ذخیره‌سازی. در قالب nanoTON به ازای هر مگابایت در روز مشخص شده است.
 - حداکثر بازه - چقدر باید ارائه‌دهنده اثبات ذخیره‌سازی *کیف* ها را ارائه دهد.
 
+The output includes the following parameters:
+
+- Whether new storage contracts are currently accepted.
+- Minimum and maximum **bag** size (in bytes).
+- Rate – the cost of storage specified in nanoTON per megabyte per day.
+- Max span – the interval at which the provider must submit proof of **bag** storage.
+
 ### درخواست برای ذخیره‌سازی
 
-شما نیاز دارید تا یک *کیف فایل* بسازید و پیامی با دستور زیر تولید کنید:
+To request storage, you need to create a **bag** and generate a message using the following command:
 
 ```
 new-contract-message <BagID> <file> --query-id 0 --provider <address>
 ```
 
-### اطلاعات:
+### Notes
 
-اجرای این دستور ممکن است برای *کیف*‌های بزرگ کمی زمان‌بر باشد. بدنه‌ی پیام در `<file>` ذخیره خواهد شد (نه تمامی پیام داخلی). شناسه‌ی جستجو می‌تواند هر عددی از ۰ تا `۲^۶۴-۱` باشد. پیام حاوی پارامترهای ارائه‌دهنده (نرخ و حداکثر بازه) است. این پارامترها پس از اجرای دستور چاپ خواهند شد، بنابراین باید قبل از ارسال دوباره بررسی شوند. اگر مالک ارائه‌دهنده پارامترها را تغییر دهد، پیام رد خواهد شد، به طوری که شرایط قرارداد جدید ذخیره‌سازی دقیقا مورد انتظار مشتری خواهد بود.
+- This command may take some time to execute for large **bags**.
+- The generated message body, not the full internal message, is saved to `<file>`.
+- Query ID can be any integer from `0` to `2^64 - 1`.
+- The generated message includes the provider's current rate and max span parameters. These values are displayed after execution and should be reviewed before sending.
+- If the provider updates their parameters before the message is submitted, it will be rejected. This ensures that the storage contract is created under the client's agreed-upon conditions.
 
-سپس مشتری باید پیامی با محتوای این بدنه به آدرس ارائه‌دهنده بفرستد. در صورت بروز خطا پیام به فرستنده برمی‌گردد (برگشت). در غیر این صورت، یک قرارداد ذخیره‌سازی جدید ایجاد می‌شود و مشتری پیامی از آن دریافت خواهد کرد با [`op=0xbf7bd0c1`](https://github.com/ton-blockchain/ton/tree/testnet/storage/storage-daemon/smartcont/constants.fc#L3) و همان شناسه جستجو.
+The client must then send the generated message body to the provider's smart contract address. If an error occurs, the message bounces back to the sender. If successful, a new storage contract is created, and the client receives a message from the contract with [`op=0xbf7bd0c1`](https://github.com/ton-blockchain/ton/tree/testnet/storage/storage-daemon/smartcont/constants.fc#L3) and the same query ID.
 
-در این مرحله قرارداد هنوز فعال نشده است. وقتی ارائه‌دهنده *کیف* را دانلود کند، قرارداد ذخیره‌سازی فعال می‌شود و مشتری پیامی با [`op=0xd4caedcd`](https://github.com/SpyCheese/ton/blob/tonstorage/storage/storage-daemon/smartcont/constants.fc#L4) دریافت می‌کند (همچنین از قرارداد ذخیره‌سازی).
+At this stage, the contract is not yet active. Once the provider downloads the bag, the contract is activated, and the client receives another message from the same contract with  [`op=0xd4caedcd`](https://github.com/SpyCheese/ton/blob/tonstorage/storage/storage-daemon/smartcont/constants.fc#L4).
 
-قرارداد ذخیره‌سازی دارای «مانده‌ی مشتری» است - این وجوهی هستند که مشتری به قرارداد منتقل کرده و هنوز به ارائه‌دهنده پرداخت نشده‌اند. وجوه به تدریج از این موجودی کسر می‌شوند (با نرخ برابر با نرخ در هر مگابایت در روز). موجودی اولیه همان چیزی است که مشتری با درخواست ایجاد قرارداد ذخیره‌سازی انتقال داده است. سپس مشتری می‌تواند با انجام انتقالات ساده به قرارداد ذخیره‌سازی موجودی را افزایش دهد (این امر می‌تواند از هر آدرسی انجام شود). مانده‌ی مشتری باقی‌مانده با متد [`get_storage_contract_data`](https://github.com/ton-blockchain/ton/tree/testnet/storage/storage-daemon/smartcont/storage-contract.fc#L222) در مقدار دوم با عنوان (`balance`) بازگردانده می‌شود.
+#### Client balance
 
-### قرارداد ممکن است به دلیل موارد زیر بسته شود:
+The storage contract maintains a client balance, which consists of the funds transferred by the client that have not yet been paid to the provider. This balance gradually reduces over time based on the provider's rate (in nanoTON per megabyte per day).
+
+- The initial balance is the amount sent when creating the storage contract with the request.
+- The client can top up the contract anytime by making transfers to the storage contract — this can be done from any wallet address.
+- The current balance can be retrieved using the [`get_storage_contract_data`](https://github.com/ton-blockchain/ton/tree/testnet/storage/storage-daemon/smartcont/storage-contract.fc#L222) getter method. It is returned as the second value: `balance`.
+
+### Contract closure
 
 :::info
-در صورت بسته شدن قرارداد ذخیره‌سازی، مشتری پیامی با موجودی باقیمانده و [`op=0xb6236d63`](https://github.com/ton-blockchain/ton/tree/testnet/storage/storage-daemon/smartcont/constants.fc#L6) دریافت می‌کند.
+If the storage contract is closed, the client receives a message with the remaining balance and [`op=0xb6236d63`](https://github.com/ton-blockchain/ton/tree/testnet/storage/storage-daemon/smartcont/constants.fc#L6).
 :::
 
-- بلافاصله پس از ایجاد، قبل از فعال‌سازی، اگر ارائه‌دهنده از پذیرفتن قرارداد خودداری کند (محدودیت ارائه‌دهنده تجاوز کرده یا خطاهای دیگر).
-- موجودی مشتری به ۰ می‌رسد.
-- ارائه‌دهنده می‌تواند به‌صورت داوطلبانه قرارداد را منتفی کند.
-- مشتری می‌تواند به طور داوطلبانه قرارداد را با ارسال پیامی با [`op=0x79f937ea`](https://github.com/ton-blockchain/ton/tree/testnet/storage/storage-daemon/smartcont/constants.fc#L2) از آدرس خود و هر شناسه استعلامی منتفی کند.
+A storage contract may be closed under the following conditions:
 
-## راه‌اندازی و پیکربندی یک تامین‌کننده
+- Immediately after creation, before activation, if the provider declines the request, e.g., due to capacity limits or configuration issues.
+- When the client balance reaches 0.
+- Voluntarily by the provider.
+- Voluntarily by the client by sending a message with [`op=0x79f937ea`](https://github.com/ton-blockchain/ton/tree/testnet/storage/storage-daemon/smartcont/constants.fc#L2) from the address with any query ID.
 
-تامین‌کننده ذخیره‌سازی بخشی از `storage-daemon` است و توسط `storage-daemon-cli` مدیریت می‌شود. `storage-daemon` باید با علامت `-P` شروع شود.
+## Running and configuring a provider
+
+The storage provider is a component of the `storage-daemon` and is managed using the `storage-daemon-cli`. To run the provider, launch `storage-daemon` with the `-P` flag.
 
 ### ایجاد یک قرارداد هوشمند اصلی
 
-می‌توانید این کار را از `storage-daemon-cli` انجام دهید:
+To deploy the provider’s smart contract from `storage-daemon-cli`, run:
 
 ```
 deploy-provider
 ```
 
 :::info مهم!
-از شما خواسته خواهد شد که برای راه‌اندازی تامین‌کننده، یک پیام غیرقابل برگشت با ۱ تن به آدرس مشخص شده ارسال کنید. شما می‌توانید با استفاده از فرمان `get-provider-info` وضعیت قرارداد را بررسی کنید.
+During deployment, you’ll be prompted to send a non-bounceable message with 1 TON to the specified address to initialize the provider. You can verify successful deployment with the `get-provider-info` command.
 :::
 
-به طور پیش‌فرض، قرارداد تنظیم شده است که قراردادهای ذخیره‌سازی جدیدی را نپذیرد. قبل از فعال‌سازی آن، باید تامین‌کننده را پیکربندی کنید. تنظیمات تامین‌کننده از یک پیکربندی (ذخیره شده در `storage-daemon`) و پارامترهای قرارداد (ذخیره شده در بلاکچین) تشکیل شده است.
+By default, the contract does not accept new storage contracts. Before activating it, you must configure the provider configuration, which is stored in  `storage-daemon`, and contract parameters stored on-chain.
 
-### پیکربندی:
+### Configuration
 
-- `max contracts` - حداکثر تعداد قراردادهای ذخیره‌سازی که می‌توانند به طور همزمان وجود داشته باشند.
-- `max total size` - حداکثر اندازه کل *کیف‌ها* در قراردادهای ذخیره‌سازی.
-  شما می‌توانید مقدارهای پیکربندی را با استفاده از `get-provider-info` مشاهده کرده و با استفاده از موارد زیر تغییر دهید:
+The provider configuration includes:
+
+- `max contracts` - maximum number of concurrent storage contracts.
+- `max total size` - maximum total size of *bags* in storage contracts.
+
+To view the current configuration:
+
+```
+get-provider-info
+```
+
+To update the configuration:
 
 ```
 set-provider-config --max-contracts 100 --max-total-size 100000000000
 ```
 
-### پارامترهای قرارداد:
+### Contract parameters
 
 - `accept` - آیا قراردادهای ذخیره‌سازی جدید را پذیرا هستیم یا خیر.
-- `max file size`, `min file size` - محدودیت اندازه برای یک *کیف‌فایل*.
-- `rate` - هزینه ذخیره‌سازی (در قالب nanoTON برای هر مگابایت در روز).
+- `max file size`, `min file size` - size limits for one *bag*.
+- `rate` - cost of storage specified in nanoTON per megabyte per day.
 - `max span` - تعداد دفعاتی که تامین‌کننده باید مدارک ذخیره‌سازی را ارائه دهد.
 
-شما می‌توانید پارامترها را با استفاده از `get-provider-info` مشاهده کنید و آن‌ها را به صورت زیر تغییر دهید:
+To view the current parameters:
+
+```
+get-provider-info
+```
+
+To update the parameters:
 
 ```
 set-provider-params --accept 1 --rate 1000000000 --max-span 86400 --min-file-size 1024 --max-file-size 1000000000
 ```
 
-### ارزش توجه دارد
+**Note:** in the `set-provider-params` command, you may update only a subset of parameters. Any omitted values will retain their current settings. Since blockchain data is not updated instantly, executing multiple `set-provider-params` commands quickly can lead to inconsistent results.
 
-توجه: در فرمان `set-provider-params`، شما می‌توانید فقط بعضی از پارامترها را مشخص کنید. بقیه از پارامترهای فعلی گرفته خواهند شد. با توجه به اینکه داده‌ها در بلاکچین به صورت لحظه‌ای به‌روز نمی‌شوند، چندین فرمان `set-provider-params` متوالی می‌تواند به نتایج غیرمنتظره منجر شود.
-
-توصیه می‌شود به طور اولیه بیش از ۱ تن در موجودی تامین‌کننده قرار دهید تا بودجه کافی برای پوشش کمیسیون‌ها برای کار با قراردادهای ذخیره‌سازی وجود داشته باشد. با این حال، نباید بیش از حد زیاد تن در اولین پیام ارسال کنید زیرا غیرقابل برگشت است.
+It is recommended that the provider’s smart contract be funded with more than 1 TON after deployment to cover future transaction fees. However, avoid transferring large amounts during the initial non-bounceable setup.
 
 پس از تنظیم پارامتر `accept` به `1`، قرارداد هوشمند شروع به پذیرفتن درخواست‌ها از مشتری‌ها و ایجاد قراردادهای ذخیره‌سازی خواهد کرد، در حالی که دیمون ذخیره‌سازی به طور خودکار آن‌ها را پردازش می‌کند: دانلود و توزیع *کیف‌ها*، تولید مدارک ذخیره‌سازی.
 
-## کار بیشتر با تامین‌کننده
+- The provider begins accepting client requests once the `accept` parameter is set to `1` and creates storage contracts. The storage daemon will automatically:
+- Download and distribute **bags**.
+- Generate and submit storage proofs.
+
+## Further work with the provider
 
 ### لیست قراردادهای ذخیره‌سازی موجود
+
+To list all active storage contracts and their balances:
 
 ```
 get-provider-info --contracts --balances
 ```
 
-هر قرارداد ذخیره‌سازی یک تراز `Client$` و `Contract$` دارد. تفاوت بین آن‌ها می‌تواند با فرمان `withdraw <address>` به قرارداد اصلی تامین‌کننده منتقل شود.
+Each contract displays:
 
-فرمان `withdraw-all` وجوه را از تمام قراردادهایی که حداقل ۱ تن در دسترس دارند برداشت می‌کند.
+- `Client$`: funds provided by the client.
+- `Contract$`: total funds in the contract.
 
-هر قرارداد ذخیره‌سازی را می‌توان با فرمان `close-contract <address>` بست. این نیز وجوه را به قرارداد اصلی منتقل می‌کند. زمانی که موجودی مشتری به پایان برسد، همین حالت به طور خودکار اتفاق می‌افتد. در این صورت فایل‌های *کیف* حذف خواهند شد (مگر اینکه قراردادهای دیگری وجود داشته باشند که از همان *کیف* استفاده کنند).
+The difference between these values represents the provider’s earnings, which can be withdrawn using `withdraw <address>`.
+
+To withdraw from all contracts with at least 1 TON available:
+`withdraw-all`
+
+To close a specific contract:
+`close-contract <address>`
+
+Closing a contract automatically transfers available funds to the main provider contract. The exact process occurs automatically when the client’s balance is depleted. In both cases, the associated bag files will be deleted—unless other active contracts still use them.
 
 ### انتقال
 
@@ -146,5 +205,8 @@ send-coins <address> <amount> --message "Some message"
 ```
 
 :::info
-تمام *کیف‌هایی* که توسط تامین‌کننده ذخیره شده‌اند با فرمان `list` در دسترس هستند و می‌توانند به صورت معمول استفاده شوند. برای جلوگیری از اختلال در عملیات تامین‌کننده، آن‌ها را حذف نکنید یا این دیمون ذخیره‌سازی را برای کار با *کیف‌های* دیگر استفاده نکنید.
+All *bags* stored by the provider are available with the command `list` and can be used as usual. To prevent disrupting the provider's operations, do not delete them or use this storage daemon to work with any other *bags*.
 :::
+
+<Feedback />
+

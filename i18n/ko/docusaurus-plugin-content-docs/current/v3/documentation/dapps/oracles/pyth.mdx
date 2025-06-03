@@ -1,8 +1,10 @@
+import Feedback from '@site/src/components/Feedback';
+
 import ThemedImage from '@theme/ThemedImage';
 
-# Pyth 오라클
+# Pyth oracles
 
-## TON 컨트랙트에서 실시간 데이터를 사용하는 방법
+## How to use real-time data in TON contracts
 
 TON의 Pyth 가격 피드는 메인 TON Pyth 스마트 컨트랙트를 통해 관리되어 온체인 데이터와 원활하게 상호작용할 수 있습니다. TON에서 이러한 상호작용은 Pyth 수신자 컨트랙트 내의 특정 함수를 통해 이루어집니다. 이 컨트랙트는 Pyth 가격 피드에 대한 인터페이스 역할을 하며, 가격 데이터의 검색과 업데이트를 처리합니다.
 
@@ -22,7 +24,7 @@ npm 또는 yarn을 사용하여 Pyth TON SDK와 기타 필요한 의존성을 �
    @ton/core @ton/ton @ton/crypto
 ```
 
-## 클라이언트 코드 작성
+## Write client code
 
 다음 코드는 가격 업데이트를 가져오고, TON의 Pyth 컨트랙트와 상호작용하며, 가격 피드를 업데이트하는 방법을 보여줍니다:
 
@@ -31,6 +33,7 @@ npm 또는 yarn을 사용하여 Pyth TON SDK와 기타 필요한 의존성을 �
 
 다음 예제는 테스트넷 컨트랙트를 사용합니다. 메인넷 사용 시에는 `PYTH_CONTRACT_ADDRESS_TESTNET`을 `PYTH_CONTRACT_ADDRESS_MAINNET`으로 적절히 변경하세요.
 
+<details>
 ```ts
 import { TonClient, Address, WalletContractV4 } from "@ton/ton";
 import { toNano } from "@ton/core";
@@ -92,6 +95,7 @@ async function main() {
 }
 main().catch(console.error);
 ```
+</details>
 
 이 코드는 다음과 같은 작업을 수행합니다:
 
@@ -101,12 +105,14 @@ main().catch(console.error);
 4. 업데이트 데이터를 준비하고 업데이트 수수료를 계산합니다.
 5. TON 컨트랙트에서 가격 피드를 업데이트합니다.
 
-## 추가 리소스
+## Additional resources
 
 TON 애플리케이션 개발에 도움이 될 만한 추가 리소스:
 
-- [TON 문서](https://ton.org/docs/)
-- [Pyth 가격 피드 ID](https://pyth.network/developers/price-feed-ids)
-- [Pyth TON 컨트랙트](https://github.com/pyth-network/pyth-crosschain/tree/main/target_chains/ton/contracts)
+- [TON documentation](https://ton.org/docs/)
+- [Pyth price feed IDs](https://pyth.network/developers/price-feed-ids)
+- [Pyth TON contract](https://github.com/pyth-network/pyth-crosschain/tree/main/target_chains/ton/contracts)
 - [Pyth TON SDK](https://github.com/pyth-network/pyth-crosschain/tree/main/target_chains/ton/sdk)
-- [Pyth TON 예제](https://github.com/pyth-network/pyth-examples/tree/main/price_feeds/ton/sdk_js_usage)
+- [Pyth TON example](https://github.com/pyth-network/pyth-examples/tree/main/price_feeds/ton/sdk_js_usage)
+
+<Feedback />

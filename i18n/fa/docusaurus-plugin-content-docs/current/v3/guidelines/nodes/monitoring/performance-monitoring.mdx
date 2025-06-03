@@ -1,13 +1,15 @@
-# نظارت بر عملکرد
+import Feedback from '@site/src/components/Feedback';
+
+# Performance monitoring
 
 ## نظارت بر عملکرد سرور TON
 
-ابزارهایی مانند `htop`, `iotop`, `iftop`, `dstat`, `nmon` و سایر موارد برای اندازه‌گیری عملکرد در زمان واقعی خوب هستند، اما وقتی به عیب‌یابی عملکرد گذشته می‌رسد، از لحاظ کارایی کمبودهایی دارند.
+Tools such as `htop`, `iotop`, `iftop`, `dstat`, and `nmon` are effective for measuring real-time system performance; however, they fall short when it comes to troubleshooting performance issues that have occurred in the past.
 
-این راهنما توصیه می‌کند و توضیح می‌دهد چگونه از ابزار sar (گزارش فعالیت سیستم) در لینوکس برای نظارت بر عملکرد سرور TON استفاده کنید.
+This guide recommends using the Linux SAR (System Activity Report) utility for monitoring the performance of TON servers, and it provides an explanation of how to use it effectively.
 
 :::tip
-این راهنما کمک می کند تا تشخیص دهید آیا سرور شما با کمبود منابع روبرو است و برای تشخیص عملکرد بد موتور اعتبار سنجی نیست.
+This guideline helps to identify whether your server experiences a resource shortage, not whether the validator engine performs badly.
 :::
 
 ### نصب
@@ -38,7 +40,7 @@ sudo systemctl start sysstat sysstat-collect.timer sysstat-summary.timer
 
 ### استفاده
 
-به طور پیش‌فرض، sar هر ۱۰ دقیقه یکبار آمار جمع‌آوری کرده و آمار روز جاری را از نیمه شب نمایش می‌دهد. می‌توانید آن را بدون پارامترها اجرا کنید:
+By default, the SAR gathers statistics every 10 minutes and shows statistics for the current day, starting at midnight. You can check it by running the SAR without parameters:
 
 ```bash
 sar
@@ -51,15 +53,15 @@ sar -1   # previous day
 sar -2   # two days ago
 ```
 
-برای تاریخ دقیق، باید از گزینه f برای اشاره به فایل sa یک روز خاص از ماه استفاده کنید. بنابراین برای ۲۳ سپتامبر، به این صورت خواهد بود:
+For the exact date, you should use the f option to point to the `sa` file of a given day within a month. Thus, for the September 23rd it would be:
 
 ```bash
 sar -f /var/log/sysstat/sa23
 ```
 
-کدام گزارش‌های sar باید اجرا شود و چگونه آن‌ها را بخوانیم تا مسائل مربوط به عملکرد را شناسایی کنیم؟
+To identify performance issues, it is essential to run specific SAR reports and analyze their results effectively.
 
-در زیر لیستی از دستورات sar که می‌توان برای جمع‌آوری آمار مختلف سیستم استفاده کرد آمده است. می‌توانید آن‌ها را با گزینه‌های ذیل برای دریافت سریع گزارش‌های تاریخ مورد نظر تکمیل کنید.
+The following list outlines the SAR commands that can be used to gather various system statistics. By combining these commands with the provided options, you can quickly generate reports for the desired date.
 
 ### گزارش حافظه
 
@@ -67,19 +69,19 @@ sar -f /var/log/sysstat/sa23
 sar -rh
 ```
 
-از آنجا که موتور اعتبارسنجی TON از ویژگی jemalloc استفاده می‌کند، حجم زیادی از داده‌ها را در حافظه پنهان ذخیره می‌کند، به همین دلیل است که بیشتر اوقات دستور sar -rh عدد کمتری در ستون `%memused` برمی‌گرداند.
+The TON validator engine uses the **jemalloc** feature, which allows it to cache a significant amount of data. As a result, the `sar —rh` command often returns a low number in the `%memused` column.
 
-در همان زمان، همیشه عدد بالایی در ستون `kbcached` وجود دارد. به همان دلیل، نباید نگران مقدار کم RAM آزاد شده در ستون `kbmemfree` باشید. نشانگر مهم اما، عددی است که از ستون `%memused` می‌آید.
+Meanwhile, you will typically see a high number in the `kbcached` column. Therefore, there is no need to worry about the low amount of free RAM indicated in the `kbmemfree` column. The key indicator to monitor is the value shown in the `%memused` column.
 
-اگر از ۹۰٪ فراتر رود، باید به فکر افزودن RAM بیشتر باشید و توجه کنید که آیا موتور اعتبارسنجی شما به دلیل OOM (کمبود حافظه) به طرز غیرعادی متوقف نمی‌شود - بهترین روش برای بررسی این موضوع بررسی پیام‌های Signal در فایل `/var/ton-work/log` است.
+If the percentage exceeds 90%, you should consider adding more RAM. Additionally, keep an eye on your validator engine to ensure it doesn't stop unexpectedly due to an out-of-memory (OOM) issue. The best way to check for this is to grep the `/var/ton-work/log` file for any **Signal** messages.
 
-استفاده از Swap
+**Swap usage:**
 
 ```bash
 sar -Sh
 ```
 
-اگر متوجه شده‌اید که Swap مورد استفاده قرار می‌گیرد، باید به فکر افزودن RAM بیشتر باشید. توصیه کلی از تیم TON Core این است که Swap را غیرفعال کنید.
+If you notice that a swap is used, you should consider adding more RAM. The general recommendation from the **TON Core team** is to disable the swap.
 
 ### گزارش CPU
 
@@ -87,7 +89,7 @@ sar -Sh
 sar -u
 ```
 
-اگر سرور شما به طور متوسط تا ۷۰٪ از CPU استفاده می‌کند (به ستون '%user' نگاه کنید) این باید به عنوان خوب در نظر گرفته شود.
+If your server utilizes CPU on average up to 70% (see the `%user` column), this should be considered as good.
 
 ### گزارش استفاده از دیسک
 
@@ -95,9 +97,11 @@ sar -u
 sar -dh
 ```
 
-به ستون '%util' توجه کنید و در صورت باقی ماندن آن بالای ۹۰٪ برای یک دیسک خاص، به‌طور مقتضی واکنش نشان دهید.
+Watch the `%util` column and react accordingly if it stays above 90% for a particular disk.
 
 ### گزارش شبکه
+
+Use the commands :
 
 ```bash
 sar -n DEV -h
@@ -120,39 +124,45 @@ cat /sys/class/net/<interface>/speed
 ```
 
 :::info
-این سرعت اتصال ارائه شده توسط ارائه‌دهنده شما نیست.
+The speed you're experiencing is not what your provider promised you.
 :::
 
-اگر `%ifutil` استفاده بالای ۷۰٪ را نشان می‌دهد یا ستون‌های rxkB/s و txkB/s مقادیر نزدیک به پهنای باند ارائه شده توسط ارائه‌دهنده شما را گزارش می‌دهند، ارتقاء سرعت اتصال خود را در نظر بگیرید.
+Consider upgrading your link speed if `%ifutil` shows above 70% usage or columns `rxkB/s` and `txkB/s` reporting values close to a bandwidth provided by your provider.
 
 ### گزارش یک مشکل عملکردی
 
-قبل از گزارش هرگونه مشکل عملکردی، لطفاً اطمینان حاصل کنید که حداقل شرایط لازم برای نود را برآورده می‌کنید. سپس دستورات زیر را اجرا کنید:
+Before reporting any performance issues, ensure that you meet the minimum requirements for the node. Then, execute the following commands:
+
+To generate today's report, run:
 
 ```bash
 sar -rudh | cat && sar -n DEV -h --iface=eno1 | cat > report_today.txt
 ```
 
-برای گزارش دیروز، اجرا کنید:
+For yesterday's report, use the following command:
 
 ```bash
 sar -rudh -1 | cat && sar -n DEV -h --iface=eno1 -1 | cat > report_yesterday.txt
 ```
 
-همچنین، نود TON را متوقف کرده و I/O دیسک و سرعت شبکه خود را اندازه‌گیری کنید.
+Additionally, stop the TON node and measure your disk I/O and network speed with the command below:
 
 ```bash
 sudo fio --randrepeat=1 --ioengine=io_uring --direct=1 --gtod_reduce=1 --name=test --filename=/var/ton-work/testfile --bs=4096 --iodepth=1 --size=40G --readwrite=randread --numjobs=1 --group_reporting
 ```
 
-مقدار `read: IOPS=` را جستجو کنید و آن را با گزارش ارسال کنید. مقداری بالاتر از 10k IOPS باید به عنوان خوب در نظر گرفته شود.
+Look for the value at `read: IOPS=` and include it in your report. A value above **10K IOPS** is considered good.
+
+Check your download and upload speeds using the following command:
 
 ```bash
 curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -
 ```
 
-سرعت‌های دانلود و آپلود بالای ۷۰۰ مگابیت بر ثانیه باید به عنوان خوب در نظر گرفته شوند.
+Speeds exceeding **700 Mbit/s** are deemed satisfactory.
 
-هنگام گزارش، لطفاً گزارش SAR و همچنین نتایج IOPS و سرعت شبکه را به [@mytonctrl_help_bot](https://t.me/mytonctrl_help_bot) ارسال کنید.
+When reporting, please send the SAR report, IOPS, and network speed results to [@mytonctrl_help_bot](https://t.me/mytonctrl_help_bot).
 
-نسخه اولیه توسط [@neodix](https://t.me/neodix) - تیم اصلی Ton، سپتامبر ۲۳، ۲۰۲۴
+Initial version - _[@neodix](https://t.me/neodix) - TON Core team_, Sep 23, 2024
+
+<Feedback />

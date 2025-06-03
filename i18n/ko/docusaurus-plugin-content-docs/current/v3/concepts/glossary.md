@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 용어집
 
 ## 소개
@@ -272,9 +274,9 @@ __________
 
 **Mainnet** — 블록체인의 메인 네트워크입니다.
 
-### Market cap (capitalization)
+### Market cap
 
-**Market cap (capitalization)** — 암호화폐의 결합된 토큰 수의 총 가치입니다.
+**Market capitalization (Market cap)** — the total value of a cryptocurrency’s combined number of tokens.
 
 ### Masterchain
 
@@ -410,7 +412,7 @@ ________
 
 ### T
 
-**TEP** — [TON Enhancement Proposals](https://github.com/ton-blockchain/TEPs), TON 생태계의 다양한 부분과 상호작용하는 표준 방식 모음입니다.
+**TON Enhancement Proposals (TEP)**—a [standard set](https://github.com/ton-blockchain/TEPs) of ways to interact with various parts of the TON ecosystem.
 
 ### Testnet
 
@@ -507,3 +509,6 @@ ___________
 ### Yolo
 
 **Yolo** — "you only live once(인생은 한 번뿐)", 주어진 시도의 위험을 고려하지 않고 삶을 최대한 살라는 의미로 사용되는 속어 약자입니다.
+
+<Feedback />
+

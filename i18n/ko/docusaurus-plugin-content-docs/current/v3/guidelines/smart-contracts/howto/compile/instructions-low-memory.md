@@ -1,50 +1,61 @@
-# 낮은 메모리의 기기에서 TON 컴파일하기
+import Feedback from '@site/src/components/Feedback';
+
+# Compile TON on low-memory machines
 
 :::caution
-이 섹션은 TON과 낮은 수준에서 상호작용하기 위한 지침과 매뉴얼을 설명합니다.
+This section provides low-level instructions for working with TON.
 :::
 
-낮은 메모리(1GB 미만)를 가진 컴퓨터에서 TON을 컴파일하기 위한 스왑 파티션 생성.
+To compile TON on systems with limited memory (< 1 GB), you need to create swap partitions.
 
 ## 전제 조건
 
-Linux 시스템에서 C++ 컴파일 중에 다음과 같은 오류가 발생하여 컴파일이 중단됩니다:
+When compiling C++ components on Linux, you may encounter memory-related failures:
 
 ```
-C++: fatal error: Killed signal terminated program cc1plus compilation terminated.
+C++: fatal error: Killed signal terminated program cc1plus
+compilation terminated.
 ```
 
 ## 해결방법
 
-이는 메모리 부족으로 인해 발생하며 스왑 파티션을 생성하여 해결됩니다.
+Follow these steps to create a 4GB swap partition:
 
 ```bash
-# Create the partition path
+# Create swap partition
 sudo mkdir -p /var/cache/swap/
-# Set the size of the partition
-# bs=64M is the block size, count=64 is the number of blocks, so the swap space size is bs*count=4096MB=4GB
+
+# Allocate 4GB swap space (64MB blocks × 64)
 sudo dd if=/dev/zero of=/var/cache/swap/swap0 bs=64M count=64
-# Set permissions for this directory
+
+# Set secure permissions
 sudo chmod 0600 /var/cache/swap/swap0
-# Create the SWAP file
+
+# Initialize swap
 sudo mkswap /var/cache/swap/swap0
-# Activate the SWAP file
+
+# Activate swap
 sudo swapon /var/cache/swap/swap0
-# Check if SWAP information is correct
+
+# Verify activation
 sudo swapon -s
 ```
 
-스왑 파티션 삭제 명령:
+### Swap management commands
+
+**Remove swap partition:**
 
 ```bash
 sudo swapoff /var/cache/swap/swap0
 sudo rm /var/cache/swap/swap0
 ```
 
-여유 공간 명령:
+**Free all swap space:**
 
 ```bash
 sudo swapoff -a
-#Detailed usage: swapoff --help
-#View current memory usage: --swapoff: free -m
+# Check memory: free -m
 ```
+
+<Feedback />
+

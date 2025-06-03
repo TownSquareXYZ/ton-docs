@@ -1,10 +1,12 @@
-# 高负载钱包
+import Feedback from '@site/src/components/Feedback';
 
-在短时间内处理大量信息时，需要使用名为 "Highload Wallet "的特殊钱包。在很长一段时间里，Highload Wallet V2 是 TON 的主要钱包，但使用时必须非常小心。否则，您可能会[锁定所有资金](https://t.me/tonstatus/88)。
+# Highload wallet contracts
+
+When working with many messages in a short period, there is a need for special wallet called Highload wallet. Highload wallet v2 was the main wallet on TON for a long time, but you had to be very careful with it. Otherwise, you could [lock all funds](https://t.me/tonstatus/88).
 
 [随着 Highload Wallet V3](https://github.com/ton-blockchain/Highload-wallet-contract-v3)的问世，这一问题已在合约架构层面得到解决，而且耗 gas 量更少。本章将介绍 Highload Wallet V3 的基础知识和需要记住的重要细微差别。
 
-## 高负载钱包 v3
+## Highload wallet v3
 
 该钱包专为需要以极高的速度发送交易的用户设计。例如，加密货币交易所。
 
@@ -54,15 +56,18 @@ Highload v3 绝不会执行包含相同 `query_id` **和** `created_at` 的多�
 2. **gas 限制。** 目前， gas 限制为 1'000'000 GAS 单位，这意味着一个 tx 中可清理的
  旧查询次数是有限制的。如果过期查询次数较多，合约就会卡住。
 
-这意味着不建议设置过高的过期日期：
-，过期时间跨度内的查询次数不应超过 1000 次。
+That means that it is not recommended to set too high expiration date:
+the number of queries during expiration time span should not exceed 1000.
 
-此外，一次交易中清理的过期查询次数应低于 100 次。
+Also, the number of expired queries cleaned in one transaction should be below 100.
 
-## 如何
+## How to
 
 您还可以阅读 [Highload Wallet Tutorials](/v3/guidelines/smart-contracts/howto/wallet#-high-load-wallet-v3) 一文。
 
 钱包源代码：
 
 - [ton/crypto/smartcont/Highload-wallet-v2-code.fc](https://github.com/ton-blockchain/ton/blob/master/crypto/smartcont/new-highload-wallet-v2.fif)
+
+<Feedback />
+

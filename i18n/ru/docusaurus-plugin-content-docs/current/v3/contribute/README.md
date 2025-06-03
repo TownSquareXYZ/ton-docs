@@ -1,18 +1,14 @@
 # Как внести свой вклад
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
-
 :::info
 Узнайте, как отправить контент в документацию TON здесь.
 :::
 
 ## Правила внесения вклада
 
-### Политика ведения документации
+### Documentation maintain community
 
-Документация TON полностью открыта. Энтузиасты сообщества и ранние участники TON сыграли ключевую роль в создании этой открытой документации TON, превратив свои заметки в подробные страницы.
+TON Documentation is entirely open source. Community enthusiasts and early TON contributors have played a key role in creating this open-source TON documentation by turning their notes into detailed pages.
 
 Первоначально она была написана [участниками] TON (/v3/contribute/maintainers/) и поддерживается [TON Studio] (https://tonstudio.io/).
 Мы стремимся рассказать пользователям о TON с помощью понятного контента с возможностью простого поиска, который понравится техническим экспертам и обычным читателям.
@@ -24,17 +20,19 @@
 :::
 
 1. Клонируйте текущую версию из репозитория GitHub [ton-docs](https://github.com/ton-community/ton-docs).
-2. Определите область для внесения вклада в соответствии с [руководством по стилю](/v3/contribute/style-guide/) и откройте связанную [задачу](https://github.com/ton-community/ton-docs/issues).
+2. Determine an area for contribution according to [Style guide](/v3/contribute/style-guide/) and open a related [issue](https://github.com/ton-community/ton-docs/issues).
 3. Ознакомьтесь со [Стандартизацией контента](/v3/contribute/content-standardization/) и [Типографикой](/v3/contribute/typography/).
 4. Откройте запрос на извлечение ветки `main` с четким описанием и краткими обновлениями в соответствии с шаблоном.
 
-#### Шаблон запроса на объединение в пул
+#### Pull request template
 
 ```md
 
 ## Description
 
-Please provide a brief description of the changes introduced in this pull request. Include any relevant issue numbers or links.
+Brief description of the changes introduced in this pull request. Include any relevant issue numbers or links.
+
+Closes [link to issue].
 
 ## Checklist
 
@@ -55,11 +53,11 @@ Please provide a brief description of the changes introduced in this pull reques
 
 - Изучите процесс разработки документации на основе документа [ton-docs/README.md](https://github.com/ton-community/ton-docs?tab=readme-ov-file#set-up-your-environment-%EF%B8%8F).
 
-#### Лучшая практика для запросов на извлечение
+#### Best practices for pull requests
 
 1. **Сделайте ваш pull request небольшим**. Меньшие pull requests (~300 строк различий) легче проходят проверку и вероятнее всего будут приняты. Убедитесь, что pull request выполняет только одно действие, в противном случае разделите его.
 2. **Используйте описательные заголовки**. Рекомендуется придерживаться стиля сообщений фиксации.
-3. **Протестируйте свои изменения**. Запустите сборку локально и убедитесь, что у вас нет сбоев.
+3. **Test your changes**. Run build locally, and make sure you have no crashes.
 4. **Используйте мягкий перенос**: не переносите строки по 80 символов; настройте редактор на мягкий перенос.
 
 ## Общайтесь с другими разработчиками

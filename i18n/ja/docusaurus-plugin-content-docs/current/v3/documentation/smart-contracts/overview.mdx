@@ -1,0 +1,213 @@
+import Feedback from '@site/src/components/Feedback';
+
+import Button from '@site/src/components/button'
+
+# はじめに
+
+Smart contract creation, development, and deployment on TON Blockchain leverages the [TON Virtual Machine (TVM)](/v3/documentation/smart-contracts/overview#ton-virtual-machine-tvm) and one of the following programming languages:
+
+- [Tact](/v3/documentation/smart-contracts/overview#-tact)
+- [FunC](/v3/documentation/smart-contracts/overview#-func)
+
+## Quick start: your first smart contract
+
+_ブループリント_フレームワークを使用して、最初のスマートコントラクトを作成してデプロイします。
+
+ブループリントは、スマートコントラクトを作成、テスト、デプロイするための開発環境です。
+新しいデモプロジェクトを作成するには、次のコマンドを使用します。
+
+```bash
+npm create ton@latest
+```
+
+<Button href="/v3/documentation/smart-contracts/getting-started/javascript" colorType="primary" sizeType={'sm'}>
+
+もっと読む
+
+</Button>
+
+<Button href="https://stepik.org/course/176754/" colorType={'secondary'} sizeType={'sm'}>
+
+TON Blockchain course
+
+</Button>
+
+## Getting started
+
+### Fun and easy tutorials
+
+初心者向けガイドで旅を始めましょう：
+
+- [TON Hello World: Step-by-step guide for writing your first smart contract](https://helloworld.tonstudio.io/02-contract/)
+- TON チュートリアル
+  - [🚩 Challenge 1: Simple NFT Deploy](https://github.com/romanovichim/TONQuest1)
+  - [🚩 Challenge 2: Chatbot Contract](https://github.com/romanovichim/TONQuest2)
+  - [🚩 Challenge 3: Jetton Vending Machine](https://github.com/romanovichim/TONQuest3)
+  - [🚩 Challenge 4: Lottery/Raffle](https://github.com/romanovichim/TONQuest4)
+  - [🚩 Challenge 5: 5分でコントラクトとやりとりするUIを作成する](https://github.com/romanovichim/TONQuest5)
+  - [🚩 Challenge 6: GetgemsマーケットプレイスでNFT売上を分析する](https://github.com/romanovichim/TONQuest6)
+- [TON development playlist](https://www.youtube.com/playlist?list=PLQ5rEj25H3U2P5qp7nsgVtNGYxEojnnez) [[RU version]](https://www.youtube.com/playlist?list=PLOIvUFGfwP93tZI_WnaLyJsZlskU4ao92)
+
+### TON course
+
+:::tip
+コースを開始する前に、ブロックチェーン技術の基本をしっかりと理解していることを確認してください。 あなたの知識にギャップがある場合は、[**ブロックチェーンの基礎とTON**](https://stepik.org/course/201294/promo)を取ることをお勧めします。[RU version](https://stepik.org/course/202221/), [CHN version](https://stepik.org/course/200976/))
+:::
+
+私たちは、トンブロックチェーンの包括的なガイドである**TON Blockchain Course**を紹介することを誇りに思っています。 このコースは、TON Blockchainでスマートコントラクトと分散アプリケーションを作成する方法を学びたい開発者向けに設計されています。
+
+**9つのモジュール**で構成され、TONブロックチェーンの基本をカバーしています。 スマートコントラクト開発のライフサイクル、FunC プログラミング言語、TON Virtual Machine (TVM) があります。
+
+<Button href="https://stepik.org/course/176754/promo"
+        colorType={'primary'} sizeType={'sm'}>
+
+Check TON course
+
+</Button>
+
+<Button href="https://stepik.org/course/201638/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+CHN
+
+</Button>
+
+<Button href="https://stepik.org/course/201855/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+RU
+
+</Button>
+
+### Comprehensive guides
+
+詳細とニュアンスを好む人は、以下をご覧ください:
+
+- [ウォレットスマートコントラクトを機能させる方法](/v3/guidelines/smart-contracts/howto/wallet)
+
+## Examples of smart contracts
+
+TONコミュニティが提供する既製のスマートコントラクトの例とツールをご覧ください。
+
+:::info 小さなヒント
+FunCで書かれたスマートコントラクトに自由に焦点を当ててください。 低レベルのFift(.5)言語ではなく、FunC(.fc)で書かれたスマートコントラクトに集中する方が良いことがよくあります。
+:::
+
+TONのスマートコントラクトの標準例には、ウォレット、選挙人(TONで検証を管理する)、および検証時に参照として機能するマルチシグネチャウォレットがあります。
+
+<Button href="/v3/documentation/smart-contracts/contracts-specs/examples" colorType={'primary'} sizeType={'sm'}>
+
+Open examples
+
+</Button>
+
+## Smart contract best practices
+
+TON は無限の可能性を提供します。推奨されるガイドラインを遵守しながら、それらを最大限に活用する方法を学びます。
+
+- [スマートコントラクトのガイドライン](/v3/guidelines/smart-contracts/guidelines)
+
+## TON Virtual Machine (TVM)
+
+スマートコントラクトを実行するエンジンを見つけましょう。
+
+- [TVM 概要](/v3/documentation/tvm/tvm-overview)
+
+## Programming languages
+
+### 📘 FunC
+
+TONスマートコントラクト用のオーダーメイド言語。
+
+<Button href="/v3/documentation/smart-contracts/func/overview" colorType={'primary'} sizeType={'sm'}>
+
+FunC overview
+
+</Button>
+
+### 📒 Tact
+
+Tact は、開発の効率性と容易さに焦点を当てた、TON ブロックチェーン用の新しいプログラミング言語です。複雑なスマート コントラクト、迅速なオンボーディング、ラピッド プロトタイピングに適しています。
+
+Developed by [TON Studio](https://tonstudio.io), powered by the community — by the end of 2024, the number of _unique code_[^1] contracts deployed on the mainnet reached almost 28 thousand, of which about 33% were written in Tact.
+
+View some of the selected projects: [Tact in production](https://github.com/tact-lang/awesome-tact#tact-in-production-).
+
+[^1]: The "unique code" means that each contract in the data sample has at least one TVM instruction that differs from the other contracts, excluding many preprocessed wallets with everything inlined — even seqno and a public key for signature verification!
+
+<Button href="/v3/documentation/smart-contracts/tact"
+        colorType={'primary'} sizeType={'sm'}>
+
+Read more
+
+</Button>
+
+<Button href="https://tact-lang.org/"
+        colorType={'secondary'} sizeType={'sm'}>
+
+Official website
+
+</Button>
+
+<Button href="https://docs.tact-lang.org/"
+        colorType={'secondary'} sizeType={'sm'}>
+
+Tact docs
+
+</Button>
+
+<Button href="https://github.com/tact-lang/awesome-tact"
+        colorType="secondary" sizeType={'sm'}>
+
+Awesome Tact
+
+</Button>
+
+### 📗 Tolk
+
+TON でスマート コントラクトを作成するための新しい言語。 Tolk を「**次世代 FunC**」と考えてください。
+
+:::caution
+活発に開発中です。
+:::
+
+<Button href="/v3/documentation/smart-contracts/tolk/overview" colorType={'primary'} sizeType={'sm'}>
+
+Tolk overview
+
+</Button>
+
+### 📕 Fift (advanced)
+
+:::caution 高度なレベル
+勇者のためにのみ!
+:::
+
+<Button href="/v3/documentation/smart-contracts/fift/overview" colorType={'primary'} sizeType={'sm'}>
+
+Fift overview
+
+</Button>
+
+## Community tools
+
+- [MyLocalTON](/v3/guidelines/nodes/running-nodes/running-a-local-ton) — MyLocalTONはローカル環境でプライベートなTONブロックチェーンを実行するために使用されます。
+- [tonwhales.com/tools/boc](https://tonwhales.com/tools/boc) — BOC parser
+- [tonwhales.com/tools/introspection-id](https://tonwhales.com/tools/introspecion-id) — crc32 generator
+- [@orbs-network/ton-access](https://www.orbs.com/ton-access/) — 分散型APIゲートウェイ
+
+## Further reading
+
+これらのコミュニティ主導の教育リソースでスキルセットを強化しましょう。
+
+- [スマートコントラクトのガイドライン](/v3/guidelines/smart-contracts/guidelines)
+- [TON FunC Learning Path](https://blog.ton.org/func-juriy) ([RUバージョン](https://github.com/romanovichim/TonFunClessons_ru))
+- [YouTube チュートリアル](https://www.youtube.com/@TONDevStudy) [[RU version]](https://www.youtube.com/@WikiMar)
+- [TON development playlist](https://www.youtube.com/playlist?list=PLQ5rEj25H3U2P5qp7nsgVtNGYxEojnnez) [[RU version]](https://www.youtube.com/playlist?list=PLOIvUFGfwP93tZI_WnaLyJsZlskU4ao92)
+
+## Additional resources
+
+- [ブロックチェーンとは？スマートコントラクトとは？ガスとは？](https://blog.ton.org/what-is-blockchain)
+- [取引手数料について](/v3/guidelines/smart-contracts/fee-calculation)
+
+<Feedback />

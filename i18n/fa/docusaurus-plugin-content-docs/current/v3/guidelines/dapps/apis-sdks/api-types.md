@@ -1,23 +1,31 @@
-# انواع API
+import Feedback from '@site/src/components/Feedback';
 
-**APIهای بلاکچین با دسترسی بالا عنصر اصلی توسعه امن، راحت و سریع برنامه‌های کاربردی مفید بر روی TON هستند.**
+# API types
 
-- [TON HTTP API](/v3/guidelines/dapps/apis-sdks/ton-http-apis) — API که اجازه کار با *اطلاعات ایندکس شده بلاک‌چین* را می‌دهد.
-- [TON ADNL API](/v3/guidelines/dapps/apis-sdks/ton-adnl-apis) — یک API امن برای ارتباط با TON، بر اساس پروتکل ADNL.
+**High availability blockchain APIs are essential for developing secure, efficient, and scalable applications on TON.**
 
-## APIهای Toncenter
+- [TON HTTP API](/v3/guidelines/dapps/apis-sdks/ton-http-apis) — An API that allows working with the *indexed blockchain information*.
+- [TON ADNL API](/v3/guidelines/dapps/apis-sdks/ton-adnl-apis) — A secure API for communicating with TON using the ADNL protocol.
 
-- [TON Index](https://toncenter.com/api/v3/) - TON Index داده‌ها را از یک Full Node به پایگاه‌داده PostgreSQL جمع‌آوری می‌کند و API مناسبی را برای یک بلاک‌چین ایندکس شده فراهم می‌کند.
-- [toncenter/v2](https://toncenter.com/) - این API دسترسی HTTP به بلاک‌چین TON را فراهم می‌کند، اطلاعات حساب‌ها و Wallet‌ها را دریافت می‌کند، بلوک‌ها و تراکنش‌ها را جستجو می‌کند، پیام‌ها را به بلاک‌چین ارسال می‌کند، متدهای get قراردادهای هوشمند را فراخوانی می‌کند و بیشتر.
+:::tip TON Infrastructure Status
 
-## APIهای شخص ثالث
+- [status.toncenter](https://status.toncenter.com/) - Displays various node activity statistics from the last hour.
+- [Tonstat.us](https://tonstat.us/) - A real-time Grafana dashboard, updated every 5 minutes.
+  :::
 
-- [tonapi.io](https://docs.tonconsole.com/tonapi) - API سریع ایندکس شده که داده‌های پایه‌ی مربوط به حساب‌ها، تراکنش‌ها، بلاک‌ها و داده‌های خاص نرم‌افزار مربوط به NFT، حراج‌ها، Jettonها، TON DNS و اشتراک‌ها را فراهم می‌کند. همچنین داده‌های توضیح‌دار مربوط به زنجیره‌های تراکنش را ارائه می‌دهد.
-- [TONX API](https://docs.tonxapi.com/) - یک API است که به‌طور خاص برای توسعه بی‌درنگ DApp طراحی شده است، دسترسی آسان به مجموعه‌ای گوناگون از ابزارها و داده‌ها را ممکن می‌سازد.
-- [dton.io](https://dton.io/graphql/) - GraphQL API که می‌تواند داده‌هایی در مورد حساب‌ها، تراکنش‌ها و بلوک‌ها، و همچنین داده‌های خاص نرم‌افزار در مورد NFT، حراج‌ها، Jettonها و TON DNS ارائه دهد.
-- [ton-api-v4](https://mainnet-v4.tonhubapi.com) - یک لایت API دیگر که بر سرعت تمرکز دارد از طریق کشینگ تهاجمی در CDN.
-- [docs.nftscan.com](https://docs.nftscan.com/reference/ton/model/asset-model) - APIهای NFT برای بلاک‌چین TON.
-- [everspace.center](https://everspace.center/toncoin) - API ساده RPC برای دسترسی به بلاک‌چین TON.
+## TON Center APIs
+
+- [TON Index](https://toncenter.com/api/v3/) - Collects data from a full node into a PostgreSQL database and provides a convenient API for accessing indexed blockchain data.
+- [toncenter/v2](https://toncenter.com/) - Enables HTTP access to TON Blockchain, allowing developers to retrieve account and wallet information, look up blocks and transactions, send messages to the blockchain, call smart contract methods, and more.
+
+## Third-party APIs
+
+- [tonapi.io](https://docs.tonconsole.com/tonapi) - A fast indexed API that provides basic data about accounts, transactions, blocks, application-specific data about NFT, auctions, jettons, TON DNS, and subscriptions. It also offers annotated transaction chain data.
+- [TONX API](https://docs.tonxapi.com/) - Designed for seamless dApp development, this API provides easy access to various tools and data.
+- [dton.io](https://dton.io/graphql/) - A GraphQL API that delivers data on accounts, transactions, and blocks, as well as application-specific data about NFT, auctions, jettons, and TON DNS.
+- [ton-api-v4](https://mainnet-v4.tonhubapi.com) - A lightweight API optimized for speed through aggressive CDN caching
+- [docs.nftscan.com](https://docs.nftscan.com/reference/ton/model/asset-model) - NFT APIs for TON Blockchain.
+- [everspace.center](https://everspace.center/toncoin) - A simple RPC API for accessing TON Blockchain.
 
 ## APIهای اضافی
 
@@ -27,13 +35,13 @@
 - https://coinmarketcap.com/api/documentation/v1/
 - https://apiguide.coingecko.com/getting-started
 
-### APIهای تبدیل آدرس
+### Address convert APIs
 
 :::info
-ترجیح داده می‌شود آدرس را از طریق الگوریتم محلی تبدیل کنید، برای مطالعه بیشتر به بخش [Addresses](/v3/documentation/smart-contracts/addresses) مستندات مراجعه کنید.
+It is preferable to convert addresses using a local algorithm. See [Addresses](/v3/documentation/smart-contracts/addresses) section of documentation for details.
 :::
 
-#### از شکل دوستانه به شکل خام
+#### From friendly to raw form
 
 /api/v2/unpackAddress
 
@@ -54,7 +62,7 @@ curl -X 'GET' \
 }
 ```
 
-#### از شکل دوستانه به شکل خام
+#### From friendly to raw form
 
 /api/v2/packAddress
 
@@ -75,8 +83,11 @@ curl -X 'GET' \
 }
 ```
 
-## همچنین ببینید
+## See also
 
 - [TON HTTP API](/v3/guidelines/dapps/apis-sdks/ton-http-apis)
 - [فهرست SDKها](/v3/guidelines/dapps/apis-sdks/sdk)
-- [کتاب آشپزی TON](/v3/guidelines/dapps/cookbook)
+- [TON cookbook](/v3/guidelines/dapps/cookbook)
+
+<Feedback />
+

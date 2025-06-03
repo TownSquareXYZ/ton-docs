@@ -1,42 +1,36 @@
+import Feedback from '@site/src/components/Feedback';
+
 # راهنمای پرسش‌های متداول TON Storage
 
-## چگونه یک دامنه TON را به یک مجموعه از فایل‌های TON Storage اختصاص دهیم
+## How to assign a TON domain to a TON Storage bag
 
-1. [بارگذاری](/v3/guidelines/web3/ton-storage/storage-daemon#creating-a-bag-of-files) کیف فایل‌ها به شبکه و دریافت شناسه کیف
-
-2. مرورگر Google Chrome را روی کامپیوتر خود باز کنید.
-
-3. [افزونه TON](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) را برای Google Chrome نصب کنید.
-   همچنین می‌توانید از [MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc) استفاده کنید.
-
-4. افزونه را باز کنید، "Import wallet" را کلیک کنید و با استفاده از عبارت بازیابی، کیف پول که مالک دامنه است را وارد کنید.
-
-5. حالا دامنه خود را در https://dns.ton.org باز کنید و "Edit" را کلیک کنید.
-
-6. شناسه کیف خود را به فیلد "Storage" کپی کنید و "Save" را کلیک کنید.
+1. [Upload your bag of files](\(/v3/guidelines/web3/ton-storage/storage-daemon#creating-a-bag-of-files\))to the network and copy the bag ID.
+2. Open Google Chrome on your computer.
+3. Install a TON extension:
+   - [TON Wallet](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd)
+   - or [MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc)
+4. Open the extension, click "Import wallet", and import the wallet that owns the domain using your recovery phrase.
+5. Go to [dns.ton.org](https://dns.ton.org), open your domain, and click "Edit".
+6. Paste the bag ID into the "Storage" field and click "Save".
 
 ## چگونه یک سایت استاتیک TON را در TON Storage میزبانی کنیم
 
-1. [ایجاد کنید](/v3/guidelines/web3/ton-storage/storage-daemon#creating-a-bag-of-files) کیف از پوشه با فایل‌های وب‌سایت، به شبکه بارگذاری کنید و شناسه کیف را دریافت کنید. پوشه باید شامل فایل `index.html` باشد.
-
-2. مرورگر Google Chrome را روی کامپیوتر خود باز کنید.
-
-3. [افزونه TON](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) را برای Google Chrome نصب کنید.
-   همچنین می‌توانید از [MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc) استفاده کنید.
-
-4. افزونه را باز کنید، "Import wallet" را کلیک کنید و با استفاده از عبارت بازیابی، کیف پول که مالک دامنه است را وارد کنید.
-
-5. حالا دامنه خود را در https://dns.ton.org باز کنید و "Edit" را کلیک کنید.
-
-6. شناسه کیف خود را به فیلد "Site" کپی کنید، چک‌باکس "Host in TON Storage" را انتخاب کنید و "Save" را کلیک کنید.
+1. [Create a bag](/v3/guidelines/web3/ton-storage/storage-daemon#creating-a-bag-of-files) from the folder containing your static website.
+2. The folder must contain an `index.html` file.
+3. Upload the bag to the network and copy the bag ID.
+4. Open Google Chrome and install a [TON extension](https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd) or [MyTonWallet](https://chrome.google.com/webstore/detail/mytonwallet/fldfpgipfncgndfolcbkdeeknbbbnhcc).
+5. Import the wallet that owns the domain using your recovery phrase.
+6. Go to [dns.ton.org](https://dns.ton.org), open your domain, and click "Edit".
+7. Paste the bag ID into the "Site" field, select "Host in TON Storage", and click "Save".
 
 ## چگونه محتوای TON NFT را به TON Storage انتقال دهیم
 
-اگر از [قرارداد هوشمند استاندارد NFT](https://github.com/ton-blockchain/token-contract/blob/main/nft/nft-collection-editable.fc) برای کلکسیون خود استفاده کرده‌اید، باید یک [پیام](https://github.com/ton-blockchain/token-contract/blob/2d411595a4f25fba43997a2e140a203c140c728a/nft/nft-collection-editable.fc#L132) از کیف پول مالک کلکسیون با پیش‌شوند URL جدید به قرارداد هوشمند کلکسیون ارسال کنید.
+If you're using a [standard NFT contract](https://github.com/ton-blockchain/token-contract/blob/main/nft/nft-collection-editable.fc), update the content prefix by sending a [message](https://github.com/ton-blockchain/token-contract/blob/2d411595a4f25fba43997a2e140a203c140c728a/nft/nft-collection-editable.fc#L132) to your NFT collection smart contract from the collection owner's wallet.
 
-به عنوان مثال، اگر پیشوند URL قبلاً `https://mysite/my_collection/` بود، پیشوند جدید `tonstorage://my_bag_id/` خواهد بود.
+- **Old URL prefix example:** `https://mysite/my_collection/`
+- **New URL prefix format:** `tonstorage://my_bag_id/`.
 
-## چگونه یک دامنه TON را به یک کیف‌فایل TON Storage اختصاص دهیم (سطح پایین)
+## How to assign a TON domain to a TON Storage bag (low-level)
 
 شما باید مقدار زیر را به رکورد sha256("storage") دامنه TON خود اختصاص دهید:
 
@@ -44,13 +38,16 @@
 dns_storage_address#7473 bag_id:uint256 = DNSRecord;
 ```
 
-## چگونه یک سایت استاتیک TON را در TON Storage میزبانی کنیم (سطح پایین)
+## How to host static TON site in TON Storage (low-level)
 
-یگ کیف از پوشه فایل‌های وب‌سایت [ایجاد کنید](/v3/guidelines/web3/ton-storage/storage-daemon#creating-a-bag-of-files)، در شبکه بارگذاری کنید و شناسه کیف را دریافت کنید. پوشه باید شامل فایل `index.html` باشد.
+To host a static site via TON Storage directly:
 
-شما باید مقدار زیر را به رکورد sha256("site") دامنه TON خود اختصاص دهید:
+- [Create a bag](/v3/guidelines/web3/ton-storage/storage-daemon#creating-a-bag-of-files) from your website folder. The folder must include `index.html`.
+- Assign the following value to the DNS record with key sha256("site"):
 
 ```
 dns_storage_address#7473 bag_id:uint256 = DNSRecord;
 ```
+
+<Feedback />
 

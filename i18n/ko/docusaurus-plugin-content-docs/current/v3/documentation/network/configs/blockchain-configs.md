@@ -1,45 +1,47 @@
-# 설정 매개변수
+import Feedback from '@site/src/components/Feedback';
+
+# Config parameters
 
 :::info
-[tonviewer](https://tonviewer.com/config)를 통해 실시간 값을 읽어보세요
+You can view live values by using [Tonviewer](https://tonviewer.com/config).
 :::
 
-## 👋 소개
+## Introduction
 
-이 페이지에서는 TON 블록체인에서 사용되는 설정 매개변수에 대한 설명을 찾을 수 있습니다.
-TON은 많은 기술적 매개변수가 있는 복잡한 설정을 가지고 있습니다: 일부는 블록체인 자체에서 사용되고, 일부는 생태계에서 사용됩니다. 하지만 이러한 매개변수의 의미를 이해하는 사람은 많지 않습니다. 이 글은 사용자에게 매개변수와 그 목적을 쉽게 이해할 수 있는 방법을 제공하기 위해 필요합니다.
+This page provides a description of the configuration parameters used in the TON Blockchain.
 
-## 💡 전제조건
+TON features a complex configuration consisting of many technical parameters, some of which are utilized by the blockchain itself, while others serve the ecosystem. However, only a limited number of individuals fully understand the significance of these parameters. This article aims to offer users a straightforward explanation of each parameter and its purpose.
 
-이 자료는 매개변수 목록과 함께 읽어야 합니다.
-[현재 설정](https://explorer.toncoin.org/config)에서 매개변수 값을 볼 수 있으며, [cells](/v3/concepts/dive-into-ton/ton-blockchain/cells-as-data-storage)에 쓰이는 방식은 [TL-B](/v3/documentation/data-formats/tlb/tl-b-language) 형식의 [block.tlb](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb) 파일에 설명되어 있습니다.
+## Prerequisites
+
+This material should be read alongside the parameter list.
+
+You can view the parameter values in the [current configuration](https://explorer.toncoin.org/config), and the method of writing them into [cells](/v3/concepts/dive-into-ton/ton-blockchain/cells-as-data-storage) is outlined in the [block.tlb](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb) file in [TL-B](/v3/documentation/data-formats/tlb/tl-b-language) format.
 
 :::info
-TON 블록체인 매개변수 끝의 이진 인코딩은 설정의 직렬화된 이진 표현으로, 설정의 효율적인 저장이나 전송을 가능하게 합니다. 직렬화의 정확한 세부사항은 TON 블록체인이 사용하는 특정 인코딩 체계에 따라 다릅니다.
+The binary encoding found at the end of the TON Blockchain parameter represents a serialized binary format of its configuration. This allows for efficient storage and transmission of the configuration data. The specific details of the serialization process vary depending on the encoding scheme utilized by the TON Blockchain.
 :::
 
-## 🚀 시작하겠습니다!
-
-모든 매개변수는 순서대로 되어 있어 헷갈리지 않을 것입니다. 빠른 탐색을 위해 오른쪽 사이드바를 사용하세요.
+All parameters are in place, and you won't get lost. For your convenience, please use the right sidebar for quick navigation.
 
 ## Param 0
 
 이 매개변수는 블록체인의 설정을 저장하는 특별한 스마트 컨트랙트의 주소입니다. 설정은 검증자 투표 중 로딩과 수정을 단순화하기 위해 컨트랙트에 저장됩니다.
 
 :::info
-설정 매개변수에는 주소의 해시 부분만 기록되는데, 이는 컨트랙트가 항상 [마스터체인](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains#masterchain-blockchain-of-blockchains)(워크체인 -1)에 있기 때문입니다. 따라서 컨트랙트의 전체 주소는 `-1:<설정 매개변수의 값>`으로 작성됩니다.
+In the configuration parameter, only the hash portion of the address is recorded, as the contract always resides in the [MasterChain](/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains#masterchain-blockchain-of-blockchains) (WorkChain -1). Therefore, the full address of the contract will be written as `-1:<value of the configuration parameter>`.
 :::
 
 ## Param 1
 
-이 매개변수는 검증자 임명, 보상 분배, 블록체인 매개변수 변경에 대한 투표를 담당하는 [선거인](/v3/documentation/smart-contracts/contracts-specs/governance#elector) 스마트 컨트랙트의 주소입니다.
+This parameter is the address of the [elector smart contract](/v3/documentation/smart-contracts/contracts-specs/governance#elector), responsible for appointing validators, distributing rewards, and voting on changes to blockchain parameters.
 
 ## Param 2
 
-이 매개변수는 새로운 TON을 발행하고 블록체인 검증에 대한 보상으로 보내는 시스템의 주소를 나타냅니다.
+This parameter represents the address of the system, on behalf of which new Toncoins are minted and sent as rewards for validating the blockchain.
 
 :::info
-매개변수 2가 없으면 매개변수 0이 대신 사용됩니다(새로 발행된 TON은 설정 스마트 컨트랙트에서 나옴).
+If the parameter 2 is missing, the parameter 0 is used instead (newly minted Toncoins come from the configuration smart contract).
 :::
 
 ## Param 3
@@ -47,7 +49,7 @@ TON 블록체인 매개변수 끝의 이진 인코딩은 설정의 직렬화된 
 이 매개변수는 트랜잭션 수수료 수집기의 주소입니다.
 
 :::info
-매개변수 3이 없는 경우(현재 상황), 트랜잭션 수수료는 선거인 스마트 컨트랙트(매개변수 1)로 보내집니다.
+If the this parameter is missing (for the time being), transaction fees are directed to the elector smart contract (parameter 1).
 :::
 
 ## Param 4
@@ -55,8 +57,9 @@ TON 블록체인 매개변수 끝의 이진 인코딩은 설정의 직렬화된 
 이 매개변수는 TON 네트워크의 루트 DNS 컨트랙트의 주소입니다.
 
 :::info
-자세한 정보는 [TON DNS & 도메인](/v3/guidelines/web3/ton-dns/dns) 문서와 더 자세한 원본 설명인 [여기](https://github.com/ton-blockchain/TEPs/blob/master/text/0081-dns-standard.md)에서 찾을 수 있습니다.
-이 컨트랙트는 .ton 도메인 판매를 담당하지 않습니다.
+More detailed information, please see the [TON DNS & Domains](/v3/guidelines/web3/ton-dns/dns) documentation and in a more detailed original description [here](https://github.com/ton-blockchain/TEPs/blob/master/text/0081-dns-standard.md).
+
+This contract is not responsible for selling **.ton** domains.
 :::
 
 ## Param 6
@@ -64,28 +67,28 @@ TON 블록체인 매개변수 끝의 이진 인코딩은 설정의 직렬화된 
 이 매개변수는 새로운 화폐 발행 수수료를 담당합니다.
 
 :::info
-Currently, minting additional currency is not implemented and does not work. The implementation and launch of the minter are planned.
+Currently, the minting of additional currency is not implemented and does not function. The implementation and launch of the minter are planned for the future.
 
-문제와 전망에 대해 [관련 문서](/v3/documentation/infra/minter-flow)에서 자세히 알아볼 수 있습니다.
+You can learn more about the issues and prospects in the [relevant documentation](/v3/documentation/infra/minter-flow).
 :::
 
 ## Param 7
 
-이 매개변수는 유통 중인 각 추가 화폐의 양을 저장합니다. 데이터는 [딕셔너리](/v3/documentation/data-formats/tlb/tl-b-types#hashmap-parsing-example)(이진 트리; TON 개발 중에 이 구조가 실수로 hashmap으로 명명된 것 같음) `extracurrency_id -> amount` 형태로 저장되며, 금액은 `VarUint 32` - `0`에서 `2^248` 사이의 정수로 표시됩니다.
+This parameter stores the volume of each additional currency in circulation. The data is organized as a dictionary (also referred to as a **hashmap**, although this name may be a typo during the TON Blockchain's development). The structure uses the format `extracurrency_id -> amount`, where the amount is represented as a `VarUint 32`, which is an integer ranging from `0` to `2^248`.
 
 ## Param 8
 
 이 매개변수는 네트워크 버전과 검증자가 지원하는 추가 기능을 나타냅니다.
 
 :::info
-검증자는 새 블록을 생성하고 트랜잭션을 확인하는 책임이 있는 블록체인 네트워크의 노드입니다.
+Validators are nodes in the TON Blockchain network that are responsible for creating new blocks and verifying transactions.
 :::
 
 - `version`: 이 필드는 버전을 지정합니다.
 
 - `capabilities`: 이 필드는 특정 기능이나 성능의 존재 또는 부재를 나타내는 데 사용되는 플래그 세트입니다.
 
-따라서 네트워크를 업데이트할 때 검증자들은 매개변수 8을 변경하는 데 투표할 것입니다. 이런 방식으로 TON 네트워크는 다운타임 없이 업데이트될 수 있습니다.
+Thus, when updating the network, validators will vote to change parameter 8. This way, the TON Blockchain network can be updated without downtime.
 
 ## Param 9
 
@@ -93,71 +96,77 @@ Currently, minting additional currency is not implemented and does not work. The
 
 ## Param 10
 
-이 매개변수는 변경이 네트워크에 크게 영향을 미치는 중요한 TON 매개변수 목록(이진 트리)을 나타내므로 더 많은 투표 라운드가 열립니다.
+This parameter represents a list (binary tree) of critical TON parameters whose change significantly affects the network, so more voting rounds are held.
 
 ## Param 11
 
 이 매개변수는 TON 설정 변경 제안이 어떤 조건에서 수락되는지를 나타냅니다.
 
-- `min_tot_rounds` - 제안을 적용할 수 있는 최소 라운드 수
-- `max_tot_rounds` - 도달하면 제안이 자동으로 거부되는 최대 라운드 수
-- `min_wins` - 필요한 승리 수(검증자의 3/4이 담보금 합계로 찬성 투표해야 함)
-- `max_losses` - 도달하면 제안이 자동으로 거부되는 최대 패배 수
+- `min_tot_rounds`: The minimum number of rounds before a proposal can be applied
+
+- `max_tot_rounds`: The maximum number of rounds, upon reaching which the proposal will automatically be rejected
+
+- `min_wins`: The required number of wins (3/4 of validators by the sum of the pledge must vote in favor)
+
+- `max_losses`: The maximum number of losses, upon reaching which the proposal will automatically be rejected
+
 - `min_store_sec`와 `max_store_sec`는 제안이 저장될 수 있는 가능한 시간 간격을 결정
+
 - `bit_price`와 `cell_price`는 제안의 1비트나 1셀을 저장하는 비용을 나타냄
 
 ## Param 12
 
-이 매개변수는 TON 블록체인의 워크체인 설정을 나타냅니다. TON 블록체인의 워크체인은 병렬로 작동할 수 있는 독립적인 블록체인으로 설계되어 TON이 매우 많은 트랜잭션과 스마트 컨트랙트를 처리할 수 있게 합니다.
+This parameter represents the configuration of a WorkChain in the TON Blockchain. WorkChains are designed as independent blockchains that can operate in parallel, allowing TON to scale and process a large number of transactions and smart contracts.
 
-## 워크체인 설정 매개변수
+### WorkChain configuration parameters
 
-- `enabled_since`: 이 워크체인이 활성화된 순간의 UNIX 타임스탬프
+- `enabled_since`: A UNIX timestamp of the moment this WorkChain was enabled.
 
-- `actual_min_split`: 검증자가 지원하는 이 워크체인의 최소 분할(샤딩) 깊이
+- `actual_min_split`: The minimum depth of the split (sharding) of this WorkChain, supported by validators.
 
-- `min_split`: 설정에 의해 설정된 이 워크체인의 최소 분할 깊이
+- `min_split`: The minimum depth of the split of this WorkChain, set by the configuration.
 
-- `max_split`: 이 워크체인의 최대 분할 깊이
+- `max_split`: The maximum depth of the split of this WorkChain.
 
-- `basic`: 이 워크체인이 기본(TON 코인 처리, TON 가상 머신 기반 스마트 컨트랙트)인지 나타내는 부울 플래그(true는 1, false는 0)
+- `basic`: A boolean flag (1 for true, 0 for false) indicating whether this WorkChain is basic (handles TON coins, smart contracts based on the TON Virtual Machine).
 
-- `active`: 이 워크체인이 현재 활성 상태인지 나타내는 부울 플래그
+- `active`: A boolean flag indicating whether this WorkChain is active at the moment.
 
-- `accept_msgs`: 이 워크체인이 현재 메시지를 수락하고 있는지 나타내는 부울 플래그
+- `accept_msgs`: A boolean flag indicating whether this WorkChain is accepting messages at the moment.
 
-- `flags`: 워크체인의 추가 플래그(예약됨, 현재 항상 0)
+- `flags`: Additional flags for the WorkChain (reserved, currently always 0).
 
-- `zerostate_root_hash`와 `zerostate_file_hash`: 워크체인의 첫 번째 블록 해시
+- `zerostate_root_hash` and `zerostate_file_hash`: Hashes of the first block of the WorkChain.
 
-- `version`: 워크체인의 버전
+- `version`: Version of the WorkChain.
 
-- `format`: vm_version과 vm_mode를 포함하는 워크체인의 형식 - 거기서 사용되는 가상 머신
+- `format`: The format of the WorkChain, which includes `vm_version` and `vm_mode` - the virtual machine used there.
 
 ## Param 13
 
-이 매개변수는 [선거인](/v3/documentation/smart-contracts/contracts-specs/governance#elector) 컨트랙트에서 검증자의 잘못된 작동에 대한 불만을 제기하는 비용을 정의합니다.
+This parameter defines the cost of filing complaints about incorrect operation of validators in the [elector smart contract](/v3/documentation/smart-contracts/contracts-specs/governance#elector).
 
 ## Param 14
 
-이 매개변수는 TON 블록체인에서 블록 생성에 대한 보상을 나타냅니다. 나노그램은 nanoTON이므로, 마스터체인의 블록 생성 보상은 1.7 TON이고, 기본 워크체인에서는 1.0 TON입니다(한편, 워크체인이 분할되는 경우 블록 보상도 분할됩니다: 워크체인에 두 개의 샤드체인이 있으면 샤드 블록 보상은 0.5 TON이 됩니다).
+This parameter indicates the reward for creating a block in the TON Blockchain. Nanograms represent nanoToncoins. Therefore, the reward for block creation in the MasterChain is 1.7 Toncoins, while in the basic WorkChain, it is 1.0 Toncoins. In the event of a WorkChain split, the block reward is also divided: if there are two ShardChains within the WorkChain, then the reward for each shard block will be 0.5 Toncoins.
 
 ## Param 15
 
 이 매개변수는 TON 블록체인에서 선거와 검증자 작업의 다른 단계의 기간을 포함합니다.
 
-각 검증 기간에는 검증 시작 시 UNIX 형식 시간과 동일한 `election_id`가 있습니다.
-선거인 컨트랙트의 각각의 get-methods `active_election_id`와 `past_election_ids`를 호출하여 현재 `election_id`(선거가 진행 중인 경우) 또는 이전 id를 얻을 수 있습니다.
+For each validation period, there is an `election_id` equal to the UNIX-format time at the start of the validation.
 
-## 워크체인 설정 매개변수
+You can get the current `election_id` (if elections are ongoing) or the past one by invoking the elector smart contract's respective get-methods `active_election_id` and `past_election_ids`.
 
-- `validators_elected_for`: 선출된 검증자 세트가 역할을 수행하는 초 단위 시간(한 라운드)
+### WorkChain configuration parameters
 
-- `elections_start_before`: 현재 라운드 종료 몇 초 전에 다음 기간의 선거 과정이 시작될지
+- `validators_elected_for`: The number of seconds the elected set of validators perform their role (one round).
 
-- `elections_end_before`: 현재 라운드 종료 몇 초 전에 다음 라운드의 검증자가 선택될지
+- `elections_start_before`: The seconds before the end of the current round the election process for the next period will start.
 
-- `stake_held_for`: 라운드가 만료된 후 불만 처리를 위해 검증자의 스테이크가 보류되는 기간
+- `elections_end_before`: The seconds before the end of the current round, the validators for the next round will be chosen.
+
+- `stake_held_for`: The period for which a validator's stake is held (for handling complaints) after the round expires.
 
 :::info
 인수의 각 값은 `uint32` 데이터 유형으로 결정됩니다.
@@ -165,7 +174,7 @@ Currently, minting additional currency is not implemented and does not work. The
 
 ### 예시
 
-TON 블록체인에서는 검증 기간을 짝수와 홀수로 관례적으로 나누는 것이 일반적입니다. 이러한 라운드는 서로 이어집니다. 다음 라운드에 대한 투표가 이전 라운드 중에 이루어지므로, 검증자는 두 라운드 모두에 참여할 기회를 가지기 위해 자금을 두 풀로 나눠야 합니다.
+In the TON Blockchain, validation periods are typically divided into **even** and **odd** rounds that alternate. Voting for the next round occurs during the previous one, so a validator must allocate their funds into two separate pools to participate in both rounds.
 
 #### 메인넷
 
@@ -195,11 +204,11 @@ hold_start = validation_end = election_id + constants['validators_elected_for'] 
 hold_end = hold_start + constants['stake_held_for'] = 1600098304 + 32768 = 1600131072
 ```
 
-따라서 현재 한 패리티의 한 라운드 길이는 `1600131072 - 1600000000 = 131072초 = 36.40888... 시간`입니다.
+Therefore, at this time, the length of one round of one parity is `1600131072 - 1600000000 = 131072 seconds = 36.40888... hours`
 
 #### 테스트넷
 
-##### 현재 값:
+현재 값:
 
 ```python
 constants = {
@@ -210,11 +219,11 @@ constants = {
 }
 ```
 
-##### 스키마
+Scheme:
 
 ![image](/img/docs/blockchain-configs/config15-testnet.png)
 
-###### 기간은 어떻게 계산하나요?
+#### 기간은 어떻게 계산하나요?
 
 `election_id = validation_start = 160002400`이라고 가정해 보겠습니다. 그러면:
 
@@ -225,13 +234,13 @@ hold_start = validation_end = election_id + constants['validators_elected_for'] 
 hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 160010500
 ```
 
-따라서 현재 한 패리티의 한 라운드 길이는 `160010500 - 1600000000 = 10500초 = 175분 = 2.91666... 시간`입니다.
+Therefore, at this time, the length of one round of one parity is `160010500 - 1600000000 = 10500 seconds = 175 minutes = 2.91666... hours`
 
 ## Param 16
 
-이 매개변수는 TON 블록체인의 검증자 수에 대한 제한을 나타냅니다. 선거인 스마트 컨트랙트에서 직접 사용됩니다.
+This parameter represents the limits on the number of validators in the TON Blockchain. It is directly used by the elector smart contract.
 
-### 선거를 위한 검증자 수 설정 매개변수:
+### Configuration parameters for the number of validators for elections
 
 - `max_validators`: 네트워크 운영에 참여할 수 있는 최대 검증자 수를 나타냅니다.
 
@@ -239,21 +248,25 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 
 - `min_validators`: 네트워크 운영을 지원해야 하는 최소 검증자 수를 나타냅니다.
 
-1. 최대 검증자 수는 마스터체인 검증자의 최대 수보다 크거나 같아야 합니다.
-2. 마스터체인 검증자의 최대 수는 최소 검증자 수보다 크거나 같아야 합니다.
-3. 최소 검증자 수는 1 이상이어야 합니다.
+#### Notes
+
+- The maximum number of validators is greater than or equal to the maximum number of MasterChain validators.
+
+- The maximum number of MasterChain validators must be greater than or equal to the minimum number of validators.
+
+- 최소 검증자 수는 1 이상이어야 합니다.
 
 ## Param 17
 
 이 매개변수는 TON 블록체인의 스테이크 매개변수 설정을 나타냅니다. 지분증명이나 위임된 지분증명 합의 알고리즘을 사용하는 많은 블록체인 시스템에서, 네트워크 고유의 암호화폐 소유자는 검증자가 되어 보상을 얻기 위해 토큰을 "스테이크"할 수 있습니다.
 
-## 설정 매개변수:
+### Configuration parameters
 
-- `min_stake`: 검증 과정에 참여하기 위해 관심 있는 당사자가 스테이크해야 하는 최소 TON 양을 나타냅니다.
+- `min_stake`: This parameter represents the minimum amount of Toncoins that an interested party needs to stake to participate in the validation process.
 
-- `max_stake`: 관심 있는 당사자가 스테이크할 수 있는 최대 TON 양을 나타냅니다.
+- `max_stake`: This parameter represents the maximum amount of Toncoins that an interested party can stake.
 
-- `min_total_stake`: 선택된 검증자 세트가 보유해야 하는 최소 총 TON 양을 나타냅니다.
+- `min_total_stake`: This parameter represents the minimum total amount of Toncoins that the chosen set of validators must hold.
 
 - `max_stake_factor`: 최대 유효 스테이크(담보)가 다른 검증자가 보낸 최소 스테이크를 초과할 수 있는 배수를 나타내는 승수입니다.
 
@@ -265,17 +278,16 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 
 이 매개변수는 TON 블록체인의 데이터 저장 비용을 결정하는 설정을 나타냅니다. 이는 스팸을 방지하고 네트워크 유지를 장려하는 수단으로 작용합니다.
 
-### 저장소 수수료 매개변수 딕셔너리:
+### Dictionary of storage fee parameters
 
 - `utime_since`: 지정된 가격이 적용되는 초기 Unix 타임스탬프를 제공합니다.
 
-- `bit_price_ps`와 `cell_price_ps`: TON 블록체인의 주요 워크체인에서 65536초 동안 1비트나 1셀의 정보에 대한 저장 가격을 나타냅니다.
+- `bit_price_ps` and `cell_price_ps`: These parameters represent the storage prices for one bit or one cell of information in the main WorkChains of the TON Blockchain for 65536 seconds
 
-- `mc_bit_price_ps`와 `mc_cell_price_ps`: 65536초 동안 TON 마스터체인에서의 컴퓨팅 자원 가격을 나타냅니다.
+- `mc_bit_price_ps` and `mc_cell_price_ps`: These parameters represent the prices for computational resources specifically in the TON MasterChain for 65536 seconds
 
 :::info
-
-각 인수의 값은 `uint32` 데이터 유형으로 결정됩니다.
+`utime_since` accepts values in the `uint32` data type.
 
 나머지는 `uint64` 데이터 타입으로 값을 받습니다.
 :::
@@ -292,21 +304,21 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 
 - `special_gas_limit`: 특별한(시스템) 컨트랙트의 트랜잭션당 소비할 수 있는 가스량 제한을 나타냅니다.
 
-- `gas_credit`: 외부 메시지 확인을 위해 트랜잭션에 제공되는 가스 단위의 크레딧을 나타냅니다.
+- `gas_credit`: This parameter represents a credit in gas units provided to transactions to check an external message.
 
 - `block_gas_limit`: 단일 블록 내에서 소비할 수 있는 최대 가스량을 나타냅니다.
 
-- `freeze_due_limit`와 `delete_due_limit`: 컨트랙트가 동결되고 삭제되는 누적 저장 수수료의 한도(나노TON 단위)입니다.
+- `freeze_due_limit` and `delete_due_limit`: Limits of accumulated storage fees (in nanoToncoin) at which a contract is frozen and deleted, respectively.
 
 :::info
-`gas_credit`과 다른 매개변수에 대한 자세한 내용은 외부 메시지 섹션 [여기](/v3/documentation/smart-contracts/transaction-fees/accept-message-effects#external-messages)를 참조하세요.
+You can find more about `gas_credit` and other parameters in the section of external messages [here](/v3/documentation/smart-contracts/transaction-fees/accept-message-effects#external-messages).
 :::
 
 ## Param 22와 23
 
 이 매개변수들은 블록에 대한 제한을 설정하며, 이 제한에 도달하면 블록이 종료되고 남은 메시지의 콜백(있는 경우)이 다음 블록으로 이월됩니다.
 
-### 설정 매개변수:
+### Configuration parameters
 
 - `bytes`: 바이트 단위로 블록 크기의 제한을 설정합니다.
 
@@ -316,21 +328,21 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 
 - `hard_limit`: 하드 제한 - 이것은 절대적인 최대 크기입니다.
 
-- `gas`: 블록이 소비할 수 있는 가스양에 대한 제한을 설정합니다. 블록체인 맥락에서 가스는 연산 작업의 지표입니다. 언더로드, 소프트 및 하드 제한에 대한 제한은 바이트 크기와 동일하게 작동합니다.
+- `gas`: This section sets the limits on the amount of gas that a block can consume. Gas, in the context of blockchain, is an indicator of computational work. The limits on underload, soft and hard limits, work the same as for size in bytes.
 
-- `lt_delta`: 첫 번째와 마지막 트랜잭션 사이의 논리적 시간 차이에 대한 제한을 설정합니다. 논리적 시간은 TON 블록체인에서 이벤트를 정렬하는 데 사용되는 개념입니다. 언더로드, 소프트 및 하드 제한에 대한 제한은 바이트 크기와 가스와 동일하게 작동합니다.
+- `lt_delta`: This section sets the limits on the difference in logical time between the first and last transaction. Logical time is a concept used in the TON Blockchain for ordering events. The limits on underload, soft and hard limits, work the same as for size in bytes and gas.
 
 :::info
-샤드의 부하가 부족하고 그에 따라 이웃과 병합하고자 하는 경우, `soft_limit`는 내부(internal) 메시지가 처리를 중단하지만 외부(external) 메시지는 계속되는 상태를 정의합니다. 외부(external) 메시지는 `(soft_limit + hard_limit)/2`와 같은 제한에 도달할 때까지 처리됩니다.
+If a shard has insufficient load and there is an intention to merge with a neighboring shard, the `soft_limit` indicates a threshold. When this threshold is exceeded, internal messages will stop being processed, while external messages will still be handled. External messages will continue to be processed until the total reaches a limit that is equal to half the sum of the `soft_limit` and `hard_limit`, or `(soft_limit + hard_limit) / 2`.
 :::
 
 ## Param 24와 25
 
-매개변수 24는 TON 블록체인의 마스터체인에서 메시지 전송 비용에 대한 설정을 나타냅니다.
+Parameter 24 represents the configuration for the cost of sending messages in the MasterChain of the TON Blockchain.
 
 매개변수 25는 다른 모든 경우의 메시지 전송 비용에 대한 설정을 나타냅니다.
 
-### 전달 비용을 정의하는 설정 매개변수:
+### Configuration parameters defining the costs of forwarding
 
 - `lump_price`: 메시지 크기나 복잡성에 관계없이 메시지를 전달하는 기본 가격을 의미합니다.
 
@@ -338,10 +350,11 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 
 - `cell_price`: 셀당 메시지 전달 비용을 반영합니다. 셀은 TON 블록체인의 기본 데이터 저장 단위입니다.
 
-- `ihr_price_factor`: 즉시 하이퍼큐브 라우팅(IHR) 비용을 계산하는 데 사용되는 요소입니다.
-    :::info
-    IHR은 메시지가 수신자의 샤드 체인으로 직접 전송되는 TON 블록체인 네트워크의 메시지 전달 방법입니다.
-    :::
+- `ihr_price_factor`: This is a factor used to calculate the cost of immediate hypercube routing (IHR).
+
+:::info
+IHR is a method of message delivery in the TON Blockchain network, where messages are sent directly to the recipient's ShardChain.
+:::
 
 - `first_frac`: 메시지 경로를 따라 첫 번째 전환에 사용될 남은 잔액의 분율을 정의합니다.
 
@@ -349,31 +362,31 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 
 ## Param 28
 
-이 매개변수는 TON 블록체인의 Catchain 프로토콜 설정을 제공합니다. Catchain은 검증자 간의 합의를 달성하기 위해 TON에서 사용되는 가장 낮은 수준의 합의 프로토콜입니다.
+This parameter provides the configuration for the `Catchain` protocol in the TON Blockchain. `Catchain` is the lowest-level consensus protocol used in the TON to achieve agreement among validators.
 
-### 설정 매개변수:
+### Configuration parameters
 
 - `flags`: 다양한 이진 매개변수를 설정하는 데 사용할 수 있는 일반 필드. 이 경우 0과 같으며, 특정 플래그가 설정되지 않았음을 의미합니다.
 
 - `shuffle_mc_validators`: 마스터체인 검증자를 섞을지 여부를 나타내는 부울 값. 이 매개변수가 1로 설정되면 검증자가 섞입니다.
 
-- `mc_catchain_lifetime`: 마스터체인 catchain 그룹의 수명(초)
+- `mc_catchain_lifetime`: The lifetime of MasterChain's `Catchain` groups in seconds.
 
-- `shard_catchain_lifetime`: 샤드체인 catchain 그룹의 수명(초)
+- `shard_catchain_lifetime`: The lifetime of ShardChain's `Catchain` groups in seconds.
 
-- `shard_validators_lifetime`: 샤드체인 검증자 그룹의 수명(초)
+- `shard_validators_lifetime`: The lifetime of a ShardChain's validators group in seconds.
 
-- `shard_validators_num`: 각 샤드체인 검증 그룹의 검증자 수
+- `shard_validators_num`: The number of validators in each ShardChain validation group.
 
 ## Param 29
 
-이 매개변수는 TON 블록체인의 catchain([Param 28](#param-28)) 위의 합의 프로토콜에 대한 설정을 제공합니다. 합의 프로토콜은 블록체인 네트워크의 중요한 구성 요소이며, 모든 노드가 분산 원장의 상태에 동의하도록 보장합니다.
+This parameter provides the configuration for the consensus protocol above `Catchain` ([Param 28](#param-28)) in the TON Blockchain. The consensus protocol is a crucial component of a blockchain network, and it ensures that all nodes agree on the state of the distributed ledger.
 
-### 설정 매개변수:
+### Configuration parameters
 
 - `flags`: 다양한 이진 매개변수를 설정하는 데 사용할 수 있는 일반 필드. 이 경우 0과 같으며, 특정 플래그가 설정되지 않았음을 의미합니다.
 
-- `new_catchain_ids`: 새 Catchain 식별자를 생성할지 여부를 나타내는 부울 값. 이 매개변수가 1로 설정되면 새 식별자가 생성됩니다. 이 경우 1의 값이 할당되어 새 식별자가 생성됨을 의미합니다.
+- `new_catchain_ids`: A Boolean value indicating whether to generate new `Catchain` identifiers. If this parameter is set to 1, new identifiers will be generated. In this case, it is assigned the value of 1, which means that new identifiers will be generated.
 
 - `round_candidates`: 합의 프로토콜의 각 라운드에서 고려될 후보자 수. 여기서는 3으로 설정됩니다.
 
@@ -393,35 +406,35 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 
 - `proto_version`: 프로토콜 버전. 여기서는 2로 설정됩니다.
 
-- `catchain_max_blocks_coeff`: Catchain의 블록 생성 속도를 제한하는 계수, [설명](https://github.com/ton-blockchain/ton/blob/master/doc/catchain-dos.md). 여기서는 10000으로 설정됩니다.
+- `catchain_max_blocks_coeff`: The coefficient limiting the rate of block generation in `Catchain`, [description](https://github.com/ton-blockchain/ton/blob/master/doc/catchain-dos.md). Here, it is set to 10000.
 
 ## Param 31
 
-이 매개변수는 가스나 저장소 모두에 대해 수수료가 부과되지 않고 틱톡 트랜잭션을 생성할 수 있는 스마트 컨트랙트 주소의 설정을 나타냅니다. 목록에는 일반적으로 거버넌스 컨트랙트가 포함됩니다. 매개변수는 이진 트리 구조 - 주소의 256비트 표현이 키인 트리(HashMap 256)로 표시됩니다. 이 목록에는 마스터체인의 주소만 있을 수 있습니다.
+This parameter represents the configuration of smart contract addresses from which no fees are charged for either gas or storage and where **tick-tok** transactions can be created. The list usually includes governance contracts. The parameter is presented as a binary tree structure — a tree (HashMap 256), where the keys are a 256-bit representation of the address. Only addresses in the MasterChain can be present in this list.
 
 ## Param 32, 34 및 36
 
 이전(32), 현재(34) 및 다음(36) 라운드의 검증자 목록입니다. 매개변수 36은 선거 끝부터 라운드 시작까지 설정됩니다.
 
-### 설정 매개변수:
+### Configuration parameters
 
 - `cur_validators`: 현재 검증자 목록입니다. 검증자는 일반적으로 블록체인 네트워크에서 트랜잭션을 검증하는 책임이 있습니다.
 
 - `utime_since`와 `utime_until`: 이 검증자들이 활성화되는 기간을 제공합니다.
 
-- `total`과 `main`: 네트워크의 총 검증자 수와 마스터체인을 검증하는 검증자 수를 제공합니다.
+- `total` and `main`: These parameters provide the total number of validators and the number of validators validating the MasterChain in the network.
 
 - `total_weight`: 검증자의 가중치를 합산합니다.
 
-- `list`: `id->validator-data` 트리 형식의 검증자 목록: `validator_addr`, `public_key`, `weight`, `adnl_addr`: 각 검증자에 대한 세부 정보 - 마스터체인의 256 주소, 공개 키, 가중치, ADNL 주소(TON의 네트워크 수준에서 사용되는 주소)를 제공합니다.
+- `list`: A list of validators in the tree format `id->validator-data`: `validator_addr`, `public_key`, `weight`, `adnl_addr`: These parameters provide details about each validator - their 256 addresses in the MasterChain, public key, weight, ADNL address (the address used at the network level of the TON).
 
 ## Param 40
 
-이 매개변수는 부적절한 행동(비검증)에 대한 처벌 설정의 구조를 정의합니다. 매개변수가 없는 경우 기본 벌금 크기는 101 TON입니다.
+This parameter defines the structure of the configuration for punishment for improper behavior (non-validation). In the absence of the parameter, the default fine size is 101 Toncoins.
 
-## 설정 매개변수:
+### Configuration parameters
 
-**`MisbehaviourPunishmentConfig`**: 이 데이터 구조는 시스템의 부적절한 행동이 어떻게 처벌되는지 정의합니다.
+`MisbehaviourPunishmentConfig`: This data structure defines how improper behavior in the system is punished.
 
 다음 필드를 포함합니다:
 
@@ -441,35 +454,42 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 
 ## Param 43
 
-이 매개변수는 계정과 메시지의 다양한 크기 제한과 다른 특성에 관련됩니다.
+This parameter relates to the size limits and other features of accounts and messages.
 
-### 설정 매개변수:
+### Configuration parameters
 
-- `max_msg_bits`: 최대 메시지 크기(비트)
+- `max_msg_bits`: Maximum message size in bits.
 
-- `max_msg_cells`: 메시지가 차지할 수 있는 최대 셀(저장 단위의 한 형태) 수
+- `max_msg_cells`: Maximum number of cells (a form of storage unit) a message can occupy.
 
-- `max_library_cells`: 라이브러리 셀에 사용할 수 있는 최대 셀 수
+- `max_library_cells`: Maximum number of cells that can be used for library cells.
 
-- `max_vm_data_depth`: 메시지와 계정 상태의 최대 셀 깊이
+- `max_vm_data_depth`: Maximum cell depth in messages and account state.
 
-- `max_ext_msg_size`: 최대 외부 메시지 크기(비트)
+- `max_ext_msg_size`: Maximum external message size in bits.
 
-- `max_ext_msg_depth`: 최대 외부 메시지 깊이. 메시지 내 데이터 구조의 깊이를 의미할 수 있습니다.
+- `max_ext_msg_depth`: Maximum external message depth. This could refer to the depth of the data structure within the message.
 
-- `max_acc_state_cells`: 계정 상태가 차지할 수 있는 최대 셀 수
+- `max_acc_state_cells`: Maximum number of cells that an account state can occupy.
 
-- `max_acc_state_bits`: 최대 계정 상태 크기(비트)
+- `max_acc_state_bits`: Maximum account state size in bits.
 
 없는 경우 기본 매개변수가 사용됩니다:
 
 - `max_size` = 65535
+
 - `max_depth` = 512
+
 - `max_msg_bits` = 1 << 21
+
 - `max_msg_cells` = 1 << 13
+
 - `max_library_cells` = 1000
+
 - `max_vm_data_depth` = 512
+
 - `max_acc_state_cells` = 1 << 16
+
 - `max_acc_state_bits` = (1 << 16) \* 1023
 
 :::info
@@ -481,12 +501,12 @@ hold_end = hold_start + constants['stake_held_for'] = 160009600 + 900 = 16001050
 이 매개변수는 `suspended_until`까지 초기화할 수 없는 일시 중단된 주소 목록을 정의합니다. 아직 초기화되지 않은 계정에만 적용됩니다. 이는 토큰노믹스를 안정화하기 위한 조치입니다(초기 마이너 제한). 설정되지 않은 경우 - 제한이 없습니다. 각 주소는 이 트리의 끝 노드로 표현되며, 트리와 같은 구조를 통해 주소의 존재 여부를 효과적으로 확인할 수 있습니다.
 
 :::info
-토큰노믹스의 안정화는 "The Open Network" 텔레그램 채널의 [공식 보고서](https://t.me/tonblockchain/178)에서 자세히 설명됩니다.
+The stabilization of the tokenomics is further described in the [official report](https://t.me/tonblockchain/178) of the **@tonblockchain** Telegram channel.
 :::
 
 ## Param 45
 
-미리 컴파일된 컨트랙트 목록은 마스터체인 설정에 저장됩니다:
+The list of precompiled contracts is stored in the MasterChain config:
 
 ```
 precompiled_smc#b0 gas_usage:uint64 = PrecompiledSmc;
@@ -494,39 +514,43 @@ precompiled_contracts_config#c0 list:(HashmapE 256 PrecompiledSmc) = Precompiled
 _ PrecompiledContractsConfig = ConfigParam 45;
 ```
 
-미리 컴파일된 컨트랙트에 대한 자세한 내용은 [이 페이지](/v3/documentation/smart-contracts/contracts-specs/precompiled-contracts)를 참조하세요.
+More details about precompiled contracts are on [this page](/v3/documentation/smart-contracts/contracts-specs/precompiled-contracts).
 
 ## Param 71 - 73
 
-이 매개변수는 다른 네트워크에서 TON을 래핑하기 위한 브릿지에 관한 것입니다:
+This parameter pertains to bridges for wrapping Toncoins in other networks:
 
 - ETH-TON **(71)**
+
 - BSC-TON **(72)**
+
 - Polygon-TON **(73)**
 
-### 설정 매개변수:
+### Configuration parameters
 
-- `bridge_address`: 다른 네트워크에서 래핑된 TON을 발행하기 위해 TON을 수락하는 브릿지 컨트랙트 주소입니다.
+- `bridge_address`: This is the bridge contract address that accepts TON to issue wrapped Toncoins in other networks.
 
 - `oracle_multisig_address`: 브릿지 관리 지갑 주소입니다. 멀티시그 지갑은 트랜잭션 승인을 위해 여러 당사자의 서명이 필요한 디지털 지갑 유형입니다. 보안을 강화하기 위해 자주 사용됩니다. 오라클이 당사자 역할을 합니다.
 
-- `oracles`: `id->address` 형태의 트리로된 오라클 목록
+- `oracles`: List of oracles in the form of a tree `id->address`
 
 - `external_chain_address`: 해당 외부 블록체인의 브릿지 컨트랙트 주소입니다.
 
 ## Param 79, 81 및 82
 
-이 매개변수는 다른 네트워크의 토큰을 TON 네트워크의 토큰으로 래핑하기 위한 브릿지에 관한 것입니다:
+This parameter relates to bridges for wrapping tokens from other networks into tokens on the TON network:
 
 - ETH-TON **(79)**
+
 - BSC-TON **(81)**
+
 - Polygon-TON **(82)**
 
-### 설정 매개변수:
+### Configuration parameters
 
 - `bridge_address`와 `oracles_address`: 브릿지와 브릿지 관리 컨트랙트(오라클 멀티시그)의 블록체인 주소입니다.
 
-- `oracles`: `id->address` 형태의 트리로된 오라클 목록
+- `oracles`: List of oracles in the form of a tree `id->address`
 
 - `state_flags`: 상태 플래그. 이 매개변수는 개별 브릿지 기능의 활성화/비활성화를 담당합니다.
 
@@ -534,24 +558,32 @@ _ PrecompiledContractsConfig = ConfigParam 45;
 
 - `external_chain_address`: 다른 블록체인의 브릿지 컨트랙트 주소입니다.
 
-## 음수 매개변수
+## Negative parameters
 
 :::info
-음수 매개변수와 양수 매개변수의 차이는 검증자의 검증 필요성입니다; 일반적으로 특정한 할당된 역할이 없습니다.
+The distinction between negative and positive parameters lies in the necessity for validators to verify them; negative parameters typically lack a specific assigned role.
 :::
 
-## 다음 단계
+## Next steps
 
-이 글을 깊이 있게 살펴본 후에는 다음 문서들을 더 자세히 공부하는 것이 강력히 권장됩니다:
+After thoroughly reviewing this article, it is highly recommended that you dedicate time for a more in-depth study of the following documents:
 
-- [whitepaper.pdf](https://ton.org/whitepaper.pdf)와 [tblkch.pdf](/tblkch.pdf)의 원본이지만 제한적인 설명.
+- The original descriptions are present, but they may be limited, in the documents:
+    - [The Open Network Whitepaper](https://ton.org/whitepaper.pdf)
+    - [Telegram Open Network Blockchain](/tblkch.pdf)
 
-- [mc-config.h](https://github.com/ton-blockchain/ton/blob/fc9542f5e223140fcca833c189f77b1a5ae2e184/crypto/block/mc-config.h), [block.tlb](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb) 및 [BlockMasterConfig Type](https://docs.evercloud.dev/reference/graphql-api/field_descriptions#blockmasterconfig-type).
+- Source code:
+    - [mc-config.h](https://github.com/ton-blockchain/ton/blob/fc9542f5e223140fcca833c189f77b1a5ae2e184/crypto/block/mc-config.h)
+    - [block.tlb](https://github.com/ton-blockchain/ton/blob/master/crypto/block/block.tlb)
+    - [BlockMasterConfig Type](https://docs.evercloud.dev/reference/graphql-api/field_descriptions#blockmasterconfig-type)
 
-## 📖 참고
+## See also
 
-이 페이지에서 TON 블록체인의 활성 네트워크 설정을 찾을 수 있습니다:
+On these pages, you can find active network configurations of the TON Blockchain:
 
-- 메인넷: https://ton.org/global-config.json
-- 테스트넷: https://ton.org/testnet-global.config.json
-- [러시아어 버전](https://github.com/delovoyhomie/description-config-for-TON-Blockchain/blob/main/Russian-version.md).
+- [Mainnet configuration](https://ton.org/global-config.json)
+- [Testnet configuration](https://ton.org/testnet-global.config.json)
+- [Russian version](https://github.com/delovoyhomie/description-config-for-TON-Blockchain/blob/main/Russian-version.md)
+
+<Feedback />
+

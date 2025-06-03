@@ -1,16 +1,17 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 구문
 
-이 섹션에서는 일반 함수 본문을 구성하는 FunC 구문들을 간단히 설명합니다.
+This section briefly overviews FunC statements, which form the core of function bodies.
 
 ## 표현식 구문
 
-가장 일반적인 구문 유형은 표현식 구문입니다. 이는 `;`가 따라오는 표현식입니다. 표현식의 설명은 매우 복잡할 수 있으므로, 여기서는 간략한 설명만 제시합니다. 규칙적으로 모든 하위 표현식은 [asm 스택 재배치](/v3/documentation/smart-contracts/func/docs/functions#rearranging-stack-entries)의 예외를 제외하고는 왼쪽에서 오른쪽으로 계산됩니다.
+The most common type of statement is the expression statement—an expression followed by `;`. As a rule, all sub-expressions are evaluated from left to right,
+except in cases where [asm stack rearrangement](/v3/documentation/smart-contracts/func/docs/functions#rearranging-stack-entries) explicitly defines the order.
 
 ### 변수 선언
 
-초기값을 정의하지 않고 지역 변수를 선언하는 것은 불가능합니다.
-
-다음은 변수 선언의 몇 가지 예시입니다:
+Local variables must be initialized at the time of declaration. Here are some examples:
 
 ```func
 int x = 2;
@@ -26,7 +27,7 @@ var (x, y, z) = (1, 2, 3);
 var [x, y, z] = [1, 2, 3];
 ```
 
-변수는 동일한 범위 내에서 "재선언"될 수 있습니다. 예를 들어, 이는 올바른 코드입니다:
+A variable can be redeclared in the same scope. For example, the following code is valid:
 
 ```func
 int x = 2;
@@ -34,55 +35,64 @@ int y = x + 1;
 int x = 3;
 ```
 
-사실, `int x`의 두 번째 등장은 선언이 아니라 `x`가 `int` 타입을 가진다는 컴파일 타임 보험일 뿐입니다. 따라서 세 번째 줄은 본질적으로 간단한 할당 `x = 3;`과 동등합니다.
+In this case,
+the second occurrence of `int x` is not a new declaration but a compile-time check ensuring that `x` has type `int`. The third line is equivalent to `x = 3;`.
 
-중첩된 범위에서는 C 언어처럼 변수를 진정으로 재선언할 수 있습니다. 예를 들어, 다음 코드를 고려해보세요:
+**Variable redeclaration in nested scopes**
+
+In nested scopes, a new variable with the same name can be declared, just like in C:
 
 ```func
 int x = 0;
 int i = 0;
 while (i < 10) {
   (int, int) x = (i, i + 1);
-  ;; here x is a variable of type (int, int)
+  ;; Here x is a variable of type (int, int)
   i += 1;
 }
-;; here x is a (different) variable of type int
+;; Here, x refers to the original variable of type int declared above
 ```
 
-하지만 전역 변수 [섹션](/v3/documentation/smart-contracts/func/docs/global_variables)에서 언급했듯이, 전역 변수는 재선언될 수 없습니다.
+However, as mentioned in the [Global variables](/v3/documentation/smart-contracts/func/docs/global_variables/) section,
+global variables **cannot** be redeclared.
 
-변수 선언은 표현식 구문**이라는** 점에 주목하세요, 따라서 실제로 `int x = 2`와 같은 구문은 완전한 표현식입니다. 예를 들어, 이는 올바른 코드입니다:
+Since variable declarations are **expression statements**, constructs like `int x = 2;` are valid expressions.
+For instance:
+`int y = (int x = 3) + 1;`
+Here, `x` is declared and assigned `3`, and `y` is assigned `4`.
 
-```func
-int y = (int x = 3) + 1;
-```
+#### Underscore
 
-이는 각각 `3`과 `4`에 해당하는 두 변수 `x`와 `y`의 선언입니다.
-
-#### 밑줄
-
-밑줄 `_`은 값이 필요하지 않을 때 사용됩니다. 예를 들어, `foo` 함수가 `int -> (int, int, int)` 타입을 가진다고 가정해봅시다. 우리는 다음과 같이 첫 번째 반환 값을 얻고 두 번째와 세 번째를 무시할 수 있습니다:
+The underscore `_` is used when a value is not needed.
+For example, if `foo` is a function of type `int -> (int, int, int)`,
+you can retrieve only the first return value while ignoring the rest:
 
 ```func
 (int fst, _, _) = foo(42);
 ```
 
-### 함수 적용
+### Function application
 
-함수 호출은 일반적인 언어에서처럼 보입니다. 함수 호출의 인수들은 함수 이름 뒤에 쉼표로 구분되어 나열됩니다.
+A function call in FunC follows a conventional syntax:
+the function name is followed by its arguments, separated by commas.
 
 ```func
-;; suppose foo has type (int, int, int) -> int
+;; Suppose foo has type (int, int, int) -> int
 int x = foo(1, 2, 3);
 ```
 
-하지만 `foo`가 실제로는 `(int, int, int)` 타입의 **하나의** 인수를 가진 함수라는 점에 주목하세요. 차이점을 보려면, `bar`가 `int -> (int, int, int)` 타입의 함수라고 가정해봅시다. 일반적인 언어와는 달리, 다음과 같이 함수들을 합성할 수 있습니다:
+However, unlike many conventional languages, FunC treats functions as taking a single argument.
+In the example above, `foo` is a function that takes one tuple argument of type `(int, int, int)`.
+
+**Function composition**
+
+To illustrate how function arguments work in FunC, consider a function `bar` of type `int -> (int, int, int)`. Since `foo` expects a single tuple argument, you can pass the entire result of `bar(42)` directly into `foo`:
 
 ```func
 int x = foo(bar(42));
 ```
 
-다음과 같은 더 긴 형태 대신:
+This is equivalent to the longer form:
 
 ```func
 (int a, int b, int c) = bar(42);
@@ -91,24 +101,45 @@ int x = foo(a, b, c);
 
 또한 Haskell 스타일의 호출도 가능하지만, 항상 가능한 것은 아닙니다(나중에 수정될 예정):
 
+FunC also supports **Haskell-style** function application, but with some limitations:
+
 ```func
-;; suppose foo has type int -> int -> int -> int
-;; i.e. it's carried
+;; Suppose foo has type int -> int -> int -> int
+;; i.e., it is curried
 (int a, int b, int c) = (1, 2, 3);
-int x = foo a b c; ;; ok
-;; int y = foo 1 2 3; wouldn't compile
-int y = foo (1) (2) (3); ;; ok
+int x = foo a b c; ;; Valid syntax
+```
+
+However, direct application with literals does not compile:
+
+```func
+;; int y = foo 1 2 3; ERROR: won't compile
+```
+
+Instead, parentheses are required:
+
+```func
+int y = foo (1) (2) (3); ;; Valid syntax
 ```
 
 ### 람다 표현식
 
-람다 표현식은 아직 지원되지 않습니다.
+Lambda expressions are not yet supported in FunC.
 
 ### 메서드 호출
 
 #### 수정하지 않는 메서드
 
-함수가 적어도 하나의 인수를 가지고 있다면, 수정하지 않는 메서드로 호출될 수 있습니다. 예를 들어, `store_uint`는 `(builder, int, int) -> builder` 타입을 가집니다(두 번째 인수는 저장할 값이고, 세 번째는 비트 길이입니다). `begin_cell`은 새로운 빌더를 생성하는 함수입니다. 다음 코드들은 동등합니다:
+In FunC, a function with at least one argument can be called a non-modifying method using the dot `.` syntax.
+
+For example, the function `store_uint` has the type `(builder, int, int)  → builder`, where:
+
+- The first argument is a builder object.
+- The second argument is the value to store.
+- The third argument is the bit length.
+
+The function `begin_cell()` creates a new builder.
+These two ways of calling `store_uint` are equivalent:
 
 ```func
 builder b = begin_cell();
@@ -120,13 +151,14 @@ builder b = begin_cell();
 b = b.store_uint(239, 8);
 ```
 
-따라서 함수의 첫 번째 인수는 `.`로 구분되어 함수 이름 앞에 위치할 수 있습니다. 코드는 더 간단하게 만들 수 있습니다:
+The dot `.` syntax allows the first argument of a function to be placed before the function name,
+simplifying the code further:
 
 ```func
 builder b = begin_cell().store_uint(239, 8);
 ```
 
-메서드의 다중 호출도 가능합니다:
+Multiple non-modifying methods can be chained together:
 
 ```func
 builder b = begin_cell().store_uint(239, 8)
@@ -136,21 +168,26 @@ builder b = begin_cell().store_uint(239, 8)
 
 #### 수정하는 메서드
 
-함수의 첫 번째 인수가 타입 `A`를 가지고 함수의 반환 값이 `(A, B)` 형태를 가질 때(`B`는 임의의 타입), 그 함수는 수정하는 메서드로 호출될 수 있습니다. 수정하는 메서드 호출은 일부 인수를 받고 일부 값을 반환할 수 있지만, 첫 번째 인수를 수정합니다. 즉, 반환된 값의 첫 번째 구성 요소를 첫 번째 인수의 변수에 할당합니다. 예를 들어, `cs`가 셀 슬라이스이고 `load_uint`가 `(slice, int) -> (slice, int)` 타입을 가진다고 가정해봅시다: 이는 셀 슬라이스와 로드할 비트 수를 받아서 슬라이스의 나머지와 로드된 값을 반환합니다. 다음 코드들은 동등합니다:
+If a function’s first argument is of type `A` and its return value follows the structure `(A, B)`,
+where `B` is an arbitrary type, the function can be used as a modifying method.
+
+A modifying method modifies its first argument by assigning the first component of the returned value to the original variable. These methods may take additional arguments and return extra values, but their primary purpose is to update the first argument.
+
+For example, consider a cell slice `cs` and the function `load_uint`, which has the type: `load_uint(slice, int) → (slice, int)`.
+
+This function takes a cell slice and a number of bits to load, returning the remaining slice and the loaded value. The following three calls are equivalent:
 
 ```func
 (cs, int x) = load_uint(cs, 8);
-```
-
-```func
 (cs, int x) = cs.load_uint(8);
-```
-
-```func
 int x = cs~load_uint(8);
 ```
 
-어떤 경우에는 값을 반환하지 않고 첫 번째 인수만 수정하는 함수를 수정하는 메서드로 사용하고 싶을 수 있습니다. 이는 다음과 같이 unit 타입을 사용하여 수행할 수 있습니다: 정수를 증가시키는 `int -> int` 타입의 `inc` 함수를 정의하고 이를 수정하는 메서드로 사용하고 싶다고 가정해봅시다. 그렇다면 `inc`를 `int -> (int, ())` 타입의 함수로 정의해야 합니다:
+Without return values
+Sometimes, a function can be used as a modifying method even when it doesn’t return a meaningful value—only modifying its first argument.
+This can be achieved using unit types.
+
+For example, consider an increment function `inc` of type `int -> int`. It should be redefined as a function of type `int -> (int, ())` to use it as a modifying method:
 
 ```func
 (int, ()) inc(int x) {
@@ -158,7 +195,7 @@ int x = cs~load_uint(8);
 }
 ```
 
-이렇게 정의하면 수정하는 메서드로 사용할 수 있습니다. 다음은 `x`를 증가시킬 것입니다.
+Now, the following code increments `x`:
 
 ```func
 x~inc();
@@ -166,13 +203,13 @@ x~inc();
 
 #### 함수 이름의 `.`와 `~`
 
-`inc`를 수정하지 않는 메서드로도 사용하고 싶다고 가정해봅시다. 다음과 같이 작성할 수 있습니다:
+Suppose we want to use `inc` as a non-modifying method. We can write:
 
 ```func
 (int y, _) = inc(x);
 ```
 
-하지만 수정하는 메서드로서의 `inc` 정의를 오버라이드하는 것이 가능합니다.
+However, we can also define `inc` as a modifying method:
 
 ```func
 int inc(int x) {
@@ -183,33 +220,35 @@ int inc(int x) {
 }
 ```
 
-그리고 다음과 같이 호출할 수 있습니다:
+Now, we can call it in different ways:
 
 ```func
-x~inc();
-int y = inc(x);
-int z = x.inc();
+x~inc(); ;; Modifies x
+int y = inc(x); ;; Doesn't modify x
+int z = x.inc(); ;; Also doesn't modify x
 ```
 
-첫 번째 호출은 x를 수정할 것이고; 두 번째와 세 번째는 수정하지 않을 것입니다.
+**How FunC resolves function calls**
 
-요약하면, `foo`라는 이름의 함수가 수정하지 않는 메서드나 수정하는 메서드로 호출될 때(즉, `.foo` 또는 `~foo` 구문으로), FunC 컴파일러는 그러한 정의가 있다면 `.foo` 또는 `~foo`의 정의를 사용하고, 없다면 `foo`의 정의를 사용합니다.
+- If a function is called with `.` (e.g., `x.foo()`), the compiler looks for a `.foo` definition.
+- If a function is called with `~` (e.g., `x~foo()`), the compiler looks for a `~foo` definition.
+- If neither `.foo` nor `~foo` is defined, the compiler falls back to the regular `foo` definition.
 
 ### 연산자
 
-현재 모든 단항 및 이항 연산자가 정수 연산자라는 점에 주목하세요. 논리 연산자는 비트 단위 정수 연산자로 표현됩니다 (참조: [불리언 타입의 부재](/v3/documentation/smart-contracts/func/docs/types#absence-of-boolean-type)).
+Note that all the unary and binary operators are currently integer operators. Logical operators are bitwise integer operators (cf. [absence of boolean type](/v3/documentation/smart-contracts/func/docs/types#absence-of-boolean-type)).
 
 #### 단항 연산자
 
-두 가지 단항 연산자가 있습니다:
+FunC supports two unary operators:
 
 - `~`는 비트 단위 not (우선순위 75)
 - `-`는 정수 부정 (우선순위 20)
 
-이들은 인수와 분리되어야 합니다:
+These operators must be separated from the arguments:
 
-- `- x`는 정상입니다.
-- `-x`는 정상이 아닙니다 (단일 식별자입니다)
+- `- x` - Negates x.
+- `-x` - Interpreted as a single identifier, not an operation.
 
 #### 이항 연산자
 
@@ -251,12 +290,12 @@ int z = x.inc();
 
 이들도 인수와 분리되어야 합니다:
 
-- `x + y`는 정상입니다
-- `x+y`는 정상이 아닙니다 (단일 식별자입니다)
+- `x + y` -  Proper spacing between operands.
+- `x+y` - Interpreted as a single identifier, not an operation.
 
 #### 조건 연산자
 
-일반적인 구문을 가집니다.
+FunC supports the standard conditional (ternary) operator with the following syntax:
 
 ```func
 <condition> ? <consequence> : <alternative>
@@ -268,13 +307,13 @@ int z = x.inc();
 x > 0 ? x * fac(x - 1) : 1;
 ```
 
-우선순위는 13입니다.
+Priority 13.
 
 #### 할당
 
 우선순위 10.
 
-단순 할당 `=`과 이항 연산의 대응: `+=`, `-=`, `*=`, `/=`, `~/=`, `^/=`, `%=`, `~%=`, `^%=`, `<<=`, `>>=`, `~>>=`, `^>>=`, `&=`, `|=`, `^=`.
+Supports simple assignment `=` and compound assignment operators: `+=`, `-=`, `*=`, `/=`, `~/=`, `^/=`, `%=`, `~%=`, `^%=`, `<<=`, `>>=`, `~>>=`, `^>>=`, `&=`, `|=`, `^=`.
 
 ## 반복문
 
@@ -282,11 +321,13 @@ FunC는 `repeat`, `while`, `do { ... } until` 반복문을 지원합니다. `for
 
 ### Repeat 반복문
 
-구문은 `repeat` 키워드 뒤에 `int` 타입의 표현식이 따라옵니다. 지정된 횟수만큼 코드를 반복합니다. 예시:
+The `repeat` loop uses the `repeat` keyword followed by an `int`  expression. It executes the code a specified number of times.
+
+**Examples:**
 
 ```func
 int x = 1;
-repeat(10) {
+repeat(10) { ;;Repeats the block 10 times
   x *= 2;
 }
 ;; x = 1024
@@ -294,11 +335,13 @@ repeat(10) {
 
 ```func
 int x = 1, y = 10;
-repeat(y + 6) {
+repeat(y + 6) { ;;Repeats the block 16 times
   x *= 2;
 }
 ;; x = 65536
 ```
+
+If the repetition count is negative, the loop does not execute:
 
 ```func
 int x = 1;
@@ -308,11 +351,11 @@ repeat(-1) {
 ;; x = 1
 ```
 
-반복 횟수가 `-2^31` 미만이거나 `2^31 - 1`보다 크면 범위 검사 예외가 발생합니다.
+A range check exception is thrown if the repetition count is less than `-2³¹` or greater than `2³¹ - 1`.
 
 ### While 반복문
 
-일반적인 구문을 가집니다. 예시:
+The `while` loop follows standard syntax:
 
 ```func
 int x = 2;
@@ -326,7 +369,7 @@ while (x < 100) {
 
 ### Until 반복문
 
-다음과 같은 구문을 가집니다:
+The `do { ... } until` loop has the following syntax:
 
 ```func
 int x = 0;
@@ -338,28 +381,31 @@ do {
 
 ## If 구문
 
-예시:
+**Examples**
+
+Standard `if` statement:
 
 ```func
-;; usual if
 if (flag) {
   do_something();
 }
 ```
 
+Negated condition, which is equivalent to `if` (`~flag`):
+
 ```func
-;; equivalent to if (~ flag)
+
 ifnot (flag) {
   do_something();
 }
 ```
 
+`If-else` statement:
+
 ```func
-;; usual if-else
 if (flag) {
   do_something();
-}
-else {
+} else {
   do_alternative();
 }
 ```
@@ -373,24 +419,39 @@ if (flag1) {
 }
 ```
 
-중괄호는 필수입니다. 다음 코드는 컴파일되지 않을 것입니다:
+Curly brackets `{}` are required for `if` statements. The following code will not compile:
 
 ```func
 if (flag1)
   do_something();
 ```
 
-## Try-Catch 구문
+## Try-catch statements
 
-*func v0.4.0부터 사용 가능*
+*Available in FunC since v0.4.0*
 
-`try` 블록의 코드를 실행합니다. 실패하면, `try` 블록에서 이루어진 변경사항을 완전히 롤백하고 대신 `catch` 블록을 실행합니다; `catch`는 두 개의 인수를 받습니다: 임의의 타입의 예외 매개변수(`x`)와 에러 코드(`n`, 정수).
+The `try` block executes a section of code.
+If an error occurs, all changes made within the `try` block are completely rolled back, and the `catch` block is executed instead. The `catch` block receives two arguments:
 
-다른 많은 언어의 try-catch 구문과 달리 FunC의 try-catch 구문에서는, try 블록에서 이루어진 변경사항, 특히 지역 및 전역 변수의 수정, 모든 레지스터의 변경사항(즉, `c4` 저장소 레지스터, `c5` 액션/메시지 레지스터, `c7` 컨텍스트 레지스터 및 기타)이 try 블록에서 오류가 발생하면 **폐기**되며 결과적으로 모든 컨트랙트 저장소 업데이트와 메시지 전송이 취소됩니다. *코드페이지* 및 가스 카운터와 같은 일부 TVM 상태 매개변수는 롤백되지 않는다는 점에 주목하는 것이 중요합니다. 이는 특히 try 블록에서 사용된 모든 가스가 계산되고 가스 제한을 변경하는 OP(`accept_message` 및 `set_gas_limit`)의 효과가 유지된다는 것을 의미합니다.
+- `x`: the exception parameter, which can be of any type
+- `n`: the error code, an integer
 
-예외 매개변수는 어떤 타입이든(다른 예외의 경우 다를 수 있음) 될 수 있으므로 funC는 컴파일 시에 이를 예측할 수 없다는 점에 주목하세요. 이는 개발자가 예외 매개변수를 어떤 타입으로 캐스팅하여 컴파일러를 "도와야" 한다는 것을 의미합니다(아래의 예시 2 참조):
+Unlike many other languages, in FunC, all changes are **undone** if an error occurs inside the `try` block. These modifications include updates to local and global variables and changes to storage registers (`c4` for storage, `c5`for action/messages, `c7` for context, etc.).
+Any contract storage updates and outgoing messages are also reverted.
 
-예시:
+However, certain TVM state parameters are not rolled back, such as:
+
+- Codepage settings
+- Gas counters
+  As a result, all gas consumed within the `try` block is still accounted for, and any operations that modify gas limits (e.g., `accept_message` or `set_gas_limit`) will remain in effect.
+
+**Exception parameter handling**
+
+Since the exception parameter can be of any type, which may vary depending on the exception, FunC cannot determine its type at compile time. This requires the developer to manually cast the exception parameter when necessary, as shown in the type-casting example below.
+
+**Examples**
+
+Basic `try-catch` usage:
 
 ```func
 try {
@@ -399,6 +460,8 @@ try {
   handle_exception();
 }
 ```
+
+Casting the exception parameter:
 
 ```func
 forall X -> int cast_to_int(X x) asm "NOP";
@@ -412,6 +475,8 @@ try {
 }
 ```
 
+Variable reset on exception:
+
 ```func
 int x = 0;
 try {
@@ -419,12 +484,13 @@ try {
   throw(100);
 } catch (_, _) {
 }
-;; x = 0 (not 1)
 ```
+
+In this last example, although `x` is incremented inside the `try` block, the modification is **rolled back** due to the exception, so `x` remains `0`.
 
 ## 블록 구문
 
-블록 구문도 허용됩니다. 새로운 중첩된 범위를 엽니다:
+Block statements are supported as well, creating a new nested scope:
 
 ```func
 int x = 1;
@@ -435,3 +501,9 @@ builder b = begin_cell();
 }
 x += 1;
 ```
+
+In this example, the inner block introduces a new `builder` variable named `x`, which exists only within that scope.
+The outer `x` remains unchanged and can be used after the block ends.
+
+<Feedback />
+

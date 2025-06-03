@@ -1,13 +1,10 @@
-import ConceptImage from '@site/src/components/conceptImage';
-import ThemedImage from '@theme/ThemedImage';
+import Feedback from '@site/src/components/Feedback';
 
-# Типы контрактов кошелька
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
 
-Возможно, вы слышали о различных версиях кошельков на блокчейне TON. Но что на самом деле означают эти версии и чем отличаются?
+# Wallet contracts
+
+You may have heard about different versions of wallets on TON Blockchain. But what do these versions actually mean, and how do they differ?
 
 В этой статье мы рассмотрим различные версии и модификации кошельков TON.
 
@@ -22,8 +19,8 @@ Before we start, there are some terms and concepts that you should be familiar w
 
 Чтобы разрушить напряжение, для начала мы должны понять, что кошельки не являются особой сущностью в экосистеме TON. Они по-прежнему являются всего лишь смарт-контрактами, состоящими из кода и данных, и в этом смысле равны любому другому субъекту (т.е. смарт-контракту) в TON.
 
-Как и ваш собственный или любой другой смарт-контракт, кошельки могут принимать внешние и внутренние сообщения, отправлять внутренние сообщения и логи, а также использовать GET-методы.
-Поэтому возникает вопрос: какую функциональность предоставляют кошельки и чем она отличается в разных версиях?
+Like your own custom smart contract, or any other one, wallets can receive external and internal messages, send internal messages and logs, and provide `get methods`.
+So the question is: what functionality do they provide and how it differs between versions?
 
 Вы можете рассматривать каждую версию кошелька как реализацию смарт-контракта, предоставляющую стандартный внешний интерфейс, позволяющий различным внешним клиентам взаимодействовать с кошельками одинаковым образом. Вы можете найти эти реализации на языках FunC и Fift в основном репозитарии TON:
 
@@ -44,7 +41,7 @@ Before we start, there are some terms and concepts that you should be familiar w
 - Нет простого способа получить seqno и публичный ключ из контракта.
 - Нет проверки `valid_until`, поэтому вы не можете быть уверены, что транзакция не будет подтверждена слишком поздно.
 
-Первая проблема была исправлена в `V1R2` и `V1R3`. Символ `R` означает "ревизия". Обычно ревизии – это небольшие обновления, которые добавляют только GET-методы (вы можете найти историю изменений в файле `new-wallet.fif`). Здесь и далее мы будем рассматривать только последние ревизии.
+The first issue was fixed in `V1R2` and `V1R3`. The `R` stands for **revision**. Usually, revisions are just small updates that only add get methods; you can find all of those in the changes history of `new-wallet.fif`. Hereinafter, we will consider only the latest revisions.
 
 Тем не менее, поскольку каждая последующая версия наследует функциональность предыдущей, нам все равно следует придерживаться ее, поскольку это поможет нам в последующих версиях.
 
@@ -349,9 +346,9 @@ actions$_ out_actions:(Maybe OutList) has_other_actions:(## 1) {m:#} {n:#} other
 4. int `get_public_key()` – возвращает текущий сохраненный публичный ключ.
 5. cell `get_extensions()` – возвращает словарь расширений.
 
-#### Подготовка к безгазовым транзакциям
+#### Preparing for gasless transactions
 
-Как было сказано ранее, смарт-контракт кошелька v5 позволяет обрабатывать внутренние сообщения, подписанные владельцем. Это также позволяет совершать безгазовые транзакции, например, оплачивать сетевые комиссии при переводе USDt в сам USDt. Общая схема выглядит следующим образом:
+As was said, before v5, the wallet smart contract allowed the processing of internal messages signed by the owner. This also allows you to make gasless transactions, e.g., payment of network fees when transferring USDt in USDt itself. The common scheme looks like this:
 
 ![image](/img/gasless.jpg)
 
@@ -378,7 +375,7 @@ actions$_ out_actions:(Maybe OutList) has_other_actions:(## 1) {m:#} {n:#} other
 
 Давайте посмотрим на них.
 
-### Highload-кошельки
+### Highload wallets
 
 При работе с большим количеством сообщений за короткий промежуток времени возникает необходимость в специальном кошельке, называемом Highload Wallet. Прочитайте [статью](/v3/documentation/smart-contracts/contracts-specs/highload-wallet) для получения дополнительной информации.
 
@@ -406,7 +403,7 @@ actions$_ out_actions:(Maybe OutList) has_other_actions:(## 1) {m:#} {n:#} other
 
 Как видите, в TON существует множество различных версий кошельков. Но в большинстве случаев вам нужны только `V3R2` или `V4R2`. Вы также можете использовать один из специальных кошельков, если вам нужна какая-то дополнительная функциональность, например, периодическая разблокировка средств.
 
-## См. также
+## See also
 
 - [Работа со смарт-контрактами кошелька](/v3/guidelines/smart-contracts/howto/wallet)
 - [Источники базовых кошельков](https://github.com/ton-blockchain/ton/tree/master/crypto/smartcont)
@@ -415,3 +412,6 @@ actions$_ out_actions:(Maybe OutList) has_other_actions:(## 1) {m:#} {n:#} other
 - [Источники блокировки кошелька и подробное описание](https://github.com/ton-blockchain/lockup-wallet-contract)
 - [Источники с ограниченным кошельком](https://github.com/EmelyanenkoK/nomination-contract/tree/master/restricted-wallet)
 - [Безгазовые операции на TON](https://medium.com/@buidlingmachine/gasless-transactions-on-ton-75469259eff2)
+
+<Feedback />
+

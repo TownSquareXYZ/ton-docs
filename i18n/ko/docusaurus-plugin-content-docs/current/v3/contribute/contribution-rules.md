@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 기여 지침
+
+:::danger
+This page is outdated and will be deleted soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 docs.ton.org 페이지에 기여하기 전에 원활한 경험을 보장하기 위해 다음의 일반적이고 중요한 요구 사항 목록을 검토하세요.
 
@@ -25,8 +32,8 @@ TON 문서의 모든 페이지는 반드시 'See Also' 섹션으로 마무리해
 
 ```
 ## See Also
-* [TON Contribution Guidelines](/v3/contribute/contribution-rules)
-* [Tutorial Styling Guidelines](/v3/contribute/tutorials/guidelines)
+* [TON Contribution Guidelines](/v3/contribute/contribution-rules/)
+* [Tutorial Styling Guidelines](/v3/contribute/tutorials/guidelines/)
 ```
 
 :::
@@ -40,5 +47,8 @@ TON Ecosystem은 전 세계를 위해 구축되고 있으므로, 지구상의 �
 
 ## 더 보기
 
-- [TON 기여 가이드](/v3/contribute/contribution-rules)
-- [튜토리얼 스타일 가이드](/v3/contribute/tutorials/guidelines)
+- [TON Contribution Guidelines](/v3/contribute/contribution-rules/)
+- [Tutorial Styling Guidelines](/v3/contribute/tutorials/guidelines/)
+
+<Feedback />
+

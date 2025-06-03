@@ -1,8 +1,6 @@
-# Руководство по внесению вклада
+import Feedback from '@site/src/components/Feedback';
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
+# Руководство по внесению вклада
 
 :::danger
 Эта страница устарела и скоро будет удалена.
@@ -56,3 +54,6 @@
 2. Следуйте [руководству по завершению задания](https://github.com/ton-society/grants-and-bounties/blob/main/bounties/BOUNTIES_PROGRAM_GUIDELINES.md#got-assigned-submit-a-questbook-proposal), чтобы завершить работу и получить вознаграждение.
 3. В вашей задаче вас попросят указать кошелек для отправки вознаграждения.
 4. Получите вознаграждение!
+
+<Feedback />
+

@@ -1,145 +1,170 @@
-# 스테이킹 인센티브
+import Feedback from '@site/src/components/Feedback';
 
-## 선거와 스테이킹
+# Staking incentives
 
-TON 블록체인은 지분증명(PoS) 합의 알고리즘을 사용하며, 모든 PoS 네트워크처럼 네트워크 보안과 안정성은 네트워크 검증자 집합이 유지합니다. 검증자는 새 블록(트랜잭션 배치로 구성)의 후보를 제안하고, 다른 검증자들이 디지털 서명을 통해 이를 _검증_하고 승인합니다.
+## Election and staking
 
-검증자는 특별한 [선거인 거버넌스 컨트랙트](/v3/documentation/smart-contracts/contracts-specs/governance#elector)를 통해 선택됩니다. 각 합의 라운드에서 검증자 후보는 스테이크와 원하는 *max_factor*(합의 라운드당 검증자가 수행하는 유지보수 양을 조절하는 매개변수)와 함께 선거 신청서를 제출합니다.
+TON Blockchain uses the **Proof-of-stake (PoS)** consensus algorithm, meaning that, like all PoS networks, a set of network validators maintains the network's security and stability. In particular, validators propose candidates for new blocks (made up of transaction batches), while other validators *validate* and approve them via digital signatures.
 
-검증자 선거 과정에서 거버넌스 스마트 컨트랙트는 다음 라운드의 검증자를 선택하고, 검증자의 스테이크와 _max_factor_를 고려하면서 총 스테이크를 최대화하기 위해 각 검증자에게 투표 가중치를 할당합니다. 이러한 측면에서 스테이크와 _max_factor_가 높을수록 검증자의 투표 가중치가 높아지고 반대의 경우도 마찬가지입니다.
+Validators are chosen using a special [Elector governance contract](/v3/documentation/smart-contracts/contracts-specs/governance#elector). During each consensus round, validator candidates send an application for election along with their stake and desired *max_factor* (a parameter that regulates the amount of maintenance the validator performs per consensus round).
 
-선출된 검증자는 다음 합의 라운드에 참여하여 네트워크를 보호하도록 선택됩니다. 하지만 다른 많은 블록체인과 달리 수평적 확장성을 달성하기 위해 각 검증자는 네트워크의 일부만 검증합니다:
+During the validator election process, the governance smart contract chooses the next round of validators and assigns a voting weight to each validator to maximize their total stake while also considering the validator’s stake and *max_factor*. In this respect, the higher the stake and *max_factor*, the higher the voting weight of the validator, and vice versa.
 
-각 샤드체인과 마스터체인에는 전용 검증자 세트가 존재합니다. 마스터체인 검증자 세트는 가장 높은 투표 가중치를 가진 최대 100명의 검증자로 구성됩니다(네트워크 매개변수 `Config16:max_main_validators`로 정의).
+Elected validators are selected to secure the network by participating in the next consensus round. However, to achieve horizontal scalability, each validator verifies only a portion of the network, unlike many other blockchains:
 
-반면 각 샤드체인은 23명의 검증자 세트(네트워크 매개변수 `Config28:shard_validators_num`로 정의)가 검증하며, 1000초마다 무작위로 교체됩니다(네트워크 매개변수 `Config28:shard_validators_lifetime`).
+Each ShardChain and MasterChain has a dedicated set of validators. Sets of master chain validators consist of up to 100 validators exhibiting the highest voting weight (defined as Network Parameter `Config16:max_main_validators`).
 
-## 스테이크 값: 최대 유효 스테이크
+Each ShardChain is validated by 23 validators, as defined by Network Parameter `Config28:shard_validators_num`. These validators are rotated randomly every 1000 seconds according to Network Parameter `Config28:shard_validators_lifetime`.
 
-현재 설정의 `max_factor`는 __3__으로, *가장 작은* 검증자의 스테이크가 *가장 큰* 검증자의 스테이크보다 세 배 이상 적을 수 없음을 의미합니다.
+## Values of stakes: max effective stake
+
+The current `max_factor` in config is **3**, meaning the stake of the *smallest* validator cannot be more than three times less than the stake of the **largest** one.
 
 설정 매개변수를 사용한 공식:
 
 `max_factor` = [`max_stake_factor`](https://tonviewer.com/config#17) / [`validators_elected_for`](https://tonviewer.com/config#15)
 
-### (간소화된) 선택 알고리즘
+### Selection algorithm review
 
 [선거인 스마트 컨트랙트](/v3/documentation/smart-contracts/contracts-specs/governance#elector)가 실행하는 이 알고리즘은 약정한 스테이크를 기반으로 최적의 검증자 후보를 선택합니다. 작동 방식은 다음과 같습니다:
 
-1. **초기 선택**: 선거인은 설정된 최소 금액(300K, [설정](https://tonviewer.com/config#17)에 명시)보다 많은 스테이크를 보유한 모든 후보를 고려합니다.
+1. **Initial selection**: Elector considers all candidates who have staked more than a set minimum amount (300K, as specified in the [configuration](https://tonviewer.com/config#17)).
 
-2. **후보 정렬**: 이러한 후보들은 스테이크에 따라 높은 순서부터 낮은 순서로 정렬됩니다.
+2. **Ordering candidates**: These candidates are then arranged from highest to lowest based on their stake.
 
-3. **좁히기**:
-   - 후보 수가 허용된 최대 검증자 수를 초과하면([설정 참조](https://tonviewer.com/config#16)), 가장 낮은 스테이크를 가진 후보들이 제외됩니다.
-   - 그런 다음 선거인은 가장 큰 그룹부터 작은 그룹으로 이동하며 각 잠재적 후보 그룹을 평가합니다:
-     - 정렬된 목록에서 상위 후보들을 하나씩 늘려가며 검토합니다.
-     - 각 후보에 대해 선거인은 '유효 스테이크'를 계산합니다. 후보의 스테이크가 최소값보다 크게 높은 경우 하향 조정됩니다(예: 누군가 310k를 스테이크하고 최소값이 100k이지만 최소값의 세 배로 제한하는 규칙이 있는 경우, 유효 스테이크는 300k로 간주).
-     - 이 그룹의 모든 후보의 유효 스테이크 합계를 계산합니다.
+3. **Narrowing down**:
 
-4. **최종 선택**: 총 유효 스테이크가 가장 높은 후보 그룹이 선거인에 의해 검증자로 선택됩니다.
+- 후보 수가 허용된 최대 검증자 수를 초과하면([설정 참조](https://tonviewer.com/config#16)), 가장 낮은 스테이크를 가진 후보들이 제외됩니다.
 
-#### 검증자 선택 알고리즘
+- 그런 다음 선거인은 가장 큰 그룹부터 작은 그룹으로 이동하며 각 잠재적 후보 그룹을 평가합니다:
+
+    - 정렬된 목록에서 상위 후보들을 하나씩 늘려가며 검토합니다.
+
+    - For each candidate, Elector calculates their **effective stake**. If a candidate's stake is significantly higher than the minimum, it's adjusted down (e.g., if someone staked 310k and the minimum is 100k, but there's a rule capping at three times the minimum, their effective stake is considered as 300k).
+
+    - 이 그룹의 모든 후보의 유효 스테이크 합계를 계산합니다.
+
+4. **Final selection**: The elector chooses the group of candidates with the highest total effective stake as the validators.
+
+#### Validator selection algorithm
 
 잠재적 검증자의 사용 가능한 스테이크를 기반으로 총 스테이크의 크기를 최대화하는 것을 목표로 최소 및 최대 스테이크의 최적값이 결정됩니다:
 
 1. 선거인은 최소값([설정의 300K](https://tonviewer.com/config#17))보다 높은 스테이크를 가진 모든 지원자를 선택합니다.
+
 2. 선거인은 스테이크를 _내림차순_으로 정렬합니다.
+
 3. 참가자가 검증자의 [최대 수](https://tonviewer.com/config#16)보다 많으면 선거인은 목록의 끝부분을 버립니다. 그런 다음 선거인은 다음을 수행합니다:
 
-   - *1부터 N*(남은 참가자 수)까지 각 사이클 __i__에 대해 정렬된 목록에서 처음 __i__개의 신청서를 가져옵니다.
-   - `max_factor`를 고려하여 유효 스테이크를 계산합니다. 즉, 어떤 사람이 310k를 넣었지만 `max_factor`가 3이고 목록의 최소 스테이크가 100k Toncoin인 경우, 유효 스테이크는 min(310k, 3\*100k) = 300k가 됩니다. 하나의 검증자 노드는 두 라운드에 최대 600k TON을 사용할 수 있습니다(이 예에서는 홀수 라운드에 절반, 짝수 라운드에 절반). 스테이크를 늘리려면 여러 검증자 노드를 설정해야 합니다.
-   - 모든 **i** 참가자의 총 유효 스테이크를 계산합니다.
+    - *1부터 N*(남은 참가자 수)까지 각 사이클 __i__에 대해 정렬된 목록에서 처음 __i__개의 신청서를 가져옵니다.
 
-선거인이 총 유효 스테이크가 최대인 __i__를 찾으면, 이 **i** 참가자들을 검증자로 선언합니다.
+    - `max_factor`를 고려하여 유효 스테이크를 계산합니다. 즉, 어떤 사람이 310k를 넣었지만 `max_factor`가 3이고 목록의 최소 스테이크가 100k Toncoin인 경우, 유효 스테이크는 min(310k, 3\*100k) = 300k가 됩니다. 하나의 검증자 노드는 두 라운드에 최대 600k TON을 사용할 수 있습니다(이 예에서는 홀수 라운드에 절반, 짝수 라운드에 절반). 스테이크를 늘리려면 여러 검증자 노드를 설정해야 합니다.
 
-## 긍정적 인센티브
+    - 모든 **i** 참가자의 총 유효 스테이크를 계산합니다.
 
-모든 블록체인 네트워크와 마찬가지로 TON의 각 트랜잭션은 네트워크 저장소와 온체인 트랜잭션 처리에 사용되는 [가스](https://blog.ton.org/what-is-blockchain)라는 계산 수수료가 필요합니다. TON에서 이러한 수수료는 선거인 컨트랙트의 보상 풀에 축적됩니다.
+Once Elector identifies such an **i**, where the total effective stake is maximized, we declare these **i** participants as validators.
 
-네트워크는 각 마스터체인 블록에 대해 1.7 TON, 각 베이스체인 블록에 대해 1 TON의 보조금을 보상 풀에 추가하여 블록 생성을 보조합니다(네트워크 매개변수 `Config14:masterchain_block_fee` 및 `Config14:basechain_block_fee`). 베이스체인이 둘 이상의 샤드체인으로 분할될 때 샤드체인 블록당 보조금이 그에 따라 분할됩니다. 이 과정을 통해 단위 시간당 보조금을 거의 일정하게 유지할 수 있습니다.
+## Positive incentives
+
+Similarly to all blockchain networks, each transaction on TON requires a computation fee called [gas](https://blog.ton.org/what-is-blockchain) to store the network and process the transaction on-chain. On TON, these fees are accumulated within the Elector contract in a reward pool.
+
+The network also provides a subsidy for block creation by adding an amount of 1.7 TON to the reward pool for each MasterChain block and an amount equal to 1 TON for each BaseChain block (refer to Network Parameters `Config14:masterchain_block_fee` and `Config14:basechain_block_fee`). It is important to note that when a BaseChain is divided into multiple ShardChains, the subsidy for each ShardChain block is distributed accordingly. This approach helps maintain a consistent subsidy per unit of time.
 
 :::info
 2023년 6월, [디플레이션 소각 메커니즘](https://blog.ton.org/ton-holders-and-validators-vote-in-favor-of-implementing-the-toncoin-real-time-burn-mechanism)이 도입되었습니다. 이 메커니즘으로 네트워크가 생성한 TON의 일부가 보상 풀에 할당되는 대신 소각됩니다.
 :::
 
-65536초 또는 약 18시간(네트워크 매개변수 `Config15:validators_elected_for`)의 검증 사이클 라운드 후, 스테이크된 TON은 각 검증자로부터 즉시 해제되지 않고 추가로 32768초 또는 약 9시간(네트워크 매개변수 `Config15:stake_held_for`) 동안 보류됩니다. 이 기간 동안 슬래싱(잘못 행동하는 검증자에 대한 페널티 메커니즘) 페널티가 검증자로부터 공제될 수 있습니다. 자금이 해제된 후 검증자는 검증 라운드 동안 투표 _가중치_에 비례하여 축적된 보상 풀의 몫과 함께 스테이크를 인출할 수 있습니다.
+After a validation cycle lasting 65536 seconds, or approximately 18 hours (as determined by the network parameter `Config15:validators_elected_for`), staked TON is not immediately released by each validator. Instead, it is held for an additional 32768 seconds, or about 9 hours (as specified by the network parameter `Config15:stake_held_for`). During this period, slashing penalties can be imposed on the validator as a consequence for any misbehavior. Once the funds are released, validators can withdraw their staked amount along with a share of the rewards accrued during the validation round, proportional to their voting **weight**.
 
 2023년 4월 기준, 네트워크의 모든 검증자에 대한 합의 라운드당 총 보상 풀은 약 40,000 TON이며 검증자당 평균 보상은 약 120 TON입니다(투표 가중치와 발생한 보상의 최대 차이는 약 3 TON).
 
-Toncoin의 총 공급량(50억 TON)은 연간 약 0.3-0.6%의 인플레이션율을 가집니다.
+The total supply of Toncoin (5 billion TON) has an inflation rate of approximately 0.3-0.6% annually.
 
-하지만 이 인플레이션율은 항상 일정하지 않으며 네트워크의 현재 상태에 따라 달라질 수 있습니다. 결국 디플레이션 메커니즘 활성화와 네트워크 활용도 증가 후에는 디플레이션으로 이어질 것입니다.
+This inflation rate, however, is not always constant and may deviate depending on the network’s current state. Eventually, it will tend to deflate after the Deflation mechanism is activated and network utilization grows.
 
 :::info
 현재 TON 블록체인 통계는 [여기](https://tontech.io/stats/)에서 확인하세요.
 :::
 
-## 부정적 인센티브
+## Negative incentives
 
-TON 블록체인에서 검증자는 일반적으로 두 가지 방식으로 잘못된 행동에 대해 페널티를 받을 수 있습니다: 유휴 상태와 악의적인 잘못된 행동입니다. 둘 다 금지되어 있으며 이러한 행동에 대해 벌금(슬래싱이라는 과정에서)이 부과될 수 있습니다.
+On TON Blockchain, there are generally two ways validators can be penalized for misbehaving: **idle** and **malicious** misbehaving. Both are prohibited and may result in fines (in a process called slashing) for their actions.
 
-검증자가 검증 라운드 동안 상당 시간 블록 생성과 트랜잭션 서명에 참여하지 않으면 *표준 벌금* 매개변수를 사용하여 벌금이 부과될 수 있습니다. 2023년 4월 기준, 발생하는 표준 벌금은 101 TON입니다(네트워크 매개변수 `ConfigParam40:MisbehaviorPunishmentConfig`).
+If a validator fails to participate in block creation and transaction signing for a significant period during a validation round, they may incur a fine based on the **Standard fine** parameter. As of April 2023, the Standard fine that can be accrued is 101 TON (Network Parameter `ConfigParam40:MisbehaviorPunishmentConfig`).
 
-TON에서 슬래싱 페널티(검증자에게 부과되는 벌금)는 네트워크 참가자가 검증자가 잘못 행동한다고 판단될 경우 불만을 제기할 수 있게 합니다. 이 과정에서 불만을 제기하는 참가자는 선거인 제출을 위한 잘못된 행동의 암호화 증명을 첨부해야 합니다. `stake_held_for` 분쟁 해결 기간 동안, 네트워크에서 운영 중인 모든 검증자는 불만의 유효성을 확인하고 집단적으로 불만을 추구할지 투표합니다(잘못된 행동 증명의 정당성과 벌금 할당을 결정하면서).
+On the TON network, slashing penalties—also known as fines imposed on validators—allow any participant to file a complaint if they suspect a validator is misbehaving. When submitting a complaint, the participant must provide cryptographic evidence of the alleged misbehavior for submission to the Electors.
 
-66% 검증자 승인(동등한 투표 가중치로 측정)에 도달하면, 슬래싱 페널티가 검증자로부터 공제되어 검증자의 총 스테이크에서 인출됩니다. 페널티 부과와 불만 해결을 위한 검증 과정은 일반적으로 MyTonCtrl을 사용하여 자동으로 수행됩니다.
+During the `stake_held_for` dispute resolution period, all validators on the network assess the validity of the complaints and vote on whether to pursue each complaint collectively. They also evaluate the legitimacy of the provided evidence and determine the appropriate penalties.
 
-## 페널티의 탈중앙화 시스템
+If, based on weighted votes, at least 66% of the validators approve the complaint, the slashing penalty is applied. This penalty is deducted from the offending validator's total stake. Typically, the process of penalization and resolution of complaints is managed automatically using MyTonCtrl.
+
+## Decentralized system of penalties
 
 :::info
-성과가 좋지 않은 검증자에 대한 다음 페널티 시스템은 2024년 9월 9일부터 완전히 운영될 예정입니다.
+The following system of penalizing poorly performing validators was fully operational on September 9, 2024.
 :::
 
-### 부실 작업 판단
+### Determination of poor work
 
-TON은 [lite-client](https://github.com/newton-blockchain/ton/tree/master/lite-client) 유틸리티를 제공합니다. lite-client에는 `checkloadall` 명령이 있습니다.
-이 명령은 검증자가 처리해야 할 블록 수와 주어진 기간 동안 실제로 처리한 블록 수를 분석합니다.
+The TON is supplied with the [lite-client](https://github.com/newton-blockchain/ton/tree/master/lite-client) utility. In lite-client, there is a `checkloadall` command.
 
-검증자가 검증 라운드 동안 예상 블록 수의 90% 미만을 처리한 경우, 성과가 좋지 않은 것으로 간주되어 페널티를 받아야 합니다.
+This command analyses the number of blocks the validator should have processed and the number it actually processed in a given period of time.
+
+If the validator processed less than 90% of the expected number of blocks during a validation round, it is considered to be performing poorly and should be penalized.
+
 :::info
-프로세스의 기술적 설명에 대해 [여기](https://github.com/ton-blockchain/TIPs/issues/13#issuecomment-786627474)에서 자세히 알아보세요.
+Learn more about the technical description of the process [here](https://github.com/ton-blockchain/TIPs/issues/13#issuecomment-786627474)
 :::
 
-### 불만 처리 절차
+### Complain workflow
 
-- 누구나 불만을 제기할 수 있고 올바른 불만에 대해 보상을 받을 수 있습니다.
-- 불만의 검증은 검증자들이 유지하며 완전히 탈중앙화되어 있습니다.
+- Anyone can make a complaint and get a reward for the right complaint.
 
-#### 불만 제기
+- Validation of complaints maintained by Validators and fully decentralized.
 
-각 검증 라운드(~18시간) 후, 해당 라운드에 참여한 검증자의 스테이크는 추가로 ~9시간 동안 선거인 스마트 컨트랙트에 있습니다.
-이 기간 동안 누구나 해당 라운드에서 성과가 좋지 않았던 검증자에 대해 불만을 제기할 수 있습니다. 이는 선거인 스마트 컨트랙트에서 온체인으로 이루어집니다.
+#### Make complaint
 
-#### 불만 검증
+After each validation round (~18 hours), the validator stakes of the validators who participated in that round remain on the Elector smart contract for another ~9 hours.
 
-각 검증 라운드 후, 검증자들은 선거인 스마트 컨트랙트에서 불만 목록을 받아 `checkloadall`을 호출하여 재확인합니다.
-불만이 검증된 경우, 그들은 온체인에서 해당 불만에 찬성 투표합니다.
+During this time, anyone can send a complaint against a validator who performed poorly in said round. This happens on-chain on the Elector smart contract.
 
-이러한 작업은 `mytonctrl`에 내장되어 있으며 자동으로 이루어집니다.
-불만이 검증자 투표(가중치 기준)의 66%를 얻으면 검증자의 스테이크에서 페널티가 차감됩니다.
-누구도 혼자서 누군가에게 벌금을 부과할 수 없습니다.
+#### Validation of complaint
 
-[@tonstatus_notifications](https://t.me/tonstatus_notifications) - 각 라운드마다 페널티를 받은 검증자 목록
+After each validation round, validators receive a list of complaints from the Elector smart contract. They then double-check these complaints by calling `checkloadall`.
 
-### 벌금 금액
+If a complaint is validated, a vote is conducted on-chain in favor of that complaint.
+
+These actions are integrated into MyTonCtrl and occur automatically.
+
+When a complaint receives 66% of the validators' votes (weighted by their stake), the validator's stake is penalized.
+
+No one has the authority to impose a fine on their own.
+
+The list of penalized validators for each round is available at [@tonstatus_notifications](https://t.me/tonstatus_notifications).
+
+### Fine value
 
 벌금 금액은 고정되어 있으며 101 TON(네트워크 매개변수 `ConfigParam40:MisbehaviourPunishmentConfig`)입니다. 이는 대략 라운드당 검증자 수입과 동일합니다.
 
-TON의 사용자와 트랜잭션 수가 빠르게 증가하고 있어 작업 품질이 최상이어야 하기 때문에 벌금 금액이 변경될 수 있습니다.
+The value of the fine may change due to the rapidly growing audience and the number of transactions in TON, and it is vital that the quality of work is at its best.
 
-### 벌금 분배
+### Fine distribution
 
-벌금은 네트워크 비용과 선거인에게 올바른 불만을 처음 보낸 불만 제기자에 대한 작은 보상(~8 TON)을 제외하고 검증자들 사이에 분배됩니다.
+The fine is distributed among the validators minus network costs, and a small reward (~8 TON) is given to the first complainer who sends the correct complaint to the Elector.
 
-### 검증자 가이드라인
+### Validator guidelines
 
-검증자 노드가 벌금을 받지 않도록 하려면 하드웨어, 모니터링, 검증자 운영이 올바르게 설정되어 있는지 확인하는 것이 좋습니다.
-[검증자 유지보수 가이드라인](/v3/guidelines/nodes/running-nodes/validator-node#maintain-guidelines)을 준수하고 있는지 확인하세요.
-이를 원하지 않는 경우 스테이킹 서비스 https://ton.org/stake 사용을 고려하세요.
+To prevent your Validator node from being fined, it is advisable to ensure that the hardware, monitoring, and validator operations are set up properly.
 
-## 참고
+Please ensure you comply with the [validator maintain guidelines](/v3/guidelines/nodes/running-nodes/validator-node#maintain-guidelines).
 
-- [검증자 실행하기](/v3/guidelines/nodes/running-nodes/validator-node)
-- [트랜잭션 수수료](/v3/documentation/smart-contracts/transaction-fees/fees)
+If you don't want to do this please consider [using staking services](https://ton.org/stake).
+
+## See also
+
+- [Running a validator](/v3/guidelines/nodes/running-nodes/validator-node)
+- [Transaction fees](/v3/documentation/smart-contracts/transaction-fees/fees)
 - [블록체인이란? 스마트 컨트랙트란? 가스란?](https://blog.ton.org/what-is-blockchain)
+
+<Feedback />
+

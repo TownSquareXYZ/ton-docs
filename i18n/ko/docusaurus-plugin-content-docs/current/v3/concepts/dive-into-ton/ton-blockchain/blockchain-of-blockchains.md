@@ -1,72 +1,88 @@
-# 블록체인의 블록체인
+import Feedback from '@site/src/components/Feedback';
+
+# Blockchain of blockchains
 
 :::tip
-이 문서에서는 '**스마트 컨트랙트**', '**계정**', '**액터**'라는 용어를 블록체인 엔티티를 설명하기 위해 서로 바꿔가며 사용합니다.
+Terms '**smart contract**', '**account**', and '**actor**' are used interchangeably in this document to describe a blockchain entity.
 :::
 
 ## 단일 액터
 
 하나의 스마트 컨트랙트를 살펴보겠습니다.
 
-TON에서 이것은 `address`, `code`, `data`, `balance` 등의 속성을 가진 _것_입니다. 다시 말해, 어떤 _저장소_와 _동작_을 가진 객체입니다.
-그 동작은 다음과 같은 패턴을 따릅니다:
+In TON, it is a *thing* with properties like `address`, `code`, `data`, `balance` and others. In other words, it is an object with some *storage* and *behavior*.
+That behavior has the following pattern:
 
-- 무언가가 발생합니다(가장 일반적인 상황은 컨트랙트가 메시지를 받는 것입니다)
-- 컨트랙트는 TON 가상 머신에서 자신의 `code`를 실행하여 자신의 속성에 따라 해당 이벤트를 처리합니다
-- 컨트랙트는 자신의 속성(`code`, `data` 등)을 수정합니다
+- contract receives a message
+- contract handles that event according to its properties by executing its `code` in TON Virtual Machine
+- contract modifies its properties consisting of `code`, `data`, and others
 - 컨트랙트는 선택적으로 발신 메시지를 생성합니다
 - 컨트랙트는 다음 이벤트가 발생할 때까지 대기 모드로 들어갑니다
 
-이러한 단계들의 조합을 **트랜잭션**이라고 합니다. 이벤트들이 하나씩 처리되므로 _트랜잭션_은 엄격하게 순서가 정해지며 서로를 중단할 수 없다는 것이 중요합니다.
+A combination of these steps is called a **transaction**. Since it is essential to handle events one by one, transactions follow a strict order and cannot interrupt each other.
 
-이러한 동작 패턴은 잘 알려져 있으며 '액터'라고 불립니다.
+This behavior pattern is well known and called **actor**.
 
-### 가장 낮은 수준: 계정 체인
+### The lowest level: AccountChain
 
-*트랜잭션* 시퀀스 `Tx1 -> Tx2 -> Tx3 -> ....`는 **체인**이라고 부를 수 있습니다. 그리고 고려된 경우에는 단일 계정의 트랜잭션의 _체인_임을 강조하기 위해 **AccountChain**이라고 부릅니다.
+A **chain** can be viewed as a sequence of transactions, such as `Tx1 → Tx2 → Tx3 → …`. When this transaction sequence pertains to a single account, it is specifically termed an **AccountChain**.
 
-이제, 트랜잭션을 처리하는 노드들이 때때로 스마트 컨트랙트의 상태를 조정해야 하기 때문에(상태에 대한 _합의_에 도달하기 위해) 이러한 _트랜잭션_들은 배치로 처리됩니다:
-`[Tx1 -> Tx2] -> [Tx3 -> Tx4 -> Tx5] -> [] -> [Tx6]`.
-배치 처리는 순서에 개입하지 않으며, 각 트랜잭션은 여전히 하나의 '이전 tx'만을 가지고 최대 하나의 '다음 tx'만을 가지지만, 이제 이 시퀀스는 **블록**으로 나뉩니다.
+Since nodes processing these transactions periodically need to synchronize the smart contract state to achieve consensus, transactions are grouped into batches called **blocks**. For instance:
 
-_블록_에 수신 및 발신 메시지 큐를 포함하는 것도 유용합니다. 그 경우, _블록_은 해당 블록 동안 스마트 컨트랙트에 무슨 일이 일어났는지를 결정하고 설명하는 완전한 정보 세트를 포함하게 됩니다.
+```
+[Tx1 → Tx2] → [Tx3 → Tx4 → Tx5] → [] → [Tx6]
+```
 
-## 많은 AccountChain: 샤드
+Batching does not alter the underlying sequence. Each transaction still references exactly one preceding transaction (`prev tx`) and at most one succeeding transaction (`next tx`). Batching simply organizes this sequence into manageable blocks for consensus purposes.
 
-이제 많은 계정들을 고려해봅시다. 우리는 몇 개의 _AccountChain_을 얻어 함께 저장할 수 있으며, 이러한 _AccountChain_의 집합을 **ShardChain**이라고 부릅니다. 같은 방식으로, 우리는 **ShardChain**을 개별 _AccountBlock_의 집합인 **ShardBlock**으로 나눌 수 있습니다.
+Additionally, each block can contain queues of incoming and outgoing messages. Incorporating these queues ensures that a block fully encapsulates all events and state changes relevant to the smart contract within the block period.
 
-### ShardChain의 동적 분할과 병합
+## Many AccountChains: Shards
 
-_ShardChain_이 쉽게 구분되는 _AccountChain_으로 구성되어 있기 때문에, 우리는 이를 쉽게 분할할 수 있습니다. 이런 식으로 100만 개의 계정과 관련된 이벤트를 설명하는 1개의 _ShardChain_이 있고 한 노드에서 처리하고 저장하기에는 초당 트랜잭션이 너무 많은 경우, 우리는 그 체인을 두 개의 더 작은 _ShardChain_으로 나누어(**분할**) 각 체인이 50만 개의 계정을 담당하고 각 체인이 별도의 노드 하위 집합에서 처리되도록 할 수 있습니다.
+Now let's consider many accounts. We can get a few AccountChains and store them together; such a set of AccountChains is called a **ShardChain**. In the same way, we can cut ShardChain into **ShardBlocks**, which are an aggregation of individual AccountBlocks.
 
-마찬가지로, 일부 샤드가 너무 비어 있게 되면 하나의 더 큰 샤드로 **병합**될 수 있습니다.
+### Dynamic splitting and merging of ShardChains
 
-명백히 두 가지 제한 사례가 있습니다: 샤드가 하나의 계정만 포함하는 경우(따라서 더 이상 분할될 수 없음)와 샤드가 모든 계정을 포함하는 경우입니다.
+Note that since a ShardChain consists of easily distinguished AccountChains, we can easily split it. That way, if we have one ShardChain that describes events that happen with one million accounts and there are too many transactions per second to be processed and stored in one node, so we just **split** that chain into two smaller ShardChains with each chain accounting for half a million accounts and each chain processed on a separate subset of nodes.
 
-계정들은 메시지를 보내서 서로 상호작용할 수 있습니다. 발신 큐에서 해당하는 수신 큐로 메시지를 이동시키고 1) 모든 메시지가 전달될 것과 2) 메시지가 연속적으로 전달될 것(더 일찍 보낸 메시지가 더 일찍 목적지에 도달)을 보장하는 특별한 라우팅 메커니즘이 있습니다.
+Analogously, if some shards become too unoccupied, they can be **merged** into one more enormous shard.
 
-:::info 부가 설명
-분할과 병합을 결정적으로 만들기 위해, AccountChain을 샤드로 집계하는 것은 계정 주소의 비트 표현을 기반으로 합니다. 예를 들어, 주소는 `(샤드 접두사, 주소)`처럼 보입니다. 이런 방식으로, 샤드체인의 모든 계정은 정확히 같은 이진 접두사를 가지게 됩니다(예를 들어 모든 주소가 `0b00101`로 시작).
+There are two limiting cases: when the shard contains only one account (and thus cannot be split further) and when the shard contains all accounts.
+
+Accounts can interact with each other by sending messages.  A unique routing mechanism moves messages from outgoing queues to corresponding incoming queues and ensures:
+
+1. The delivery of all messages
+2. Consecutive delivery of messages — a message sent earlier will reach the destination earlier
+
+:::info SIDE NOTE
+An aggregation of AccountChains into shards is based on the bit-representation of account addresses to make splitting and merging deterministic. For example, an address looks like `(shard prefix, address)`. That way, all accounts in the ShardChain will have the same binary prefix (for instance, all addresses will start with `0b00101`).
 :::
 
-## 블록체인
+## Blockchain
 
-하나의 규칙 세트로 동작하는 모든 계정을 포함하는 모든 샤드의 집합을 **블록체인**이라고 부릅니다.
+An aggregation of all shards, which contains all accounts behaving according to one set of rules, is called a Blockchain.
 
-TON에는 많은 규칙 세트가 있을 수 있으며, 따라서 동시에 작동하고 한 체인의 계정들이 서로 상호작용할 수 있는 것과 같은 방식으로 크로스체인으로 메시지를 보내서 상호작용할 수 있는 많은 블록체인이 있을 수 있습니다.
+In TON, there can be many sets of rules, and thus, many blockchains operate simultaneously and can interact with each other by sending messages cross-chain in the same way that accounts of one chain can interact with each other.
 
-### 워크체인: 자신만의 규칙을 가진 블록체인
+### WorkChain: a blockchain with your own rules
 
-샤드체인 그룹의 규칙을 커스터마이즈하고 싶다면, **워크체인**을 만들 수 있습니다. 좋은 예는 Solidity 스마트 컨트랙트를 실행하기 위해 EVM을 기반으로 작동하는 워크체인을 만드는 것입니다.
+If you want to customize the rules of the ShardChains group, you could create a **WorkChain**. A good example is to make a workchain that works on the base of EVM to run Solidity smart contracts on it.
 
-이론적으로, 커뮤니티의 모든 사람이 자신의 워크체인을 만들 수 있습니다. 실제로는, 이를 구축하는 것은 매우 복잡한 작업이며, 그 후에 (비싼) 생성 비용을 지불하고 워크체인 생성을 승인하기 위해 검증자로부터 2/3의 투표를 받아야 합니다.
+Theoretically, everyone in the community can create their own WorkChain. Building it isn't very easy, and then you have to pay a high price and receive 2/3 of votes from validators to approve it.
 
-TON은 최대 `2^32`개의 워크체인을 생성할 수 있으며, 각 워크체인은 최대 `2^60`개의 샤드로 세분화될 수 있습니다.
+TON allows creating up to `2^32` workchains, subdivided into `2^60` shards.
 
-현재 TON에는 마스터체인과 베이스체인이라는 2개의 워크체인만 있습니다.
+Nowadays, there are only two workchains in TON: MasterChain and BaseChain.
 
-베이스체인은 비용이 매우 저렴하기 때문에 일상적인 액터 간의 트랜잭션에 사용되는 반면, 마스터체인은 TON에서 중요한 기능을 담당합니다. 그럼 마스터체인이 하는 일을 살펴보겠습니다!
+BaseChain is used for everyday transactions between actors because it's cheap, while MasterChain has a crucial function for TON.
 
-### 마스터체인: 블록체인의 블록체인
+### MasterChain: blockchain of blockchains
 
-메시지 라우팅과 트랜잭션 실행의 동기화가 필요합니다. 다시 말해, 네트워크의 노드들은 멀티체인 상태의 어떤 '지점'을 고정하고 그 상태에 대한 합의에 도달하는 방법이 필요합니다. TON에서는 이러한 목적을 위해 **마스터체인**이라고 불리는 특별한 체인이 사용됩니다. _마스터체인_의 블록들은 시스템의 다른 모든 체인에 대한 추가 정보(최신 블록 해시)를 포함하므로, 모든 관찰자가 단일 마스터체인 블록에서 모든 멀티체인 시스템의 상태를 명확하게 결정할 수 있습니다.
+There is a necessity for the synchronization of message routing and transaction execution. In other words, nodes in the network need a way to fix some 'point' in a multichain state and reach a consensus about that state. In TON, a special chain called **MasterChain** is used for that purpose. Blocks of MasterChain contain additional information, like the latest block hashes, about all other chains in the system, thus any observer unambiguously determines the state of all multichain systems at a single MasterChain block.
+
+## See also
+
+- [Smart contract addresses](/v3/concepts/dive-into-ton/ton-blockchain/smart-contract-addresses/)
+
+<Feedback />
+

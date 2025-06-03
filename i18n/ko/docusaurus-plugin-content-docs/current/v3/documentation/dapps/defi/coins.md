@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 네이티브 토큰: 톤코인
 
 TON 블록체인의 네이티브 암호화폐는 **톤코인**입니다.
@@ -27,3 +29,6 @@ TLB: `extra_currencies$_ dict:(HashmapE 32 (VarUInteger 32)) = ExtraCurrencyColl
 다른 작업에는 [제톤](/v3/documentation/dapps/defi/tokens#jettons-fungible-tokens)이 적합합니다.
 
 현재 TON 블록체인에는 추가 통화가 생성되지 않았습니다. TON 블록체인은 계정과 메시지에서 추가 통화를 완벽히 지원하지만, 생성을 위한 민터 시스템 컨트랙트는 아직 만들어지지 않았습니다.
+
+<Feedback />
+

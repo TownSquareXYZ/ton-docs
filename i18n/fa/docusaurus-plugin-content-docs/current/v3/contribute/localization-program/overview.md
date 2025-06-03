@@ -1,39 +1,44 @@
-# برنامه بومی‌سازی
+import Feedback from '@site/src/components/Feedback';
 
-طرح ترجمه یک تلاش مشترک برای ترجمه اسناد مختلف مرتبط با TON به چندین زبان است تا وب سایت برای میلیاردها نفر از کاربران غیرانگلیسی‌زبان در سراسر جهان قابل‌ دسترس‌تر شود.
+# Localization
 
-## فلسفه طراحی سیستم
+The localization is a collaborative effort to translate various TON-related documents into multiple languages, making the website accessible to billions of non-English speakers worldwide.
+
+## System design philosophy
 
 ![چگونه کار می‌کند](/img/localizationProgramGuideline/localization-program.png)
 
-برنامه بومی‌سازی توسط [**TownSquare Labs**](https://github.com/TownSquareXYZ)، یکی از نزدیک‌ترین شرکای **TON**، **راه‌اندازی** و **پشتیبانی فعال** می‌شود.
+The localization process is fully maintained by [TownSquare Labs](https://github.com/TownSquareXYZ).
 
-ما متعهد به ایجاد زیرساختی باز برای همکاری جامعه چندزبانه برای **پیشبرد TON به مرحله‌ای بهتر** هستیم که شامل موارد زیر می‌باشد:
+TownSquare is committed to creating an open infrastructure for multilingual community collaboration to advance TON to a better phase, which includes:
 
 - **مناسب برای جوامع چندزبانه**\
-  برنامه از چندین زبان پشتیبانی می‌کند و با این کار، فراگیری و دسترسی آسان‌تری برای کاربران از زمینه‌های زبانی متنوع فراهم می‌کند.
+   برنامه از چندین زبان پشتیبانی می‌کند و با این کار، فراگیری و دسترسی آسان‌تری برای کاربران از زمینه‌های زبانی متنوع فراهم می‌کند.
 
-- **خودکارسازی توسعه، یکپارچه‌سازی و پیاده‌سازی**\
-  از طریق ابزارهای خودکارسازی، برنامه توسعه، یکپارچه‌سازی و پیاده‌سازی را ساده می‌کند، تلاش‌های دستی را کاهش می‌دهد و کارایی و سازگاری تلاش‌های بومی‌سازی را افزایش می‌دهد.
+- **Automate development, integration, and deployment**\
+   The program simplifies development, integration, and deployment through automation tools, reducing manual efforts and enhancing efficiency and consistency across localization efforts.
 
-- **جدا‌سازی نقش‌ها برای توسعه‌دهنده، مترجم و تایید‌کننده**\
-  رویکرد ما مسئولیت‌های توسعه‌دهندگان، مترجمان و تایید‌کنندگان را از هم جدا می‌کند، به هر نقش اجازه می‌دهد بر وظایف خود تمرکز کند و اطمینان از ترجمه‌های با کیفیت بالا و همکاری بدون تداخل نقش‌ها به وجود می‌آید.
+- **Separation of roles for developer, translator, and verifier**\
+   Our approach divides the responsibilities of developers, translators, and verifiers, allowing each role to focus on their tasks and ensuring high-quality translations and seamless collaboration without role conflicts.
 
 - **تشویق‌ها برای مشارکت جامعه**\
-  ما برای اعضای جامعه که در تلاش‌های بومی‌سازی مشارکت می‌کنند، تشویق‌هایی ارائه می‌دهیم. این امر مشارکت فعال، تقدیر از مشارکت‌کنندگان و ارتقای حس مالکیت و تعامل جامعه را ترویج می‌دهد.
+   ما برای اعضای جامعه که در تلاش‌های بومی‌سازی مشارکت می‌کنند، تشویق‌هایی ارائه می‌دهیم. این امر مشارکت فعال، تقدیر از مشارکت‌کنندگان و ارتقای حس مالکیت و تعامل جامعه را ترویج می‌دهد.
 
 - **یکپارچه‌سازی سیستم پیشرفته هوش مصنوعی**\
-  سیستم‌های هوش مصنوعی با ارائه پیشنهادهای هوشمند و خودکارسازی وظایف تکراری، دقت و کارایی ترجمه را افزایش می‌دهند و با کاهش تلاش‌ها، خروجی‌های با کیفیت بالا را تضمین می‌کنند.
+   سیستم‌های هوش مصنوعی با ارائه پیشنهادهای هوشمند و خودکارسازی وظایف تکراری، دقت و کارایی ترجمه را افزایش می‌دهند و با کاهش تلاش‌ها، خروجی‌های با کیفیت بالا را تضمین می‌کنند.
 
-این پروژه به منظور پشتیبانی از سخنوران چندین زبان طراحی شده است و هدف آن خدمت به اکوسیستم جهانی توسعه‌دهندگان است.
+This project is designed to support speakers of multiple languages and serve the global developer ecosystem.
 
 ## تشکر و قدردانی
 
-ما از هزاران عضو جامعه که بخشی از برنامه ترجمه هستند صمیمانه قدردانی می‌کنیم. قصد داریم مترجمان خود معرفی کنیم و از رشد شغلی آنها حمایت کنیم. در آینده، قصد داریم جدول‌های رتبه‌بندی و فهرست همه مشارکت‌کنندگان در برنامه ایجاد کنیم.
+We sincerely appreciate the thousands of community members integral to the Translation Program. We aim to acknowledge our translators and support their career growth. In the future, we plan to create leaderboards and a list of all contributors.
 
-## راهنماها و منابع
+## Guides and resources
 
 اگر در برنامه ترجمه شرکت می‌کنید یا در نظر دارید به آن بپیوندید، به راهنماهای زیر مراجعه کنید:
 
-- [**راهنمای سبک ترجمه**](/v3/contribute/localization-program/translation-style-guide) – دستورالعمل‌ها و نکاتی برای مترجمان.
-- [**راهنمای ویرایشگر آنلاین Crowdin**](https://support.crowdin.com/online-editor/) – یک راهنمای عمیق برای استفاده از ویرایشگر آنلاین Crowdin و برخی از ویژگی‌های پیشرفته آن.
+- [Translation style guide](/v3/contribute/localization-program/translation-style-guide) – Instructions and tips for translators.
+- [Crowdin online editor guide](https://support.crowdin.com/online-editor/) – An in-depth guide to using the Crowdin online editor and some of Crowdin's advanced features.
+
+<Feedback />
+

@@ -1,22 +1,24 @@
-# TON 블록체인을 활용한 게임 개발
+import Feedback from '@site/src/components/Feedback';
+
+# TON Blockchain for games
 
 ## 튜토리얼 내용
 
-이 튜토리얼에서는 게임에 TON 블록체인을 추가하는 방법을 알아보겠습니다. 예제로, Phaser로 작성된 Flappy Bird 클론을 사용하고 단계별로 GameFi 기능을 추가할 것입니다. 이해하기 쉽도록 튜토리얼에서는 짧은 코드 조각과 의사코드를 사용할 것입니다. 또한 더 잘 이해할 수 있도록 실제 코드 블록에 대한 링크도 제공합니다. 전체 구현은 [데모 저장소](https://github.com/ton-community/flappy-bird)에서 확인할 수 있습니다.
+In this tutorial, we will explore how to integrate TON Blockchain into a game. As an example, we will use a Flappy Bird clone built with Phaser and gradually add GameFi features. To improve readability, we will use short code snippets and pseudocode. Additionally, we will provide links to real code blocks for better understanding. The complete implementation can be found in the [demo repo](https://github.com/ton-community/flappy-bird).
 
 ![GameFi 기능이 없는 Flappy Bird 게임](/img/tutorials/gamefi-flappy/no-gamefi-yet.png)
 
-다음 기능들을 구현할 예정입니다:
+We will implement the following:
 
-- 업적. 사용자에게 [SBT](/v3/concepts/glossary#sbt)로 보상합시다. 업적 시스템은 사용자 참여를 높이는 훌륭한 도구입니다.
-- 게임 화폐. TON 블록체인에서는 자체 토큰(jetton)을 쉽게 발행할 수 있습니다. 토큰은 게임 내 경제를 만드는 데 사용될 수 있습니다. 사용자는 게임 코인을 획득하여 나중에 사용할 수 있습니다.
-- 게임 상점. 사용자가 게임 내 화폐나 TON 코인을 사용하여 게임 내 아이템을 구매할 수 있게 할 것입니다.
+- Achievements. Let’s reward our users with [SBTs](/v3/concepts/glossary#sbt). The achievement system is a great tool for increasing user engagement.
+- Game currency. On the TON blockchain, it’s easy to launch your own token (jetton). The token can be used to create an in-game economy. Our users will be able to earn game coins and spend them later.
+- Game shop. We will allow users to purchase in-game items using either in-game currency or TON coins.
 
 ## 준비사항
 
 ### GameFi SDK 설치
 
-먼저, 게임 환경을 설정하겠습니다. 이를 위해 `assets-sdk`를 설치해야 합니다. 이 패키지는 개발자가 블록체인을 게임에 통합하는 데 필요한 모든 것을 준비하도록 설계되었습니다. 이 라이브러리는 CLI나 Node.js 스크립트에서 사용할 수 있습니다. 이 튜토리얼에서는 CLI 방식을 사용하겠습니다.
+First, we need to set up the game environment by installing `assets-sdk`. This package is designed to provide developers with everything required to integrate blockchain into games. The library can be used either from the CLI or within Node.js scripts. In this tutorial, we will use the CLI approach.
 
 ```sh
 npm install -g @ton-community/assets-sdk@beta
@@ -24,40 +26,39 @@ npm install -g @ton-community/assets-sdk@beta
 
 ### 마스터 지갑 생성
 
-다음으로, 마스터 지갑을 생성해야 합니다. 마스터 지갑은 jetton, 컬렉션, NFT, SBT를 발행하고 결제를 받는 데 사용할 지갑입니다.
+Next, we need to create a master wallet. This wallet will be used to mint jettons, collections, NFTs, and SBTs, as well as to receive payments.
 
 ```sh
 assets-cli setup-env
 ```
 
-몇 가지 질문을 받게 됩니다:
+You will be asked a few questions during the setup.
 
-| 필드           | 힌트                                                                                                                                                                                                                                          |
-| :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Network      | 테스트 게임이므로 `testnet`을 선택하세요.                                                                                                                                                                                                 |
-| Type         | 마스터 지갑으로 사용하기에 가장 좋고 성능이 좋은 옵션이므로 `highload-v2` 타입을 선택하세요.                                                                                                                                                                  |
-| Storage      | `NFT`/`SBT` 파일을 저장하는 데 사용될 스토리지입니다. `Amazon S3`(중앙화) 또는 `Pinata`(탈중앙화) 중에서 선택할 수 있습니다. Web3 게임에 더 적합한 탈중앙화 스토리지를 사용하기 위해 이 튜토리얼에서는 `Pinata`를 사용하겠습니다. |
-| IPFS gateway | 자산 메타데이터를 로드할 서비스: `pinata`, `ipfs.io` 또는 다른 서비스 URL을 입력하세요.                                                                                                                                                |
+| 필드           | 힌트                                                                                                                                                                                                                                                                                                                    |
+| :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Network      | Select `testnet` since this is a test game.                                                                                                                                                                                                                                                           |
+| Type         | Select `highload-v2`wallet type, as it offers the best performance for use as a master wallet.                                                                                                                                                                                                        |
+| Storage      | Storage is used to hold `NFT`/`SB`T files. You can choose between `Amazon S3` (centralized) or `Pinata` (decentralized).  For this tutorial, we'll use Pinata since decentralized storage is more illustrative for a Web3 game. |
+| IPFS gateway | This service loads asset metadata from  `pinata`, \`ipfs.io,  or a custom service URL.                                                                                                                                                                                                |
 
-스크립트는 생성된 지갑 상태를 볼 수 있는 링크를 출력합니다.
+The script will output a link where you can view the created wallet's state.
 
 ![Nonexist 상태의 새 지갑](/img/tutorials/gamefi-flappy/wallet-nonexist-status.png)
 
-보시다시피 지갑은 아직 실제로 생성되지 않았습니다. 지갑이 실제로 생성되려면 약간의 자금을 입금해야 합니다. 실제 시나리오에서는 지갑 주소를 사용하여 원하는 방식으로 입금할 수 있습니다. 우리의 경우 [Testgiver TON Bot](https://t.me/testgiver_ton_bot)을 사용할 것입니다. 5개의 테스트 TON 코인을 받기 위해 봇을 열어주세요.
+As you can see, the wallet has not actually been created yet. To finalize the creation, we need to deposit funds into it. In a real-world scenario, you can fund the wallet however you prefer using its address. In our case, we will use the [Testgiver TON Bot](https://t.me/testgiver_ton_bot). Open it to claim 5 test TON coins.
 
-잠시 후 지갑에 5 TON이 표시되고 상태가 `Uninit`으로 변경됩니다. 지갑이 준비되었습니다. 첫 사용 후에는 상태가 `Active`로 변경됩니다.
-
-![충전 후 지갑 상태](/img/tutorials/gamefi-flappy/wallet-nonexist-status.png)
+A little later, you should see 5 TON in the wallet, and its status will change to Uninit. The wallet is now ready. After the first transaction, its status will change to Active.
+![Wallet status after top-up](/img/tutorials/gamefi-flappy/wallet-nonexist-status.png)
 
 ### 게임 내 화폐 발행
 
-사용자에게 보상할 게임 내 화폐를 만들어보겠습니다:
+We are going to create an in-game currency to reward users.
 
 ```sh
 assets-cli deploy-jetton
 ```
 
-몇 가지 질문을 받게 됩니다:
+You will be asked a few questions during the setup:
 
 | 필드          | 힌트                                                                                                                                                                                                                                |
 | :---------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -67,13 +68,13 @@ assets-cli deploy-jetton
 | Symbol      | `FLAP` 또는 사용하고 싶은 약어를 입력하세요.                                                                                                                                                                                      |
 | Decimals    | 화폐의 소수점 이하 자릿수입니다. 우리의 경우 `0`으로 하겠습니다.                                                                                                                                                            |
 
-스크립트는 생성된 jetton 상태를 볼 수 있는 링크를 출력합니다. 상태는 `Active`가 될 것입니다. 지갑 상태도 `Uninit`에서 `Active`로 변경됩니다.
+The script will output a link where you can view the created jetton's state. It will have an **Active** status. The wallet’s status will change from **Uninit** to **Active**.
 
 ![게임 내 화폐 / jetton](/img/tutorials/gamefi-flappy/jetton-active-status.png)
 
 ### SBT를 위한 컬렉션 생성
 
-예시로, 데모 게임에서는 첫 번째와 다섯 번째 게임에 대해 사용자에게 보상을 할 것입니다. 따라서 사용자가 관련 조건(첫 번째와 다섯 번째 게임 플레이)을 달성했을 때 SBT를 넣을 두 개의 컬렉션을 발행할 것입니다:
+For our demo game, we will reward users after their first and fifth games. To do this, we will mint two collections, where SBTs will be assigned when users meet the required conditions—playing for the first and fifth time:
 
 ```sh
 assets-cli deploy-nft-collection
@@ -86,17 +87,19 @@ assets-cli deploy-nft-collection
 | Description | 당신의 첫 Flappy Bird 게임 여정을 기념합니다!                                                                                                 | 다섯 번째 플레이를 기념하는 Flappy High Fiver NFT입니다!                                                                                       |
 | Image       | [이미지](https://raw.githubusercontent.com/ton-community/flappy-bird/article-v1/scripts/tokens/first-time/image.png)를 다운로드할 수 있습니다 | [이미지](https://raw.githubusercontent.com/ton-community/flappy-bird/article-v1/scripts/tokens/five-times/image.png)를 다운로드할 수 있습니다 |
 
-모든 준비가 되었습니다. 이제 로직 구현으로 넘어가겠습니다.
+Now that we are fully prepared, let's proceed to implementing the game logic.
 
 ## 지갑 연결하기
 
-모든 것은 사용자가 자신의 지갑을 연결하는 것에서 시작됩니다. 지갑 연결 통합을 추가해보겠습니다. 클라이언트 측에서 블록체인 작업을 하기 위해 Phaser용 GameFi SDK를 설치해야 합니다:
+The process begins with the user connecting their wallet. Let's integrate wallet connectivity.
+
+To interact with the blockchain from the client side, we need to install the GameFi SDK for Phaser:
 
 ```sh
 npm install --save @ton/phaser-sdk@beta
 ```
 
-이제 GameFi SDK를 설정하고 인스턴스를 생성해보겠습니다:
+Now, let's set up GameFi SDK and create an instance of it:
 
 ```typescript
 import { GameFi } from '@ton/phaser-sdk'
@@ -135,7 +138,7 @@ const gameFi = await GameFi.create({
 
 > `tonconnect-manifest.json`이 무엇인지 알아보려면 ton-connect [매니페스트 설명](/v3/guidelines/ton-connect/guidelines/creating-manifest)을 확인하세요.
 
-이제 지갑 연결 버튼을 만들 준비가 되었습니다. Phaser에서 연결 버튼이 포함될 UI 씬을 만들어보겠습니다:
+Next, we are ready to create a **Wallet Connect** button. Let’s create a UI scene in Phaser that will contain the **Connect** button:
 
 ```typescript
 class UiScene extends Phaser.Scene {
@@ -161,7 +164,7 @@ class UiScene extends Phaser.Scene {
 
 > [connect 버튼](https://github.com/ton-community/flappy-bird/blob/article-v1/workspaces/client/src/connect-wallet-ui.ts#L82)과 [UI 씬](https://github.com/ton-community/flappy-bird/blob/article-v1/workspaces/client/src/connect-wallet-ui.ts#L45)을 만드는 방법을 읽어보세요.
 
-사용자가 지갑을 연결하거나 연결 해제할 때를 감시하기 위해 다음 코드를 사용해보겠습니다:
+To monitor when a user connects or disconnects their wallet, use the following code snippet:
 
 ```typescript
 function onWalletChange(wallet: Wallet | null) {
@@ -176,9 +179,9 @@ const unsubscribe = gameFi.onWalletChange(onWalletChange)
 
 > 더 복잡한 시나리오에 대해서는 [지갑 연결 흐름](https://github.com/ton-community/flappy-bird/blob/article-v1/workspaces/client/src/index.ts#L16)의 전체 구현을 확인하세요.
 
-[게임 UI 관리](https://github.com/ton-community/flappy-bird/blob/article-v1/workspaces/client/src/index.ts#L50)가 어떻게 구현될 수 있는지 읽어보세요.
+Read how [game UI managing](https://github.com/ton-community/flappy-bird/blob/article-v1/workspaces/client/src/index.ts#L50) can be implemented.
 
-이제 사용자의 지갑이 연결되었고 계속 진행할 수 있습니다.
+Now that we have the user's wallet connected, we can move forward.
 
 ![지갑 연결 버튼](/img/tutorials/gamefi-flappy/wallet-connect-button.png)
 ![지갑 연결 확인](/img/tutorials/gamefi-flappy/wallet-connect-confirmation.png)
@@ -186,22 +189,22 @@ const unsubscribe = gameFi.onWalletChange(onWalletChange)
 
 ## 업적 & 보상 구현하기
 
-업적과 보상 시스템을 구현하기 위해 사용자가 시도할 때마다 요청될 엔드포인트를 준비해야 합니다.
+To implement the achievements and reward system, we need to set up an endpoint that will be triggered each time a user plays.
 
 ### `/played` 엔드포인트
 
-`/played` 엔드포인트를 만들어야 하며 다음을 수행해야 합니다:
+We need to create an endpoint `/played ` which does the following:
 
-- 사용자 지갑 주소와 앱 실행 중 미니 앱에 전달된 텔레그램 초기 데이터가 포함된 본문을 받습니다. 초기 데이터는 인증 데이터를 추출하고 사용자가 자신을 대신해서만 요청을 보내는지 확인하기 위해 파싱되어야 합니다.
-- 엔드포인트는 사용자가 플레이한 게임의 수를 계산하고 저장해야 합니다.
-- 엔드포인트는 사용자의 첫 번째 또는 다섯 번째 게임인지 확인하고 그렇다면 관련 SBT로 보상해야 합니다.
-- 엔드포인트는 각 게임마다 1 FLAP으로 사용자에게 보상해야 합니다.
+- receives a request body containing the user’s wallet address and Telegram initial data, which is passed to the Mini App during launch. The initial data must be parsed to extract authentication details and verify that the user is sending the request on their own behalf.
+- tracks and stores the number of games a user has played.
+- checks whether this is the user’s first or fifth game. If so, it rewards the user with the corresponding SBT.
+- rewards the user with 1 FLAP for each game played.
 
 > [/played 엔드포인트](https://github.com/ton-community/flappy-bird/blob/article-v1/workspaces/server/src/index.ts#L197) 코드를 읽어보세요.
 
 ### `/played` 엔드포인트 요청하기
 
-새가 파이프에 부딪히거나 떨어질 때마다 클라이언트 코드는 올바른 본문을 포함하여 `/played` 엔드포인트를 호출해야 합니다:
+Every time the bird hits a pipe or falls, the client code must call the `/played` endpoint, passing the correct request body:
 
 ```typescript
 async function submitPlayed(endpoint: string, walletAddress: string) {
@@ -222,42 +225,41 @@ const playedInfo = await submitPlayed('http://localhost:3001', wallet.account.ad
 
 > [submitPlayer 함수](https://github.com/ton-community/flappy-bird/blob/article-v1/workspaces/client/src/game-scene.ts#L10) 코드를 읽어보세요.
 
-첫 번째로 플레이하고 FLAP 토큰과 SBT로 보상받을 수 있는지 확인해보겠습니다. Play 버튼을 클릭하고, 한두 개의 파이프를 통과한 다음 관에 부딪혀보세요. 좋습니다, 모든 것이 작동합니다!
+Let’s play for the first time and ensure we receive a FLAP token and an SBT. Click the Play button, fly through a pipe or two, then crash into a pipe. Everything works!
 
 ![토큰과 SBT로 보상받음](/img/tutorials/gamefi-flappy/sbt-rewarded.png)
 
-두 번째 SBT를 받기 위해 4번 더 플레이한 다음, 지갑, TON Space를 열어보세요. 여기 당신의 수집품이 있습니다:
+Play four more times to earn the second SBT, then open your TON Space Wallet. Here are your collectibles:
+![Achievements as SBT in Wallet](/img/tutorials/gamefi-flappy/sbts-in-wallet.png)
 
-![지갑의 업적으로서의 SBT](/img/tutorials/gamefi-flappy/sbts-in-wallet.png)
+## Implementing the game shop
 
-## 게임 상점 구현하기
-
-게임 내 상점을 갖기 위해서는 두 가지 구성 요소가 필요합니다. 첫 번째는 사용자의 구매 정보를 제공하는 엔드포인트입니다. 두 번째는 사용자 트랜잭션을 감시하고 게임 속성을 소유자에게 할당하는 전역 루프입니다.
+To set up an in-game shop, we need two components. The first is an endpoint that provides information about users' purchases. The second is a global loop that monitors user transactions and assigns game properties to item owners.
 
 ### `/purchases` 엔드포인트
 
 이 엔드포인트는 다음을 수행합니다:
 
-- 텔레그램 미니 앱 초기 데이터가 있는 `auth` get 파라미터를 받습니다.
-- 엔드포인트는 사용자가 구매한 아이템을 가져와 아이템 목록으로 응답합니다.
+- receive `auth` query parameter containing Telegram Mini App initial data.
+- retrieves the items a user has purchased and responds with a list of those items.
 
 > [/purchases](https://github.com/ton-community/flappy-bird/blob/article-v1/workspaces/server/src/index.ts#L303) 엔드포인트 코드를 읽어보세요.
 
 ### 구매 루프
 
-사용자가 결제를 할 때를 알기 위해 마스터 지갑 트랜잭션을 감시해야 합니다. 각 트랜잭션에는 `userId`:`itemId` 메시지가 포함되어야 합니다. 마지막으로 처리된 트랜잭션을 기억하고, 새로운 것들만 가져오고, `userId`와 `itemId`를 사용하여 구매한 속성을 사용자에게 할당하고, 마지막 트랜잭션 해시를 다시 쓸 것입니다. 이는 무한 루프로 작동할 것입니다.
+o track user payments, we need to monitor transactions in the master wallet. Each transaction must include a message in the format `userId`:`itemId`. We will store the last processed transaction, retrieve only new ones, assign purchased properties to users based on `userId` and `itemId`, and update the last transaction hash. This process will run in an infinite loop.
 
-> [구매 루프](https://github.com/ton-community/flappy-bird/blob/article-v1/workspaces/server/src/index.ts#L110) 코드를 읽어보세요.
+> Read the [purchase loop](https://github.com/ton-community/flappy-bird/blob/article-v1/workspaces/server/src/index.ts#L110) code.
 
 ### 상점의 클라이언트 사이드
 
-클라이언트 측에는 Shop 버튼이 있습니다.
+On the client side, we have a **Shop** button.
 
 ![상점 입장 버튼](/img/tutorials/gamefi-flappy/shop-enter-button.png)
 
-사용자가 버튼을 클릭하면 상점 씬이 열립니다. 상점 씬에는 사용자가 구매할 수 있는 아이템 목록이 포함되어 있습니다. 각 아이템에는 가격과 Buy 버튼이 있습니다. 사용자가 Buy 버튼을 클릭하면 구매가 이루어집니다.
+When a user clicks this button, the **Shop Scene** opens. The shop contains a list of items available for purchase. Each item has a price and a Buy button. When a user clicks the Buy button, the purchase is processed.
 
-상점을 열면 구매한 아이템을 로드하고 10초마다 업데이트하는 것이 트리거됩니다:
+Opening the **Shop Scene** will trigger the loading of purchased items and refresh the list every 10 seconds.
 
 ```typescript
 // inside of fetchPurchases function
@@ -268,7 +270,7 @@ setTimeout(() => { fetchPurchases() }, 10000)
 
 > [showShop 함수](https://github.com/ton-community/flappy-bird/blob/article-v1/workspaces/client/src/ui.ts#L191) 코드를 읽어보세요.
 
-이제 구매 자체를 구현해야 합니다. 이를 위해 먼저 GameFi SDK 인스턴스를 만들고 `buyWithJetton` 메소드를 사용할 것입니다:
+Now, we need to implement the purchase process. To do this, we will first create a GameFi SDK instance and then use the `buyWithJetton` method:
 
 ```typescript
 gameFi.buyWithJetton({
@@ -282,7 +284,7 @@ gameFi.buyWithJetton({
 ![구매 확인](/img/tutorials/gamefi-flappy/purchase-confirmation.png)
 ![속성 사용 준비 완료](/img/tutorials/gamefi-flappy/purchase-done.png)
 
-TON 코인으로도 결제할 수 있습니다:
+It is also possible to pay with TON coins:
 
 ```typescript
 import { toNano } from '@ton/phaser-sdk'
@@ -295,10 +297,13 @@ gameFi.buyWithTon({
 
 ## 마무리
 
-이것으로 이 튜토리얼은 끝났습니다! 기본적인 GameFi 기능들을 살펴보았지만, SDK는 플레이어 간의 전송, NFT와 컬렉션 작업을 위한 유틸리티 등 더 많은 기능을 제공합니다. 앞으로 더 많은 기능을 제공할 예정입니다.
+That’s it for this tutorial! We explored the basic GameFi features, but the SDK offers additional functionality, such as player-to-player transfers and utilities for working with NFTs and collections. More features will be introduced in the future.
 
-사용할 수 있는 모든 GameFi 기능에 대해 알아보려면 [ton-org/game-engines-sdk](https://github.com/ton-org/game-engines-sdk)와 [@ton-community/assets-sdk](https://github.com/ton-community/assets-sdk)의 문서를 읽어보세요.
+To learn about all available GameFi features, read the documentation for [ton-org/game-engines-sdk](https://github.com/ton-org/game-engines-sdk) and [@ton-community/assets-sdk](https://github.com/ton-community/assets-sdk).
 
-[Discussions](https://github.com/ton-org/game-engines-sdk/discussions)에서 여러분의 생각을 들려주세요!
+Let us know your thoughts in [Discussions](https://github.com/ton-org/game-engines-sdk/discussions)!
 
-전체 구현은 [flappy-bird](https://github.com/ton-community/flappy-bird) 저장소에서 확인할 수 있습니다.
+The complete implementation is available in the [flappy-bird](https://github.com/ton-community/flappy-bird) repository.
+
+<Feedback />
+
