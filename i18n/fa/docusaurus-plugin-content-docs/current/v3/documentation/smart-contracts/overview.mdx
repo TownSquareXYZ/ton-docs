@@ -1,0 +1,213 @@
+import Feedback from '@site/src/components/Feedback';
+
+import Button from '@site/src/components/button'
+
+# معرفی
+
+Smart contract creation, development, and deployment on TON Blockchain leverages the [TON Virtual Machine (TVM)](/v3/documentation/smart-contracts/overview#ton-virtual-machine-tvm) and one of the following programming languages:
+
+- [Tact](/v3/documentation/smart-contracts/overview#-tact)
+- [FunC](/v3/documentation/smart-contracts/overview#-func)
+
+## Quick start: your first smart contract
+
+اولین قرارداد هوشمند خود را با استفاده از فریمورک _Blueprint_ بنویسید و پیاده‌سازی کنید.
+
+Blueprint یک محیط توسعه برای نوشتن، تست و پیاده‌سازی قراردادهای هوشمند است.
+برای ایجاد یک پروژه دمو جدید، از فرمان زیر استفاده کنید:
+
+```bash
+npm create ton@latest
+```
+
+<Button href="/v3/documentation/smart-contracts/getting-started/javascript" colorType="primary" sizeType={'sm'}>
+
+بیشتر بخوانید
+
+</Button>
+
+<Button href="https://stepik.org/course/176754/" colorType={'secondary'} sizeType={'sm'}>
+
+TON Blockchain course
+
+</Button>
+
+## Getting started
+
+### Fun and easy tutorials
+
+سفر خود را با راهنماهای دوستانه به مبتدی آغاز کنید:
+
+- [TON Hello World: Step-by-step guide for writing your first smart contract](https://helloworld.tonstudio.io/02-contract/)
+- TON tutorials
+  - [🚩 چالش 1: پیاده‌سازی ساده NFT](https://github.com/romanovichim/TONQuest1)
+  - [🚩 چالش 2: قرارداد ربات چت](https://github.com/romanovichim/TONQuest2)
+  - [🚩 چالش 3: ماشین فروش Jetton](https://github.com/romanovichim/TONQuest3)
+  - [🚩 چالش 4: لاتاری/قرعه‌کشی](https://github.com/romanovichim/TONQuest4)
+  - [🚩 چالش 5: ایجاد رابط کاربری برای تعامل با قرارداد در 5 دقیقه](https://github.com/romanovichim/TONQuest5)
+  - [🚩 چالش 6: تحلیل فروش NFT در بازار Getgems](https://github.com/romanovichim/TONQuest6)
+- [TON development playlist](https://www.youtube.com/playlist?list=PLQ5rEj25H3U2P5qp7nsgVtNGYxEojnnez) [[RU version]](https://www.youtube.com/playlist?list=PLOIvUFGfwP93tZI_WnaLyJsZlskU4ao92)
+
+### TON course
+
+:::tip
+قبل از شروع دوره، اطمینان حاصل کنید که درکی کامل از اصول فناوری بلاکچین دارید. اگر در دانش خود شکاف‌هایی دارید، توصیه می‌کنیم دوره [**مبانی بلاکچین با TON**](https://stepik.org/course/201294/promo) ([نسخه روسی](https://stepik.org/course/202221/), [نسخه چینی](https://stepik.org/course/200976/)) را بگذرانید.
+:::
+
+ما مفتخریم که **دوره بلاکچین TON** را ارائه دهیم، که یک راهنمای جامع برای بلاکچین TON است. این دوره برای توسعه‌دهندگانی طراحی شده است که می‌خواهند یاد بگیرند چگونه قراردادهای هوشمند و برنامه‌های غیرمتمرکز در بلاکچین TON ایجاد کنند.
+
+این دوره شامل **۹ ماژول** است و مبانی بلاکچین TON، چرخه عمر توسعه قرارداد هوشمند، زبان برنامه‌نویسی FunC و ماشین مجازی TON (TVM) را پوشش می‌دهد.
+
+<Button href="https://stepik.org/course/176754/promo"
+        colorType={'primary'} sizeType={'sm'}>
+
+Check TON course
+
+</Button>
+
+<Button href="https://stepik.org/course/201638/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+چینی
+
+</Button>
+
+<Button href="https://stepik.org/course/201855/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+روسی
+
+</Button>
+
+### Comprehensive guides
+
+برای کسانی که به جزئیات و نکات ظریف علاقه دارند، به اینجا مراجعه کنید:
+
+- [چگونه با قراردادهای هوشمند کیف پول کار کنیم](/v3/guidelines/smart-contracts/howto/wallet)
+
+## Examples of smart contracts
+
+نمونه‌های آماده قرارداد هوشمند و ابزارهای ارائه شده توسط جامعه TON را کاوش کنید.
+
+:::info نکته کوچک
+می‌توانید بر روی قراردادهای هوشمند نوشته شده به زبان FunC تمرکز کنید. اغلب بهتر است به جای زبان سطح پایین‌تر Fift (.fif)، بر قراردادهای هوشمند نوشته شده به زبان FunC (.fc) تمرکز کنید.
+:::
+
+نمونه‌های استاندارد قراردادهای هوشمند در TON شامل کیف پول‌ها، انتخاب‌کنندگان (که اعتبارسنجی در TON را مدیریت می‌کنند) و کیف پول‌های چند امضایی است که می‌توانند در هنگام مطالعه به عنوان مرجع استفاده شوند.
+
+<Button href="/v3/documentation/smart-contracts/contracts-specs/examples" colorType={'primary'} sizeType={'sm'}>
+
+Open examples
+
+</Button>
+
+## Smart contract best practices
+
+TON امکانات بی‌پایانی ارائه می‌دهد. یاد بگیرید چگونه در حالی که به دستورالعمل‌های توصیه شده پایبند هستید، از آن‌ها به بهترین شکل استفاده کنید.
+
+- [راهنمای قراردادهای هوشمند](/v3/guidelines/smart-contracts/guidelines)
+
+## ماشین مجازی TON (TVM)
+
+موتوری که قراردادهای هوشمند شما را اجرا می‌کند، کشف کنید.
+
+- [مروری بر TVM](/v3/documentation/tvm/tvm-overview)
+
+## Programming languages
+
+### 📘 FunC
+
+زبان سفارشی برای قراردادهای هوشمند TON.
+
+<Button href="/v3/documentation/smart-contracts/func/overview" colorType={'primary'} sizeType={'sm'}>
+
+FunC overview
+
+</Button>
+
+### 📒 Tact
+
+Tact یک زبان برنامه‌نویسی تازه برای بلاکچین TON است که بر کارایی و سهولت توسعه تمرکز دارد. این زبان برای قراردادهای هوشمند پیچیده، ورود سریع و پروتوتایپ‌سازی سریع مناسب است.
+
+Developed by [TON Studio](https://tonstudio.io), powered by the community — by the end of 2024, the number of _unique code_[^1] contracts deployed on the mainnet reached almost 28 thousand, of which about 33% were written in Tact.
+
+View some of the selected projects: [Tact in production](https://github.com/tact-lang/awesome-tact#tact-in-production-).
+
+[^1]: The "unique code" means that each contract in the data sample has at least one TVM instruction that differs from the other contracts, excluding many preprocessed wallets with everything inlined — even seqno and a public key for signature verification!
+
+<Button href="/v3/documentation/smart-contracts/tact"
+        colorType={'primary'} sizeType={'sm'}>
+
+Read more
+
+</Button>
+
+<Button href="https://tact-lang.org/"
+        colorType={'secondary'} sizeType={'sm'}>
+
+Official website
+
+</Button>
+
+<Button href="https://docs.tact-lang.org/"
+        colorType={'secondary'} sizeType={'sm'}>
+
+Tact docs
+
+</Button>
+
+<Button href="https://github.com/tact-lang/awesome-tact"
+        colorType="secondary" sizeType={'sm'}>
+
+Awesome Tact
+
+</Button>
+
+### 📗 Tolk
+
+یک زبان جدید برای نوشتن قراردادهای هوشمند در TON. Tolk را به عنوان "**نسل بعدی FunC**" تصور کنید
+
+:::caution
+در حال توسعه فعال.
+:::
+
+<Button href="/v3/documentation/smart-contracts/tolk/overview" colorType={'primary'} sizeType={'sm'}>
+
+Tolk overview
+
+</Button>
+
+### 📕 Fift (پیشرفته)
+
+:::caution سطح پیشرفته
+فقط برای شجاعان!
+:::
+
+<Button href="/v3/documentation/smart-contracts/fift/overview" colorType={'primary'} sizeType={'sm'}>
+
+Fift overview
+
+</Button>
+
+## Community tools
+
+- [MyLocalTON](/v3/guidelines/nodes/running-nodes/running-a-local-ton) — MyLocalTON برای اجرای بلاکچین خصوصی TON در محیط محلی شما استفاده می‌شود.
+- [tonwhales.com/tools/boc](https://tonwhales.com/tools/boc) — تجزیه کننده BoC
+- [tonwhales.com/tools/introspection-id](https://tonwhales.com/tools/introspection-id) — تولید کننده crc32
+- [@orbs-network/ton-access](https://www.orbs.com/ton-access/) — درگاه API غیرمتمرکز
+
+## Further reading
+
+مجموعه مهارت‌های خود را با استفاده از این منابع آموزشی جامعه‌محور افزایش دهید.
+
+- [راهنمایی‌های قراردادهای هوشمند](/v3/guidelines/smart-contracts/guidelines)
+- [مسیر یادگیری FunC در TON](https://blog.ton.org/func-journey) ([نسخه روسی](https://github.com/romanovichim/TonFunClessons_ru))
+- [آموزش‌های یوتیوب](https://www.youtube.com/@TONDevStudy) [[نسخه روسی]](https://www.youtube.com/@WikiMar)
+- [TON development playlist](https://www.youtube.com/playlist?list=PLQ5rEj25H3U2P5qp7nsgVtNGYxEojnnez) [[RU version]](https://www.youtube.com/playlist?list=PLOIvUFGfwP93tZI_WnaLyJsZlskU4ao92)
+
+## Additional resources
+
+- [بلاکچین چیست؟ قرارداد هوشمند چیست؟ گس چیست؟](https://blog.ton.org/what-is-blockchain)
+- [درک هزینه‌های تراکنش](/v3/guidelines/smart-contracts/fee-calculation)
+
+<Feedback />

@@ -1,0 +1,141 @@
+import Feedback from '@site/src/components/Feedback';
+
+# How to use the nominator pool
+
+:::tip
+Before reading this tutorial, you should familiarize yourself with [Nominator Pool Specification](/v3/documentation/smart-contracts/contracts-specs/nominator-pool).
+:::
+
+## Running the validator in nominator pool mode {#validator-pool-mode}
+
+1. سخت‌افزار را برای validator آماده کنید: به ۸ vCPU، ۱۲۸GB حافظه، ۱TB SSD، آدرس IP ثابت، و سرعت اینترنت ۱Gb/s نیاز خواهید داشت.
+
+   To maintain network stability, distribute validator nodes across different geographical locations worldwide rather than concentrating them in a single data center. Use [this site](https://status.toncenter.com/) to assess the load of various locations. The map indicates high data center utilization in Europe, especially in Finland, Germany, and Paris. Therefore, avoid using providers such as Hetzner and OVH.
+
+   > Ensure your hardware meets or exceeds the specifications above. Running the validator on insufficient hardware negatively impacts the network and could result in penalties.
+   >
+   > Note that as of May 2021, Hetzner has prohibited mining on its servers. This ban includes both PoW and PoS algorithms. Even installing a regular node may violate their terms of service.
+   >
+   > **ارائه‌دهندگان پیشنهادی شامل:** [Amazon](https://aws.amazon.com/), [DigitalOcean](https://www.digitalocean.com/), [Linode](https://www.linode.com/), [Alibaba Cloud](https://alibabacloud.com/), [Latitude](https://www.latitude.sh/).
+
+2. همان‌طور که در راهنما [اینجا](/v3/guidelines/nodes/running-nodes/full-node#install-the-mytonctrl) توضیح داده شده است، **mytonctrl** را نصب و همگام‌سازی کنید.
+
+   For additional help, refer to this [Video Instruction](/v3/guidelines/nodes/running-nodes/full-node#run-a-node-video).
+
+3. Transfer 1 TON to the validator wallet address in the `wl` list.
+
+4. از دستور `aw` برای فعال‌سازی کیف پول validator خود استفاده کنید.
+
+5. حالت استخر را فعال کنید:
+
+   ```bash
+   enable_mode nominator-pool
+   set stake null
+   ```
+
+6. دو استخر ایجاد کنید (برای دوره‌های اعتبارسنجی زوج و فرد):
+
+   ```bash
+   new_pool p1 0 1 1000 300000
+   new_pool p2 0 1 1001 300000
+   ```
+
+   Where:
+
+   - `p1` نام استخر است;
+   - `۰` ٪ سهم پاداش validator است (به عنوان مثال، از ۴۰ برای ۴۰٪ استفاده کنید);
+   - `۱` حداکثر تعداد nominators در استخر است (باید \<= ۴۰ باشد);
+   - `1000` TON حداقل سهم validator است (باید >= 1K TON باشد);
+   - `300000` TON حداقل سهم nominator است (باید >= 10K TON باشد);
+
+   > (!) Pool configurations do not have to be identical. You can add 1 to the minimum stake of one pool to make them different.
+   >
+   > (!) از https://tonmon.xyz/ برای تعیین حداقل سهم فعلی validator استفاده کنید.
+
+7. برای نمایش آدرس‌های استخر `pools_list` را تایپ کنید:
+
+   ```bash
+   pools_list
+   Name  Status  Balance  Address
+   p1    empty   0        0f98YhXA9wnr0d5XRXT-I2yH54nyQzn0tuAYC4FunT780qIT
+   p2    empty   0        0f9qtmnzs2-PumMisKDmv6KNjNfOMDQG70mQdp-BcAhnV5jL
+   ```
+
+8. ۱ TON به هر استخر ارسال کرده و استخرها را فعال کنید:
+
+   ```bash
+   mg validator_wallet_001 0f98YhXA9wnr0d5XRXT-I2yH54nyQzn0tuAYC4FunT780qIT 1
+   mg validator_wallet_001 0f9qtmnzs2-PumMisKDmv6KNjNfOMDQG70mQdp-BcAhnV5jL 1
+   activate_pool p1
+   activate_pool p2
+   ```
+
+9. برای نمایش استخر ها `pools_list` را تایپ کنید:
+
+   ```bash
+   pools_list
+   Name  Status  Balance      Address
+   p1    active  0.731199733  kf98YhXA9wnr0d5XRXT-I2yH54nyQzn0tuAYC4FunT780v_W
+   p2    active  0.731199806  kf9qtmnzs2-PumMisKDmv6KNjNfOMDQG70mQdp-BcAhnV8UO
+   ```
+
+10. هر استخر را از طریق لینک "https://tonscan.org/nominator/{address_of_pool}" باز کنید و تنظیمات استخر را تأیید کنید.
+
+11. با واریز validator به هر استخر ادامه دهید:
+
+    ```bash
+    deposit_to_pool validator_wallet_001 <address_of_pool_1> 1005
+    deposit_to_pool validator_wallet_001 <address_of_pool_2> 1005
+    ```
+
+In these commands, `1005` TON is the deposit amount. The pool will deduct 1 TON to process the deposit.
+
+12. با واریز nominator به هر استخر ادامه دهید:
+
+    به لینک استخر (از **گام ۹**) مراجعه کرده و روی **ADD STAKE** کلیک کنید.
+    همچنین می‌توانید با استفاده از **mytonctrl** و دستورات زیر واریز انجام دهید:
+
+    ```bash
+    mg nominator_wallet_001 <address_of_pool_1> 300001 -C d
+    mg nominator_wallet_001 <address_of_pool_2> 300001 -C d
+    ```
+
+> (!) The nominator wallet must be initialized in the basechain (workchain 0).
+>
+> (!) Remember that the validator and nominator wallets must be stored separately! Store the validator wallet on the server with the validator node to ensure the processing of all system transactions. Meanwhile, store the nominator wallet in your cold cryptocurrency wallet.
+>
+> برای برداشت واریز nominator، تراکنشی با نظر `w` به آدرس استخر ارسال کرده و ۱ TON برای پردازش تراکنش پیوست کنید. (همچنین می‌توانید این عملیات را با استفاده از **mytonctrl** اجرا کنید.)
+
+13. Nominator ها را دعوت کنید تا به استخرهای شما واریز کنند. شرکت در بررسی به‌طور خودکار آغاز خواهد شد.
+
+> (!) Ensure you have at least 200 TON/month in your validator wallet for operation fees.
+>
+> In the TON blockchain, the validator cycle is approximately 18 hours, and there are roughly 40.5 validation rounds per month (assuming a 30-day month).
+>
+> Here's the breakdown of costs based on participation:
+>
+> - **Participating in only odd or even cycles (half of the rounds):**
+>
+>   - Rounds per month: ~20.25
+>   - Cost per round: ~5 Toncoins
+>   - `total cost = 20.25 * 5 -> ~101.25 Toncoins`
+>
+> - **Participating in both odd and even cycles (all rounds):**
+>   - Rounds per month: ~40.5
+>   - Cost per round : ~ 5 Toncoins
+>   - `total cost = 40.5 * 5 -> ~202.50 Toncoins`
+
+## Pool configuration
+
+If you intend to lend to yourself, use `new_pool p1 0 1 1000 300000` (maximum of 1 nominator, 0% validator share).
+
+If you're creating a pool for numerous nominators, you might use something like this: `new_pool p1 40 40 10000 10000` (maximum of 40 nominators, 40% validator share, minimum participant stakes of 10K TON).
+
+## Transitioning a regular validator to nominator pool mode
+
+1. Input `set stake 0` to discontinue election participation.
+
+2. Await the return of both your stakes from the elector.
+
+3. Proceed with the steps under [Running the validator in nominator pool mode](#validator-pool-mode) from the **4th step** onwards.
+   <Feedback />

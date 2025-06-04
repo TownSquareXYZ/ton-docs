@@ -1,4 +1,6 @@
-# 使用 TON 区块链时应注意的事项
+import Feedback from '@site/src/components/Feedback';
+
+# Things to focus on while working with TON Blockchain
 
 在本文中，我们将回顾和讨论希望开发 TON 应用程序的人员需要考虑的要素。
 
@@ -29,69 +31,72 @@ TVM 的执行每次正常停止时，都会以退出代码 `0` 或 `1` 停止。
 
 必须检查报文模式，特别是它与之前发送的报文和费用之间的相互关系。可能出现的故障是没有考虑存储费用，在这种情况下，合约可能会耗尽 TON，导致发送信息时出现意外故障。您可以查看消息模式 [此处](/v3/documentation/smart-contracts/message-management/sending-messages#message-modes)。
 
-### 5. TON完全实现演员模型
+### 5. Replay protection {#replay-protection}
+
+There are two custom solutions for wallets (smart contracts that store user funds): `seqno-based` (using a counter to prevent processing the same message twice) and `high-load` (storing processed identifiers and their expiration times).
+
+- [基于序列号的钱包](/v3/guidelines/apps/asset-processing/payments-processing/#seqno-based-wallets)
+- [高负载钱包](/v3/guidelines/apps/asset-processing/payments-processing/#high-load-wallets)
+
+For `seqno`, refer to [this section](/v3/documentation/smart-contracts/message-management/sending-messages#mode3) for details on possible replay scenarios.
+
+### 6. TON fully implements the actor model
 
 这意味着合约的代码可以更改。既可以使用 [`SETCODE`](/v3/documentation/smart-contracts/func/docs/stdlib#set_code)TVM 指令永久更改代码，也可以在运行时将 TVM 代码注册表设置为新的 cell 值，直到执行结束。
 
-### 6.TON 区块链有几个交易阶段：计算阶段、行动阶段和反弹阶段。
+### 7. TON Blockchain has several transaction phases: computational phase, actions phase, and a bounce phase among them
 
 计算阶段会执行智能合约的代码，然后才会执行操作（发送消息、修改代码、更改库等）。因此，与基于以太坊的区块链不同的是，如果你预计发送的消息会失败，就不会看到计算阶段的退出代码，因为它不是在计算阶段执行的，而是在之后的操作阶段执行的。
 
 - [事务和阶段](/v3/documentation/tvm/tvm-overview#transactions-and-phases)
 
-### 7. TON 合约是自治的
+### 8. TON contracts are autonomous
 
 区块链中的合约可以驻留在不同的分片中，由其他验证器处理，这意味着开发者无法按需从其他合约中获取数据。因此，任何通信都是异步的，通过发送消息来完成。
 
 - [从智能合约发送信息](/v3/documentation/smart-contracts/message-management/sending-messages)
 - [从 DApp 发送信息](/v3/guidelines/ton-connect/guidelines/sending-messages)
 
-### 8. 与其他区块链不同，TON 不包含还原信息，只包含退出代码
+### 9. Unlike other blockchains, TON does not contain revert messages, only exit codes
 
 在开始编写 TON 智能合约之前，考虑清楚代码流的退出代码路线图（并将其记录在案）是很有帮助的。
 
-### 9. 具有 `method_id` 标识符的 Func 函数具有方法 ID
+### 10. Func functions that have method_id identifiers have method IDs
 
 它们可以显式地设置为 `"method_id(5)"`，也可以由 func 编译器隐式地设置为 "method_id(5)"。在这种情况下，可以在 .fift 汇编文件的方法声明中找到它们。其中两个是预定义的：一个用于接收区块链内部的信息，通常称为 `recv_internal` ；另一个用于接收外部的信息，称为 `recv_external` 。
 
-### 10. TON Crypto 地址可能没有任何代币或代码
+### 11. TON crypto address may not have any coins or code
 
 TON 区块链中的智能合约地址是确定的，可以预先计算。与地址相关联的 Ton 账户甚至可能不包含任何代码，这意味着如果发送了带有特殊标志的消息，这些账户将被取消初始化（如果未部署）或冻结，同时不再拥有存储空间或 TON coins。
 
-### 11. TON 地址可以有三种表示形式
+### 12. TON addresses may have three representations
 
 TON 地址可以有三种表示法。
 完整的表示法可以是 "原始"（`workchain:address`）的，也可以是 "用户友好 "的。最后一种是用户最常遇到的。它包含一个标签字节，表示地址是 "可跳转 "还是 "不可跳转"，以及一个工作链 id 字节。应注意这些信息。
 
-- [原始地址和用户友好地址](/v3/documentation/smart-contracts/addresses#raw-and-user-friendly-addresses)
+- [Raw and user-friendly addresses](/v3/documentation/smart-contracts/addresses#raw-and-user-friendly-addresses)
 
-### 12. 跟踪代码执行中的缺陷
+### 13. Keep track of the flaws in code execution
 
 与 Solidity 不同，在 Solidity 中，方法的可见性由用户自行设置，而在 Func 中，可见性则通过显示错误或 `if` 语句以更复杂的方式加以限制。
 
-### 13. 在发送被退回的信息之前，请留意 gas 情况
+### 14. Keep an eye on gas before sending bounced messages
 
 如果智能合约用用户提供的值发送退回的信息，确保从退回的金额中减去相应的 gas 费用。
 
-### 14. 监控回调及其失败
+### 15. Monitor the callbacks and their failures
 
 TON 区块链是异步的。这意味着信息不必先后到达。例如，当某个操作的失败通知到达时，应妥善处理。
 
-### 15. 检查退信标志是否在接收内部邮件时发出
+### 16. Check if the bounced flag was sent receiving internal messages
 
 您可能会收到退回的信息（错误通知），应及时处理。
 
-- [标准响应信息的处理](/v3/documentation/smart-contracts/message-management/internal-messages#handling-of-standard-response-messages)
-
-### 16. 为外部信息提供重放保护：
-
-钱包（智能合约，存储用户资金）有两种自定义解决方案：`基于序列号(seqno-based)`（检查计数器，不重复处理消息）和 "高负载"（存储进程标识符及其过期时间）。
-
-- [基于序列号的钱包](/v3/guidelines/apps/asset-processing/payments-processing/#seqno-based-wallets)
-- [高负载钱包](/v3/guidelines/apps/asset-processing/payments-processing/#high-load-wallets)
+- [Handling of standard response messages](/v3/documentation/smart-contracts/message-management/internal-messages#handling-of-standard-response-messages)
 
 ## 参考资料
 
-原文作者：0xguard
+- [Original article](https://0xguard.com/things_to_focus_on_while_working_with_ton_blockchain) - *0xguard*
 
-- [原文](https://0xguard.com/things_to_focus_on_while_working_with_ton_blockchain)
+<Feedback />
+

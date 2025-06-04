@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 贡献手册
+
+:::danger
+This page is outdated and will be deleted soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 在贡献任何 docs.ton.org 页面之前，请审查以下关于常见的和重要的要求，以确保顺利的提交。
 
@@ -10,10 +17,10 @@
 :::info
 TON Blockchain...
 
-TON Ecosystem...
-
 The TON Connect protocol...
 :::
+
+请在[这里](https://ton.org/en/brand-assets)查看 TON 的品牌资产。
 
 请在[这里](https://ton.org/en/brand-assets)查看 TON 的品牌资产。
 
@@ -25,8 +32,8 @@ TON 文档的每个页面应以“参阅”部分结束。在那里放置你认�
 
 ```
 ## See Also
-* [TON Contribution Guidelines](/v3/contribute/contribution-rules)
-* [Tutorial Styling Guidelines](/v3/contribute/tutorials/guidelines)
+* [TON Contribution Guidelines](/v3/contribute/contribution-rules/)
+* [Tutorial Styling Guidelines](/v3/contribute/tutorials/guidelines/)
 ```
 
 :::
@@ -40,5 +47,8 @@ TON 生态系统正在为全世界建设，因此，确保每个人都能理解�
 
 ## 参阅
 
-- [TON 贡献指南](/contribute/contribution-rules)
-- [教程样式指南](/contribute/tutorials/guidelines)
+- [TON Contribution Guidelines](/v3/contribute/contribution-rules/)
+- [Tutorial Styling Guidelines](/v3/contribute/tutorials/guidelines/)
+
+<Feedback />
+

@@ -1,8 +1,15 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 教程样式指南
 
-所以你决定为 TON 文档写一个教程？
+:::danger
+This page is outdated and will be updated soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 我们很高兴你成为我们的贡献者之一！请仔细阅读以下指南，以确保您的教程遵循 TON 文档现有内容的样式和质量。
+
+重要的是，您需要花些时间熟悉教程结构和如何使用标题。在提交自己的教程之前，请阅读我们的一些现有教程，并查看 [以前的拉取请求](https://github.com/ton-community/ton-docs/pulls?q=is%3Apr+is%3Aclosed)。
 
 重要的是，您需要花些时间熟悉教程结构和如何使用标题。在提交自己的教程之前，请阅读我们的一些现有教程，并查看 [以前的拉取请求](https://github.com/ton-community/ton-docs/pulls?q=is%3Apr+is%3Aclosed)。
 
@@ -17,7 +24,7 @@
 1. 首先，在 GitHub 上分叉然后克隆 [ton-docs](https://github.com/ton-community/ton-docs/) 的库，并在您的本地代码库中创建一个新分支。
 2. 书写您的教程时，请牢记质量和可读性！可以查看现有教程以明确您的目标。
 3. 当准备好提交审查时，[发起一个拉取请求](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request)。我们将收到通知，并开始审查过程：
-   1. **请尽一切努力提交您的教程的最终稿**。一些打字错误和语法修正是可以接受的，但如果在我们能够发布教程之前需要进行重大更改，审查和要求您进行必要更改的过程将会花费更多时间。
+  1. **请尽一切努力提交您的教程的最终稿**。一些打字错误和语法修正是可以接受的，但如果在我们能够发布教程之前需要进行重大更改，审查和要求您进行必要更改的过程将会花费更多时间。
 4. 审查完您的提交后，并且您完成所有必要的更改后，我们将合并拉取请求并在 TON 文档上发布教程。此后不久，我们将与您联系安排付款！
 5. 发布后，记得在社交媒体上**推广**您的教程！[文档维护者](/contribute/maintainers)可以帮助扩大这种推广，只要您与我们合作。
 
@@ -32,9 +39,9 @@
 
 ## 背景
 
-在 "TON" 前加上 "THE" 的主要问题是，在开发 TON 文档和政策编辑期间，市场营销、供应商和开发人员等多个部门加入了讨论，以大写 "Blockchain"、"Ecosystem" 等词汇与 "TON" 结合使用，以创建一个单一系统、网络和品牌的强大形象。经过长时间的讨论，我们得出结论，为了推出强大的品牌形象，我们应该创建一个词汇和短语表，可以不使用 "THE" 并大写书写。如果可以大写，就不需要冠词。目前有两个这样的词组：TON Blockchain 和 TON Ecosystem。
-
 对于其他 TON 模块名称，如 TON Connect、TON SDK、TON Grants等，取决于上下文。我们应用大写规则，但对于冠词规则则较为灵活。如果组件名称单独存在，最好不用冠词。然而，如果它与普通名词结合，如 TON Connect protocol，则需要冠词，因为它指的是实体协议。
+
+至于其他词组，如 "TON + 名词"（例如，"the TON world"、"the TON community" 等），我们不限制使用冠词，因为我们期望能看到这样的一个结合。
 
 至于其他词组，如 "TON + 名词"（例如，"the TON world"、"the TON community" 等），我们不限制使用冠词，因为我们期望能看到这样的一个结合。
 
@@ -133,3 +140,6 @@ import { useEffect, useState } from 'react';
   *例如*：`mkdir example && cd example`
 - 如果使用 `npm init` 来初始化项目目录，请解释提示或使用 `-y` 标志。
 - 如果使用 `npm install`，请采用 `-save` 标志。
+
+<Feedback />
+

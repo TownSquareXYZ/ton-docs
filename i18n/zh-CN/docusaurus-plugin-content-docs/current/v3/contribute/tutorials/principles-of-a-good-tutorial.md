@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 优秀教程的原则
+
+:::danger
+This page is outdated and will be updated soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 这些原则最初由 [talkol](https://github.com/talkol) 提出：
 
@@ -25,3 +32,5 @@
 8. 库应该有易于理解的编译/部署脚本。用户能够只要输入 `npm install` 就能使用它们。
 
 9. 有时一个 GitHub 库就足够了，不需要写一篇完整的文章。只需一个 README，里面包含了库中你需要的所有代码。在这种情况下，代码应该有良好的注释，以便用户可以轻松阅读和理解它。
+ <Feedback />
+

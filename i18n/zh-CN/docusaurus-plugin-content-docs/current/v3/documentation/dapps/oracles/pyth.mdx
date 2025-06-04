@@ -1,8 +1,10 @@
+import Feedback from '@site/src/components/Feedback';
+
 import ThemedImage from '@theme/ThemedImage';
 
-# Pyth Oracles
+# Pyth oracles
 
-## 如何在 TON 合约中使用实时数据
+## How to use real-time data in TON contracts
 
 TON 上的 Pyth 价格反馈通过主 TON Pyth 智能
 合约进行管理，实现与链上数据的无缝交互。在 TON，
@@ -25,7 +27,7 @@ Pyth 接收器合约中的特定功能促进了这些交互。该合约充当 Py
    @ton/core @ton/ton @ton/crypto
 ```
 
-## 编写客户端代码
+## Write client code
 
 下面的代码片段演示了如何获取价格更新、与 TON 上的 Pyth 合约交互以及更新价格馈送：
 
@@ -34,6 +36,7 @@ Pyth 接收器合约中的特定功能促进了这些交互。该合约充当 Py
 
 以下示例使用的是 testnet 合约。要使用主网，请将 `PYTH_CONTRACT_ADDRESS_TESTNET` 相应改为 `PYTH_CONTRACT_ADDRESS_MAINNET` 。 
 
+<details>
 ```ts
 import { TonClient, Address, WalletContractV4 } from "@ton/ton";
 import { toNano } from "@ton/core";
@@ -95,6 +98,7 @@ async function main() {
 }
 main().catch(console.error);
 ```
+</details>
 
 该代码段的功能如下：
 
@@ -104,12 +108,14 @@ main().catch(console.error);
 4. 准备更新数据并计算更新费。
 5. 更新 TON 合约的价格信息。
 
-## 其他资源
+## Additional resources
 
 您可能会发现这些额外的资源对开发您的 TON 申请很有帮助：
 
-- [TON文档](https://ton.org/docs/)
-- [Pyth Price Feed IDs](https://pyth.network/developers/price-feed-ids)
-- [Pyth TON Contract](https://github.com/pyth-network/pyth-crosschain/tree/main/target_chains/ton/contracts)
+- [TON documentation](https://ton.org/docs/)
+- [Pyth price feed IDs](https://pyth.network/developers/price-feed-ids)
+- [Pyth TON contract](https://github.com/pyth-network/pyth-crosschain/tree/main/target_chains/ton/contracts)
 - [Pyth TON SDK](https://github.com/pyth-network/pyth-crosschain/tree/main/target_chains/ton/sdk)
-- [Pyth TON 示例](https://github.com/pyth-network/pyth-examples/tree/main/price_feeds/ton/sdk_js_usage)
+- [Pyth TON example](https://github.com/pyth-network/pyth-examples/tree/main/price_feeds/ton/sdk_js_usage)
+
+<Feedback />

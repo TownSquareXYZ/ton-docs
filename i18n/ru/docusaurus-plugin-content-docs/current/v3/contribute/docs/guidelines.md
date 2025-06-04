@@ -1,8 +1,6 @@
-# Общие принципы работы с документацией
+import Feedback from '@site/src/components/Feedback';
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
+# Общие принципы работы с документацией
 
 :::danger
 Эта страница устарела и скоро будет удалена.
@@ -30,4 +28,5 @@
 
 ## Получите обратную связь
 
-Перед публикацией документации рекомендуется получить обратную связь от других участников или пользователей. Это может помочь выявить области, которые могут вызывать путаницу или неясность, и позволит вам внести улучшения до выхода документации.
+Before publishing the documentation, it is a good idea to get feedback from other contributors or users. This can help identify areas that may be confusing or unclear, and allow you to make improvements before the documentation is released. <Feedback />
+

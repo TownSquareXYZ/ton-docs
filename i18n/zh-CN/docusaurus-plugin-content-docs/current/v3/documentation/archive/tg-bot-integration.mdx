@@ -1,9 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 
 # Telegram 机器人的 TON Connect
 
 :::warning 弃用
-本指南介绍了将 TON Connect 与 Telegram 机器人集成的过时方法。如需更安全、更现代的方法，请考虑使用 [Telegram 小程序](/v3/guidelines/dapps/tma/overview)。
+This guide explains an outdated method of integrating TON Connect with Telegram bots. For a more secure and modern approach, consider using [Telegram Mini Apps](/v3/guidelines/dapps/tma/overview) for a more modern and secure integration.
 :::
 
 在本教程中，我们将使用支持 TON Connect 2.0 身份验证的 JavaScript TON Connect SDK 开发一个 Telegram 机器人示例。
@@ -13,7 +15,7 @@ import Button from '@site/src/components/button'
 
 打开演示机器人
 
-</Button>
+<Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>
 
 <Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>
 
@@ -476,7 +478,7 @@ export const walletMenuCallbacks = { // Define buttons callbacks
     chose_wallet: onChooseWalletClick
 };
 
-bot.on('callback_query', query => { // Parse callback data and execute corresponing function
+bot.on('callback_query', query => { // Parse callback data and execute corresponding function
     if (!query.data) {
         return;
     }
@@ -691,7 +693,7 @@ export const walletMenuCallbacks = {
     universal_qr: onOpenUniversalQRClick
 };
 
-bot.on('callback_query', query => { // Parse callback data and execute corresponing function
+bot.on('callback_query', query => { // Parse callback data and execute corresponding function
     if (!query.data) {
         return;
     }
@@ -1699,8 +1701,8 @@ async function onOpenUniversalQRClick(query: CallbackQuery, _: string): Promise<
 // ... other code
 ```
 
-</details>
-
+<details>
+<summary>src/commands-handlers.ts 代码</summary>
 
 <details>
 <summary>src/commands-handlers.ts 代码</summary>
@@ -2055,3 +2057,5 @@ main();
 
 - [发送信息](/v3/guidelines/ton-connect/guidelines/sending-messages)
 - [集成手册](/v3/guidelines/ton-connect/guidelines/integration-with-javascript-sdk)
+
+<Feedback />

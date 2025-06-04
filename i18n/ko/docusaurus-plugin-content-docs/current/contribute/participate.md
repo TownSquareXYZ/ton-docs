@@ -18,7 +18,7 @@
 설명하고자 하는 자료를 찾거나 작성합니다.
 
 1. TON Docs GitHub에서 'tutorial' 라벨이 붙은 [이슈 목록](https://github.com/ton-community/ton-docs/issues) 을 확인합니다.
-2. *또는* [튜토리얼 템플릿](https://github.com/ton-community/ton-docs/issues/new?assignees=\&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A\&template=suggest_tutorial.yaml\&title=Suggest+a+tutorial)을 사용하여 Ton Docs Github에 자신의 아이디어를 작성합니다.
+2. *또는* [튜토리얼 템플릿](https://github.com/ton-community/ton-docs/issues/new?assignees=\\&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A\\&template=suggest_tutorial.yaml\\&title=Suggest+a+tutorial)을 사용하여 Ton Docs Github에 자신의 아이디어를 작성합니다.
 
 ## 보상을 받기 위한 문제 설명
 

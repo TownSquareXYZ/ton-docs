@@ -1,8 +1,6 @@
-# Составляйте и создавайте смарт-контракты на TON
+import Feedback from '@site/src/components/Feedback';
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
+# Составляйте и создавайте смарт-контракты на TON
 
 Вот список библиотек и репозиториев для создания Вашего смарт-контракта.
 
@@ -203,3 +201,6 @@ async function main() {
 - [disintar/toncli](https://github.com/disintar/toncli) - один из самых популярных подходов. Вы даже можете использовать его с Docker.
 - [tonthemoon/ton](https://github.com/tonthemoon/ton) - *(закрытая бета)* однострочный установщик бинарных файлов TON.
 - [delab-team/tlbcrc](https://github.com/delab-team/tlbcrc) - Пакет и CLI для генерации опкодов по схеме TL-B
+
+<Feedback />
+

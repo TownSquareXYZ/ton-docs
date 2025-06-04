@@ -1,4 +1,10 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 与 JavaScript SDK 的集成手册
+
+:::danger
+The page is outdated and will be deleted soon. Learn actual JS flow from [the guideline for web](/v3/guidelines/ton-connect/frameworks/web).
+:::
 
 在本教程中，我们将创建一个示例网页应用，支持 TON Connect 2.0 认证。这将允许进行签名验证，以消除在各方之间未建立协议时的身份冒用的可能性。
 
@@ -496,6 +502,11 @@ verify_key.verify(hashlib.sha256(signed).digest(), base64.b64decode(signature))
 nacl.exceptions.BadSignatureError: Signature was forged or corrupt.
 ```
 
+## See also
+
+- [Preparing Messages](/v3/guidelines/ton-connect/guidelines/preparing-messages)
+- [Sending Messages](/v3/guidelines/ton-connect/guidelines/sending-messages)
+
 ## 下一步工作
 
 在编写 dApp 时，还应考虑以下几点：
@@ -507,3 +518,6 @@ nacl.exceptions.BadSignatureError: Signature was forged or corrupt.
   - 当前用户可以使用其他类型的合约而不是钱包来登录。值得庆幸的是，这将在预期位置包含公钥
 
 祝你好运，祝你编写 dApp 玩得开心！
+
+<Feedback />
+

@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 词汇表
 
 ## 介绍
@@ -272,9 +274,9 @@ __________
 
 **Mainnet** - 区块链的主网络。
 
-### Market cap (capitalization)
+### Market cap
 
-**Market cap (capitalization)**--加密货币代币数量总和的总价值。
+**Market capitalization (Market cap)** — the total value of a cryptocurrency’s combined number of tokens.
 
 ### Masterchain
 
@@ -410,7 +412,7 @@ ________
 
 ### TEP
 
-**TEP** - [TON Enhancement Proposals](https://github.com/ton-blockchain/TEPs)，一套与 TON 生态系统各部分交互的标准方法。
+**TON Enhancement Proposals (TEP)**—a [standard set](https://github.com/ton-blockchain/TEPs) of ways to interact with various parts of the TON ecosystem.
 
 ### Testnet
 
@@ -507,3 +509,6 @@ ___________
 ### Yolo
 
 **Yolo**--"你只能活一次"，这是一个俚语缩写，用来号召人们尽情享受生活，而不考虑所做努力的风险。
+
+<Feedback />
+

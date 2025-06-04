@@ -1,8 +1,6 @@
-# О оракулах
+import Feedback from '@site/src/components/Feedback';
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
+# About oracles
 
 Блокчейн-оракулы — это сущности, которые соединяют блокчейн с внешними системами, позволяя выполнять смарт-контракты на основе реальных входных данных.
 
@@ -60,6 +58,8 @@
 
 ## Список оракулов в TON
 
-- [Pyth Oracles](/v3/documentation/dapps/oracles/pyth)
-- [RedStone Oracles](/v3/documentation/dapps/oracles/red_stone)
+- [Pyth oracles](/v3/documentation/dapps/oracles/pyth)
+- [RedStone oracles](/v3/documentation/dapps/oracles/red_stone)
+
+<Feedback />
 
