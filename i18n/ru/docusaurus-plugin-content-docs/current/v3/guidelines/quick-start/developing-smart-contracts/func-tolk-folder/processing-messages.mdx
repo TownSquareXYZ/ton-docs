@@ -36,7 +36,7 @@ import Button from '@site/src/components/button'
  - `my_balance` - смарт-контрактный баланс при начале транзакции.
  - `msg_value` - средства, полученные с сообщением.
  - `in_msg_full` - `ячейка`, включающая "заголовочные" поля сообщения.
- - `in_msg_body` - [slice](/v3/documentation/smart-contracts/func/docs/types#atomic-types) содержит тело сообщения.
+ - `in_msg_body` - [slice](/ru/v3/documentation/smart-contracts/func/docs/types#atomic-types) содержит тело сообщения.
 </TabItem>
 <TabItem value="Tolk" label="Tolk">
 ```tolk
@@ -128,7 +128,7 @@ const int op::decrement = 2;
     ; Шаг 1: Проверим, является ли сообщение пустым
     if (in_msg_body. lice_empty?()) {
         return; ;; Ничего не делаем с пустыми сообщениями
-}
+    }
 
 ```
 ;; Step 2: Extract the operation code
@@ -198,7 +198,7 @@ fun onInternalMessage(myBalance: int, msgValue: int, msgFull: cell, msgBody: sli
 
 ## Реализация
 
-Let's modify our smart contract to receive external messages following the standard steps described in the previous [Blueprint overview](/v3/guidelines/quick-start/developing-smart-contracts/func-tolk-folder/blueprint-sdk-overview/) section.
+Давайте изменим наш смарт-контракт по стандартным шагам из раздела [Обзор Blueprint](/ru/v3/guidelines/quick-start/developing-smart-contracts/func-tolk-folder/blueprint-sdk-overview/), чтобы он мог получать внешние сообщения.
 
 ### Шаг 1: редактирование кода смарт-контракта
 

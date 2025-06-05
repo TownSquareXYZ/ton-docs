@@ -2,7 +2,7 @@
 
 # Запись в сеть
 
-В предыдущем разделе вы узнали, как **читать данные** из блокчейна TON. Теперь давайте рассмотрим, как **записать данные** в него.
+В предыдущем разделе вы узнали, как **читать данные** из блокчейна TON. Теперь давайте рассмотрим, как **записывать** их.
 
 ## Введение
 
@@ -29,7 +29,7 @@ npm -v
 1. Создайте новый каталог для проекта
 2. Инициализируйте проект Node.js
 3. Установите необходимые зависимости
-4. Initialize TypeScript configuration.
+4. Инициализируйте конфигурацию TypeScript.
 
 Для этого выполните эти команды в терминале:
 
@@ -65,7 +65,7 @@ npx ts-node script.ts
 <br></br>
 
 :::caution
-Unlike in the [Reading from network](/v3/guidelines/quick-start/blockchain-interaction/reading-from-network/) section, a Toncenter API key is mandatory in the following examples. It may be retrieved using [the following guide](/v3/guidelines/dapps/apis-sdks/api-keys/).
+В отличие от раздела [Чтение из сети](/ru/v3/guidelines/quick-start/blockchain-interaction/reading-from-network/), в следующих примерах понадобится ключ Toncenter API. Его можно получить с помощью [следующего руководства](/ru/v3/guidelines/dapps/apis-sdks/api-keys/).
 :::
 
 #### Реализация
@@ -139,7 +139,7 @@ npx ts-node 1-send-ton.ts
 - **NFT Collection**: хранит информацию о коллекции NFT.
 - **NFT Item**: хранит информацию о конкретном NFT, которым владеет пользователь.
 
-Чтобы отправить NFT, мы должны сначала обладать им. Самый простой способ этого добиться — создать и развернуть свой собственный NFT с помощью [TON Tools](https://ton-collection-edit.vercel.app/deploy-nft-single). Обратите внимание, что адреса `владельца` NFT должны быть адресом вашего кошелька, чтобы вы могли выполнять операции над ним.
+Чтобы отправить NFT, мы должны сначала обзавестись им. Самый простой способ это сделать — создать и развернуть свой собственный NFT с помощью [TON Tools](https://ton-collection-edit.vercel.app/deploy-nft-single). Обратите внимание, что адреса `владельца` NFT должны быть адресом вашего кошелька, чтобы вы могли выполнять операции над ним.
 
 Основная операция [стандарта NFT](https://github.com/ton-blockchain/TEPs/blob/master/text/0062-nft-standard.md) в TON — `передача`. На самом деле это изменение адреса `владельца` в хранимых данных NFT на `нового владельца`: адрес другого контракта, который после этого сможет осуществлять операции с этим `экземпляром NFT`.
 

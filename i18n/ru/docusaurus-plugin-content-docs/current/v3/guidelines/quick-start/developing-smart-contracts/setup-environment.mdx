@@ -3,9 +3,9 @@ import Button from '@site/src/components/button'
 
 # Настройка среды разработки
 
-> **Вкратце:** В предыдущих шагах мы изучили концепцию смарт-контракта и основные способы взаимодействия с блокчейном TON с помощью **приложений кошельков** и **эксплореров**.
+> **Резюме:** В предыдущих шагах мы изучили концепцию смарт-контракта и основные способы взаимодействия с блокчейном TON с помощью **приложений кошельков** и **эксплореров**.
 
-This guide covers the basic steps of setting up your smart contract development environment using **`Blueprint`** and creating a basic project template.
+Это руководство описывает основные шаги настройки вашей среды разработки смарт-контрактов с помощью **`Blueprint`** и создания базового шаблона проекта.
 
 ## Что требуется для прохождения
 
@@ -23,18 +23,18 @@ Using native tools and language-dependent SDKs for smart contract development is
 - [Creating state init for deployment](/v3/guidelines/smart-contracts/howto/wallet#creating-the-state-init-for-deployment/).
   :::
 
-### Step 1: install Node.js
+### Шаг 1: установите Node.js
 
-First, visit the [installation page](https://nodejs.org/en/download) and execute the download commands in `PowerShell` or `Bash` corresponding to your operating system (Windows/Linux).
+Сначала посетите [страницу установки](https://nodejs.org/en/download) и выполните команды загрузки в `PowerShell` или `Bash`, в зависимости от вашей операционной системы (Windows/Linux).
 
-Check that `npm` and `node` are installed by executing the following command:
+Проверьте, установлены ли `npm` и `node`, с помощью следующей команды:
 
 ```bash
 npm -v
 node -v
 ```
 
-### Step 2: choose a smart contract development language
+### Шаг 2: выберите язык программирования для смарт-контрактов
 
 During the guide, we provide examples in `FunC`, `Tolk`, and `Tact`. You can choose any of them and even combine smart contracts in different languages. To proceed through the guide, there is no need for a deep understanding of the chosen language—basic programming skills will be enough.
 
@@ -42,7 +42,7 @@ During the guide, we provide examples in `FunC`, `Tolk`, and `Tact`. You can cho
 You can find a brief overview of the languages here: [Programming languages](/v3/documentation/smart-contracts/overview#programming-languages/)
 :::
 
-### Step 3: set up Blueprint
+### Шаг 3: настройте Blueprint
 
 Change the directory to the parent folder of your future project and run the following command:
 
@@ -52,38 +52,38 @@ npm create ton@latest
 
 This will run an interactive script to create the project template. You can enter anything you want, but if you want to follow the same paths as in this guide, choose the following:
 
-1. **Project name**: `Example`  
-2. **First contract name**: `HelloWorld`  
-3. **Project template**: a **simple counter contract** in `FunC`, `Tolk` or `Tact`
+1. **Project name** (название проекта): `Example`  
+2. **First contract name** (название первого контракта): `HelloWorld`  
+3. **Project template** (шаблон проекта): **simple counter contract** на `FunC`, `Tolk` или `Tact`
 
-Finally, change your current directory to the generated project template folder and install all required dependencies:
+Наконец, измените текущую директорию на ту, которая была создана при генерации шаблона, и установите все необходимые зависимости:
 
 ```bash
 cd ./Example
 npm install
 ```
 
-### Step 4 (optional): IDE and editor support
+### Шаг 4 (опционально): установите поддержку в IDE или редакторе
 
 The TON community has developed plugins that provide syntax support for several IDEs and code editors. You can find them here: [Plugin List](https://docs.ton.org/v3/documentation/smart-contracts/getting-started/ide-plugins/).
 
 Also, consider installing plugins that support **JavaScript/TypeScript** tools for your preferred IDE or code editor, specifically `Jest`, for debugging smart contract tests.
 
-## Choose the programming language
+## Выберите язык программирования
 
-Now that your environment is set up choose a programming language to get started:
+Теперь, когда ваша среда настроена, выберите язык программирования, чтобы приступить:
 
-- **FunC or Tolk**: estimated time to learn is 25 min for each.
-- **Tact**: estimated time to learn is 15 min.
+- **FunC или Tolk**: предполагаемое время обучения 25 минут для каждого.
+- **Tact**: предполагаемое время обучения 15 минут.
 
 <Button href="/v3/guidelines/quick-start/developing-smart-contracts/func-tolk-folder/blueprint-sdk-overview" colorType="primary" sizeType={'sm'}>
-  Start with FunC or Tolk
+  Начать с FunC или Tolk
 
 </Button>
 
 <Button href="/v3/guidelines/quick-start/developing-smart-contracts/tact-folder/tact-blueprint-sdk-overview" colorType={'secondary'} sizeType={'sm'}>
 
-  Start with Tact
+  Начать с Tact
 
 </Button>
 
