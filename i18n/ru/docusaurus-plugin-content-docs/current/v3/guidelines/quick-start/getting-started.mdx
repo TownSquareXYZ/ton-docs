@@ -139,33 +139,31 @@ This might seem unintuitive: why is your wallet in the `uninit` state when you�
 
 - `Приложение кошелька` — это ваш офчейн-клиент для `смарт-контракта кошелька`.
 
-- The `wallet smart contract` is the contract itself. Since its deployment requires some fees, most `wallet apps` don’t actually deploy the wallet `smart contract` until you receive funds on your address and try to make your first transaction.
+- `Смарт-контракт кошелька` — это непосредственно контракт. Поскольку его развёртывание в блокчейне требует оплаты комиссий, большинство `приложений кошелька` не делают этого, пока вы не получите средства на этот адрес и попробуете осуществить первую транзакцию.
   :::
 
-- `Active`: This is the state of a deployed `smart contract` with a positive balance. To deploy our wallet, let's send the first transaction to someone special—**ourselves**—and see how it looks on the `blockchain`. Enter the send menu in your wallet app and transfer some funds to your own address that you’ve copied before. In the explorer, our contract should start looking something like this:
+- `Active`: Это сотояние развёрнутого `смарт-контракта` с положительным балансом. Для развёртывания нашего кошелька давайте отправим первую транзакцию особо важному человеку—**самому себе**— и посмотрим, как она выглядит в `блокчейне`. Откройте меню отправки в вашем приложении кошелька и переведите немного средств на свой собственный адрес, который вы скопировали ранее. В эксплорере наш контракт должен начать выглядеть примерно так:
 
-<div style={{marginBottom: '30px'}}>
-  <img src="/img/tutorials/quick-start/active.png" alt="Screenshot of active wallet state"/>
-</div>
+<div style={{marginBottom: '30px'}}><img src="/img/tutorials/quick-start/active.png" alt="Скриншот кошелька в активном состоянии"/></div>
 
 :::info
-There is also a fourth state called [frozen](/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/), which stands for a smart contract with a [storage charge](/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/) that exceeds its balance. In this state, the smart contract cannot perform any operations.
+Есть также четвёртое состояние «[frozen](/ru/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/)». Оно означает, что расходы смарт-контракта на [хранение данных](/ru/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/) превысили его баланс. В этом состоянии смарт-контракт не может осуществлять никакие операции.
 :::
 
-And here we are — our wallet contract is deployed and ready to use. Let's examine the provided user interface:
+Теперь наш контракт кошелька развёрнут и готов к использованию. Давайте изучим, что показывает пользовательский интерфейс:
 
-#### Metadata section
+#### Раздел с метаданными
 
-- **Address**: Your account's unique ID (e.g., `QQB...1g6VdFEg`).
+- **Address**: Уникальный идентификатор вашего аккаунта (например, `QQB...1g6VdFEg`).
 - **Balance**: Текущее количество TON.
 - **Type**: Версия контракта (например, `wallet_v51r1` — определяется автоматически по коду).
-- **State**: Address state. It may be `nonexisting`, `uninit`, `active`, or `frozen`.
+- **State**: Состояние адреса. Есть четыре варианта: `nonexisting`, `uninit`, `active` и `frozen`.
 
-#### Navigation tabs
+#### Навигационные панели
 
-- **History/Transactions**: Displays recent activity (e.g., received funds, contract deployments).
-- **Code**: Shows raw smart contract code compiled from `FunC`/`Tact`/`Tolk`.
-- **Methods**: Allows execution of `get methods` to retrieve persistent contract data.
+- **History/Transactions**: Показывает недавнюю активность (например, получение средств или развёртывание контракта).
+- **Code**: Показывает код смарт-контракта в «сыром» виде, скомпилированный из кода на языке `FunC`, `Tolk` или `Tact`.
+- **Methods**: Позволяет выполнять `get-методы`, чтобы получать данные из постоянного хранилища контракта.
 
 ## Следующие шаги
 
