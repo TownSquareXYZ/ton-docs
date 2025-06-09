@@ -27,7 +27,7 @@ import Button from '@site/src/components/button'
 Смарт-контракты можно рассматривать как программы, запущенные в блокчейне. Они следуют известной поведенческой концепции из модели [акторов](/ru/v3/concepts/dive-into-ton/ton-blockchain/blockchain-of-blockchains#single-actor).
 
 :::info
-В отличие от некоторых других блокчейнов, где можно вызывать код других контрактов синхронным образом, смарт-контракт в TON — это независимая сущность, которая взаимодействует с другими смарт-контрактами на равных. Они взаимодействуют с помощью отправки сообщений друг другу, и из-за асинхронности транзакций в TON обработка этих сообщений происходит асинхронно.
+В отличие от некоторых других блокчейнов, где можно вызывать код других контрактов синхронным образом, смарт-контракт в TON — это независимая сущность, которая взаимодействует с другими смарт-контрактами на равных. Они взаимодействуют с помощью отправки сообщений друг другу, и TON спроектирован так, что обработка этих транзакций происходит асинхронно.
 :::
 
 Каждая обработка сообщения контрактом-получателем считается транзакцией, и может приводить к следующим действиям:
@@ -73,7 +73,7 @@ import Button from '@site/src/components/button'
 Не беспокойтесь, делиться своим `адресом` **совершенно безопасно**, если только вы не хотите сохранить в тайне свою связь с ним.
 :::
 
-- Для `тестнета` вы можете запросить тестовые средства в боте [Testgiver Ton Bot](https://t.me/testgiver_ton_bot/) **полностью бесплатно**! После небольшого ожидания вы получите 2 `Toncoin`, которые появятся в вашем приложении кошелька.
+- Для `тестнета` вы можете запросить тестовые средства в боте [Testgiver Ton Bot](https://t.me/testgiver_ton_bot) **полностью бесплатно**! После небольшого ожидания вы получите 2 `Toncoin`, которые появятся в вашем приложении кошелька.
 
 ### Шаг 3: создание кошелька в тестнете
 
@@ -104,7 +104,7 @@ import Button from '@site/src/components/button'
 
 ### Шаг 4: исследование блокчейна TON
 
-Поздравляем! Мы создали наш первый кошелёк и получили первые средства. Теперь давайте посмотрим, как наши действия отражены в блокчейне. Мы можем сделать это с помощью различных [эксплореров](https://ton.app/explorers/).
+Поздравляем! Мы создали наш первый кошелёк и впервые получили средства. Теперь давайте посмотрим, как наши действия отражены в блокчейне. Мы можем сделать это с помощью различных [эксплореров](https://ton.app/explorers/).
 
 `Эксплорер` — это инструмент, позволяющий вам запрашивать данные из блокчейна, исследовать `смарт-контракты` в TON, и просматривать транзакции. Для наших примеров мы будем использовать [Tonviewer](https://tonviewer.com/).
 
@@ -137,35 +137,33 @@ import Button from '@site/src/components/button'
 :::info
 This might seem unintuitive: why is your wallet in the `uninit` state when you’ve already created it? There is a small difference between the `wallet app` and the `wallet smart contract`:
 
-- The `wallet app` is your off-chain client for the `wallet smart contract`.
+- `Приложение кошелька` — это ваш офчейн-клиент для `смарт-контракта кошелька`.
 
-- The `wallet smart contract` is the contract itself. Since its deployment requires some fees, most `wallet apps` don’t actually deploy the wallet `smart contract` until you receive funds on your address and try to make your first transaction.
+- `Смарт-контракт кошелька` — это непосредственно контракт. Поскольку его развёртывание в блокчейне требует оплаты комиссий, большинство `приложений кошелька` не делают этого, пока вы не получите средства на этот адрес и попробуете осуществить первую транзакцию.
   :::
 
-- `Active`: This is the state of a deployed `smart contract` with a positive balance. To deploy our wallet, let's send the first transaction to someone special—**ourselves**—and see how it looks on the `blockchain`. Enter the send menu in your wallet app and transfer some funds to your own address that you’ve copied before. In the explorer, our contract should start looking something like this:
+- `Active`: Это сотояние развёрнутого `смарт-контракта` с положительным балансом. Для развёртывания нашего кошелька давайте отправим первую транзакцию особо важному человеку—**самому себе**— и посмотрим, как она выглядит в `блокчейне`. Откройте меню отправки в вашем приложении кошелька и переведите немного средств на свой собственный адрес, который вы скопировали ранее. В эксплорере наш контракт должен начать выглядеть примерно так:
 
-<div style={{marginBottom: '30px'}}>
-  <img src="/img/tutorials/quick-start/active.png" alt="Screenshot of active wallet state"/>
-</div>
+<div style={{marginBottom: '30px'}}><img src="/img/tutorials/quick-start/active.png" alt="Скриншот кошелька в активном состоянии"/></div>
 
 :::info
-There is also a fourth state called [frozen](/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/), which stands for a smart contract with a [storage charge](/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/) that exceeds its balance. In this state, the smart contract cannot perform any operations.
+Есть также четвёртое состояние «[frozen](/ru/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/)». Оно означает, что расходы смарт-контракта на [хранение данных](/ru/v3/documentation/smart-contracts/transaction-fees/fees-low-level#storage-fee/) превысили его баланс. В этом состоянии смарт-контракт не может осуществлять никакие операции.
 :::
 
-And here we are — our wallet contract is deployed and ready to use. Let's examine the provided user interface:
+Теперь наш контракт кошелька развёрнут и готов к использованию. Давайте изучим, что показывает пользовательский интерфейс:
 
-#### Metadata section
+#### Раздел с метаданными
 
-- **Address**: Your account's unique ID (e.g., `QQB...1g6VdFEg`).
+- **Address**: Уникальный идентификатор вашего аккаунта (например, `QQB...1g6VdFEg`).
 - **Balance**: Текущее количество TON.
 - **Type**: Версия контракта (например, `wallet_v51r1` — определяется автоматически по коду).
-- **State**: Address state. It may be `nonexisting`, `uninit`, `active`, or `frozen`.
+- **State**: Состояние адреса. Есть четыре варианта: `nonexisting`, `uninit`, `active` и `frozen`.
 
-#### Navigation tabs
+#### Навигационные панели
 
-- **History/Transactions**: Displays recent activity (e.g., received funds, contract deployments).
-- **Code**: Shows raw smart contract code compiled from `FunC`/`Tact`/`Tolk`.
-- **Methods**: Allows execution of `get methods` to retrieve persistent contract data.
+- **History/Transactions**: Показывает недавнюю активность (например, получение средств или развёртывание контракта).
+- **Code**: Показывает код смарт-контракта в «сыром» виде, скомпилированный из кода на языке `FunC`, `Tolk` или `Tact`.
+- **Methods**: Позволяет выполнять `get-методы`, чтобы получать данные из постоянного хранилища контракта.
 
 ## Следующие шаги
 
