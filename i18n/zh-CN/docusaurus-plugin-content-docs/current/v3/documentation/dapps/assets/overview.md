@@ -1,8 +1,10 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import TabItem from '@theme/TabItem'；
 
-# 资产处理概述
+# Asset processing overview
 
 在这里您可以找到关于[TON转账如何工作](/v3/documentation/dapps/assets/overview#overview-on-messages-and-transactions)的**简短概述**、您可以在 TON 中找到哪些 [资产类型](/v3/documentation/dapps/assets/overview#digital-asset-types-on-ton)（以及您将阅读 [下一个](/v3/documentation/dapps/assets/overview#read-next)），以及如何使用您的编程语言 [与 TON 交互](/v3/documentation/dapps/assets/overview#interaction-with-ton-blockchain)、建议在进入下一页之前，先了解下面发现的所有信息。
 
@@ -50,7 +52,7 @@ TON 拥有三类数字资产。
 - 合约资产，如代币和 NFT，类似于 ERC-20/ERC-721 标准，由任意合约管理，因此可能需要自定义处理规则。你可以在 [process NFTs](/v3/guidelines/dapps/asset-processing/nft-processing/nfts) 和 [process Jettons](/v3/guidelines/dapps/asset-processing/jettons) 两篇文章中找到更多关于其处理的信息。
 - 原生代币，是一种可以附加到网络上任何信息的特殊资产。但由于发行新原生代币的功能已经关闭，这些资产目前还没有被使用。
 
-## 与 TON 区块链的互动
+## Interaction with TON Blockchain
 
 TON 区块链上的基本操作可通过 TonLib 进行。它是一个共享库，可以与 TON 节点一起编译，并通过所谓的精简版服务器（精简版客户端的服务器）公开与区块链交互的 API。TonLib 采用无信任方法，检查所有传入数据的证明；因此，无需可信数据提供者。TonLib 可用的方法在[TL 方案](https://github.com/ton-blockchain/ton/blob/master/tl/generate/scheme/tonlib_api.tl#L234) 中列出。这些方法可通过[wrappers](/v3/guidelines/dapps/asset-processing/payments-processing/#sdks) 作为共享库使用。
 
@@ -61,3 +63,6 @@ TON 区块链上的基本操作可通过 TonLib 进行。它是一个共享库�
 1. [支付处理](/v3/guidelines/dapps/asset-processing/payments-processing)，了解如何使用 "TON coins"。
 2. [Jetton处理](/v3/guidelines/dapps/asset-processing/jettons) 以了解如何使用 "jettons"（有时称为 "tokens"）。
 3. [NFT处理](/v3/guidelines/dapps/asset-processing/nft-processing/nfts) 以了解如何使用 "NFT"（即 "jetton "的特殊类型）。
+
+<Feedback />
+

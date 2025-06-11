@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import Button from '@site/src/components/button'
@@ -51,8 +53,7 @@ borderRadius: '2px',
 color: '#fff',
 padding: '0.2rem',
 }}>
-{children}
-</span>
+{children} </span>
 );
 
 <Tabs groupId="operating-systems">
@@ -67,7 +68,7 @@ padding: '0.2rem',
 4. 在_“用户变量”_部分，选择“*Path*”变量，然后点击<Highlight color="#1877F2">“编辑”</Highlight>（通常需要）。
 
 5. 要在下一个窗口中为系统变量添加新值 `(路径)`，请单击<Highlight color="#1877F2">"新建 "</Highlight>按钮。
-   在新字段中，您需要指定存储先前安装的文件的文件夹路径：
+  在新字段中，您需要指定存储先前安装的文件的文件夹路径：
 
 ```
 C:\Users\%USERNAME%\ton\bin\
@@ -81,10 +82,10 @@ fift -V -and func -V -and lite-client -V
 
 7. 要检查是否一切安装正确，请在终端运行（*cmd.exe*）：
 
-   1. 下载 [fiftlib.zip](/ton-binaries/windows/fiftlib.zip)
-   2. 在机器上的某个目录（如 **`C:/Users/%USERNAME%/ton/lib/fiftlib`** ）中打开压缩包
-   3. 在"*用户变量*"部分创建一个新的环境变量 "FIFTPATH"（点击 "<Highlight color="#1877F2">新建</Highlight>"按钮）。
-   4. 在"*变量值*"字段中，指定文件的路径：**`/%USERNAME%/ton/lib/fiftlib`**，然后单击 "<Highlight color="#1877F2">确定</Highlight>"。完成。
+  1. 下载 [fiftlib.zip](/ton-binaries/windows/fiftlib.zip)
+  2. 在机器上的某个目录（如 **`C:/Users/%USERNAME%/ton/lib/fiftlib`** ）中打开压缩包
+  3. 在"*用户变量*"部分创建一个新的环境变量 "FIFTPATH"（点击 "<Highlight color="#1877F2">新建</Highlight>"按钮）。
+  4. 在"*变量值*"字段中，指定文件的路径：**`/%USERNAME%/ton/lib/fiftlib`**，然后单击 "<Highlight color="#1877F2">确定</Highlight>"。完成。
 
 :::caution important
 您必须插入自己的 "用户名"，而不是 "%USERNAME%" 关键字。
@@ -93,37 +94,41 @@ fift -V -and func -V -and lite-client -V
 </TabItem>
 <TabItem value="mac" label="Linux / MacOS">
 
-1.下载后，通过更改权限确保下载的二进制文件可执行。
+1. 下载后，通过更改权限确保下载的二进制文件可执行。
+
 ```bash
 chmod +x func
 chmod +x fift
 chmod +x lite-client
 ```
 
-2.将这些二进制文件添加到路径中（或复制到 `/usr/local/bin`）也很有用，这样你就可以在任何地方访问它们。
+2. 下载后，请确保通过更改权限使下载的二进制文件可执行。
+
 ```bash
 cp ./func /usr/local/bin/func
 cp ./fift /usr/local/bin/fift
 cp ./lite-client /usr/local/bin/lite-client
 ```
 
-3.要检查一切安装是否正确，请在终端中运行
+3. 将这些二进制文件添加到您的路径中（或复制到`/usr/local/bin`），以便您可以在任何地方访问它们也是很有用的。
+
 ```bash
 fift -V && func -V && lite-client -V
 ```
 
-4.如果打算 `使用 fift`，还需下载 [fiftlib.zip](/ton-binaries/windows/fiftlib.zip)，在设备上的某个目录（如 `/usr/local/lib/fiftlib`）中打开该压缩包，并设置环境变量 `FIFTPATH` 指向该目录。
+4. 要检查是否一切安装正确，请在终端运行。
+
 ```
 unzip fiftlib.zip
 mkdir -p /usr/local/lib/fiftlib
 cp fiftlib/* /usr/local/lib/fiftlib
 ```
 
-:::info 嘿，你差不多完成了:)
+:::info 嘿，你快完成了 :)
 记得设置[环境变量](https://stackoverflow.com/questions/14637979/how-to-permanently-set-path-on-linux-unix) `FIFTPATH`指向此目录。
 :::
 
-</TabItem>
+  </TabItem>
 </Tabs>
 
 ## 从源代码构建
@@ -147,3 +152,6 @@ mkdir ~/ton/build && cd ~/ton/build && cmake .. -DCMAKE_BUILD_TYPE=Release && ma
 核心团队以 [GitHub Actions](https://github.com/ton-blockchain/ton/releases/latest) 的形式为多个操作系统提供自动构建功能。
 
 点击上面的链接，在左侧选择与你的操作系统相关的工作流，点击最近的绿色传递构建，然后在 "工件 "下下载 "ton-binaries"。
+
+<Feedback />
+

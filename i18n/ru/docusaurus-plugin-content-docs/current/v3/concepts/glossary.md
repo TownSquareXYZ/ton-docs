@@ -1,8 +1,6 @@
-# Глоссарий
+import Feedback from '@site/src/components/Feedback';
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
+# Глоссарий
 
 ## Введение
 
@@ -276,9 +274,9 @@ __________
 
 **Мейннет** - главная сеть блокчейна.
 
-### Рыночная стоимость (капитализация)
+### Market cap
 
-**Рыночная стоимость (капитализация)** - общая стоимость криптовалюты, рассчитанная как произведение количества её токенов на текущую цену.
+**Market capitalization (Market cap)** — the total value of a cryptocurrency’s combined number of tokens.
 
 ### Мастерчейн
 
@@ -414,7 +412,7 @@ ________
 
 ### TEP
 
-**TEP** - [TON Enhancement Proposals](https://github.com/ton-blockchain/TEPs), стандартный набор методов взаимодействия с различными частями экосистемы TON.
+**TON Enhancement Proposals (TEP)**—a [standard set](https://github.com/ton-blockchain/TEPs) of ways to interact with various parts of the TON ecosystem.
 
 ### Testnet
 
@@ -511,3 +509,6 @@ ___________
 ### Yolo
 
 **Yolo** - "you only live once" (ты живёшь только один раз), сленговая аббревиатура, используемая как призыв жить на полную катушку, не учитывая риски связанного с этим начинания.
+
+<Feedback />
+

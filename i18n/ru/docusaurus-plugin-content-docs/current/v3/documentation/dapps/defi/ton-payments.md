@@ -1,8 +1,6 @@
-# TON Payments
+import Feedback from '@site/src/components/Feedback';
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
+# TON Payments
 
 TON Payments - это платформа для каналов микроплатежей.
 
@@ -36,7 +34,10 @@ TON Payments - это платформа для каналов микропла�
 - [sevenzing/hack-a-ton](https://github.com/sevenzing/hack-a-ton)—Pay-per-Request API usage in TON ([видео](https://www.youtube.com/watch?v=7lAnbyJdpOA\&feature=youtu.be))
 - [illright/diamonds](https://github.com/illright/diamonds)—Pay-per-Minute learning platform ([веб-сайт](https://diamonds-ton.vercel.app/), [видео](https://www.youtube.com/watch?v=g9wmdOjAv1s))
 
-## См. также
+## See also
 
-- [Обработка платежей](/v3/guidelines/dapps/asset-processing/payments-processing)
+- [Payments processing](/v3/guidelines/dapps/asset-processing/payments-processing)
 - [TON Connect](/v3/guidelines/ton-connect/overview)
+
+<Feedback />
+

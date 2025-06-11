@@ -1,103 +1,101 @@
-# ADNL TCP - Liteserver
+import Feedback from '@site/src/components/Feedback';
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
+# ADNL TCP - liteserver
 
-Это низкоуровневый протокол, на котором построено все взаимодействие в сети TON, он может работать поверх любого протокола, но чаще всего используется поверх TCP и UDP. UDP используется для связи между узлами, а TCP - для связи с lite-серверами.
+This is the low-level protocol that supports all interactions within the TON network. While it can operate on top of any protocol, it is most commonly used in conjunction with TCP and UDP. Typically, UDP facilitates communication between nodes, whereas TCP is employed for communication with liteservers.
 
-Теперь мы проанализируем ADNL, работающий поверх TCP, и узнаем, как напрямую взаимодействовать с lite-серверами.
+In this section, we will analyze how ADNL operates over TCP and learn how to interact directly with liteservers.
 
-В TCP-версии ADNL сетевые узлы используют открытые ключи ed25519 в качестве адресов и устанавливают соединение с помощью общего ключа, полученного с помощью процедуры Диффи-Хеллмана на эллиптических кривых - ECDH.
+In the TCP version of ADNL, network nodes utilize public keys (ed25519) as their addresses. Connections are established using a shared key obtained through the Elliptic Curve Diffie-Hellman (ECDH) procedure.
 
-## Структура пакета
+## Packet structure
 
 Каждый пакет ADNL TCP, за исключением пакета рукопожатия, имеет следующую структуру:
 
-- 4 байта размера пакета в порядке от младшего к старшему (N)
+- 4 bytes of packet size in little-endian (N)
 - 32 байта nonce (случайные байты для защиты от атак с контрольной суммой)
 - (N - 64) байта полезной нагрузки
 - 32 байта контрольной суммы SHA256 из nonce и полезной нагрузки
 
-Весь пакет, включая размер, зашифрован **AES-CTR**.
-После расшифровки необходимо проверить, соответствует ли контрольная сумма данным, для проверки нужно просто самостоятельно посчитать контрольную сумму и сравнить результат с тем, что у нас в пакете.
+The entire packet, including its size, is encrypted using **AES-CTR**.
 
-Пакет подтверждения связи является исключением, он передается в частично незашифрованном виде и описан в следующей главе.
+After decrypting the packet, you must verify that the checksum matches the data. To do this, simply calculate the checksum yourself and compare it to the checksum provided in the packet.
+
+The handshake packet is an exception; it is transmitted partially unencrypted and is detailed in the next chapter.
 
 ## Установка соединения
 
-Чтобы установить соединение, нам нужно знать IP, порт и открытый ключ сервера, а также сгенерировать собственный закрытый и открытый ключ ed25519.
+To establish a connection, we need to know the server's IP, port, and public key and generate our own private and public key, ed25519.
 
-Данные публичного сервера, такие как IP, порт и ключ, можно получить из [глобальной конфигурации](https://ton-blockchain.github.io/global.config.json). IP в конфигурации в числовой форме, его можно привести к нормальной форме, используя, например, [этот инструмент](https://www.browserling.com/tools/dec-to-ip). Открытый ключ в конфигурации в формате base64.
+Public server data such as IP, port, and key can be obtained from the [global config](https://ton-blockchain.github.io/global.config.json). The IP in the config, which is numerical, can be converted to normal form using,(for example) [this tool](https://www.browserling.com/tools/dec-to-ip). The public key in the config is in base64 format.
 
 Клиент генерирует 160 случайных байтов, некоторые из которых будут использоваться сторонами в качестве основы для шифрования AES.
 
-Из них создаются 2 постоянных шифра AES-CTR, которые будут использоваться сторонами для шифрования/расшифровки сообщений после подтверждения связи.
+Two permanent AES-CTR ciphers are created, which the parties will use to encrypt/decrypt messages after the handshake.
 
 - Шифр ​​A - ключ 0 - 31 байт, iv 64 - 79 байт
 - Шифр ​​B - ключ 32 - 63 байта, iv 80 - 95 байт
 
-Шифры применяются в следующем порядке:
+The ciphers are utilized in the following order:
 
 - Шифр ​​A используется сервером для шифрования отправляемых им сообщений.
-- Шифр ​​A используется клиентом для расшифровки полученных сообщений.
+- Cipher A is used by the client to decrypt messages it receives.
 - Шифр ​​B используется клиентом для шифрования отправляемых им сообщений.
-- Шифр ​​B используется сервером для расшифровки полученных сообщений.
+- Cipher B is used by the server to decrypt messages it receives.
 
 Чтобы установить соединение, клиент должен отправить пакет подтверждения, содержащий:
 
-- [32 байта] **ID ключа сервера** [[Подробнее]](#getting-key-id)
+- [32 bytes] **Server key ID** [[see details here]](#getting-key-id)
 - [32 байта] **Наш открытый ключ ed25519**
 - [32 байта] **Хеш SHA256 из наших 160 байт**
-- [160 байт] **Наши 160 байт зашифрованы** [[Подробнее]](#handshake-packet-data-encryption)
+- [160 bytes] **Our 160 bytes encrypted** [[see details here]](#handshake-packet-data-encryption)
 
-При получении пакета подтверждения связи сервер выполнит те же действия, получит ключ ECDH, расшифрует 160 байт и создаст 2 постоянных ключа. Если все получится, сервер ответит пустым пакетом ADNL, без полезной нагрузки, для расшифровки которого (а также последующих) нам нужно использовать один из постоянных шифров.
+When receiving a handshake packet, the server will do the same actions: receive an ECDH key, decrypt 160 bytes, and create 2 permanent keys. If everything works out, the server will respond with an empty ADNL packet, without payload, to decrypt which (as well as subsequent ones) we need to use one of the permanent ciphers.
 
 С этого момента соединение можно считать установленным.
 
-После установления соединения мы можем начать получать информацию; язык TL используется для сериализации данных.
+After we have established a connection, we can start receiving information; the TL language serializes data.
 
-[Подробнее о TL](/v3/documentation/data-formats/tl)
+[Learn more about TL here](/v3/documentation/data-formats/tl).
 
-## Ping&Pong
+## Ping and pong
 
 Оптимально отправлять пакет ping каждые 5 секунд. Это необходимо для поддержания соединения во время отсутствия передачи данных, в противном случае сервер может разорвать соединение.
 
-Пакет ping, как и все остальные, строится по стандартной схеме, описанной [выше](#packet-structure), и несет в себе идентификатор запроса и идентификатор ping в качестве полезных данных.
+Like all the others, the ping packet is built according to the standard schema described [above](#packet-structure) and carries the request ID and ping ID as payload data.
 
-Давайте найдем нужную схему для запроса ping [здесь](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L35) и вычислим идентификатор схемы как
-`crc32_IEEE("tcp.ping random_id:long = tcp.Pong")`. При преобразовании в байты с прямым порядком байтов получаем **9a2b084d**.
+Let's find the desired schema for the ping request [here](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L35) and calculate the schema id as `crc32_IEEE("tcp.ping random_id:long = tcp.Pong")`. When converted to little endian bytes, we get **9a2b084d**.
 
-Таким образом, наш пакет ping ADNL будет выглядеть так:
+Therefore, our ADNL ping packet will look like this:
 
-- 4 байта размера пакета в прямом порядке -> 64 + (4+8) = **76**
+- 4 bytes of packet size in little-endian -> 64 + (4+8) = **76**
 - 32 байта nonce -> случайные 32 байта
 - 4 байта схемы ID TL -> **9a2b084d**
-- 8 байт идентификатора запроса -> случайное число uint64
+- 8 bytes of request-id -> random uint64 number
 - 32 байта контрольной суммы SHA256 из nonce и полезной нагрузки
 
 Мы отправляем наш пакет и ждем [tcp.pong](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/ton_api.tl#L23), `random_id` будет равен тому, который мы отправили в пакете ping.
 
-## Получение информации от Liteserver
+## Receiving information from a liteserver
 
-Все запросы, направленные на получение информации из блокчейна, упакованы в схему [Liteserver запроса](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L83), которая в свою очередь упакована в схему [ADNL запроса](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L22).
+All requests that are aimed at obtaining information from the blockchain are wrapped in [Liteserver query](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L83) schema, which in turn is wrapped in [ADNL query](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L22) schema.
 
-Lite запрос:
-`liteServer.query data:bytes = Object`, id **df068c79**
+- Lite запрос:
+  `liteServer.query data:bytes = Object`, id **df068c79**
+- ADNL запрос:
+  `adnl.message.query query_id:int256 query:bytes = adnl.Message`, id **7af98bb4**
 
-ADNL запрос:
-`adnl.message.query query_id:int256 query:bytes = adnl.Message`, id **7af98bb4**
+LiteQuery is passed inside ADNLQuery as `query:bytes`, and the final query is passed inside LiteQuery as `data:bytes`.
 
-Lite запрос передается внутри ADNL запроса как `query:bytes`, а окончательный запрос передается внутри Lite запроса как `data:bytes`.
-
-[Анализ кодирующих байтов в TL](/v3/documentation/data-formats/tl)
+[Learn more about parsing encoding bytes in TL here](/v3/documentation/data-formats/tl).
 
 ### getMasterchainInfo
 
-Теперь, поскольку мы уже знаем, как генерировать пакеты TL для API Lite, мы можем запросить информацию о текущем блоке мастерчейна TON.
-Блок мастерчейна используется во многих дальнейших запросах как входной параметр для указания состояния (момента), в котором нам нужна информация.
+Since we already know how to generate TL packets for the lite API, we can request information about the current TON MasterChain block.
 
-Мы ищем [нужную нам схему TL](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L60), вычисляем ее идентификатор и создаем пакет:
+The MasterChain block is used in many further requests as an input parameter to indicate the state (moment) in which we need information.
+
+We are looking for the [TL schema we require](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L60), calculate its ID and build the packet:
 
 - 4 байта размера пакета в прямом порядке -> 64 + (4+32+(1+4+(1+4+3)+3)) = **116**
 - 32 байта nonce -> случайные 32 байта
@@ -157,8 +155,9 @@ ac2253594c86bd308ed631d57a63db4ab21279e9382e416128b58ee95897e164     -> sha256
 
 ### runSmcMethod
 
-Мы уже знаем, как получить блок мастерчейна, поэтому теперь мы можем вызывать любые методы lite-сервера.
-Давайте проанализируем **runSmcMethod** — это метод, который вызывает функцию из смарт-контракта и возвращает результат. Здесь нам нужно понять некоторые новые типы данных, такие как [TL-B](/v3/documentation/data-formats/tlb/tl-b-language), [Cell](/v3/documentation/data-formats/tlb/cell-boc#cell) и [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells).
+We already know how to get the MasterChain block, so now we can call any liteserver methods.
+
+Let's analyze **runSmcMethod** - this is a method that calls a function from a smart contract and returns a result. Here we need to understand some new data types such as [TL-B](/v3/documentation/data-formats/tlb/tl-b-language), [Cell](/v3/documentation/data-formats/tlb/cell-boc#cell) and [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells).
 
 Для выполнения метода смарт-контракта нам нужно построить и отправить запрос с использованием схемы TL:
 
@@ -174,19 +173,19 @@ liteServer.runMethodResult mode:# id:tonNode.blockIdExt shardblk:tonNode.blockId
 
 В запросе мы видим следующие поля:
 
-1. mode:# - битовая маска uint32 того, что мы хотим видеть в ответе, например, `result:mode.2?bytes` будет присутствовать в ответе только в том случае, если бит с индексом 2 равен единице.
-2. id:tonNode.blockIdExt - это наше состояние главного блока, которое мы получили в предыдущей главе.
-3. account:[liteServer.accountId](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L27) - данные адреса воркчейна и смарт-контракта.
-4. method_id:long - 8 байт, в которых от имени вызываемого метода записан crc16 с таблицей XMODEM + установлен бит 17 [[Расчет]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/ton/runmethod.go#L16)
-5. params:bytes - [Стек](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783) сериализованный в [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells), содержащий аргументы для вызова метода. [[Пример реализации]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/tlb/stack.go)
+- mode:# - битовая маска uint32 того, что мы хотим видеть в ответе, например, `result:mode.2?bytes` будет присутствовать в ответе только в том случае, если бит с индексом 2 равен единице.
+- id:tonNode.blockIdExt - our master block state that we got in the previous chapter.
+- account:[liteServer.accountId](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/tl/generate/scheme/lite_api.tl#L27) - данные адреса воркчейна и смарт-контракта.
+- method_id:long - 8 байт, в которых от имени вызываемого метода записан crc16 с таблицей XMODEM + установлен бит 17 [[Расчет]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/ton/runmethod.go#L16)
+- params:bytes - [Стек](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783) сериализованный в [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells), содержащий аргументы для вызова метода. [[Пример реализации]](https://github.com/xssnick/tonutils-go/blob/88f83bc3554ca78453dd1a42e9e9ea82554e3dd2/tlb/stack.go)
 
 Например, нам нужно только `result:mode.2?bytes`, тогда наш режим будет равен 0b100, то есть 4. В ответ мы получим:
 
-1. mode:# -> то, что было отправлено - 4.
-2. id:tonNode.blockIdExt -> наш главный блок, на котором был выполнен метод
-3. shardblk:tonNode.blockIdExt -> блок шарда, в котором находится аккаунт контракта
-4. exit_code:int -> 4 байта, которые являются кодом выхода при выполнении метода. Если все успешно, то = 0, если нет, то равно коду исключения.
-5. result:mode.2?bytes -> [Стек](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783) сериализованный в [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells), содержащий значения, возвращаемые методом.
+- mode:# -> то, что было отправлено - 4.
+- id:tonNode.blockIdExt -> наш главный блок, на котором был выполнен метод
+- shardblk:tonNode.blockIdExt -> блок шарда, в котором находится аккаунт контракта
+- exit_code:int -> 4 байта, которые являются кодом выхода при выполнении метода. Если все успешно, то = 0, если нет, то равно коду исключения.
+- result:mode.2?bytes -> [Стек](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L783) сериализованный в [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells), содержащий значения, возвращаемые методом.
 
 Давайте проанализируем вызов и получение результата из метода `a2` контракта `EQBL2_3lMiyywU17g-or8N7v9hDmPCpttzBPE2isF2GTzpK4`:
 
@@ -228,17 +227,15 @@ liteServer.runMethodResult mode:# id:tonNode.blockIdExt shardblk:tonNode.blockId
 }
 ```
 
-Если мы ее разберем, то получим 2 значения типа ячейки, которые возвращает наш метод FunC.
-Первые 3 байта корневой ячейки `000002` - это глубина стека, то есть 2. Это значит, что метод вернул 2 значения.
+If we parse it, we will get 2 values of the cell type, which our FunC method returns. The first 3 bytes of the root cell `000002` - is the depth of the stack, that is 2. This means that the method returned 2 values.
 
-Продолжаем разбор, следующие 8 бит (1 байт) - это тип значения на текущем уровне стека. Для некоторых типов может потребоваться 2 байта. Возможные варианты можно увидеть в [схеме](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L766).
-В нашем случае у нас `03`, что означает:
+We continue parsing, the next 8 bits (1 byte) is the value type at the current stack level. For some types, it may take 2 bytes. Possible options can be seen in [schema](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L766). In our case, we have `03`, which means:
 
 ```tlb
 vm_stk_cell#03 cell:^Cell = VmStackValue;
 ```
 
-То есть тип нашего значения - ячейка, и, согласно схеме, она хранит само значение как ссылку. Но, если мы посмотрим на схему хранения элементов стека:
+Hence, the type of our value is - cell, and, according to the schema, it stores the value itself as a reference. However, if we look at the stack element storage schema:
 
 ```tlb
 vm_stk_cons#_ {n:#} rest:^(VmStackList n) tos:VmStackValue = VmStackList (n + 1);
@@ -259,7 +256,7 @@ vm_stk_cons#_ {n:#} rest:^(VmStackList n) tos:VmStackValue = VmStackList (n + 1)
 
 Обратите внимание, что они идут в обратном порядке. Точно так же нужно передавать аргументы при вызове функции - в обратном порядке от того, что мы видим в коде FunC.
 
-[Пример реализации](https://github.com/xssnick/tonutils-go/blob/46dbf5f820af066ab10c5639a508b4295e5aa0fb/ton/runmethod.go#L24)
+[Please see implementation example here](https://github.com/xssnick/tonutils-go/blob/46dbf5f820af066ab10c5639a508b4295e5aa0fb/ton/runmethod.go#L24)
 
 ### getAccountState
 
@@ -271,11 +268,11 @@ vm_stk_cons#_ {n:#} rest:^(VmStackList n) tos:VmStackValue = VmStackList (n + 1)
 liteServer.accountState id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_proof:bytes proof:bytes state:bytes = liteServer.AccountState;
 ```
 
-1. `id` - наш главный блок, относительно которого мы получили данные.
-2. `shardblk` - блок шарда воркчейна, где находится наш аккаунт, относительно которого мы получили данные.
-3. `shard_proof` - доказательство Меркла блока шарда.
-4. `proof` - доказательство Меркла состояния аккаунта.
-5. `state` - [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells) TL-B [схема состояния аккаунта](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L232).
+- `id` - our master block, regarding which we got the data.
+- `shardblk` - WorkChain shard block where our account is located, regarding which we received data.
+- `shard_proof` - Merkle proof of a shard block.
+- `proof` - Merkle proof of account status.
+- `state` - [BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells) TL-B [схема состояния аккаунта](https://github.com/ton-blockchain/ton/blob/ad736c6bc3c06ad54dc6e40d62acbaf5dae41584/crypto/block/block.tlb#L232).
 
 Из всех этих данных, то, что нам нужно, находится в состоянии, мы его и проанализируем.
 
@@ -285,7 +282,7 @@ liteServer.accountState id:tonNode.blockIdExt shardblk:tonNode.blockIdExt shard_
 b5ee9c720102350100051e000277c0021137b0bc47669b3267f1de70cbb0cef5c728b8d8c7890451e8613b2d899827026a886043179d3f6000006e233be8722201d7d239dba7d818134001020114ff00f4a413f4bcf2c80b0d021d0000000105036248628d00000000e003040201cb05060013a03128bb16000000002002012007080043d218d748bc4d4f4ff93481fd41c39945d5587b8e2aa2d8a35eaf99eee92d9ba96004020120090a0201200b0c00432c915453c736b7692b5b4c76f3a90e6aeec7a02de9876c8a5eee589c104723a18020004307776cd691fbe13e891ed6dbd15461c098b1b95c822af605be8dc331e7d45571002000433817dc8de305734b0c8a3ad05264e9765a04a39dbe03dd9973aa612a61f766d7c02000431f8c67147ceba1700d3503e54c0820f965f4f82e5210e9a3224a776c8f3fad1840200201200e0f020148101104daf220c7008e8330db3ce08308d71820f90101d307db3c22c00013a1537178f40e6fa1f29fdb3c541abaf910f2a006f40420f90101d31f5118baf2aad33f705301f00a01c20801830abcb1f26853158040f40e6fa120980ea420c20af2670edff823aa1f5340b9f2615423a3534e2a2d2b2c0202cc12130201201819020120141502016616170003d1840223f2980bc7a0737d0986d9e52ed9e013c7a21c2b2f002d00a908b5d244a824c8b5d2a5c0b5007404fc02ba1b04a0004f085ba44c78081ba44c3800740835d2b0c026b500bc02f21633c5b332781c75c8f20073c5bd0032600201201a1b02012020210115bbed96d5034705520db3c8340201481c1d0201201e1f0173b11d7420c235c6083e404074c1e08075313b50f614c81e3d039be87ca7f5c2ffd78c7e443ca82b807d01085ba4d6dc4cb83e405636cf0069006031003daeda80e800e800fa02017a0211fc8080fc80dd794ff805e47a0000e78b64c00015ae19574100d56676a1ec40020120222302014824250151b7255b678626466a4610081e81cdf431c24d845a4000331a61e62e005ae0261c0b6fee1c0b77746e102d0185b5599b6786abe06fedb1c68a2270081e8f8df4a411c4605a400031c34410021ae424bae064f613990039e2ca840090081e886052261c52261c52265c4036625ccd88302d02012026270203993828290111ac1a6d9e2f81b609402d0015adf94100cc9576a1ec1840010da936cf0557c1602d0015addc2ce0806ab33b50f6200220db3c02f265f8005043714313db3ced542d34000ad3ffd3073004a0db3c2fae5320b0f26212b102a425b3531cb9b0258100e1aa23a028bcb0f269820186a0f8010597021110023e3e308e8d11101fdb3c40d778f44310bd05e254165b5473e7561053dcdb3c54710a547abc2e2f32300020ed44d0d31fd307d307d33ff404f404d10048018e1a30d20001f2a3d307d3075003d70120f90105f90115baf2a45003e06c2170542013000c01c8cbffcb0704d6db3ced54f80f70256e5389beb198106e102d50c75f078f1b30542403504ddb3c5055a046501049103a4b0953b9db3c5054167fe2f800078325a18e2c268040f4966fa52094305303b9de208e1638393908d2000197d3073016f007059130e27f080705926c31e2b3e63006343132330060708e2903d08308d718d307f40430531678f40e6fa1f2a5d70bff544544f910f2a6ae5220b15203bd14a1236ee66c2232007e5230be8e205f03f8009322d74a9802d307d402fb0002e83270c8ca0040148040f44302f0078e1771c8cb0014cb0712cb0758cf0158cf1640138040f44301e201208e8a104510344300db3ced54925f06e234001cc8cb1fcb07cb07cb3ff400f400c9
 ```
 
-[Разбем этот BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells) и получим
+[Parse this BoC](/v3/documentation/data-formats/tlb/cell-boc#bag-of-cells) and get:
 
 <details>
   <summary>большая ячейка</summary>
@@ -425,7 +422,7 @@ account_active$1 _:StateInit = AccountState;
 account_frozen$01 state_hash:bits256 = AccountState;
 ```
 
-Как мы видим, ячейка содержит много данных, но мы проанализируем основные случаи и получим баланс. Остальное можно проанализировать аналогичным образом.
+As we can see, the cell contains a lot of data, but we will analyze the main cases and get a balance. You can analyze the rest in a similar way.
 
 Приступим к разбору. В корневой ячейке у нас есть данные:
 
@@ -439,7 +436,7 @@ C0021137B0BC47669B3267F1DE70CBB0CEF5C728B8D8C7890451E8613B2D899827026A886043179D
 11000000000000100001000100110111101100001011110001000111011001101001101100110010011001111111000111011110011100001100101110110000110011101111010111000111001010001011100011011000110001111000100100000100010100011110100001100001001110110010110110001001100110000010011100000010011010101000100001100000010000110001011110011101001111110110000000000000000000000110111000100011001110111110100001110010001000100000000111010111110100100011100111011011101001111101100000011000000100110
 ```
 
-Посмотрим на нашу основную структуру TL-B, увидим, что у нас есть 2 варианта того, что там может быть - `account_none$0` или `account$1`. Понять, какой у нас вариант, можно, прочитав префикс, объявленный после символа $, в нашем случае это 1 бит. Если там 0, то у нас `account_none`, или 1, то есть `account`.
+Let's look at our main TL-B structure, we see that we have two options for what can be there - `account_none$0` or `account$1`. We can understand which option we have by reading the prefix declared after the symbol $, in our case it is 1 bit. If there is 0, then we have `account_none`, or 1, then `account`.
 
 Наш первый бит из приведенных выше данных равен 1, поэтому мы работаем с `account$1` и будем использовать схему:
 
@@ -448,34 +445,34 @@ account$1 addr:MsgAddressInt storage_stat:StorageInfo
           storage:AccountStorage = Account;
 ```
 
-Далее у нас есть `addr:MsgAddressInt`, мы видим, что для MsgAddressInt у нас также есть несколько вариантов:
+Next, we have `addr:MsgAddressInt`, we see that for MsgAddressInt we also have several options:
 
 ```tlb
 addr_std$10 anycast:(Maybe Anycast) workchain_id:int8 address:bits256  = MsgAddressInt;
 addr_var$11 anycast:(Maybe Anycast) addr_len:(## 9) workchain_id:int32 address:(bits addr_len) = MsgAddressInt;
 ```
 
-Чтобы понять, с каким работать, мы, как и в прошлый раз, считываем префиксные биты, на этот раз мы считываем 2 бита. Мы отсекаем уже считанный бит, остается `1000000...`, мы считываем первые 2 бита и получаем `10`, что означает, что мы работаем с `addr_std$10`.
+To determine which structure to work with, we follow a similar approach as last time by reading the prefix bits. This time, we read 2 bits. After processing the first bit, we have `1000000...` remaining. Reading the first 2 bits yields `10`, indicating that we are working with `addr_std$10`.
 
-Далее нам нужно разобрать `anycast:(Maybe Anycast)`, Maybe означает, что мы должны прочитать 1 бит, и если он один, прочитать Anycast, в противном случае пропустить. Наши оставшиеся биты `00000...`, считываем 1 бит, это 0, поэтому мы пропускаем Anycast.
+Next, we encounter `anycast:(Maybe Anycast)`. The "Maybe" indicates that we should read 1 bit; if it's 1, we read `Anycast`; if it's 0, we skip it. After processing, our remaining bits are `00000...`. We read 1 bit and find it to be 0, so we skip reading `Anycast`.
 
-Далее у нас `workchain_id: int8`, тут все просто, считываем 8 бит, это будет идентификатор воркчейна. Считываем следующие 8 бит, все нули, поэтому воркчейн равен 0.
+Now, we move on to `workchain_id: int8`. This is straightforward— we read 8 bits to obtain the WorkChain ID. The next 8 bits are all zeros, so the WorkChain ID is 0.
 
-Далее считываем `address:bits256`, это 256 бит адреса, так же как и с `workchain_id`. При считывании получаем `21137B0BC47669B3267F1DE70CBB0CEF5C728B8D8C7890451E8613B2D8998270` в шестнадцатеричном представлении.
+Following this, we read `address: bits256`, which consists of 256 bits for the address, similar to how we handled the `workchain_id`. Upon reading, we receive `21137B0BC47669B3267F1DE70CBB0CEF5C728B8D8C7890451E8613B2D8998270` in hexadecimal representation.
 
-Считываем адрес `addr:MsgAddressInt`, затем у нас есть `storage_stat:StorageInfo` из основной структуры, ее схема:
+Next, we read the address `addr: MsgAddressInt` and then proceed to `storage_stat: StorageInfo` from the main structure. Its schema is:
 
 ```tlb
 storage_info$_ used:StorageUsed last_paid:uint32 due_payment:(Maybe Grams) = StorageInfo;
 ```
 
-Сначала идет `used:StorageUsed`, со схемой:
+First, we have `used:StorageUsed`, along with its schema:
 
 ```tlb
 storage_used$_ cells:(VarUInteger 7) bits:(VarUInteger 7) public_cells:(VarUInteger 7) = StorageUsed;
 ```
 
-Это количество ячеек и бит, используемых для хранения данных аккаунта. Каждое поле определяется как `VarUInteger 7`, что означает единицу динамического размера, но максимум 7 бит. Вы можете понять, как оно устроено в соответствии со схемой:
+This is the number of cells and bits used to store account data. Each field is defined as `VarUInteger 7`, which means a uint of dynamic size, but a maximum of 7 bits. You can understand how it is arranged according to the schema:
 
 ```tlb
 var_uint$_ {n:#} len:(#< n) value:(uint (len * 8)) = VarUInteger n;
@@ -499,8 +496,7 @@ account_storage$_ last_trans_lt:uint64 balance:CurrencyCollection state:AccountS
 currencies$_ grams:Grams other:ExtraCurrencyCollection = CurrencyCollection;
 ```
 
-Отсюда мы будем считывать `grams:Grams`, который будет балансом аккаунта в nano-tone.
-`grams:Grams` - это `VarUInteger 16`, для хранения 16 (в двоичной форме `10000`, вычитая 1, получаем `1111`), затем считываем первые 4 бита и умножаем полученное значение на 8, затем считываем полученное количество бит, это наш баланс.
+From here we will read `grams:Grams` which will be the account balance in nano-tones. `grams:Grams` is `VarUInteger 16`, to store 16 (in binary form `10000`, subtracting 1 we get `1111`), then we read the first 4 bits, and multiply the resulting value by 8, then we read the received number of bits, it is our balance.
 
 Давайте проанализируем наши оставшиеся биты в соответствии с нашими данными:
 
@@ -514,7 +510,7 @@ currencies$_ grams:Grams other:ExtraCurrencyCollection = CurrencyCollection;
 
 ### Другие методы
 
-Теперь, изучив всю информацию, вы можете вызывать и обрабатывать ответы и для других методов lite-server. Принцип тот же :)
+After studying all the information, you can call and process responses for other liteserver methods using the same principle.
 
 ## Дополнительные технические детали подтверждения связи
 
@@ -532,10 +528,9 @@ pub.unenc data:bytes = PublicKey   -- ID 0a451fb6
 pk.aes key:int256 = PrivateKey     -- ID 3751e8a5
 ```
 
-Например, для ключей типа ED25519, которые используются для подтверждения связи, идентификатором ключа будет хэш SHA256 из
-**[0xC6, 0xB4, 0x13, 0x48]** и **открытого ключа**, (массив из 36 байт, префикс + ключ)
+As an example, for keys of type ed25519 that are used for handshake, the key ID will be the SHA256 hash from **[0xC6, 0xB4, 0x13, 0x48]** and **public key**, (36 byte array, prefix + key).
 
-[Пример кода](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L16)
+[Please see code example](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L16).
 
 ### Шифрование пакетных данных при установлении связи
 
@@ -550,7 +545,7 @@ pk.aes key:int256 = PrivateKey     -- ID 3751e8a5
 
 После того, как шифр собран, мы шифруем с его помощью наших 160 байт.
 
-[Пример кода](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/connection.go#L361)
+[Please see code example](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/connection.go#L361).
 
 ### Получение общего ключа с помощью ECDH
 
@@ -558,20 +553,23 @@ pk.aes key:int256 = PrivateKey     -- ID 3751e8a5
 
 Суть DH заключается в получении общего секретного ключа, не раскрывая закрытую информацию. Приведу пример того, как это происходит, в максимально упрощенном виде. Предположим, нам нужно сгенерировать общий ключ между нами и сервером, процесс будет выглядеть так:
 
-1. Мы генерируем секретные и открытые числа, например **6** и **7**
-2. Сервер генерирует секретные и открытые числа, например **5** и **15**
-3. Мы обмениваемся открытыми числами с сервером, отправляем **7** на сервер, он отправляет нам **15**.
-4. Мы вычисляем: **7^6 mod 15 = 4**
-5. Сервер вычисляет: **7^5 mod 15 = 7**
-6. Мы обмениваемся полученными числами, отдаем серверу **4**, он дает нам **7**
-7. Мы вычисляем **7^6 mod 15 = 4**
-8. Сервер вычисляет: **4^5 mod 15 = 4**
-9. Общий ключ = **4**
+- Мы генерируем секретные и открытые числа, например **6** и **7**
+- Сервер генерирует секретные и открытые числа, например **5** и **15**
+- Мы обмениваемся открытыми числами с сервером, отправляем **7** на сервер, он отправляет нам **15**.
+- Мы вычисляем: **7^6 mod 15 = 4**
+- Сервер вычисляет: **7^5 mod 15 = 7**
+- Мы обмениваемся полученными числами, отдаем серверу **4**, он дает нам **7**
+- Мы вычисляем **7^6 mod 15 = 4**
+- Сервер вычисляет: **4^5 mod 15 = 4**
+- Общий ключ = **4**
 
 Детали самого ECDH будут опущены для простоты. Он вычисляется с использованием 2 ключей, закрытого и открытого, путем нахождения общей точки на кривой. Если интересно, лучше почитать об этом отдельно.
 
-[Пример кода](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L32)
+[Please see code example](https://github.com/xssnick/tonutils-go/blob/2b5e5a0e6ceaf3f28309b0833cb45de81c580acc/liteclient/crypto.go#L32).
 
 ## Ссылки
 
-*Вот [ссылка на оригинальную статью](https://github.com/xssnick/ton-deep-doc/blob/master/ADNL-TCP-Liteserver.md) [Олега Баранова](https://github.com/xssnick).*
+Here is a [link to the original article](https://github.com/xssnick/ton-deep-doc/blob/master/ADNL-TCP-Liteserver.md) - *[Oleg Baranov](https://github.com/xssnick)*.
+
+<Feedback />
+

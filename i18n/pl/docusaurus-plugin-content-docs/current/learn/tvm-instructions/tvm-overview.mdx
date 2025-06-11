@@ -1,0 +1,133 @@
+import Button from '@site/src/components/button'
+
+# Przegląd TVM
+
+Wszystkie inteligentne kontrakty TON są wykonywane na własnej maszynie wirtualnej TON (TVM). TVM jest zbudowana na zasadzie _stack_, co czyni ją wydajną i łatwą do wdrożenia.
+
+Niniejszy dokument przedstawia z lotu ptaka sposób, w jaki TVM realizuje transakcje.
+
+:::tip
+
+- TVM Source - [**Implementacja TVM C++**](https://github.com/ton-blockchain/ton/tree/master/crypto/vm)
+  :::
+
+## Kurs TON: TVM
+
+:::tip
+Przed rozpoczęciem kursu prosimy upewnić się, że dobrze rozumieją Państwo podstawy technologii blockchain. Jeśli mają Państwo luki w wiedzy, zalecamy wzięcie udziału w kursie [Blockchain Basics with TON](https://stepik.org/course/201294/promo) ([wersja RU](https://stepik.org/course/202221/), [wersja CHN](https://stepik.org/course/200976/)).
+:::
+
+Kurs [TON Blockchain Course] (https://stepik.org/course/176754/) to kompleksowy przewodnik po rozwoju TON Blockchain.
+
+Moduł 2 w całości obejmuje **TVM**, transakcje, skalowalność i przypadki biznesowe.
+
+```mdx-code-block
+<Button href="https://stepik.org/course/176754/promo" 
+        colorType={'primary'} sizeType={'sm'}>
+```
+
+Proszę sprawdzić kurs TON Blockchain
+
+```mdx-code-block
+</Button>
+```
+
+```mdx-code-block
+<Button href="https://stepik.org/course/201638/promo" 
+        colorType={'secondary'} sizeType={'sm'}>
+```
+
+CHN
+
+```mdx-code-block
+</Button>
+```
+
+```mdx-code-block
+<Button href="https://stepik.org/course/201855/promo" 
+        colorType={'secondary'} sizeType={'sm'}>
+```
+
+RU
+
+```mdx-code-block
+</Button>
+```
+
+## Transakcje i fazy
+
+Kiedy jakieś zdarzenie ma miejsce na koncie w jednym z łańcuchów TON, powoduje to **transakcję**. Najczęstszym zdarzeniem jest "nadejście jakiejś wiadomości", ale ogólnie rzecz biorąc mogą to być zdarzenia typu `tick-tock`, `merge`, `split` i inne.
+
+Każda transakcja składa się z maksymalnie 5 faz:
+
+1. **Faza przechowywania** - w tej fazie obliczane są opłaty za przechowywanie zgromadzone przez umowę z powodu zajęcia pewnej przestrzeni w stanie łańcucha. Proszę przeczytać więcej w [Storage Fees](/develop/smart-contracts/fees#storage-fee).
+2. **Faza kredytowania** - w tej fazie obliczane jest saldo umowy w odniesieniu do (możliwej) wartości przychodzącej wiadomości i pobranej opłaty za przechowywanie.
+3. **Faza obliczeniowa** - w tej fazie TVM wykonuje kontrakt (patrz poniżej), a wynikiem wykonania kontraktu jest agregacja `exit_code`, `actions` (serializowana lista działań), `gas_details`, `new_storage` i kilku innych.
+4. **Faza akcji** - jeśli faza obliczeniowa zakończyła się sukcesem, w tej fazie przetwarzane są `akcje` z fazy obliczeniowej. W szczególności działania mogą obejmować wysyłanie wiadomości, aktualizację kodu inteligentnego kontraktu, aktualizację bibliotek itp. Proszę zauważyć, że niektóre akcje mogą zakończyć się niepowodzeniem podczas przetwarzania (na przykład, jeśli spróbujemy wysłać wiadomość z większą liczbą TON niż posiada kontrakt), w takim przypadku cała transakcja może zostać cofnięta lub ta akcja może zostać pominięta (zależy to od trybu akcji, innymi słowy, kontrakt może wysłać wiadomość typu `send-or-revert` lub `try-send-if-no-ignore`).
+5. **Faza odbicia** - jeśli faza obliczeniowa nie powiodła się (zwróciła `exit_code >= 2`), w tej fazie tworzony jest _bounce message_ dla transakcji zainicjowanych przez przychodzącą wiadomość.
+
+## Faza obliczeniowa
+
+W tej fazie następuje wykonanie TVM.
+
+### Stan TVM
+
+W danym momencie stan TVM jest w pełni określony przez 6 właściwości:
+
+- Stos (patrz poniżej)
+- Rejestry kontrolne - (patrz poniżej), mówiąc prościej, oznacza to do 16 zmiennych, które mogą być bezpośrednio ustawiane i odczytywane podczas wykonywania.
+- Bieżąca kontynuacja - obiekt opisujący aktualnie wykonywaną sekwencję instrukcji
+- Bieżąca strona kodowa - w uproszczeniu oznacza to wersję TVM, która jest obecnie uruchomiona
+- Limity gazu - zestaw 4 wartości całkowitych: aktualny limit gazu<sub>gl</sub>, maksymalny limit gazu<sub>gm</sub>, pozostały gaz<sub>gr</sub> i kredyt gazu <sub>gc</sub>.
+- Kontekst biblioteki - mapa bibliotek, które mogą być wywoływane przez TVM 
+
+### TVM jest maszyną stosową
+
+TVM jest maszyną stosową typu ostatnie wejście-pierwsze wyjście. W sumie istnieje 7 typów zmiennych, które mogą być przechowywane na stosie - trzy typy niekomórkowe:
+
+- Integer - 257-bitowe liczby całkowite ze znakiem
+- Tuple - uporządkowany zbiór do 255 elementów o dowolnych typach wartości, w miarę możliwości odrębnych.
+- Null
+
+I cztery różne smaki komórek:
+
+- Cell - podstawowa (ewentualnie zagnieżdżona) nieprzezroczysta struktura używana przez TON Blockchain do przechowywania wszystkich danych.
+- Slice - specjalny obiekt umożliwiający odczyt z komórki
+- Builder - specjalny obiekt umożliwiający tworzenie nowych komórek
+- Kontynuacja - specjalny obiekt, który pozwala wykorzystać komórkę jako źródło instrukcji TVM
+
+### Rejestry kontrolne
+
+- `c0` - Zawiera następną kontynuację lub kontynuację powrotu (podobną do adresu powrotu podprogramu w konwencjonalnych projektach). Ta wartość musi być kontynuacją.
+- `c1` - Zawiera alternatywną (powrotną) kontynuację; ta wartość musi być kontynuacją. 
+- `c2` - Zawiera procedurę obsługi wyjątku. Ta wartość jest kontynuacją, wywoływaną za każdym razem, gdy zostanie wyzwolony wyjątek.
+- `c3` - Rejestr pomocniczy, zawiera bieżący słownik, zasadniczo hashmap zawierający kod wszystkich funkcji używanych w programie. Ta wartość musi być kontynuacją. 
+- `c4` - Zawiera główną część trwałych danych lub po prostu sekcję `data` kontraktu. Ta wartość jest komórką.
+- `c5` - Zawiera akcje wyjściowe. Ta wartość to komórka.
+- `c7` - Zawiera korzeń danych tymczasowych. Jest to krotka.
+
+### Inicjalizacja TVM
+
+TVM inicjalizuje się, gdy wykonanie transakcji osiągnie fazę obliczeniową, a następnie wykonuje polecenia (kody operacyjne) z _Current continuation_, dopóki nie będzie więcej poleceń do wykonania (i nie będzie kontynuacji dla skoków powrotnych).
+
+Szczegółowy opis procesu inicjalizacji można znaleźć tutaj: [Inicjalizacja TVM](/learn/tvm-instructions/tvm-initialization.md).
+
+## Instrukcje TVM
+
+Listę instrukcji TVM można znaleźć tutaj: [Instrukcje TVM](/learn/tvm-instructions/instructions).
+
+### Wynik wykonania TVM
+
+Oprócz danych exit_code i zużytego gazu, TVM pośrednio wysyła następujące dane:
+
+- Rejestr c4 - komórka, która zostanie zapisana jako nowe `dane` inteligentnego kontraktu (jeśli wykonanie nie zostanie cofnięte w tej lub późniejszych fazach)
+- c5 register - (lista akcji wyjściowych) komórka z ostatnią akcją na liście i odwołanie do komórki z poprzednią akcją (rekurencyjnie)
+
+Wszystkie inne wartości rejestru zostaną pominięte.
+
+Proszę zauważyć, że ponieważ istnieje limit maksymalnej głębokości komórki `<1024`, a w szczególności limit głębokości c4 i c5 `<=512`, będzie istniał limit liczby akcji wyjściowych w jednym tx `<=255`. Jeśli kontrakt musi wysłać więcej niż to, może wysłać wiadomość z żądaniem `continue_sending` do siebie i wysłać wszystkie potrzebne wiadomości w kolejnych transakcjach.
+
+## Proszę zobaczyć również
+
+- [Instrukcje TVM](/learn/tvm-instructions/instructions)
+- [TON TVM](https://ton.org/tvm.pdf) Koncepcje TVM (mogą zawierać nieaktualne informacje)

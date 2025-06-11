@@ -1,0 +1,213 @@
+import Feedback from '@site/src/components/Feedback';
+
+import Button from '@site/src/components/button'
+
+# 소개
+
+Smart contract creation, development, and deployment on TON Blockchain leverages the [TON Virtual Machine (TVM)](/v3/documentation/smart-contracts/overview#ton-virtual-machine-tvm) and one of the following programming languages:
+
+- [Tact](/v3/documentation/smart-contracts/overview#-tact)
+- [FunC](/v3/documentation/smart-contracts/overview#-func)
+
+## Quick start: your first smart contract
+
+블루프린트\* 프레임워크로 첫 스마트 컨트랙트를 작성하고 배포하세요.
+
+블루프린트는 스마트 컨트랙트를 작성, 테스트 및 배포하기 위한 개발 환경입니다.
+새 데모 프로젝트를 만들려면 다음 명령을 사용합니다:
+
+```bash
+npm create ton@latest
+```
+
+<버튼 href="/v3/documentation/smart-contacts/getting-started/javascript" colorType="primary" sizeType={'sm'}>
+
+자세히 보기
+
+</Button>
+
+<버튼 href="https://stepik.org/course/176754/" colorType={'secondary'} sizeType={'sm'}>
+
+TON Blockchain course
+
+</Button>
+
+## Getting started
+
+### Fun and easy tutorials
+
+초보자 친화적인 가이드로 여행을 시작하세요:
+
+- [TON Hello World: Step-by-step guide for writing your first smart contract](https://helloworld.tonstudio.io/02-contract/)
+- TON tutorials
+  - [🚩 챌린지 1: 간단한 NFT 배포](https://github.com/romanovichim/TONQuest1)
+  - [🚩 챌린지 2: 챗봇 계약](https://github.com/romanovichim/TONQuest2)
+  - [🚩 챌린지 3: 제톤 자판기](https://github.com/romanovichim/TONQuest3)
+  - [🚩 챌린지 4: 추첨/추첨](https://github.com/romanovichim/TONQuest4)
+  - [🚩 챌린지 5: 5분 안에 계약과 상호작용할 수 있는 UI 만들기](https://github.com/romanovichim/TONQuest5)
+  - [🚩 챌린지 6: 겟젬 마켓플레이스에서 NFT 판매 분석](https://github.com/romanovichim/TONQuest6)
+- [TON development playlist](https://www.youtube.com/playlist?list=PLQ5rEj25H3U2P5qp7nsgVtNGYxEojnnez) [[RU version]](https://www.youtube.com/playlist?list=PLOIvUFGfwP93tZI_WnaLyJsZlskU4ao92)
+
+### TON course
+
+:::tip
+강좌를 시작하기 전에 블록체인 기술의 기초를 확실히 이해했는지 확인하세요. 지식이 부족하다면 [**블록체인 기초 with TON**](https://stepik.org/course/201294/promo)([RU 버전](https://stepik.org/course/202221/), [CHN 버전](https://stepik.org/course/200976/)) 강좌를 수강하는 것을 추천합니다.
+:::
+
+TON 블록체인에 대한 종합적인 가이드인 **TON 블록체인 코스**를 소개하게 되어 자랑스럽게 생각합니다. 이 과정은 TON 블록체인에서 스마트 컨트랙트와 탈중앙화 애플리케이션을 만드는 방법을 배우고자 하는 개발자를 위해 설계되었습니다.
+
+9개의 모듈로 구성되어 있으며, TON 블록체인의 기본 사항, 스마트 컨트랙트 개발 라이프사이클, FunC 프로그래밍 언어, TON 가상 머신(TVM)을 다룹니다.
+
+<버튼 href="https://stepik.org/course/176754/promo"
+        colorType={'primary'} sizeType={'sm'}>
+
+Check TON course
+
+</Button>
+
+<버튼 href="https://stepik.org/course/201638/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+CHN
+
+</Button>
+
+<버튼 href="https://stepik.org/course/201855/promo"
+        colorType={'secondary'} sizeType={'sm'}>
+
+RU
+
+</Button>
+
+### Comprehensive guides
+
+디테일과 뉘앙스를 선호하는 분들은 방문하세요:
+
+- [지갑 스마트 컨트랙트 작업 방법](/v3/guidelines/smart-contract/howto/wallet)
+
+## Examples of smart contracts
+
+TON 커뮤니티에서 제공하는 기성 스마트 컨트랙트 예시와 도구를 살펴보세요.
+
+:::info 작은 팁
+FunC로 작성된 스마트 컨트랙트에 집중하세요. 하위 언어인 파이브(.fif) 대신 펀씨(.fc)로 작성된 스마트 컨트랙트에 집중하는 것이 더 나은 경우가 많습니다.
+:::
+
+TON에서 스마트 컨트랙트의 표준 예시에는 지갑, 선거인(TON에서 검증을 관리하는), 다중 서명 지갑이 있으며, 공부할 때 참고할 수 있습니다.
+
+<버튼 href="/v3/documentation/smart-contracts/contracts-specs/exples" colorType={'primary'} sizeType={'sm'}>
+
+Open examples
+
+</Button>
+
+## Smart contract best practices
+
+TON은 무한한 가능성을 제공합니다. 권장 지침을 준수하면서 이를 최대한 활용하는 방법을 알아보세요.
+
+- [스마트 계약 가이드라인](/v3/guidelines/smart-contract/guidelines)
+
+## TON 가상 머신(TVM)
+
+스마트 컨트랙트를 실행하는 엔진을 알아보세요.
+
+- [TVM 개요](/v3/documentation/tvm/tvm-overview)
+
+## Programming languages
+
+### 📘 FunC
+
+TON 스마트 컨트랙트를 위한 맞춤형 언어입니다.
+
+<버튼 href="/v3/documentation/smart-contacts/func/overview" colorType={'primary'} sizeType={'sm'}>
+
+FunC overview
+
+</Button>
+
+### 📒 재치
+
+택트는 효율성과 개발 편의성에 초점을 맞춘 새로운 TON 블록체인 프로그래밍 언어입니다. 복잡한 스마트 컨트랙트, 빠른 온보딩, 빠른 프로토타이핑에 적합합니다.
+
+Developed by [TON Studio](https://tonstudio.io), powered by the community — by the end of 2024, the number of _unique code_[^1] contracts deployed on the mainnet reached almost 28 thousand, of which about 33% were written in Tact.
+
+View some of the selected projects: [Tact in production](https://github.com/tact-lang/awesome-tact#tact-in-production-).
+
+[^1]: The "unique code" means that each contract in the data sample has at least one TVM instruction that differs from the other contracts, excluding many preprocessed wallets with everything inlined — even seqno and a public key for signature verification!
+
+<Button href="/v3/documentation/smart-contracts/tact"
+        colorType={'primary'} sizeType={'sm'}>
+
+Read more
+
+</Button>
+
+<Button href="https://tact-lang.org/"
+        colorType={'secondary'} sizeType={'sm'}>
+
+Official website
+
+</Button>
+
+<버튼 href="https://docs.tact-lang.org/"
+        colorType={'secondary'} sizeType={'sm'}>
+
+Tact docs
+
+</Button>
+
+<Button href="https://github.com/tact-lang/awesome-tact"
+        colorType="secondary" sizeType={'sm'}>
+
+Awesome Tact
+
+</Button>
+
+### 📗 Tolk
+
+TON에서 스마트 컨트랙트를 작성하기 위한 새로운 언어입니다. Tolk를 "**차세대 FunC**"라고 생각하세요.
+
+:::caution
+현재 개발 중입니다.
+:::
+
+<버튼 href="/v3/documentation/smart-contacts/tolk/overview" colorType={'primary'} sizeType={'sm'}>
+
+Tolk overview
+
+</Button>
+
+### 📕 파이브(고급)
+
+:::caution 고급 레벨
+용감한 분들을 위해!
+:::
+
+<버튼 href="/v3/documentation/smart-contacts/fift/overview" colorType={'primary'} sizeType={'sm'}>
+
+Fift overview
+
+</Button>
+
+## Community tools
+
+- [마이로컬톤](/v3/guidelines/nodes/running-nodes/running-a-local-ton) - 마이로컬톤은 로컬 환경에서 프라이빗 TON 블록체인을 실행하는 데 사용됩니다.
+- [tonwhales.com/tools/boc](https://tonwhales.com/tools/boc) - BOC 파서
+- [tonwhales.com/tools/introspection-id](https://tonwhales.com/tools/introspection-id) - crc32 생성기
+- [@orbs-network/ton-access](https://www.orbs.com/ton-access/) - 탈중앙화 API 게이트웨이
+
+## Further reading
+
+커뮤니티가 주도하는 교육 리소스를 통해 기술을 향상하세요.
+
+- [스마트 계약 가이드라인](/v3/guidelines/smart-contract/guidelines)
+- [TON FunC 학습 경로](https://blog.ton.org/func-journey) ([RU 버전](https://github.com/romanovichim/TonFunClessons_ru))
+- [유튜브 튜토리얼]](https://www.youtube.com/@TONDevStudy) [[RU 버전]](https://www.youtube.com/@WikiMar)
+- [TON development playlist](https://www.youtube.com/playlist?list=PLQ5rEj25H3U2P5qp7nsgVtNGYxEojnnez) [[RU version]](https://www.youtube.com/playlist?list=PLOIvUFGfwP93tZI_WnaLyJsZlskU4ao92)
+
+## Additional resources
+
+- [블록체인이란 무엇인가요? 스마트 컨트랙트란 무엇인가요? 가스란 무엇인가요?](https://blog.ton.org/what-is-blockchain)
+- [거래 수수료 이해](/v3/guidelines/smart-contracts/fee-calculation)
+
+<Feedback />

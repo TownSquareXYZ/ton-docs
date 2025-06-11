@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 作为维护者参与
 
 Hacktoberfest 活动是一年中获得社区支持的最佳时机！
@@ -37,3 +39,6 @@ Hacktoberfest 活动是一年中获得社区支持的最佳时机！
     将代码库添加到列表中
   </a>
 </span>
+
+<Feedback />
+
