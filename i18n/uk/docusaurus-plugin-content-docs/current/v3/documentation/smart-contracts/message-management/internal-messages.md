@@ -76,13 +76,13 @@ Input:
 5. Calculate `x = hmac_sha512(shared_secret, msg_key)`. Let `key=x[0:32]` and `iv=x[32:48]`.
 6. Encrypt `data` using AES-256 in CBC mode with `key` and `iv`.
 7. Construct the encrypted comment:
- 1. `pub_xor = pub_1 ^ pub_2` - 32 bytes. This allows each party to decrypt the message without looking up the other’s public key.
- 2. `msg_key` - 16 bytes.
- 3. Encrypted `data`.
+  1. `pub_xor = pub_1 ^ pub_2` - 32 bytes. This allows each party to decrypt the message without looking up the other’s public key.
+  2. `msg_key` - 16 bytes.
+  3. Encrypted `data`.
 8. The body of the message starts with the 4-byte tag `0x2167da4b`. Then, this encrypted comment is stored:
- 1. The byte string is divided into segments and is stored in a chain of cells `c_1,...,c_k` (`c_1` is the root of the body). Each cell (except for the last one) has a reference to the next.
- 2. `c_1` contains up to 35 bytes (not including the 4-byte tag); all other cells contain up to 127 bytes.
- 3. This format has limitations: `k <= 16`, max string length is 1024.
+  1. The byte string is divided into segments and is stored in a chain of cells `c_1,...,c_k` (`c_1` is the root of the body). Each cell (except for the last one) has a reference to the next.
+  2. `c_1` contains up to 35 bytes (not including the 4-byte tag); all other cells contain up to 127 bytes.
+  3. This format has limitations: `k <= 16`, max string length is 1024.
 
 Comments for NFT and jetton transfers follow the same format. Note that the public key of the sender and receiver addresses (not jetton-wallet addresses) should be used.
 
@@ -90,7 +90,7 @@ Comments for NFT and jetton transfers follow the same format. Note that the publ
 
 - [encryption.js](https://github.com/toncenter/ton-wallet/blob/master/src/js/util/encryption.js)
 - [SimpleEncryption.cpp](https://github.com/ton-blockchain/ton/blob/master/tonlib/tonlib/keys/SimpleEncryption.cpp)
- :::
+  :::
 
 ### Simple transfer messages without comments
 
