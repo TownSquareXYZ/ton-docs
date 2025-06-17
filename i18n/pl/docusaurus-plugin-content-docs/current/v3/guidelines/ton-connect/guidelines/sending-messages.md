@@ -120,11 +120,11 @@ The received hash is what the `sendBocReturnHash` methods of TON Center API are 
 
 3. Search for the required transaction using this hash through an indexer:
 
- - Using TON Center [api_v3_transactionsByMessage_get](https://toncenter.com/api/v3/#/default/get_transactions_by_message_api_v3_transactionsByMessage_get).
+  - Using TON Center [api_v3_transactionsByMessage_get](https://toncenter.com/api/v3/#/default/get_transactions_by_message_api_v3_transactionsByMessage_get).
 
- - Using the `/v2/blockchain/messages/{msg_id}/transaction` method from [TON API](https://tonapi.io/api-v2).
+  - Using the `/v2/blockchain/messages/{msg_id}/transaction` method from [TON API](https://tonapi.io/api-v2).
 
- - Collect transactions independently and search for the required extInMsg by its hash: [see example](/v3/guidelines/dapps/cookbook#how-to-find-transaction-for-a-certain-ton-connect-result).
+  - Collect transactions independently and search for the required extInMsg by its hash: [see example](/v3/guidelines/dapps/cookbook#how-to-find-transaction-for-a-certain-ton-connect-result).
 
 It's important to note that `extInMsg` may not be unique, which means collisions can occur. However, all transactions are unique.
 If you are using this for an informative display, this method should be sufficient. With standard wallet contracts, collisions can occur only in exceptional situations.
@@ -136,9 +136,9 @@ If you are using this for an informative display, this method should be sufficie
 Before we proceed, let's talk about the format of the messages we will send.
 
 - **payload** (string base64, optional): raw one-cell BoC encoded in Base64.
- - We will use it to store text comments on transfer
+  - We will use it to store text comments on transfer
 - **stateInit** (string base64, optional): raw one-cell BoC encoded in Base64.
- - We will use it to deploy a smart contract
+  - We will use it to deploy a smart contract
 
 After building a message, you can serialize it into BoC.
 
