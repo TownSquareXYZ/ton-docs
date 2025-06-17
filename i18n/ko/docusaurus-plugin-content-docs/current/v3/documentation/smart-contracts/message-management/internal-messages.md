@@ -76,13 +76,13 @@ If `op` is `0x2167da4b`, then the message is a transfer message with the encrypt
 5. `x = hmac_sha512(shared_secret, msg_key)`를 계산합니다. `key=x[0:32]`와 `iv=x[32:48]`로 합니다.
 6. `key`와 `iv`를 사용하여 CBC 모드의 AES-256으로 `data`를 암호화합니다.
 7. 암호화된 코멘트를 다음과 같이 구성합니다:
- 1. `pub_xor = pub_1 ^ pub_2` - 32 bytes. This allows each party to decrypt the message without looking up the other’s public key.
- 2. `msg_key` - 16바이트.
- 3. 암호화된 `data`.
+  1. `pub_xor = pub_1 ^ pub_2` - 32 bytes. This allows each party to decrypt the message without looking up the other’s public key.
+  2. `msg_key` - 16바이트.
+  3. 암호화된 `data`.
 8. The body of the message starts with the 4-byte tag `0x2167da4b`. Then, this encrypted comment is stored:
- 1. The byte string is divided into segments and is stored in a chain of cells `c_1,...,c_k` (`c_1` is the root of the body). Each cell (except for the last one) has a reference to the next.
- 2. `c_1` contains up to 35 bytes (not including the 4-byte tag); all other cells contain up to 127 bytes.
- 3. This format has limitations: `k <= 16`, max string length is 1024.
+  1. The byte string is divided into segments and is stored in a chain of cells `c_1,...,c_k` (`c_1` is the root of the body). Each cell (except for the last one) has a reference to the next.
+  2. `c_1` contains up to 35 bytes (not including the 4-byte tag); all other cells contain up to 127 bytes.
+  3. This format has limitations: `k <= 16`, max string length is 1024.
 
 Comments for NFT and jetton transfers follow the same format. Note that the public key of the sender and receiver addresses (not jetton-wallet addresses) should be used.
 
@@ -90,7 +90,7 @@ Comments for NFT and jetton transfers follow the same format. Note that the publ
 
 - [encryption.js](https://github.com/toncenter/ton-wallet/blob/master/src/js/util/encryption.js)
 - [SimpleEncryption.cpp](https://github.com/ton-blockchain/ton/blob/master/tonlib/tonlib/keys/SimpleEncryption.cpp)
- :::
+  :::
 
 ### Simple transfer messages without comments
 
