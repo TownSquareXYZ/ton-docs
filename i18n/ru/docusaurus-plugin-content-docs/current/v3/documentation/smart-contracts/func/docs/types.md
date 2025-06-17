@@ -42,7 +42,7 @@ In FunC, the `null` value of the TVM type `Null` represents the absence of a val
 - Some functions that return an atomic type may return `null` in some instances.
 - Others may expect an atomic type as input but can also accept `null` without errors.
 - This behavior is explicitly defined in the function specification.
- By default, `null` values are not permitted and will cause a runtime exception.
+  By default, `null` values are not permitted and will cause a runtime exception.
 
 Additionally, an atomic type `A` can be implicitly transformed into `A^?` (also known as `Maybe A`),
 allowing a variable of type `A` to store either a valid value or `null`.
