@@ -32,5 +32,5 @@ See the [How to contribute](/v3/contribute/).
 8. リポジトリは、独自のわかりやすいcompilation/deployment スクリプトを持つべきである。ユーザーは、`npm install`するだけで、それらを使うことができるはずです。
 
 9. GitHubのリポジトリだけで十分なこともあるし、完全な記事を書く必要がないこともある。リポジトリに必要なコードをまとめたREADMEがあればいい。この場合、ユーザーが読みやすく理解しやすいように、コードにはしっかりとコメントをつけましょう。
- <Feedback />
+  <Feedback />
 

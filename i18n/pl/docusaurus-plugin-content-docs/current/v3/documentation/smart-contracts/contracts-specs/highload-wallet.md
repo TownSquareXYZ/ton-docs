@@ -51,10 +51,10 @@ Note, when dealing with Highload wallet the following limits need to be checked 
 :::
 
 1. **Storage size limit.** Currently, size of contract storage should be less than 65535 cells. If size of
- old_queries will grow above this limit, exception in ActionPhase will be thrown and transaction will fail.
- Failed transaction may be replayed.
+  old_queries will grow above this limit, exception in ActionPhase will be thrown and transaction will fail.
+  Failed transaction may be replayed.
 2. **Gas limit.** Currently, gas limit is 1'000'000 GAS units, that means that there is a limit of how much
- old queries may be cleaned in one tx. If number of expired queries will be higher, contract will stuck.
+  old queries may be cleaned in one tx. If number of expired queries will be higher, contract will stuck.
 
 That means that it is not recommended to set too high expiration date:
 the number of queries during expiration time span should not exceed 1000.

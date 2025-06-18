@@ -21,7 +21,7 @@ By the end of this tutorial, you'll be able to:
 Before you start, make sure you have the following:
 
 1. A [Tonhub](https://ton.app/wallets/tonhub-wallet) / [Tonkeeper](https://ton.app/wallets/tonkeeper) wallet or any other TON-compatible wallet.
- At least 0.25 Toncoin in your wallet (plus extra for blockchain fees)
+  At least 0.25 Toncoin in your wallet (plus extra for blockchain fees)
 
 :::tip Starter tip
 ~0.5 TON should be enough for this tutorial.
@@ -64,7 +64,7 @@ You can easily find out about the URL placement of the logo in the [repository](
 - On-chain.
 - Off-chain IPFS.
 - Off-chain website.
- :::
+  :::
 
 #### How to create your logo URL?
 
@@ -72,8 +72,8 @@ You can easily find out about the URL placement of the logo in the [repository](
 2. Host it online using, for example, [GitHub Pages](https://pages.github.com/).
 3. [Create a new public repository](https://docs.github.com/en/get-started/quickstart/create-a-repo) with the name `website`.
 4. Upload your prepared image to git and enable `GitHub Pages`.
- 1. [Add GitHub Pages to your repository](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
- 2. [Upload your image and get a link](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository).
+  1. [Add GitHub Pages to your repository](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site).
+  2. [Upload your image and get a link](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository).
 5. If possible, purchase a custom domain for your project. Use any domain seller like [Google Domains](https://domains.google/) or [GoDaddy](https://www.godaddy.com/). Then, connect your custom domain to the repository in the previous step, you can follow the instructions [here](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site).
 6. If you have a custom domain, your image URL should be `https://bitcoincash.org/logo.png` instead of the `github.io` one. This prevents dependency on GitHub and gives you full control over hosting.
 
