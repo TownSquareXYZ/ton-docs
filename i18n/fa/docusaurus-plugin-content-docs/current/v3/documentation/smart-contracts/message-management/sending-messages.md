@@ -150,7 +150,7 @@ Indeed, in the elector code above, we serialize coins amounts via `.store_coins(
 - The first bit stands for empty extra-currencies dictionary.
 - Then we have two 4-bit long fields. They encode 0 as `VarUInteger 16`. Since `ihr_fee` and `fwd_fee` will be overwritten, we may as well put them as zeroes.
 - Then we put zero to the `created_lt` and `created_at` fields. Those fields will also be overwritten; however, in contrast to fees, these fields have a fixed length and are thus encoded as 64- and 32-bit long strings.
- > *We had already serialized the message header and passed to init/body at that moment*
+  > *We had already serialized the message header and passed to init/body at that moment*
 - صفر بعدی به معنای آن است که میدان `init` وجود ندارد.
 - آخرین بیت صفر به این معناست که msg_body به صورت مستقیم سریال‌سازی خواهد شد.
 - After that, the message body (with an arbitrary layout) is encoded.
@@ -189,8 +189,8 @@ That way:
 
 - `0` nanotons serialized as `0b0000` (4 bits indicating zero-length byte string + no bytes)
 - `100000000000000000` nanotons (100,000,000 TON) serializes as:
- `0b10000000000101100011010001010111100001011101100010100000000000000000`
- (where `0b1000` specifies 8 bytes length followed by the 8-byte value)
+  `0b10000000000101100011010001010111100001011101100010100000000000000000`
+  (where `0b1000` specifies 8 bytes length followed by the 8-byte value)
 
 :::info اندازه پیام
 
@@ -281,17 +281,17 @@ The `IGNORE ERRORS` flag (`+2`) suppresses these specific errors during the Acti
 
 1. **Insufficient funds**
 
- - Message transfer value exhaustion
- - Insufficient balance for message processing
- - Inadequate attached value for forwarding fees
- - Missing extra currency for message transfer
- - Insufficient funds for external message delivery
+  - Message transfer value exhaustion
+  - Insufficient balance for message processing
+  - Inadequate attached value for forwarding fees
+  - Missing extra currency for message transfer
+  - Insufficient funds for external message delivery
 
 2. **[Oversized message](#message-size)**
 
 3. **Excessive Merkle depth**
 
- Message exceeds allowed Merkle tree complexity.
+  Message exceeds allowed Merkle tree complexity.
 
 #### Non-suppressed errors
 

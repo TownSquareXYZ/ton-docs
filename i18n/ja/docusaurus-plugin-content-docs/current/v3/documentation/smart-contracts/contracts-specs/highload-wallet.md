@@ -51,10 +51,10 @@ Highload v3 は、同じ `query_id` と `created_at` を含む複数の外部を
 :::
 
 1. 現在、**契約ストレージのサイズ**は65535セル以下でなければいけません。
- old_queriesのサイズがこの制限を超えると、ActionPhaseで例外がスローされ、トランザクションは失敗します。
- 失敗したトランザクションは再生されるかもしれません。
+  old_queriesのサイズがこの制限を超えると、ActionPhaseで例外がスローされ、トランザクションは失敗します。
+  失敗したトランザクションは再生されるかもしれません。
 2. ガスのリミットについて。現在、**ガスの上限**は1'000'000GASユニットです。 つまり、
- 古いクエリを1つのtxでどれだけきれいにするかに制限があります。 期限切れのクエリの数が多い場合、コントラクトは停止します。
+  古いクエリを1つのtxでどれだけきれいにするかに制限があります。 期限切れのクエリの数が多い場合、コントラクトは停止します。
 
 That means that it is not recommended to set too high expiration date:
 the number of queries during expiration time span should not exceed 1000.

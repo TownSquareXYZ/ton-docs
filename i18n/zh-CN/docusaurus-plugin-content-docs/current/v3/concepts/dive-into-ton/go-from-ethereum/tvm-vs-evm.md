@@ -25,7 +25,7 @@ import Feedback from '@site/src/components/Feedback';
 3. Data structure limitations
 
 - The simplification to 256-bit word constraints means that the EVM is not inherently designed to handle complex or custom data structures directly.
- Developers often need to implement additional logic within smart contracts to simulate more complex data structures, which can increase gas costs and complexity.
+    Developers often need to implement additional logic within smart contracts to simulate more complex data structures, which can increase gas costs and complexity.
 
 #### TVM
 
@@ -42,7 +42,7 @@ import Feedback from '@site/src/components/Feedback';
 3. Complex data handling
 
 - The ability to manage complex data types inherently within the VM architecture reduces the need for workaround implementations in smart contracts, potentially lowering the execution cost and increasing execution speed.
- TVM's design is particularly advantageous for applications requiring complex state management or interlinked data structures. It provides a robust foundation for developers to build sophisticated and scalable decentralized applications.
+    TVM's design is particularly advantageous for applications requiring complex state management or interlinked data structures. It provides a robust foundation for developers to build sophisticated and scalable decentralized applications.
 
 ### Stack machine
 
