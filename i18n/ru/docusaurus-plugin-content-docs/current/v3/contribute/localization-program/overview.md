@@ -38,7 +38,7 @@ We sincerely appreciate the thousands of community members integral to the Trans
 Полезные ресурсы, которые помогут сделать первые шаги в рамках проекта локализации:
 
 - [Translation style guide](/v3/contribute/localization-program/translation-style-guide) – Instructions and tips for translators.
-- [Crowdin online editor guide](https://support.crowdin.com/online-editor/) – An in-depth guide to using the Crowdin online editor and some of Crowdin's advanced features.
+-
 
 <Feedback />
 
