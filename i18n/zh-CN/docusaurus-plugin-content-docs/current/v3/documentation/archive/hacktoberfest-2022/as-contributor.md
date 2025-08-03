@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 作为贡献者参与
 
 要成为获得限量版 *Hack-TON-berfest NFT* 的贡献者，请设置你自己的 [TON 钱包](https://ton.org/wallets) 并验证你的 GitHub 账户。
@@ -31,3 +33,6 @@ TON 生态系统拥有几个组织和代码库：
     寻找贡献者的项目列表
   </a>
 </span>
+
+<Feedback />
+

@@ -1,7 +1,9 @@
+import Feedback from '@site/src/components/Feedback';
+
 # Руководство по интеграции с JavaScript SDK
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
+:::danger
+The page is outdated and will be deleted soon. Learn actual JS flow from [the guideline for web](/v3/guidelines/ton-connect/frameworks/web).
 :::
 
 В этом руководстве мы создадим пример веб-приложения, поддерживающего аутентификацию TON Connect 2.0. Это позволит выполнить проверку подписи, чтобы исключить возможность мошеннической выдачи себя за другое лицо без необходимости заключения соглашения между сторонами.
@@ -499,6 +501,11 @@ verify_key.verify(hashlib.sha256(signed).digest(), base64.b64decode(signature))
 nacl.exceptions.BadSignatureError: Signature was forged or corrupt.
 ```
 
+## See also
+
+- [Preparing Messages](/v3/guidelines/ton-connect/guidelines/preparing-messages)
+- [Sending Messages](/v3/guidelines/ton-connect/guidelines/sending-messages)
+
 ## Следующие шаги
 
 При написании dApp также следует учитывать следующее:
@@ -510,3 +517,6 @@ nacl.exceptions.BadSignatureError: Signature was forged or corrupt.
   - текущий пользователь может войти, используя другой тип контракта вместо кошелька. Благодаря этому это будет содержать публичный ключ в ожидаемом месте
 
 Удачи и получайте удовольствие от написания dApps!
+
+<Feedback />
+

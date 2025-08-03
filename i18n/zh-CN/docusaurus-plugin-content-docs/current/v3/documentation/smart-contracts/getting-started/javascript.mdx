@@ -1,12 +1,14 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 
-# Blueprint SDK
+# Blueprint
 
 ![Blueprint](\img\blueprint\logo.svg)
 
 一个用于TON的开发环境，用于编写、测试和部署智能合约。
 
-## 快速开始 🚀
+## Quick start
 
 在终端中运行以下命令以创建一个新项目，并按照屏幕上的指示操作：
 
@@ -16,7 +18,7 @@ npm create ton@latest
 
 <Button href="https://www.youtube.com/watch?v=7omBDfSqGfA&list=PLtUBO1QNEKwtO_zSyLj-axPzc9O9rkmYa" colorType={'secondary'} sizeType={'sm'}>
 
-观看视频教程
+Watch video tutorials
 
 </Button>
 
@@ -29,13 +31,16 @@ npm create ton@latest
 ### 技术栈
 
 - 编译FunC https://github.com/ton-community/func-js (无需 cli)
+- Compiling Tact with https://github.com/tact-lang/tact
 - 测试智能合约 https://github.com/ton-org/sandbox
 - 使用TON Connect 2.0兼容钱包或`ton://`深层链接部署智能合约
 
 ### 要求
 
 - [Node.js](https://nodejs.org/) 使用像v18这样的近期版本，用`node -v`验证版本
-- 支持TypeScript和FunC的IDE，如[Visual Studio Code](https://code.visualstudio.com/)，配合[FunC插件](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode)
+- IDE with TypeScript and TON support:
+  - [Visual Studio Code](https://code.visualstudio.com/) with the [FunC plugin](https://marketplace.visualstudio.com/items?itemName=tonwhales.func-vscode) or [Tact plugin](https://marketplace.visualstudio.com/items?itemName=tonstudio.vscode-tact)
+  - [IntelliJ IDEA](https://www.jetbrains.com/idea/) with the [TON Development plugin](https://plugins.jetbrains.com/plugin/23382-ton)
 
 ## 参考资料
 
@@ -50,8 +55,10 @@ npm create ton@latest
 - [开发一个新的智能合约](https://github.com/ton-org/blueprint#develop-a-new-contract)
 - [\[YouTube\] 使用Blueprint EN 的FunC](https://www.youtube.com/watch?v=7omBDfSqGfA&list=PLtUBO1QNEKwtO_zSyLj-axPzc9O9rkmYa) ([俄文版](https://youtube.com/playlist?list=PLyDBPwv9EPsA5vcUM2vzjQOomf264IdUZ))
 
-## 参阅
+## See also
 
 - [开发智能合约介绍](/develop/smart-contracts/)
 - [如何使用钱包智能合约工作](/develop/smart-contracts/tutorials/wallet)
 - [使用toncli](/develop/smart-contracts/sdk/toncli)
+
+<Feedback />

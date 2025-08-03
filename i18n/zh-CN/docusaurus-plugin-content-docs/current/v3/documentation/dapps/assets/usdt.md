@@ -1,12 +1,14 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 
-# USDT 处理
+# USDT processing
 
 ## Tether
 
-稳定币是一种加密货币，其价值与另一种资产（如法定货币或黄金）1:1挂钩，以保持价格稳定。直到最近，存在一种名为jUSDT的代币，它是通过Ethereum的ERC-20代币桥接<a href="https://bridge.ton.org" target="_blank">bridge.ton.org</a>转换而来的 。然而，在[2023年4月18日](https://t.me/toncoin/824)，由 <a href="https://tether.to/en/" target="_blank">Tether</a> 公司发行的原生USD₮代币进行了公开发布。USD₮发布后，jUSDT成为了次要优先级的代币，但仍然作为USD₮的替代品或补充在服务中使用。
+[Apr 18, 2023](https://t.me/toncoin/824), the public launch of native USD₮ token issued by the company <a href="https://tether.to/en/" target="_blank">Tether</a>.
 
-在 TON 区块链中，美元作为[Jetton 资产](/v3/guidelines/dapps/asset-processing/jettons) 得到支持。
+In TON Blockchain USD₮ supported as a [Jetton asset](/v3/guidelines/dapps/asset-processing/jettons).
 
 :::info
 要在 TON 区块链上集成 Tether 的 USD₮ 代币，请使用合约地址：
@@ -14,8 +16,8 @@ import Button from '@site/src/components/button'
 :::
 
 <Button href="https://github.com/ton-community/assets-sdk" colorType="primary" sizeType={'sm'}>Assets SDK</Button>
-<Button href="/v3/guidelines/dapps/asset-processing/jettons" colorType={'secondary'} sizeType={'sm'}>Jetton Processing</Button>
-<Button href="https://github.com/ton-community/tma-usdt-payments-demo?tab=readme-ov-file#tma-usdt-payments-demo" colorType={'secondary'} sizeType={'sm'}>TMA USDT 支付演示</Button>
+<Button href="/v3/guidelines/dapps/asset-processing/jettons" colorType={'secondary'} sizeType={'sm'}>Jetton processing</Button>
+<Button href="https://github.com/ton-community/tma-usdt-payments-demo?tab=readme-ov-file#tma-usdt-payments-demo" colorType={'secondary'} sizeType={'sm'}>TMA USDT payments demo</Button>
 
 ## 在 TON 上使用 USD₮ 的优势
 
@@ -40,13 +42,16 @@ transaction_fee = gas_used * gas_price
 
 TON 的高吞吐量和快速确认时间使美元交易的处理速度比以往任何时候都快。
 
-## 高级详细信息
+## Advanced details
 
 :::caution 重要事项
 
 参见重要 [建议](/v3/guidelines/dapps/asset-processing/jettons)。
 :::
 
-## 另请参见
+## See also
 
-- [支付处理](/v3/guidelines/dapps/asset-processing/payments-processing)
+- [Payments processing](/v3/guidelines/dapps/asset-processing/payments-processing)
+
+<Feedback />
+

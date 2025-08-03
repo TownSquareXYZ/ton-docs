@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 在 TON 上编译和构建智能合约
 
 以下是构建智能合约的库和库列表。
@@ -199,3 +201,6 @@ async function main() {
 - [disintar/toncli](https://github.com/disintar/toncli) — 最受欢迎的方法之一。您甚至可以在Docker中使用它。
 - [tonthemoon/ton](https://github.com/tonthemoon/ton) — _(封闭测试)_一行TON二进制安装程序。
 - [delab-team/tlbcrc](https://github.com/delab-team/tlbcrc) — 包和CLI，根据TL-B方案生成操作码。
+
+<Feedback />
+

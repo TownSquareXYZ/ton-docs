@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 import Button from '@site/src/components/button'
 
 # Telegram 机器人的 TON Connect - Python
@@ -10,9 +12,11 @@ import Button from '@site/src/components/button'
 
 打开演示机器人
 
+打开演示机器人
+
 </Button>
 
-<Button href="https://github.com/ton-connect/demo-telegram-bot" colorType={'secondary'} sizeType={'sm'}>
+查看 GitHub
 
 查看 GitHub
 
@@ -95,7 +99,7 @@ if __name__ == "__main__":
 
 ```
 
-## TON Connect 存储
+## TON 连接存储
 
 ### TON 连接存储
 
@@ -496,11 +500,11 @@ if __name__ == "__main__":
 
 </details>
 
-## 添加持久存储 - Redis
+## 添加永久存储 - Redis
 
 ### 添加永久存储 - Redis
 
-在启动 Redis 数据库后安装用于与之交互的 python 库：
+启动 Redis 数据库后，安装 python 库与之交互：
 
 启动 Redis 数据库后，安装 python 库与之交互：
 
@@ -575,3 +579,6 @@ async def connect_wallet(message: Message, wallet_name: str):
 
 - [完整机器人代码](https://github.com/yungwine/ton-connect-bot)
 - [准备信息](/v3/guidelines/ton-connect/guidelines/preparing-messages)
+
+<Feedback />
+

@@ -12,9 +12,9 @@ GetBlock의 엔드포인트를 사용하려면, 사용자 계정에 로그인하
 
 ### 1. GetBlock 계정 생성
 
-GetBlock [웹사이트](https://getblock.io/?utm_source=external\&utm_medium=article\&utm_campaign=ton_docs)를 방문하여 메인 페이지의 "Get Started for Free" 버튼을 찾습니다. 이메일 주소를 사용하거나 MetaMask 지갑을 연결하여 계정에 가입합니다.
+GetBlock [웹사이트](https://getblock.io/?utm_source=external\\&utm_medium=article\\&utm_campaign=ton_docs)를 방문하여 메인 페이지의 "Get Started for Free" 버튼을 찾습니다. 이메일 주소를 사용하거나 MetaMask 지갑을 연결하여 계정에 가입합니다.
 
-![GetBlock.io\_main\_page](/img/docs/getblock-img/unnamed-2.png?=RAW)
+![GetBlock.io\\_main\\_page](/img/docs/getblock-img/unnamed-2.png?=RAW)
 
 ### 2. TON 블록체인을 선택
 
@@ -22,7 +22,7 @@ GetBlock [웹사이트](https://getblock.io/?utm_source=external\&utm_medium=art
 
 원하는 네트워크와 API 타입(JSON-RPC 또는 JSON-RPC(v2))을 선택합니다.
 
-![GetBlock\_계정\_\_대시보드](/img/docs/getblock-img/unnamed-4.png)
+![GetBlock\계정\\\_대시보드](/img/docs/getblock-img/unnamed-4.png)
 
 ### 3. 엔드포인트 URL 생성
 
@@ -34,7 +34,7 @@ GetBlock API의 모든 엔드포인트는 `https://go.getblock.io/[ACCESS TOKEN]
 
 사용자는 여러 엔드포인트를 생성하고, 토큰이 유출된 경우 교체하거나, 사용하지 않는 엔드포인트를 삭제할 수 있는 유연성을 갖추고 있습니다.
 
-![GetBlock\_계정\_끝점](/img/docs/getblock-img/unnamed-3.png)
+![GetBlock\\_계정\\_끝점](/img/docs/getblock-img/unnamed-3.png)
 
 이제 이러한 URL을 사용하여 TON 블록체인과 상호작용하고, 데이터를 조회하고, 트랜잭션을 전송하며, 인프라 설정 및 유지 관리의 번거로움 없이 분산 애플리케이션을 구축할 수 있습니다.
 
@@ -84,7 +84,7 @@ curl --location --request GET 'https://go.getblock.io/<ACCESS-TOKEN>/getAddressB
 
 이 명령어는 해당 주소의 잔액을 나노톤(nanotons) 단위로 출력합니다.
 
-![겟어드레스밸런스\_응답\_온\_TON\_블록체인](/img/docs/getblock-img/unnamed-2.png)
+![겟어드레스밸런스\\_응답\\_온\\_TON\\_블록체인](/img/docs/getblock-img/unnamed-2.png)
 
 TON 블록체인을 쿼리할 수 있는 다른 방법도 있습니다:
 

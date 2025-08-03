@@ -1,3 +1,5 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 从 TON Hack 挑战赛中得出结论
 
 TON Hack挑战赛于10月23日举行。在TON主网上部署了几个带有人为安全漏洞的智能合约。每个合约都有3000或5000 TON的余额，允许参与者攻击它并立即获得奖励。
@@ -151,7 +153,8 @@ slice safe_execute(int image, (int -> slice) dehasher) inline {
 
 ## 参考资料
 
-原文作者 Dan Volkov
+- [dvlkv on GitHub](https://github.com/dvlkv) - *Dan Volkov*
+- [Original article](https://dev.to/dvlkv/drawing-conclusions-from-ton-hack-challenge-1aep) - *Dan Volkov*
 
-- [dvlkv on Github](https://github.com/dvlkv)
-- [原文链接](https://dev.to/dvlkv/drawing-conclusions-from-ton-hack-challenge-1aep)
+<Feedback />
+

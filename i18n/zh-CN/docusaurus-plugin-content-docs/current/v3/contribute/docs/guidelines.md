@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 通用文档原则
+
+:::danger
+This page is outdated and will be deleted soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 为了获得最佳的用户体验和清晰度，请在创建 docs.ton.org 上的新内容时，牢记我们旨在应用于所有文档的一般性和重要要求列表。
 
@@ -21,4 +28,5 @@
 
 ## 获取反馈
 
-在发布文档之前，最好从其他贡献者或用户那里获取反馈。这可以帮助识别可能令人困惑或不清楚的地方，并允许您在文档发布之前进行改进。
+Before publishing the documentation, it is a good idea to get feedback from other contributors or users. This can help identify areas that may be confusing or unclear, and allow you to make improvements before the documentation is released. <Feedback />
+

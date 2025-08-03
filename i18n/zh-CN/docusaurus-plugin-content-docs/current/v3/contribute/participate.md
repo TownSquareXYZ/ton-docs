@@ -1,4 +1,11 @@
+import Feedback from '@site/src/components/Feedback';
+
 # 贡献指南
+
+:::danger
+This page is outdated and will be deleted soon.
+See the [How to contribute](/v3/contribute/).
+:::
 
 这是用 TON 文档撰写教程的逐步指南。
 
@@ -18,14 +25,14 @@
 找到或编写你想描述的材料。
 
 1. 检查带有 `tutorial` 标签的 [TON Docs GitHub 上的问题列表](https://github.com/ton-community/ton-docs/issues)。
-2. *或者* 在 TON Docs GitHub 上用 [教程模板](https://github.com/ton-community/ton-docs/issues/new?assignees=\\&labels=feature+%3Asparkles%3A%2Ccontent+%3Afountain_pen%3A\\&template=suggest_tutorial.yaml\\&title=Suggest+a+tutorial)写下你自己的想法。
+2. *或者* 在 TON Docs GitHub 上用 教程模板写下你自己的想法。
 
 ## 描述问题以获得奖励
 
 编写 *ton-footstep* 来获得你的贡献资金。
 
 1. 更详细地了解 [TON Footsteps](https://github.com/ton-society/ton-footsteps) 计划。
-   1. **简而言之**：使用 [“探索者”封面文章](https://github.com/ton-society/ton-footsteps/issues/61) 作为示例。
+    1. **简而言之**：使用 [“探索者”封面文章](https://github.com/ton-society/ton-footsteps/issues/61) 作为示例。
 2. 编写[你自己的footstep](https://github.com/ton-society/ton-footsteps/issues/new/choose)来参与并等待批准。
 3. 在收到 `approved` 标签后开始编写你的教程。
 
@@ -47,3 +54,6 @@
 2. 遵循指南 [如何完成 ton-footstep？](https://github.com/ton-society/ton-footsteps#how-to-complete-something-from-the-list) 完成footstep并获得奖励。
 3. 在你的任务中，你将被要求提供一个钱包，从而可以给你发送奖励。
 4. 获得奖励！
+
+<Feedback />
+

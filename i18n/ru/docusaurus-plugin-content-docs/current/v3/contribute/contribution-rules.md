@@ -1,8 +1,6 @@
-# Руководство по внесению вклада
+import Feedback from '@site/src/components/Feedback';
 
-:::warning
-Эта страница переведена сообществом на русский язык, но нуждается в улучшениях. Если вы хотите принять участие в переводе свяжитесь с [@alexgton](https://t.me/alexgton).
-:::
+# Руководство по внесению вклада
 
 :::danger
 Эта страница устарела и скоро будет удалена.
@@ -51,3 +49,6 @@ The TON Connect protocol...
 
 - [Руководство по внесению вклада в TON](/v3/contribute/contribution-rules/)
 - [Рекомендации по оформлению руководств](/v3/contribute/tutorials/guidelines/)
+
+<Feedback />
+
