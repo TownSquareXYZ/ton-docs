@@ -24,11 +24,11 @@ Using the formal address allows us to avoid sounding unofficial or offensive and
 
 Most Indo-European and Afro-Asiatic languages use gender-specific second-person personal pronouns, distinguishing between males and females. When addressing the user or using possessive pronouns, we can avoid assuming the reader’s gender, as the formal address is generally applicable and consistent, regardless of how they identify.
 
-## Straightforward vocabulary and meaning
+## Простая и понятная лексика и значение
 
 Наша цель — сделать контент на сайте понятным как можно большему количеству людей.
 
-In most cases, contributors can achieve this result by using short and simple words that are easily understandable. If multiple possible translations exist for a word in your language with the same meaning, the best option is often the shortest word reflecting the meaning.
+В большинстве случаев этого можно легко достичь, используя короткие и простые слова, которые легко понять. Если существует несколько возможных переводов определенного слова на вашем языке с одинаковым значением, лучшим вариантом чаще всего является самое короткое слово, которое четко отражает значение.
 
 ## Система письма
 
